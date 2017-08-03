@@ -18,7 +18,7 @@ Proposed project structure:
 Our goal at this point is to create two versions of a farmOS mobile app - one for iOS and one for Android.  The two versions will have equivalent functionality, but will need to be written separately.  The iOS app will be written in Swift using the Xcode IDE, and the Android app will be written in Java using the Android Studio IDE.  We will begin with the iOS version, as @BFAFisher has expressed interest in collaborating on the iOS side.
 
 iOS app:
-The iOS app will likely have XX basic elements:
+The iOS app will likely have these basic elements:
 - An SQLite database controlled by the Core Data framework (this would be a stripped-down version of the main farmOS database)
 - Components to add, remove, and edit records in the SQLite database
 - An authentication system for obtaining and securely storing user credentials, and sharing those credentials with the farmOS server
