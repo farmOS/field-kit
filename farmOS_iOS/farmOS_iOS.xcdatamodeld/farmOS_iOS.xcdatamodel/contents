@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="12141" systemVersion="16F73" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Activities" representedClassName="Activities" syncable="YES" codeGenerationType="class"/>
+    <entity name="Animals" representedClassName="Animals" syncable="YES" codeGenerationType="class"/>
+    <entity name="Eqiupment" representedClassName="Eqiupment" syncable="YES" codeGenerationType="class"/>
+    <entity name="Harvests" representedClassName="Harvests" syncable="YES" codeGenerationType="class"/>
+    <entity name="Inputs" representedClassName="Inputs" syncable="YES" codeGenerationType="class"/>
+    <entity name="Locations" representedClassName="Locations" syncable="YES" codeGenerationType="class"/>
+    <entity name="Movements" representedClassName="Movements" syncable="YES" codeGenerationType="class"/>
+    <entity name="Observations" representedClassName="Observations" syncable="YES" codeGenerationType="class"/>
+    <entity name="Plantings" representedClassName="Plantings" syncable="YES" codeGenerationType="class"/>
+    <entity name="Users" representedClassName="Users" syncable="YES" codeGenerationType="class"/>
+    <elements>
+        <element name="Activities" positionX="-63" positionY="-18" width="128" height="45"/>
+        <element name="Observations" positionX="-54" positionY="-9" width="128" height="45"/>
+        <element name="Inputs" positionX="-36" positionY="9" width="128" height="45"/>
+        <element name="Harvests" positionX="-18" positionY="27" width="128" height="45"/>
+        <element name="Plantings" positionX="0" positionY="45" width="128" height="45"/>
+        <element name="Animals" positionX="18" positionY="63" width="128" height="45"/>
+        <element name="Eqiupment" positionX="36" positionY="81" width="128" height="45"/>
+        <element name="Locations" positionX="-9" positionY="36" width="128" height="45"/>
+        <element name="Movements" positionX="0" positionY="45" width="128" height="45"/>
+        <element name="Users" positionX="9" positionY="54" width="128" height="45"/>
+    </elements>
+</model>
