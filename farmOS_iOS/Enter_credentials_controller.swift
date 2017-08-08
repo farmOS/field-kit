@@ -6,7 +6,13 @@
 //  Copyright © 2017 farmOS. All rights reserved.
 //
 
+
 import UIKit
+
+//Controller for the Enter_credentials view
+//Functions:
+//Get credentials from user and call Check_credentials to validate
+//If valid, put credentials in secure local storage
 
 class Enter_credentials: UITableViewController {
 

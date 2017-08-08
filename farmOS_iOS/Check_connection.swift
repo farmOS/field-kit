@@ -7,3 +7,17 @@
 //
 
 import Foundation
+
+//Run on load, and when called by Main_controller or New_record_controller
+//Functions:
+//Get connectivity status of device
+//If status matches user preference in settings, call Get_records and Send_records
+
+class Check_connection {
+    
+    
+    
+    
+    
+    
+}

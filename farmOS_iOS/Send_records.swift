@@ -7,3 +7,22 @@
 //
 
 import Foundation
+
+//Funcitons:
+//Get records from local database
+//Send New_observations and New_harvests local records to farmOS databse using the API
+
+
+
+class Send_records {
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+}

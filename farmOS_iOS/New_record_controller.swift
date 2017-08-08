@@ -8,6 +8,14 @@
 
 import UIKit
 
+//Controller for New_record view
+// Currently focused on capturing harvest records
+// Can be expanded to capture other kinds of records
+//Functions:
+// Enter new harvest record including crop, location, unit and quantity
+// Save to local database as New_harvests
+// Call check_connection
+
 class New_record_controller: UITableViewController {
 
     override func viewDidLoad() {

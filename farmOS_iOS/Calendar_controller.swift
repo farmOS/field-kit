@@ -8,6 +8,13 @@
 
 import UIKit
 
+//Controller for the Calendar view
+//Functions:
+// Get records from local database
+// Order chronologically in calendar view
+//
+// UI elements:
+
 class Calendar_controller: UITableViewController {
 
     override func viewDidLoad() {

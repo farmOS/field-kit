@@ -8,6 +8,12 @@
 
 import UIKit
 
+//Controller for Settings view
+//Functions:
+//Save values to local storage including:
+// - When to synch records (only when wifi is available?  when cell data is available?)
+//
+
 class Settings_controller: UITableViewController {
 
     override func viewDidLoad() {
