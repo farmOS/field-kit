@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8F6B39AEB70F86758CDEFD06 /* Pods_farmOS_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C450E4F3C56872569CFBAB4E /* Pods_farmOS_iOS.framework */; };
+		D639A8B41F67D3D2006D43CA /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = D639A8B31F67D3D2006D43CA /* Podfile */; };
+		D691BFF61FBC5FFF0017CF2A /* Credentials_controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = D691BFF51FBC5FFF0017CF2A /* Credentials_controller.swift */; };
 		D6E927C81F332EF40080613E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E927C71F332EF40080613E /* AppDelegate.swift */; };
 		D6E927CA1F332EF40080613E /* Main_controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E927C91F332EF40080613E /* Main_controller.swift */; };
 		D6E927CD1F332EF40080613E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6E927CB1F332EF40080613E /* Main.storyboard */; };
@@ -14,7 +17,6 @@
 		D6E927D21F332EF40080613E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6E927D11F332EF40080613E /* Assets.xcassets */; };
 		D6E927D51F332EF40080613E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6E927D31F332EF40080613E /* LaunchScreen.storyboard */; };
 		D6E927E01F386E840080613E /* Check_credentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E927DF1F386E840080613E /* Check_credentials.swift */; };
-		D6E927E21F386F070080613E /* Enter_credentials_controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E927E11F386F070080613E /* Enter_credentials_controller.swift */; };
 		D6E927E41F3871480080613E /* Get_records.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E927E31F3871480080613E /* Get_records.swift */; };
 		D6E927E61F38716B0080613E /* Send_records.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E927E51F38716B0080613E /* Send_records.swift */; };
 		D6E927E81F3872340080613E /* Calendar_controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E927E71F3872340080613E /* Calendar_controller.swift */; };
@@ -24,6 +26,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0FB06DCA2DFD1ADF1F33ADEA /* Pods-farmOS_iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-farmOS_iOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-farmOS_iOS/Pods-farmOS_iOS.release.xcconfig"; sourceTree = "<group>"; };
+		C450E4F3C56872569CFBAB4E /* Pods_farmOS_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_farmOS_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D639A8B31F67D3D2006D43CA /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		D691BFF51FBC5FFF0017CF2A /* Credentials_controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Credentials_controller.swift; sourceTree = "<group>"; };
 		D6E927C41F332EF40080613E /* farmOS_iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = farmOS_iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6E927C71F332EF40080613E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D6E927C91F332EF40080613E /* Main_controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main_controller.swift; sourceTree = "<group>"; };
@@ -33,13 +39,13 @@
 		D6E927D41F332EF40080613E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D6E927D61F332EF40080613E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D6E927DF1F386E840080613E /* Check_credentials.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Check_credentials.swift; sourceTree = "<group>"; };
-		D6E927E11F386F070080613E /* Enter_credentials_controller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enter_credentials_controller.swift; sourceTree = "<group>"; };
 		D6E927E31F3871480080613E /* Get_records.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Get_records.swift; sourceTree = "<group>"; };
 		D6E927E51F38716B0080613E /* Send_records.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Send_records.swift; sourceTree = "<group>"; };
 		D6E927E71F3872340080613E /* Calendar_controller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Calendar_controller.swift; sourceTree = "<group>"; };
 		D6E927E91F38726D0080613E /* Settings_controller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Settings_controller.swift; sourceTree = "<group>"; };
 		D6E927EB1F3872C40080613E /* New_record_controller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = New_record_controller.swift; sourceTree = "<group>"; };
 		D6E927ED1F38736B0080613E /* Check_connection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Check_connection.swift; sourceTree = "<group>"; };
+		E68288C7E4CC4CAAB5D04278 /* Pods-farmOS_iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-farmOS_iOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-farmOS_iOS/Pods-farmOS_iOS.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -47,17 +53,37 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F6B39AEB70F86758CDEFD06 /* Pods_farmOS_iOS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0A330C843FBD943803CB6D7E /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				E68288C7E4CC4CAAB5D04278 /* Pods-farmOS_iOS.debug.xcconfig */,
+				0FB06DCA2DFD1ADF1F33ADEA /* Pods-farmOS_iOS.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		48F5940E164C02AC6C02B21A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C450E4F3C56872569CFBAB4E /* Pods_farmOS_iOS.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		D6E927BB1F332EF40080613E = {
 			isa = PBXGroup;
 			children = (
 				D6E927C61F332EF40080613E /* farmOS_iOS */,
 				D6E927C51F332EF40080613E /* Products */,
+				0A330C843FBD943803CB6D7E /* Pods */,
+				48F5940E164C02AC6C02B21A /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -80,13 +106,14 @@
 				D6E927D61F332EF40080613E /* Info.plist */,
 				D6E927CE1F332EF40080613E /* farmOS_iOS.xcdatamodeld */,
 				D6E927DF1F386E840080613E /* Check_credentials.swift */,
-				D6E927E11F386F070080613E /* Enter_credentials_controller.swift */,
 				D6E927E31F3871480080613E /* Get_records.swift */,
 				D6E927E51F38716B0080613E /* Send_records.swift */,
 				D6E927E71F3872340080613E /* Calendar_controller.swift */,
 				D6E927E91F38726D0080613E /* Settings_controller.swift */,
 				D6E927EB1F3872C40080613E /* New_record_controller.swift */,
 				D6E927ED1F38736B0080613E /* Check_connection.swift */,
+				D639A8B31F67D3D2006D43CA /* Podfile */,
+				D691BFF51FBC5FFF0017CF2A /* Credentials_controller.swift */,
 			);
 			path = farmOS_iOS;
 			sourceTree = "<group>";
@@ -98,9 +125,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D6E927D91F332EF50080613E /* Build configuration list for PBXNativeTarget "farmOS_iOS" */;
 			buildPhases = (
+				5216A7D65ACB61DAC0923580 /* [CP] Check Pods Manifest.lock */,
 				D6E927C01F332EF40080613E /* Sources */,
 				D6E927C11F332EF40080613E /* Frameworks */,
 				D6E927C21F332EF40080613E /* Resources */,
+				570C390C4361AADF468ECA50 /* [CP] Embed Pods Frameworks */,
+				6710EC503B24D432836056B9 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -123,6 +153,7 @@
 				TargetAttributes = {
 					D6E927C31F332EF40080613E = {
 						CreatedOnToolsVersion = 8.3.3;
+						DevelopmentTeam = 9ER8KECZ32;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -152,18 +183,72 @@
 			files = (
 				D6E927D51F332EF40080613E /* LaunchScreen.storyboard in Resources */,
 				D6E927D21F332EF40080613E /* Assets.xcassets in Resources */,
+				D639A8B41F67D3D2006D43CA /* Podfile in Resources */,
 				D6E927CD1F332EF40080613E /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		5216A7D65ACB61DAC0923580 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-farmOS_iOS-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		570C390C4361AADF468ECA50 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-farmOS_iOS/Pods-farmOS_iOS-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-farmOS_iOS/Pods-farmOS_iOS-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		6710EC503B24D432836056B9 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-farmOS_iOS/Pods-farmOS_iOS-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		D6E927C01F332EF40080613E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D6E927E21F386F070080613E /* Enter_credentials_controller.swift in Sources */,
 				D6E927EE1F38736B0080613E /* Check_connection.swift in Sources */,
 				D6E927E81F3872340080613E /* Calendar_controller.swift in Sources */,
 				D6E927E61F38716B0080613E /* Send_records.swift in Sources */,
@@ -171,6 +256,7 @@
 				D6E927D01F332EF40080613E /* farmOS_iOS.xcdatamodeld in Sources */,
 				D6E927E01F386E840080613E /* Check_credentials.swift in Sources */,
 				D6E927CA1F332EF40080613E /* Main_controller.swift in Sources */,
+				D691BFF61FBC5FFF0017CF2A /* Credentials_controller.swift in Sources */,
 				D6E927EA1F38726D0080613E /* Settings_controller.swift in Sources */,
 				D6E927C81F332EF40080613E /* AppDelegate.swift in Sources */,
 				D6E927E41F3871480080613E /* Get_records.swift in Sources */,
@@ -294,9 +380,12 @@
 		};
 		D6E927DA1F332EF50080613E /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E68288C7E4CC4CAAB5D04278 /* Pods-farmOS_iOS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 9ER8KECZ32;
 				INFOPLIST_FILE = farmOS_iOS/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "farmOS.farmOS-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -306,9 +395,12 @@
 		};
 		D6E927DB1F332EF50080613E /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0FB06DCA2DFD1ADF1F33ADEA /* Pods-farmOS_iOS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 9ER8KECZ32;
 				INFOPLIST_FILE = farmOS_iOS/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "farmOS.farmOS-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -335,6 +427,7 @@
 				D6E927DB1F332EF50080613E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 

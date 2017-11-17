@@ -18,6 +18,17 @@ import UIKit
 
 class New_record_controller: UITableViewController {
 
+    var credentials = Check_credentials()
+    
+    @IBOutlet weak var statusText: UILabel!
+    
+    @IBOutlet weak var userTextbox: UITextField!
+    
+    @IBOutlet weak var passwordTextbox: UITextField!
+    
+    @IBOutlet weak var submitButton: UIButton!
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -28,6 +39,53 @@ class New_record_controller: UITableViewController {
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
     }
 
+    
+    @IBAction func submitPressed(_ sender: Any) {
+        
+        credentials.farmOSusername = self.userTextbox.text!
+        credentials.farmOSpassword = self.passwordTextbox.text!
+        
+        credentials.makeRequest() { responseObject in
+            // use responseObject and error here
+            
+            print("***RESPONSE: \(responseObject)")
+            
+            if responseObject == "success" {
+                
+                //unwind segue
+               self.performSegue(withIdentifier: "unwindToMain", sender: self)
+                
+            } else {
+                self.statusText.text = "Invalid credentials - please re-enter"
+                print("No way - your credentials are all messed up!")
+            }
+            
+            return
+        } // close credentials makeRequest
+        
+        
+    } //close submitPressed
+    
+    
+//Thanks Leo Dabus https://stackoverflow.com/questions/34941069/enable-a-button-in-swift-only-if-all-text-fields-have-been-filled-out
+ func editingChanged(_ textField: UITextField) {
+ if textField.text?.characters.count == 1 {
+ if textField.text?.characters.first == " " {
+ textField.text = ""
+ return
+ }
+ }
+ guard
+ let user = userTextbox.text, !user.isEmpty,
+ let pass = passwordTextbox.text, !pass.isEmpty
+ else {
+ submitButton.isEnabled = false
+ return
+ }
+ submitButton.isEnabled = true
+ }
+    
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -35,15 +93,7 @@ class New_record_controller: UITableViewController {
 
     // MARK: - Table view data source
 
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
-    }
 
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return 0
-    }
 
     /*
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
