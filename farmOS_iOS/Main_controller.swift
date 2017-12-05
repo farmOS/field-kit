@@ -28,10 +28,13 @@ Call Check_connection
 class Main_controller: UITableViewController {
 
     var records = Get_records()
-    
-    @IBOutlet weak var outputLabel: UILabel!
+
+    @IBOutlet weak var outputText: UITextView!
     
     @IBOutlet weak var getButton: UIButton!
+    
+    @IBOutlet weak var addButton: UIButton!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,7 +43,7 @@ class Main_controller: UITableViewController {
 
         //Check for a saved url value in user settings.  If none exists, open the login page.
         if let savedURL = UserDefaults.standard.string(forKey: "baseURL") {
-            outputLabel.text = "Ready to retrieve records from "+savedURL
+            outputText.text = "Ready to retrieve records from "+savedURL
         } else {
           self.performSegue(withIdentifier: "credentialsSegue", sender: self)
         }
@@ -50,33 +53,52 @@ class Main_controller: UITableViewController {
     
 
     //getRecords calls the get_records class to request records from the farmOS server.
-    //Currently this class retrieves only planting records in raw CSV form.
+   
     func getRecords() {
         
         //getRecords will only function if a farmOS url is saved to key baseURL
          if let savedURL = UserDefaults.standard.string(forKey: "baseURL") {
 
-        self.outputLabel.text = "Waiting for a response from "+savedURL
+        self.outputText.text = "Waiting for a response from "+savedURL
         
-        var responseString = ""
+            //By default, the response string is a header for the output values
+            var responseString = ""
 
-        self.records.makeRequest() { responseObject in //no idea why 'self' must be designated here, but not for credentials.makeRequest
+        self.records.makeRequest() { returnDict in
             
-            print("***RECORDS: \(responseObject)")
+            print("***RECORDS: \(returnDict)")
+            
+            
+            if returnDict["Status"]! == ["Error"] {
             
             //if a webpage is being returned, it will contain an 'html' tag.  This is a failure
-            if responseObject.range(of:"html") != nil || responseObject.range(of:"invalid credentials") != nil{
+            //if responseObject.range(of:"html") != nil || responseObject.range(of:"invalid credentials") != nil{
                 
                 responseString = "Incorrect URL, username or password"
                 
                 self.performSegue(withIdentifier: "credentialsSegue", sender: self)
                 
             } else {
+                responseString = "Name; Id; Type; Timestamp \n\n"
                 
-                responseString = responseObject
-            }
+                let returnNames = returnDict["Names"]!
+                let returnIds = returnDict["Ids"]!
+                let returnTypes = returnDict["Types"]!
+                let returnStamps = returnDict["Timestamps"]!
+                
+                for i in 0 ..< returnNames.count {
+                    
+                    responseString = responseString+returnNames[i]+"; "
+                    responseString = responseString+returnIds[i]+"; "
+                    responseString = responseString+returnTypes[i]+"; "
+                    responseString = responseString+returnStamps[i]
+                    responseString = responseString+"\n\n"
+                }
+            } //end if returnDict[Status]
             
-            self.outputLabel.text = responseString
+            print(responseString)
+            
+            self.outputText.text = responseString
             
             //Gotta reload data after waiting on the asynch task!
             self.tableView.reloadData()
@@ -101,6 +123,17 @@ class Main_controller: UITableViewController {
         getButton.backgroundColor = UIColor.gray
         
     }
+    
+    
+    @IBAction func addObservationPressed(_ sender: Any) {
+        
+        self.performSegue(withIdentifier: "addSegue", sender: self)
+        
+        //Change button color to indicate press
+        addButton.backgroundColor = UIColor.gray
+        
+    }
+    
     
     //accept unwind segues
     @IBAction func unwindToMain(segue:UIStoryboardSegue) {

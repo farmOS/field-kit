@@ -34,6 +34,9 @@ class Check_credentials {
     var farmOSusername = ""
     var farmOSpassword = ""
     
+    //Library of functions for parsing JSON data
+    var dataHandlers = Data_handlers()
+    
     let loginLoc = "/?q=user/login"
     
     //Request credentials from the farmOS server
@@ -49,20 +52,47 @@ class Check_credentials {
     
     let requestParams = ["form_id": "user_login", "name": farmOSusername, "pass": farmOSpassword]
 
+        //The following successfully logs in to www.beetclock.com/farmOS and livinghopefarm.farmos.net
+        //HOWEVER it only retrieves JSON output from beetclock.com NOT farmOS.net!!
+        //In beetclock.com/farmOS, retrieves a JSON response including info on the logged-in user (can call responseJSON)
+        //In farmOS.net, retrieves a success response paired w/ a 403 error (causing a parsing error if responseJSON is called)
+        //It should be possible to retrieve an x-csrf token at the time of login, according to https://groups.drupal.org/node/358308
+        Alamofire.request(farmOS_login_url, method: .post, parameters: requestParams, encoding: URLEncoding.default, headers: ["Content-Type": "application/x-www-form-urlencoded", "Accept": "application/json"]).responseString { response in
         
-Alamofire.request(farmOS_login_url, method: .post, parameters: requestParams, encoding: URLEncoding.default, headers: ["Content-Type": "application/x-www-form-urlencoded"]).responseString { response in
+            print("LOGIN RESPONSE")
+            print(String(describing: response))
+                
+                print("LOGIN RESPONSE HEADERS:")
+                print(response.response?.allHeaderFields)
+                
+    //The following works fine, but retrieves am http response which I can't use
+        //Alamofire.request(farmOS_login_url, method: .post, parameters: requestParams, encoding: URLEncoding.default, headers: ["Content-Type": "application/x-www-form-urlencoded"]).responseString { response in
 
     //Return either 'success' or 'failure as the completion handler upon receipt of the server's response
     //thanks Rob https://stackoverflow.com/questions/27390656/how-to-return-value-from-alamofire
     switch response.result {
+        
     case .success(let value):
         completionHandler("success")
 
+        //Would like to save userName and userID as user settings.  Unfortunately the farmier server does not return .json responses upon login.  beetclock does.
+        //let currentUserID = self.dataHandlers.extractSimpleJSON(rawJSON: value as! [String: AnyObject], key: "uid" )
+        //let currentUserName = self.dataHandlers.extractSimpleJSON(rawJSON: value as! [String: AnyObject], key: "name" )
+        //UserDefaults.standard.set(currentUserID, forKey: "userID")
+        //UserDefaults.standard.set(currentUserName, forKey: "userName")
+
+        
     case .failure(let error):
         completionHandler("failure")
-    }
+        
+        print("LOGIN ERROR:")
+        print(error)
+        
+    } //end response switch
  
-        }//end alamoFire request
+        }
+        
+        //end alamoFire request
    
     }//end func makeRequest
     

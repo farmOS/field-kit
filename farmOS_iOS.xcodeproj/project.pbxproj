@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		8F6B39AEB70F86758CDEFD06 /* Pods_farmOS_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C450E4F3C56872569CFBAB4E /* Pods_farmOS_iOS.framework */; };
 		D639A8B41F67D3D2006D43CA /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = D639A8B31F67D3D2006D43CA /* Podfile */; };
+		D65D659C1FD6DEB0005AE9B7 /* Data_handlers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D65D659B1FD6DEB0005AE9B7 /* Data_handlers.swift */; };
 		D691BFF61FBC5FFF0017CF2A /* Credentials_controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = D691BFF51FBC5FFF0017CF2A /* Credentials_controller.swift */; };
 		D6E927C81F332EF40080613E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E927C71F332EF40080613E /* AppDelegate.swift */; };
 		D6E927CA1F332EF40080613E /* Main_controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E927C91F332EF40080613E /* Main_controller.swift */; };
@@ -29,6 +30,7 @@
 		0FB06DCA2DFD1ADF1F33ADEA /* Pods-farmOS_iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-farmOS_iOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-farmOS_iOS/Pods-farmOS_iOS.release.xcconfig"; sourceTree = "<group>"; };
 		C450E4F3C56872569CFBAB4E /* Pods_farmOS_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_farmOS_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D639A8B31F67D3D2006D43CA /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		D65D659B1FD6DEB0005AE9B7 /* Data_handlers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data_handlers.swift; sourceTree = "<group>"; };
 		D691BFF51FBC5FFF0017CF2A /* Credentials_controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Credentials_controller.swift; sourceTree = "<group>"; };
 		D6E927C41F332EF40080613E /* farmOS_iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = farmOS_iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6E927C71F332EF40080613E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -114,6 +116,7 @@
 				D6E927ED1F38736B0080613E /* Check_connection.swift */,
 				D639A8B31F67D3D2006D43CA /* Podfile */,
 				D691BFF51FBC5FFF0017CF2A /* Credentials_controller.swift */,
+				D65D659B1FD6DEB0005AE9B7 /* Data_handlers.swift */,
 			);
 			path = farmOS_iOS;
 			sourceTree = "<group>";
@@ -257,6 +260,7 @@
 				D6E927E01F386E840080613E /* Check_credentials.swift in Sources */,
 				D6E927CA1F332EF40080613E /* Main_controller.swift in Sources */,
 				D691BFF61FBC5FFF0017CF2A /* Credentials_controller.swift in Sources */,
+				D65D659C1FD6DEB0005AE9B7 /* Data_handlers.swift in Sources */,
 				D6E927EA1F38726D0080613E /* Settings_controller.swift in Sources */,
 				D6E927C81F332EF40080613E /* AppDelegate.swift in Sources */,
 				D6E927E41F3871480080613E /* Get_records.swift in Sources */,

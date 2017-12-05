@@ -18,20 +18,31 @@ import UIKit
 
 class New_record_controller: UITableViewController {
 
-    var credentials = Check_credentials()
+    var sendRecords = Send_records()
+    
+    var xcsrf_token = ""
+
+    var responseString = ""
     
     @IBOutlet weak var statusText: UILabel!
     
-    @IBOutlet weak var userTextbox: UITextField!
+    @IBOutlet weak var nameTextbox: UITextField!
     
-    @IBOutlet weak var passwordTextbox: UITextField!
-    
+    @IBOutlet weak var bodyTextbox: UITextField!
+
     @IBOutlet weak var submitButton: UIButton!
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //Add listeners to for changes to textboxes
+        nameTextbox.addTarget(self, action: #selector(editingChanged(_:)), for: .editingChanged)
+        bodyTextbox.addTarget(self, action: #selector(editingChanged(_:)), for: .editingChanged)
 
+        
+        //The submit button starts out as disabled.  It will be enabled when values are entered into all text boxes
+        submitButton.isEnabled = false
+        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -40,32 +51,58 @@ class New_record_controller: UITableViewController {
     }
 
     
-    @IBAction func submitPressed(_ sender: Any) {
-        
-        credentials.farmOSusername = self.userTextbox.text!
-        credentials.farmOSpassword = self.passwordTextbox.text!
-        
-        credentials.makeRequest() { responseObject in
-            // use responseObject and error here
-            
-            print("***RESPONSE: \(responseObject)")
-            
-            if responseObject == "success" {
-                
-                //unwind segue
-               self.performSegue(withIdentifier: "unwindToMain", sender: self)
-                
-            } else {
-                self.statusText.text = "Invalid credentials - please re-enter"
-                print("No way - your credentials are all messed up!")
-            }
-            
-            return
-        } // close credentials makeRequest
-        
-        
-    } //close submitPressed
+    @IBAction func submitButtonPressed(_ sender: Any) {
     
+        sendRecords.nameInput = self.nameTextbox.text!
+        sendRecords.bodyInput = self.bodyTextbox.text!
+        
+        //submitPressed will only function if a farmOS url is saved to key baseURL
+        if let savedURL = UserDefaults.standard.string(forKey: "baseURL") {
+            
+            self.statusText.text = "Sending observation to "+savedURL
+            
+            self.sendRecords.getToken() { tokenResponse in
+            //self.sendRecords.getToken() { responseObject in
+                
+                print("***SEND RESPONSE: \(String(describing: tokenResponse))")
+                
+                //if a webpage is being returned, it will contain an 'html' tag.  This is a failure
+                if tokenResponse.range(of:"html") != nil || tokenResponse.range(of:"invalid credentials") != nil{
+                    
+                    self.responseString = "No token returned - error or html returned"
+                    
+                    //self.performSegue(withIdentifier: "NewCredentialsSegue", sender: self)
+                    
+                } else {
+                    
+                    self.xcsrf_token = String(describing: tokenResponse)
+                    self.sendRecords.xcsrf_token = self.xcsrf_token
+
+                    self.sendRecords.makeRequest() { sendResponse in
+                        
+                        print("NEW RECORD POST RESPONSE:")
+                        print(sendResponse)
+                        self.responseString = sendResponse as! String
+    
+                        //And display response string
+                        self.statusText.text = self.responseString
+
+                    }// end makeRequest
+                    
+                    }//end token else
+                
+                //Gotta reload data after waiting on the asynch task!
+                self.tableView.reloadData()
+                
+                //Return getButton to normal (unpressed) color
+                self.submitButton.backgroundColor = UIColor.blue
+                
+            }// close getToken()
+            
+        } // close if savedURL
+        
+    } //close submitButtonPressed
+
     
 //Thanks Leo Dabus https://stackoverflow.com/questions/34941069/enable-a-button-in-swift-only-if-all-text-fields-have-been-filled-out
  func editingChanged(_ textField: UITextField) {
@@ -76,8 +113,8 @@ class New_record_controller: UITableViewController {
  }
  }
  guard
- let user = userTextbox.text, !user.isEmpty,
- let pass = passwordTextbox.text, !pass.isEmpty
+    let name = nameTextbox.text, !name.isEmpty,
+    let body = bodyTextbox.text, !body.isEmpty
  else {
  submitButton.isEnabled = false
  return

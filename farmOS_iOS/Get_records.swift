@@ -23,47 +23,73 @@ Remove deleted records (not present on farmOS server, present in local DB) from 
 
 
 class Get_records {
+
     
+    //I am following the JSON request format at https://www.drupal.org/node/1860564
+
+    let logsLoc = "/?q=log.json"
     
-    //Eventually I would like to retrieve records in JSON format, but I haven't figured out how to get JSON from the restful web services API
-    //CSV will work for now; I should be able to parse the returned data without too much trouble
+    let assetsLoc = "/?q=farm_asset/1.json"
+    //let assetLoc = "/?q=farm_asset.json"
     
-    
-    let plantingsLoc = "/?q=farm/assets/plantings/csv&attach=page"
+    //Library of JSON parsing functions
+    var dataHandlers = Data_handlers()
     
     
     //Requesting records from farmOS server
     //This is an asynchronous task.  See Check_credentials for more description
-   func makeRequest(completionHandler: @escaping (String) -> Void) {
+    func makeRequest(completionHandler: @escaping ([String: [String]]) -> Void) {
     
     //Check if this allows baseURL to refresh
     let baseURL = UserDefaults.standard.string(forKey: "baseURL")
-    
-    
-    
-    var farmOS_csv_url = URL(string: "")
+
+    var farmOS_logs_url = URL(string: "")
 
     if let key = UserDefaults.standard.object(forKey: "baseURL") {
-   farmOS_csv_url = URL(string: baseURL!+plantingsLoc)!
+        //Testing out a new plantings location
+        //farmOS_logs_url = URL(string: baseURL!+assetsLoc)!
+        farmOS_logs_url = URL(string: baseURL!+logsLoc)!
     }
+        
+        //The change in URL alone does not obtain the desired .json - may need  to include a header
+        let requestHeaders = ["Content-Type": "application/json", "Accept": "application/json"]
 
         var returnString = ""
         
 
-        //Requesting CSV output
-        Alamofire.request(farmOS_csv_url!, method: .get).responseString { response in
+        //Requesting farmOS output
+    //inserted parameters: requestHeaders and changed .responseString to .responseJSON in an attempt to obtain JSON output
+        Alamofire.request(farmOS_logs_url!, method: .get, headers: requestHeaders).responseJSON { response in
             
             //Return
             //thanks Rob https://stackoverflow.com/questions/27390656/how-to-return-value-from-alamofire
             switch response.result {
             case .success(let value):
-
-                completionHandler(String(describing: value))
+                
+                print("RETURN VALUE")
+                print(value)
+                
+                //Get names, ids, types and timestamps from the returned json
+                let namesReturned = self.dataHandlers.extractComplexJSON(rawJSON: value as! [String: AnyObject], key: "name")
+                let idsReturned = self.dataHandlers.extractComplexJSON(rawJSON: value as! [String: AnyObject], key: "id")
+                let typesReturned = self.dataHandlers.extractComplexJSON(rawJSON: value as! [String: AnyObject], key: "type")
+                let stampsReturned = self.dataHandlers.extractComplexJSON(rawJSON: value as! [String: AnyObject], key: "timestamp")
+                
+                
+                
+                
+                completionHandler(["Status": ["OK"], "Names": namesReturned, "Ids": idsReturned, "Types": typesReturned, "Timestamps": stampsReturned])
+                //completionHandler(self.parseJSON(rawJSON: value as! [String : Any]))
+                //completionHandler(self.parseJSON(rawJSON: [String : AnyObject]()))
+                
+                //completionHandler(String(describing: value))
+                
+                
 
             case .failure(let error):
 
                 //This will trigger display of an error message in Main_controller
-                completionHandler("invalid credentials")
+                completionHandler(["Status": ["Error"]])
 
             }
             
@@ -73,5 +99,6 @@ class Get_records {
         
     }//end func makeRequest
     
+ 
     
 } //end class Get_records

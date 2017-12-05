@@ -51,12 +51,13 @@ class Credentials_controller: UITableViewController {
         //Change button color to indicate press
         submitButton.backgroundColor = UIColor.gray
         
-        
         //Gather user inputs from textboxes
         credentials.farmOSusername = self.userTextbox.text!
         credentials.farmOSpassword = self.passwordTextbox.text!
         credentials.newBaseURL = self.urlTextbox.text!
         
+        //Indicate that a request has been submitted
+        self.statusText.text = "Requesting access to "+credentials.newBaseURL
         
         credentials.makeRequest() { responseObject in
             // use responseObject and error here
