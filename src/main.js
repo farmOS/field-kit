@@ -1,4 +1,4 @@
-import LoginPlugin from '@/login';
+import LoginComponent from '@/login/LoginComponent.vue';
 import loader from './spa/loader';
 
-const app = loader(LoginPlugin);
+const app = loader(LoginComponent);
