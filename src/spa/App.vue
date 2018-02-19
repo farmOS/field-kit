@@ -25,7 +25,6 @@
 
 <script>
 import DataNative from './components/DataNative'
-import Login from './components/Login'
 import NewObservation from './components/NewObservation'
 //import Observations from './components/Observations'
 //import Calendar from './components/Calendar'
@@ -34,7 +33,6 @@ export default {
   name: 'App',
   components: {
   DataNative,
-  Login,
   NewObservation,
   //Observations,
   //Calendar,
