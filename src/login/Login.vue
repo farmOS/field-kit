@@ -32,7 +32,13 @@ export default {
       }
     },
     submitCredentials () {
-      this.$emit('didSubmitCredentials', [this.username, this.password]);
+      // this.$emit('didSubmitCredentials', [this.username, this.password]);
+      const creds = {
+        username: this.username,
+        password: this.password
+      }
+      this.$store.commit('login', creds);
+      this.$router.push({path: '/'})
     }
 
   }//methods

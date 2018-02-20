@@ -9,27 +9,29 @@ Vue.use(Router)
 
 export default new Router({
   routes: [
-
     {
       path: '/',
+      redirect: '/new-observation'
+    },
+    {
+      path: '/calendar',
       name: 'Calendar',
       component: Calendar
     },
     {
-      path: '/',
+      path: '/observations',
       name: 'Observations',
       component: Observations
     },
     {
-      path: '/',
+      path: '/new-observation',
       name: 'NewObservation',
       component: NewObservation
     },
     {
-      path: '/',
+      path: '/data-native',
       name: 'DataNative',
       component: DataNative
     }
-
   ]
 })
