@@ -25,16 +25,16 @@
 
 <script>
 import Chooser from './Chooser'
-//import DataNative from './DataNative'
+import DataNative from './DataNative'
 export default {
   components: {
-    //DataNative,
+    // DataNative,
     Chooser
   },
-  props: ['dataStore'],
+  // props: ['dataStore'],
   data () {
   return {
-    //dataStore: DataNative.data(),
+    dataStore: DataNative.data().assets,
     vueHeader: 'Enter your new observation:',
     isChoosing: false,
     choiceObject: '',
