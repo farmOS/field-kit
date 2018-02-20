@@ -1,56 +1,19 @@
 <template>
   <div id="app">
     <h3>{{headerText}}</h3>
-
-    <!-- <login v-if="this.displayState === 'displayLogin'" @didSubmitCredentials="checkCredentials" ></login>
-
-    <new-observation
-      v-if="this.displayState === 'displayNewObservation'"
-      :dataStore="dataStore"
-      @didSubmitObservation="saveObservation"
-    /> -->
-
-    <!--Somehow, this causes an extra copy of the above template to appear-->
     <router-view/>
-
-    <!--  Trying to display recorded observations in the observations view
-    <br>
-    <observations v-if="this.displayState === 'displayNewObservation'" :recordStore="recordStore"></observations>
-  -->
-  <div class="well">
-    <p>{{ statusText }}</p>
+    <div class="well">
+      <p>{{ statusText }}</p>
+    </div>
   </div>
-
-  <!--unclear if I need to include a template stub for the data module -->
-  <DataNative></DataNative>
-
-</div>
 </template>
 
 <script>
-import DataNative from './components/DataNative'
-import NewObservation from './components/NewObservation'
-//import Observations from './components/Observations'
-//import Calendar from './components/Calendar'
-
 export default {
   name: 'App',
-  components: {
-  DataNative,
-  NewObservation,
-  //Observations,
-  //Calendar,
-  },
   data () {
-  return {
-    headerText: 'Please enter your farmOS credentials',
-    displayState: 'displayLogin',
-    // headerText: 'Please enter your farmOS credentials',
-    statusText: '',
-    // Get data from an imported component
-    dataStore: DataNative.data().assets,
-    // Get computed data from an imported component
-    //recordStore: DataNative.computed.observations()
+    return {
+      statusText: '',
     }
   },
   created: function () {
@@ -68,13 +31,6 @@ export default {
     }
   },
   methods:{
-    checkCredentials (creds) {
-      this.headerText = 'Welcome '+creds[0]+'!';
-      this.displayState = 'displayNewObservation';
-
-      console.log('observations:');
-      console.log(this.recordStore)
-    },
 
     // I should parse this in an iterative way, cycling through object properties
     saveObservation (obs) {
@@ -91,7 +47,7 @@ export default {
 
       this.displayState = 'displayNewObservation'
     }
-}//methods
+  }//methods
 
 }
 </script>
