@@ -45,6 +45,7 @@ export default {
   return {
     headerText: 'Please enter your farmOS credentials',
     displayState: 'displayLogin',
+    // headerText: 'Please enter your farmOS credentials',
     statusText: '',
     // Get data from an imported component
     dataStore: DataNative.data().assets,
@@ -57,6 +58,14 @@ export default {
       return
     }
     this.$router.push({path: 'login'})
+  },
+  computed: {
+    headerText: function () {
+      if (!this.$store.state.user.isLoggedIn) {
+        return 'Please enter your farmOS credentials';
+      }
+      return 'Welcome ' + this.$store.state.user.name + '!';
+    }
   },
   methods:{
     checkCredentials (creds) {
