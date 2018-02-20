@@ -38,7 +38,7 @@ export default {
         password: this.password
       }
       this.$store.commit('login', creds);
-      this.$router.push({path: 'observations'})
+      this.$router.push({path: '/'})
     }
 
   }//methods

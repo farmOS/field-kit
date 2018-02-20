@@ -11,7 +11,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/observations'
+      redirect: '/new-observation'
     },
     {
       path: '/calendar',
