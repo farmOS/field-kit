@@ -2,25 +2,29 @@
   <div id="app">
     <h3>{{headerText}}</h3>
 
-      <login v-if="this.displayState === 'displayLogin'" @didSubmitCredentials="checkCredentials" ></login>
+    <!-- <login v-if="this.displayState === 'displayLogin'" @didSubmitCredentials="checkCredentials" ></login>
 
-      <new-observation v-if="this.displayState === 'displayNewObservation'" :dataStore="dataStore" @didSubmitObservation="saveObservation" ></new-observation>
+    <new-observation
+      v-if="this.displayState === 'displayNewObservation'"
+      :dataStore="dataStore"
+      @didSubmitObservation="saveObservation"
+    /> -->
 
     <!--Somehow, this causes an extra copy of the above template to appear-->
-    <!--<router-view/>-->
+    <router-view/>
 
     <!--  Trying to display recorded observations in the observations view
-      <br>
-      <observations v-if="this.displayState === 'displayNewObservation'" :recordStore="recordStore"></observations>
-      -->
-    <div class="well">
-      <p>{{ statusText }}</p>
-    </div>
+    <br>
+    <observations v-if="this.displayState === 'displayNewObservation'" :recordStore="recordStore"></observations>
+  -->
+  <div class="well">
+    <p>{{ statusText }}</p>
+  </div>
 
   <!--unclear if I need to include a template stub for the data module -->
   <DataNative></DataNative>
 
-  </div>
+</div>
 </template>
 
 <script>
@@ -47,6 +51,12 @@ export default {
     // Get computed data from an imported component
     //recordStore: DataNative.computed.observations()
     }
+  },
+  created: function () {
+    if (this.$store.state.user.isLoggedIn) {
+      return
+    }
+    this.$router.push({path: 'login'})
   },
   methods:{
     checkCredentials (creds) {
