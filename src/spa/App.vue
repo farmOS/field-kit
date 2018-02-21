@@ -16,21 +16,7 @@ export default {
       statusText: '',
     }
   },
-  created: function () {
-    if (this.$store.state.user.isLoggedIn) {
-      return
-    }
-    this.$router.push({path: 'login'})
-  },
-  computed: {
-    headerText: function () {
-      if (!this.$store.state.user.isLoggedIn) {
-        return 'Please enter your farmOS credentials';
-      }
-      return 'Welcome ' + this.$store.state.user.name + '!';
-    }
-  },
-  methods:{
+  methods: {
 
     // I should parse this in an iterative way, cycling through object properties
     saveObservation (obs) {

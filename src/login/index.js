@@ -1,14 +1,16 @@
 import Login from './Login.vue';
 import loginModule from './store';
+import mixinLogic from './mixin.js'
 
 export default {
-  install( vue, { router, store }) {
-    const LoginComponent = vue.component(Login.name, Login)
+  install( Vue, { router, store }) {
+    const LoginComponent = Vue.component(Login.name, Login)
     router.addRoutes([{
       path: '/login',
       name: 'Login',
       component: LoginComponent
     }]);
     store.registerModule('user', loginModule);
+    Vue.mixin(mixinLogic)
   }
 };
