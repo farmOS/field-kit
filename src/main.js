@@ -1,4 +1,4 @@
-import login from '@/login/Login.vue';
+import login from '@/login';
 import loader from './spa/loader';
 
 const app = loader(login);
