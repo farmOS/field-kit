@@ -15,9 +15,14 @@
     <div class="input-group">
       <button :disabled="observation.text === ''" @click="recordObservation" class="btn btn-default" type="button" >Record observation!</button>
     </div>
+
+    <!-- Display DataModule test template -->
+    <data-module></data-module>
+
     </div>
     <!-- Display chooser -->
     <chooser v-if="isChoosing" :toChoose="toChoose" @didChoose="registerChoice" ></chooser>
+
 
 
   </div>
@@ -26,10 +31,12 @@
 <script>
 import Chooser from './Chooser'
 import DataNative from './DataNative'
+import DataModule from './DataModule'
 export default {
   components: {
     // DataNative,
-    Chooser
+    Chooser,
+    DataModule
   },
   // props: ['dataStore'],
   data () {

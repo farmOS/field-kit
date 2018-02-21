@@ -4,6 +4,7 @@ import Calendar from '../components/Calendar'
 import Observations from '../components/Observations'
 import NewObservation from '../components/NewObservation'
 import DataNative from '../components/DataNative'
+//import Data from '../components/Data'
 
 Vue.use(Router)
 
@@ -32,6 +33,14 @@ export default new Router({
       path: '/data-native',
       name: 'DataNative',
       component: DataNative
+    },
+    // Given that Data is a child of NewObservation, it may not need to appear in Router
+    /*
+    {
+      path: '/data',
+      name: 'Data',
+      component: Data
     }
+    */
   ]
 })
