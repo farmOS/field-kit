@@ -8,7 +8,7 @@
 
 <button @click="makeTable" class="btn btn-default" type="button" >Make Table!</button>
 
-<button @click="addRecord( {name: 'No tomaotes', date: 1, notes: 'There are no tomatoes anywhere!'} )" class="btn btn-default" type="button" >Add Record!</button>
+<button @click="addRecord( {id: 0, name: 'No tomaotes', date: 1, notes: 'There are no tomatoes anywhere!'} )" class="btn btn-default" type="button" >Add Record!</button>
 
 <button @click="getRecord" class="btn btn-default" type="button" >Get Record!</button>
 
@@ -70,7 +70,7 @@ export default {
 
     //Add a new record (observation) to the local DB
     //Accepts an object with they following keys:
-    //name, date, notes
+    //id, name, date, notes
 
     console.log('adding record');
 
@@ -80,10 +80,10 @@ export default {
           //I am going to try skipping the id field, and see if it autoincrements
           var sql = "INSERT OR REPLACE INTO " +
               "observations " +
-              "(name, date, notes) " +
-              "VALUES (?, ?, ?)";
+              "(id, name, date, notes) " +
+              "VALUES (?, ?, ?, ?)";
 
-          tx.executeSql(sql, [tableRecord.name, tableRecord.date, tableRecord.notes],
+          tx.executeSql(sql, [tableRecord.id, tableRecord.name, tableRecord.date, tableRecord.notes],
 
             function () {
               console.log('INSERT success');
@@ -119,6 +119,8 @@ export default {
         tx.executeSql(sql, [0],
           function (tx, results) {
             console.log(results);
+            var firstResult = results.rows.item(0);
+            console.log("ID: "+firstResult.id+" NAME: "+firstResult.name+" DATE: "+firstResult.date+" NOTES: "+firstResult.notes);
           },
           function (tx, error) {
             console.log('INSERT error: ' + error.message);
