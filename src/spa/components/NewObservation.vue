@@ -17,7 +17,7 @@
     </div>
 
     <!-- Display DataModule test template -->
-    <data-module></data-module>
+    <data-module :newRecord="newRecord"></data-module>
 
     </div>
     <!-- Display chooser -->
@@ -53,7 +53,10 @@ export default {
       livestock: ''
     },
     */
-    toChoose: []
+    toChoose: [],
+
+    //Pass on to the data module
+    newRecord: []
     }
   }, // data
   computed: {
@@ -85,7 +88,8 @@ export default {
   methods: {
     recordObservation () {
       console.log('Observation recorded');
-      this.$emit('didSubmitObservation', this.observation);
+      //this.$emit('didSubmitObservation', this.observation);
+      this.newRecord = this.observation;
     },
 
     makeChoice (object) {

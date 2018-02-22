@@ -4,13 +4,17 @@
   <h4>Test WebSQL database creation</h4>
   <div class="input-group">
 
+<!-- This should all be handled by record input now
 <button @click="openDB" class="btn btn-default" type="button" >Open Database!</button>
 
 <button @click="makeTable" class="btn btn-default" type="button" >Make Table!</button>
 
-<button @click="addRecord( {id: 0, name: 'No tomaotes', date: 1, notes: 'There are no tomatoes anywhere!'} )" class="btn btn-default" type="button" >Add Record!</button>
-
-<button @click="getRecord" class="btn btn-default" type="button" >Get Record!</button>
+<button @click="addRecord( {id: 0, name: 'No tomatoes', date: 1, notes: 'There are no tomatoes anywhere!'} )" class="btn btn-default" type="button" >Add Record 0!</button>
+<button @click="addRecord( {id: 1, name: 'Tomaotes!!', date: 1, notes: 'OMG too many tomatoes!!'} )" class="btn btn-default" type="button" >Add Record 1!</button>
+-->
+<button @click="getRecord(1)" class="btn btn-default" type="button" >Get Record 1!</button>
+<br>
+<p>{{statusText}}</p>
 
 </div>
 </div>
@@ -19,12 +23,32 @@
 
 <script>
 export default {
+  props: ['newRecord'],
+  watch: {
+  newRecord: function(newVal, oldVal) { // watch for changes in newRecord
+    console.log('newRecord changed: ', newVal, ' | was: ', oldVal);
+    //Now add the new item to the DB
+    this.openDB();
+    this.makeTable();
+    this.addRecord(newVal);
+  }
+}, // end watch
   // name: 'Data',
   data () {
     return {
-      db: ''
+      statusText: 'Placeholder text'
     }
-  },
+  }, // end data
+
+//Do not currently need events
+/*
+  events: {
+      retrievedRecord: function (resultString) {
+          this.statusText = resultString;
+        }
+      }, //end events
+*/
+
   methods: {
 
     openDB () {
@@ -40,18 +64,19 @@ export default {
       console.log('making table');
     //Creates a table called 'tableName' in the DB if none yet exists
 
-    //I don't want to drop an existing table in this function.
-    //tableName.executeSql('DROP TABLE IF EXISTS employee');
-
     this.db.transaction(
       function (tx) {
+        //I'm going to start by eraising all preexisting records
+          tx.executeSql('DROP TABLE IF EXISTS observations');
 
+          //the id field will autoincrement beginning with 1
       var sql = "CREATE TABLE IF NOT EXISTS " +
           "observations " +
           "( id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-          "name VARCHAR(50), " +
-          "date INTEGER, " +
-          "notes VARCHAR(50) )";
+          "text VARCHAR(50), " +
+          "plantings VARCHAR(50), " +
+          "locations VARCHAR(50), " +
+          "livestock VARCHAR(50) )";
 
           tx.executeSql(sql, null,
           function () {
@@ -67,11 +92,9 @@ export default {
     }, // end makeTable
 
     addRecord (tableRecord) {
-
     //Add a new record (observation) to the local DB
     //Accepts an object with they following keys:
-    //id, name, date, notes
-
+    //text, plantings, locations, livestock
     console.log('adding record');
 
       this.db.transaction(
@@ -80,10 +103,10 @@ export default {
           //I am going to try skipping the id field, and see if it autoincrements
           var sql = "INSERT OR REPLACE INTO " +
               "observations " +
-              "(id, name, date, notes) " +
+              "(text, plantings, locations, livestock) " +
               "VALUES (?, ?, ?, ?)";
 
-          tx.executeSql(sql, [tableRecord.id, tableRecord.name, tableRecord.date, tableRecord.notes],
+          tx.executeSql(sql, [tableRecord.text, tableRecord.plantings, tableRecord.locations, tableRecord.livestock],
 
             function () {
               console.log('INSERT success');
@@ -99,38 +122,41 @@ export default {
 
     }, //end addRecord
 
-    getRecord () {
+    getRecord (idToGet) {
     //Get a record from the local DB by local ID.
-
     console.log('getting record');
 
-    //Won't use this yet
-    //var deferred = $.Deferred();
+    //I should learn more about what I'm doing here with resolve, reject, promise
+    var deferred = $.Deferred();
 
     this.db.transaction(
 
     function (tx) {
 
-        var sql = "SELECT id, name, date, notes " +
+        var sql = "SELECT id, text, plantings, locations, livestock " +
             "FROM " +
             "observations " +
             "WHERE id=? ";
 
-        tx.executeSql(sql, [0],
+        tx.executeSql(sql, [idToGet],
           function (tx, results) {
             console.log(results);
             var firstResult = results.rows.item(0);
-            console.log("ID: "+firstResult.id+" NAME: "+firstResult.name+" DATE: "+firstResult.date+" NOTES: "+firstResult.notes);
+            resultString = "ID: "+firstResult.id+" TEXT: "+firstResult.text+" PLANTINGS: "+firstResult.plantings+" LOCATIONS: "+firstResult.locations+" LIVESTOCK: "+firstResult.livestock;
+            console.log(resultString);
+            deferred.resolve(resultString);
           },
           function (tx, error) {
             console.log('INSERT error: ' + error.message);
+            deferred.reject("Transaction Error: " + error.message);
           }
         ); //end executeSql
       } // end function tx
-
     ); //end this.db.transaction
 
-
+    //!!!
+    //Why does this not display??
+    this.statusText = deferred.promise();
   } //end getRecord
   }//methods
 } // end export
