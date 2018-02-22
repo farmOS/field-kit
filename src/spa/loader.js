@@ -7,7 +7,9 @@ import App from './App';
 
 Vue.config.productionTip = false;
 
-export default (login) => {
+export default (data, login) => {
+  // TODO: Error handling for required args, better control flow for optional args
+  Vue.use(data, {store})
   if (typeof login !== 'undefined') {
     Vue.use(login, {router, store})
   }
