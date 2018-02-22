@@ -4,5 +4,14 @@ import Vuex from 'vuex';
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-  // Empty store for injecting modules in at runtime
+  state: {
+    shell: {
+      greeting: 'Welcome to farmOS!'
+    }
+  },
+  mutations: {
+    changeGreeting (state, newGreeting) {
+      state.shell.greeting = newGreeting;
+    }
+  }
 })

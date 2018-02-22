@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
   name: 'App',
   data () {
@@ -16,6 +17,9 @@ export default {
       statusText: '',
     }
   },
+  computed: mapState({
+    headerText: state => state.shell.greeting
+  }),
   methods: {
 
     // I should parse this in an iterative way, cycling through object properties
