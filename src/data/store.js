@@ -3,6 +3,8 @@ export default {
     test: 'this is some test state'
   },
   mutations: {
-    // some mutations
+    changeTestState (state, msg) {
+      state.test = msg;
+    }
   }
 }

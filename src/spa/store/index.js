@@ -3,15 +3,31 @@ import Vuex from 'vuex';
 
 Vue.use(Vuex);
 
-export default new Vuex.Store({
+const shellModule = {
   state: {
-    shell: {
-      greeting: 'Welcome to farmOS!'
-    }
+    greeting: 'Welcome to farmOS!'
   },
   mutations: {
     changeGreeting (state, newGreeting) {
-      state.shell.greeting = newGreeting;
+      state.greeting = newGreeting;
     }
+  },
+}
+
+const controllerModule = {
+  state: {
+    controllerIsActive: true
+  },
+  actions: {
+    changeTestState ({commit}, msg) {
+      commit('changeTestState', msg)
+    }
+  },
+}
+
+export default new Vuex.Store({
+  modules: {
+    shell: shellModule,
+    controller: controllerModule
   }
 })
