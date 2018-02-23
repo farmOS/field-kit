@@ -7,6 +7,9 @@ import App from './App';
 
 Vue.config.productionTip = false;
 
+//added to enable jQuery
+window.$ = window.jQuery = require('jquery')
+
 export default (login) => {
   // If passed a login component, register it on the global Vue instance,
   // then add it to routes and the components object
