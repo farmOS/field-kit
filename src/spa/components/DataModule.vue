@@ -26,16 +26,20 @@
 
 <script>
 export default {
-  props: ['newRecord'],
+  props: ['newRecordCount', 'newRecord'],
   watch: {
-  newRecord: function(newVal, oldVal) { // watch for changes in newRecord
-    console.log('newRecord changed: ', newVal, ' | was: ', oldVal);
-    //Now add the new item to the DB
-    this.openDB();
-    //Passing values to makeTable to create a table with the appropriate fields
-    this.makeTable(newVal);
-    //And then add records to the newly made table
-    this.addRecord(newVal);
+  newRecordCount: { // watch newRecord to see when it increments
+    handler: function(newVal, oldVal) {
+      //Execute when changes are made
+      console.log('newRecordCount changed: ', newVal, ' | was: ', oldVal);
+      //Now add the new item to the DB
+      this.openDB();
+      //Passing values to makeTable to create a table with the appropriate fields
+      this.makeTable(this.newRecord);
+      //And then add records to the newly made table
+      this.addRecord(this.newRecord);
+    },
+    //deep: true
   }
 }, // end watch
   // name: 'Data',
@@ -202,8 +206,16 @@ tx.executeSql(sql, values,
     this.db.transaction(
 
     function (tx) {
+      // String together all record fields, with id as the first
+        var queryString = '';
+        for (var i in self.newRecord){
+          queryString = queryString+i+", "
+        }
+        // And trim the last two characters to avoid a syntax error
+        queryString = queryString.substring(0, queryString.length - 2);
 
-        var sql = "SELECT id, text, plantings, locations, livestock " +
+        var sql = "SELECT " +
+            queryString +
             "FROM " +
             "observations ";
             //"WHERE id=? ";

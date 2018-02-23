@@ -6,6 +6,12 @@
 export default {
   data () {
   return {
+    defaultObservations: [
+      {name: 'White corn', date: 1001, notes:'It has all gone white!', quantity: 0},
+      {name: 'Tomato aphids', date: 1002, notes:'The plants are covered!', quantity: 9001},
+      {name: 'Giant pumpkins', date: 1003, notes:'Giant pumpkins in the field', quantity: 5}      
+    ], //end default observations
+
   assets: {
     plantings: {Corn: {name: 'Corn', location: 'Field 1'},
       Alfalfa: {name: 'Alfalfa', location: 'Field 2'},
