@@ -1,4 +1,4 @@
-import dataModule from './store';
+import dataModule from './dataModule';
 
 export default {
   install(Vue, {store}) {

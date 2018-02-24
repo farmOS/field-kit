@@ -2,12 +2,6 @@
   <div id="app">
     <h3>{{headerText}}</h3>
     <router-view/>
-    <div>
-      <h3>Data Test State</h3>
-      <p>{{dataTestState}}</p>
-      <input v-model="inputField" type="text" name="" value="">
-      <button @click="updateTestState()" type="button" name="button">Change Test State</button>
-    </div>
     <div class="well">
       <p>{{ statusText }}</p>
     </div>
@@ -20,13 +14,11 @@ export default {
   name: 'App',
   data () {
     return {
-      inputField: '',
       statusText: '',
     }
   },
   computed: mapState({
     headerText: state => state.shell.greeting,
-    dataTestState: state => state.data.test
   }),
   methods: {
 
@@ -45,9 +37,7 @@ export default {
 
       this.displayState = 'displayNewObservation'
     },
-    updateTestState (input) {
-      this.$store.dispatch('changeTestState', this.inputField);
-    }
+
   }//methods
 
 }

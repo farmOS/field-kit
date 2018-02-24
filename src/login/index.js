@@ -1,5 +1,5 @@
 import Login from './Login.vue';
-import loginModule from './store';
+import loginModule from './loginModule';
 import mixinLogic from './mixin.js'
 
 export default {

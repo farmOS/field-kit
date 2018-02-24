@@ -14,20 +14,8 @@ const shellModule = {
   },
 }
 
-const controllerModule = {
-  state: {
-    controllerIsActive: true
-  },
-  actions: {
-    changeTestState ({commit}, msg) {
-      commit('changeTestState', msg)
-    }
-  },
-}
-
 export default new Vuex.Store({
   modules: {
     shell: shellModule,
-    controller: controllerModule
   }
 })
