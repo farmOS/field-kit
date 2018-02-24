@@ -2,32 +2,22 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue';
 import router from './router';
-import store from './store'
+import store from './store';
 import App from './App';
 
 Vue.config.productionTip = false;
 
-//added to enable jQuery
-window.$ = window.jQuery = require('jquery')
-
-export default (login) => {
-  // If passed a login component, register it on the global Vue instance,
-  // then add it to routes and the components object
-  let components = { App }
+export default (data, login) => {
+  // TODO: Error handling for required args, better control flow for optional args
+  Vue.use(data, {store})
   if (typeof login !== 'undefined') {
-    const LoginComponent = Vue.component(login.name, login);
-    router.addRoutes([{
-      path: '/login',
-      name: 'Login',
-      component: LoginComponent
-    }]);
-    components.LoginComponent = LoginComponent;
+    Vue.use(login, {router, store})
   }
   return new Vue({
     el: '#app',
     store,
     router,
-    components: components,
+    components: {App},
     template: '<App/>'
   })
 };

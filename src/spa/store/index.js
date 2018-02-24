@@ -3,17 +3,19 @@ import Vuex from 'vuex';
 
 Vue.use(Vuex);
 
-export default new Vuex.Store({
+const shellModule = {
   state: {
-    user: {
-      isLoggedIn: false,
-      name: null,
-    }
+    greeting: 'Welcome to farmOS!'
   },
   mutations: {
-    login(state, creds) {
-      state.user.isLoggedIn = true;
-      state.user.name = creds.username;
+    changeGreeting (state, newGreeting) {
+      state.greeting = newGreeting;
     }
+  },
+}
+
+export default new Vuex.Store({
+  modules: {
+    shell: shellModule,
   }
 })
