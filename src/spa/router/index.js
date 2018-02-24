@@ -39,6 +39,6 @@ export default new Router({
       name: 'TestStateData',
       component: TestStateData
     }
-    */
+    
   ]
 })

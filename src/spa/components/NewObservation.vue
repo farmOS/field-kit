@@ -37,11 +37,21 @@
     <div class="input-group">
       <button @click="recordObservation" class="btn btn-default" type="button" >Record observation!</button>
       <!--<button :disabled="observation.name === ''" @click="recordObservation" class="btn btn-default" type="button" >Record observation!</button>-->
-
+    </div>
+    <!--Get logs-->
+    <div class="input-group">
+      <button @click="getLogs" class="btn btn-default" type="button" >Get logs!</button>
+      <!--<button :disabled="observation.name === ''" @click="recordObservation" class="btn btn-default" type="button" >Record observation!</button>-->
     </div>
 
-    <!-- Display DataModule test template -->
-    <data-module :newRecordCount="newRecordCount" :newRecord="newRecord"></data-module>
+    <!--When Get logs is pressed, display a list of text items logs array-->
+    <li v-for="i in logs">
+    {{i}}
+    </li>
+
+
+    <!-- No longer displaying DataModule.vue template -->
+    <!--<data-module :newRecordCount="newRecordCount" :newRecord="newRecord"></data-module>-->
 
     </div>
     <!-- Display chooser -->
@@ -53,6 +63,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 import Chooser from './Chooser'
 import DataNative from './DataNative'
 import DataModule from './DataModule'
@@ -69,23 +81,27 @@ export default {
     vueHeader: 'Enter your new observation:',
     isChoosing: false,
     choiceObject: '',
-    /*
-    observation: {
-      text: '',
-      plantings: '',
-      locations: '',
-      livestock: ''
-    },
-    */
     toChoose: [],
     obsFields: [],
 
+    //Temporarily creating static observation record:
+    observation: {name: '', date: '', notes: '', quantity: ''}
+
     //Pass on to the data module.  I watch newRecordCount, and get data from newRecord when it increments
-    newRecord: [],
-    newRecordCount: 0
+    //newRecord: [],
+    //newRecordCount: 0
     }
   }, // data
-  computed: {
+  computed: mapState({
+        dataTestState: state => state.data.test,
+        logs: state => state.data.logs,
+        dbReady: state => state.data.dbReady,
+        logCount: state => state.data.logCount
+      }),
+
+    //Enable to allow this component to read state from the data module
+/*
+{
     //Create an observation object w/ all the properties in the datastore + id
     observation () {
       var newObs = {};
@@ -102,7 +118,7 @@ export default {
     },
 
     //We are not currently linking observations to assets.  When we do, we can use this to build a list from the assets object
-    /*
+
     obsLinks () {
       var properties = []
       for (var i in this.dataStore){
@@ -113,8 +129,23 @@ export default {
       console.log('Observation links = '+properties)
       return properties;
     }
-    */
+
   }, // computed
+*/
+  created: function () {
+    this.$store.dispatch('loadCachedLogs');
+  },
+  watch: {
+  dbReady: { // watch newRecord to see when it increments
+    handler: function(newVal, oldVal) {
+      //Execute when changes are made
+      this.$store.dispatch('saveLog', this.observation);
+    },
+    //deep: true
+  }
+}, // end watch
+
+
   methods: {
     /* Disable this temporarily; may move to dataModule store ###
     loadDefaultObservations () {
@@ -129,9 +160,18 @@ export default {
 
     recordObservation () {
       console.log('Observation recorded');
+      //Open database and create new table if needed
+      this.$store.dispatch('makeTable', this.observation);
+      //I am using a watcher on dbReady, which will change to true when table is made.  I will then save the log.
+
       //this.DataModule.$emit('didSubmitObservation', this.observation);
-      this.newRecord = this.observation
-      this.newRecordCount++
+    },
+
+    getLogs () {
+      console.log('Retrieving observations');
+      //Now I'm getting a log, the data of which will populate to logs
+      this.$store.dispatch('getLogs', this.observation);
+      //Set to display as text in the template with v-for
     },
 
     makeChoice (object) {
