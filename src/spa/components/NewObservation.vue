@@ -4,53 +4,120 @@
     <!-- Display input form if chooser is inactive -->
     <!-- Don't use this.object notation in templates -->
     <div class="well" v-if="!isChoosing">
+
+
     <div class="input-group">
-      <input v-model="observation.text" placeholder="Enter your observation" type="text" class="form-control">
+      <input v-model="observation.name" placeholder="Enter name" type="text" class="form-control">
     </div>
+    <div class="input-group">
+      <input v-model="observation.date" placeholder="Enter date" type="text" class="form-control">
+    </div>
+    <div class="input-group">
+      <input v-model="observation.notes" placeholder="Enter notes" type="text" class="form-control">
+    </div>
+    <div class="input-group">
+      <input v-model="observation.quantity" placeholder="Enter quantity" type="text" class="form-control">
+    </div>
+
+
+    <!--Not yet functional
+    <br>
+    <li v-for="(item, key, index) in observation">
+      <input :v-model="observation.key" :placeholder="key" type="text" class="form-control">
+    </li>
+    -->
+
+    <!-- Not currently linking to assets; enable when we get back to that
     <br>
     <li v-for="i in obsLinks">
       <button @click="makeChoice(i)" class="btn btn-default" type="button" >{{ i }}</button> &nbsp; <label>{{observation[i]}}</label>
     </li>
+    -->
     <br>
     <div class="input-group">
-      <button :disabled="observation.text === ''" @click="recordObservation" class="btn btn-default" type="button" >Record observation!</button>
+      <button @click="recordObservation" class="btn btn-default" type="button" >Record observation!</button>
+      <!--<button :disabled="observation.name === ''" @click="recordObservation" class="btn btn-default" type="button" >Record observation!</button>-->
     </div>
+    <!--Get logs-->
+    <div class="input-group">
+      <button @click="getLogs" class="btn btn-default" type="button" >Get logs!</button>
+      <!--<button :disabled="observation.name === ''" @click="recordObservation" class="btn btn-default" type="button" >Record observation!</button>-->
+    </div>
+
+    <!--When Get logs is pressed, display a list of text items logs array-->
+    <li v-for="i in logs">
+    {{i}}
+    </li>
+
+
+    <!-- No longer displaying DataModule.vue template -->
+    <!--<data-module :newRecordCount="newRecordCount" :newRecord="newRecord"></data-module>-->
+
     </div>
     <!-- Display chooser -->
     <chooser v-if="isChoosing" :toChoose="toChoose" @didChoose="registerChoice" ></chooser>
+
 
 
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 import Chooser from './Chooser'
 import DataNative from './DataNative'
+import DataModule from './DataModule'
 export default {
   components: {
     // DataNative,
-    Chooser
+    Chooser,
+    DataModule
   },
   // props: ['dataStore'],
   data () {
   return {
-    dataStore: DataNative.data().assets,
+    dataStore: DataNative.data().defaultObservations,
     vueHeader: 'Enter your new observation:',
     isChoosing: false,
     choiceObject: '',
-    /*
-    observation: {
-      text: '',
-      plantings: '',
-      locations: '',
-      livestock: ''
-    },
-    */
-    toChoose: []
+    toChoose: [],
+    obsFields: [],
+
+    //Temporarily creating static observation record:
+    observation: {name: '', date: '', notes: '', quantity: ''}
+
+    //Pass on to the data module.  I watch newRecordCount, and get data from newRecord when it increments
+    //newRecord: [],
+    //newRecordCount: 0
     }
   }, // data
-  computed: {
-    //Get a list of properties in the dataStore
+  computed: mapState({
+        dataTestState: state => state.data.test,
+        logs: state => state.data.logs,
+        logCount: state => state.data.logCount
+      }),
+
+    //Enable to allow this component to read state from the data module
+/*
+{
+    //Create an observation object w/ all the properties in the datastore + id
+    observation () {
+      var newObs = {};
+      for (var i in this.dataStore[0]){
+        newObs[i] = '';
+        this.obsFields.push(i);
+      }
+      console.log('newObservation module observations:')
+      for (var i in newObs) {
+        console.log(i);
+      }
+
+      return newObs;
+    },
+
+    //We are not currently linking observations to assets.  When we do, we can use this to build a list from the assets object
+
     obsLinks () {
       var properties = []
       for (var i in this.dataStore){
@@ -60,25 +127,39 @@ export default {
       }
       console.log('Observation links = '+properties)
       return properties;
-    },
-    //Create an observation object w/ all the properties in the datastore + text
-    observation () {
-      var newObs = {text: ''};
-      for (var i in this.dataStore){
-        newObs[i] = '';
-      }
-      console.log('newObservation module observations:')
-      for (var i in newObs) {
-        console.log(i);
-      }
-
-      return newObs;
     }
+
   }, // computed
+*/
+  created: function () {
+    this.$store.dispatch('loadCachedLogs');
+  },
   methods: {
+    /* Disable this temporarily; may move to dataModule store ###
+    loadDefaultObservations () {
+      console.log("LOADING DEFAULT OBSERVATIONS")
+      for (var i in this.dataStore) {
+        //Adds each default observation from the datastore into the SQL DB
+          this.newRecord = i
+          this.newRecordCount++
+      }
+    },
+    */
+
     recordObservation () {
       console.log('Observation recorded');
-      this.$emit('didSubmitObservation', this.observation);
+      //Open database and create new table if needed
+      this.$store.dispatch('recordObservation', this.observation);
+      //I am using a watcher on dbReady, which will change to true when table is made.  I will then save the log.
+
+      //this.DataModule.$emit('didSubmitObservation', this.observation);
+    },
+
+    getLogs () {
+      console.log('Retrieving observations');
+      //Now I'm getting a log, the data of which will populate to logs
+      this.$store.dispatch('getLogs', this.observation);
+      //Set to display as text in the template with v-for
     },
 
     makeChoice (object) {
@@ -132,8 +213,15 @@ export default {
       return;
       */
     }
-  } // methods
-}
+  }, // methods
+
+  //Execute methods on page load
+  /* Disable this temporarily; may move to DataModule ###
+  created: function(){
+    this.loadDefaultObservations()
+  } // end created
+*/
+} // end export default
 
 </script>
 

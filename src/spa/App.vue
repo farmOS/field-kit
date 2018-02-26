@@ -1,10 +1,9 @@
 <template>
   <div id="app">
     <h3>{{headerText}}</h3>
+
     <router-view/>
-    <div class="well">
-      <p>{{ statusText }}</p>
-    </div>
+
   </div>
 </template>
 
@@ -14,7 +13,7 @@ export default {
   name: 'App',
   data () {
     return {
-      statusText: '',
+
     }
   },
   computed: mapState({
@@ -25,15 +24,6 @@ export default {
     // I should parse this in an iterative way, cycling through object properties
     saveObservation (obs) {
 
-      this.statusText = "Recorded "
-      for (var i in obs){
-        // create string
-        var objText = ''
-        if ( obs[i] !== '' ){
-          objText = i+': '+obs[i]+'; ';
-        }
-        this.statusText = this.statusText+objText
-      }
 
       this.displayState = 'displayNewObservation'
     },
