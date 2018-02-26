@@ -95,7 +95,6 @@ export default {
   computed: mapState({
         dataTestState: state => state.data.test,
         logs: state => state.data.logs,
-        dbReady: state => state.data.dbReady,
         logCount: state => state.data.logCount
       }),
 
@@ -135,17 +134,6 @@ export default {
   created: function () {
     this.$store.dispatch('loadCachedLogs');
   },
-  watch: {
-  dbReady: { // watch newRecord to see when it increments
-    handler: function(newVal, oldVal) {
-      //Execute when changes are made
-      this.$store.dispatch('saveLog', this.observation);
-    },
-    //deep: true
-  }
-}, // end watch
-
-
   methods: {
     /* Disable this temporarily; may move to dataModule store ###
     loadDefaultObservations () {
@@ -161,7 +149,7 @@ export default {
     recordObservation () {
       console.log('Observation recorded');
       //Open database and create new table if needed
-      this.$store.dispatch('makeTable', this.observation);
+      this.$store.dispatch('recordObservation', this.observation);
       //I am using a watcher on dbReady, which will change to true when table is made.  I will then save the log.
 
       //this.DataModule.$emit('didSubmitObservation', this.observation);
