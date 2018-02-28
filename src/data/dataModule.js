@@ -83,18 +83,10 @@ function openDatabase () {
     resolve(db);
 
   })
-
-
 }
 
 function makeTable(db, table, tableRecord) {
   return new Promise(function(resolve, reject) {
-    console.log("db instance from makeTable", db);
-    console.log('making table');
-    //Creates a table called 'tableName' in the DB if none yet exists
-
-    console.log('with the following data template:');
-    console.log(tableRecord);
     db.transaction(function (tx) {
       //I will start by eraising all preexisting records
       tx.executeSql(`DROP TABLE IF EXISTS ${table}`);
@@ -105,9 +97,6 @@ function makeTable(db, table, tableRecord) {
       }
       //I need to trim the last two characters to avoid a trailing comma
       fieldString = fieldString.substring(0, fieldString.length - 2);
-
-      console.log("create table strings")
-      console.log(fieldString);
 
       //the id field will autoincrement beginning with 1
       var sql = "CREATE TABLE IF NOT EXISTS " +
@@ -120,7 +109,6 @@ function makeTable(db, table, tableRecord) {
       fieldString +
       ")";
 
-      console.log("tx instance from makeTable(): ", tx);
       tx.executeSql(sql, null, function (_tx, result) {
         console.log('Make table success. Result: ', result);
         resolve(_tx);
@@ -137,8 +125,6 @@ function makeTable(db, table, tableRecord) {
 
 // Save a log to the local database.
 function saveRecord (tx, table, tableRecord) {
-  console.log("tx instance from saveRecord(): ", tx);
-  console.log('adding record');
   var fieldString = "";
   var queryString = "";
   var values = [];
@@ -151,26 +137,15 @@ function saveRecord (tx, table, tableRecord) {
   fieldString = fieldString.substring(0, fieldString.length - 2);
   queryString = queryString.substring(0, queryString.length - 2);
 
-  console.log("add record strings")
-  console.log(fieldString);
-  console.log(queryString);
-  console.log(values);
-
   //I am going to try skipping the id field, and see if it autoincrements
   var sql = "INSERT OR REPLACE INTO " +
   table +
   " ("+fieldString+") " +
   "VALUES ("+queryString+")";
 
-  /*
-  "(text, plantings, locations, livestock) " +
-  "VALUES (?, ?, ?, ?)";
-  */
-
   //tx.executeSql(sql, [tableRecord.text, tableRecord.plantings, tableRecord.locations, tableRecord.livestock],
   tx.executeSql(sql, values, function () {
     console.log('INSERT success');
-    // commit('iterateLogCount');
   }, function (_tx, error) {
     console.log('INSERT error: ' + error.message);
   });
@@ -178,12 +153,6 @@ function saveRecord (tx, table, tableRecord) {
 
 function getLogs (db, tableRecord) {
   return new Promise(function(resolve, reject) {
-    //Get a record from the local DB by local ID.
-    //This is an asynchronous callback.
-    console.log('getting record');
-
-    //I am avoiding using jQuery $.Deferred()
-    //var deferred = $.Deferred();
 
     //This is called if the db.transaction obtains data
     function dataHandler(tx, results) {
@@ -199,45 +168,26 @@ function getLogs (db, tableRecord) {
         for (var j in oneResult){
           resultString = resultString+j+": "+oneResult[j]+", ";
         }
-        //var resultString = "ID: "+firstResult.id+" TEXT: "+firstResult.text+" PLANTINGS: "+firstResult.plantings+" LOCATIONS: "+firstResult.locations+" LIVESTOCK: "+firstResult.livestock;
         console.log("resultString", resultString);
         //Set status text within the newly created self scope
         displayResults.push(resultString);
-      } //end results for
-      //deferred.resolve(resultString);
-
+      }
       resolve(displayResults);
-      // commit('addUnsyncedLogsToState', displayResults);
     }
 
     //This is called if the db.transaction fails to obtain data
     function errorHandler(tx, error) {
       reject('INSERT error: ' + error.message);
 
-      //deferred.reject("Transaction Error: " + error.message);
     }
 
     db.transaction(function (tx) {
-      //Disabling query, and simply returning all records
-      // // String together all record fields, with id as the first
-      // var queryString = '';
-      // for (var i in tableRecord){
-      //   queryString = queryString+i+", "
-      // }
-      // // And trim the last two characters to avoid a syntax error
-      // queryString = queryString.substring(0, queryString.length - 2);
-      // console.log('Querying the following DB records:');
-      // console.log(queryString);
       var sql = "SELECT " +
       " * " +
-      //queryString +
       "FROM " +
       "observations ";
-      //"WHERE id=? ";
 
       tx.executeSql(sql, [],
-        //tx.executeSql(sql, [idToGet],
-        //I am bringing the dataHandler and errorHandler functions outside of this.db.transaction
         dataHandler,
         errorHandler
       );
