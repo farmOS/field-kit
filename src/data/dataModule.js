@@ -23,11 +23,6 @@ export default {
       console.log(state);
 
       state.logs.observations = payload;
-
-      //state.logs = state.logs.observations.concat(payload);
-      /*for (var i in payload) {
-      state.logs = state.logs.observations.concat(i);
-    } // end payload for */
     }
   },
   actions: {
@@ -35,28 +30,40 @@ export default {
     /* Actions are called directly from the SPA.  I am passing 'state' as a param to these
     actions to give them access to the store */
 
-    getAll ({commit}, logType) {
+    getAll ({commit}, payload) {
+//getAll will be called by other actions, so I am wrapping it in a Promise
+//getAll must also be able to read state, because it needs to create a table based on existing templates
+return new Promise(function(resolve, reject) {
+
+  //Unpacking the payload into log and table
+  const log = payload.log;
+  const table = payload.logType;
+
       openDatabase()
-      /* getAll uses the promise callback structure.  When onFulfilled of openDatabase
-      is called, getLogs is called with the .then trigger.  The value returned by onFulfilled
-      of getLogs is then committed via the addUnsynchedLogsToState mutation */
       .then(function(db) {
-        return getLogs(db, logType)
+        return makeTable(db, table, log)
+      })
+      .then(function(tx) {
+        return getLogs(tx, table)
+        console.log('LOGS OBTAINED AND RETURNED')
       })
       .then(function(results) {
         console.log('This is the form data:');
         console.log(results);
 
         commit('addUnsyncedLogsToState', results)
-        // The results being passed to addUnsyncedLogsToState are currently a simple object.
+
+        resolve(results);
       })
+
+    })//end promise
     },
 
-    makeLog ({commit}, log) {
+    makeLog ({commit}, payload) {
 
-      // Pass this in to set the table name
-      const table = 'observations';
-
+      //Unpacking the payload into log and table
+      const log = payload.log;
+      const table = payload.logType;
 
       openDatabase()
       .then(function(db) {
@@ -65,7 +72,6 @@ export default {
       .then(function(tx) {
         saveRecord(tx, table, log)
       })
-      //saveRecord(tx, table, log);
 
     }, //end makeLog
 
@@ -74,36 +80,40 @@ export default {
       // AJAX request...
     },
 
-    loadCachedLogs({commit}) {
+    loadCachedLogs({commit, dispatch}) {
+      //loadCachedLogs will get data from test-obs.js, save it to the database IF no logs exist, then dispatch getAll
       // Maybe some WebSQL Queries could happen here instead?
-
-      //Temporarily converting timestamp and synced to string; find my way around this later.
       const payload = () => {
         return {
-          id: Number(testObs.id),
+          id: testObs.id,
           name: testObs.name,
           //uid: testObs.uid,
-          timestamp: String(testObs.timestamp),
+          timestamp: testObs.timestamp,
           notes: testObs.field_farm_notes.value,
-          synced: String(false)
+          synced: false
         }
       };
       //Local state will have to hold a copy that lacks the id
       var payloadNoId = payload();
       delete payloadNoId.id;
 
-            openDatabase()
-            .then(function(db) {
-              return makeTable(db, 'observations', payloadNoId);
-            })
-            .then(function(tx) {
-              saveRecord(tx, 'observations', payloadNoId);
-            })
-            .then(function() {
-              console.log('this the unsynced log added to state');
-              console.log(payload());
-              commit('addUnsyncedLogsToState', payload());
-            })
+            dispatch('getAll', {log: payloadNoId, logType: 'observations'})
+            .then(function(gotResults) {
+              console.log('GOT RESULTS')
+              console.log(gotResults)
+              if (gotResults.length === 0) {
+                openDatabase()
+                  .then(function(db) {
+                      return makeTable(db, 'observations', payloadNoId);
+                })
+                .then(function(tx) {
+                  saveRecord(tx, 'observations', payloadNoId);
+                })
+                .then(function(){
+                  commit('addUnsyncedLogsToState', [payload()]);
+                })
+              } //end if getResults
+          }) //end dispatch then
 
     }, //end loadCachedLogs
 
@@ -146,7 +156,6 @@ function makeTable(db, table, log) {
       //tx.executeSql(`DROP TABLE IF EXISTS `+table);
       //console.log('Dropping table if exists:');
       //console.log(table);
-      //tx.executeSql(`DROP TABLE IF EXISTS ${table}`);
 
       var fieldString = "";
       for (var i in log){
@@ -162,10 +171,6 @@ function makeTable(db, table, log) {
       var sql = "CREATE TABLE IF NOT EXISTS " +
       table +
       " ( id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-      /*"text VARCHAR(50), " +
-      "plantings VARCHAR(50), " +
-      "locations VARCHAR(50), " +
-      "livestock VARCHAR(50) " + */
       fieldString +
       ")";
 
@@ -220,65 +225,12 @@ function saveRecord (tx, table, log) {
   });
 }
 
-function getLogs (db, logType) {
+function getLogs (tx, logType) {
   return new Promise(function(resolve, reject) {
     //Get a record from the local DB by local ID.
     //This is an asynchronous callback.
     console.log('getting record');
 
-    //This is called if the db.transaction obtains data
-    function dataHandler(tx, results) {
-      console.log(results);
-
-
-      var displayResults = [];
-
-      for (var i = 0; i < results.rows.length; i++) {
-        var oneResult = results.rows.item(i);
-
-        //I am adding result objects to the state, not strings.
-        /*
-        //Create an array to populate with result strings
-        //Each string consists of all data from a single DB row
-        var resultString = '';
-        for (var j in oneResult){
-          resultString = resultString+j+": "+oneResult[j]+", ";
-        }
-        //var resultString = "ID: "+firstResult.id+" TEXT: "+firstResult.text+" PLANTINGS: "+firstResult.plantings+" LOCATIONS: "+firstResult.locations+" LIVESTOCK: "+firstResult.livestock;
-        console.log("resultString", resultString);
-        //Set status text within the newly created self scope
-        displayResults.push(resultString);
-        */
-      } // end results
-      //resolve(displayResults);
-
-
-
-
-      //Right now, this should only return the last DB row
-
-      resolve(oneResult)
-      //These results will are passed to addUnsynchedLogsToState via getAll
-    }
-
-    //This is called if the db.transaction fails to obtain data
-    function errorHandler(tx, error) {
-      reject('INSERT error: ' + error.message);
-
-      //deferred.reject("Transaction Error: " + error.message);
-    }
-
-    db.transaction(function (tx) {
-      //Disabling query, and simply returning all records
-      // // String together all record fields, with id as the first
-      // var queryString = '';
-      // for (var i in tableRecord){
-      //   queryString = queryString+i+", "
-      // }
-      // // And trim the last two characters to avoid a syntax error
-      // queryString = queryString.substring(0, queryString.length - 2);
-      // console.log('Querying the following DB records:');
-      // console.log(queryString);
       var sql = "SELECT " +
       " * " +
       //queryString +
@@ -287,12 +239,22 @@ function getLogs (db, logType) {
       //"observations ";
       //"WHERE id=? ";
 
-      tx.executeSql(sql, [],
-        //tx.executeSql(sql, [idToGet],
-        //I am bringing the dataHandler and errorHandler functions outside of this.db.transaction
-        dataHandler,
-        errorHandler
-      );
-    });
+      tx.executeSql(sql, [], function (_tx, results) {
+        console.log('GET LOG success');
+        console.log(results);
+
+        //This function each result object into an array, and returns the array.
+        var allResults = [];
+
+        for (var i = 0; i < results.rows.length; i++) {
+          var oneResult = results.rows.item(i);
+          allResults.push(oneResult);
+        } // end results
+
+        resolve(allResults)
+      }, function (_tx, error) {
+        console.log('INSERT error: ' + error.message);
+      });
+
   })
 }

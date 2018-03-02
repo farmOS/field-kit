@@ -33,17 +33,17 @@
     -->
     <br>
     <div class="input-group">
-      <button @click="recordObservation" class="btn btn-default" type="button" >Record observation!</button>
+      <button @click="inputMakeLog('observations')" class="btn btn-default" type="button" >Record observation!</button>
       <!--<button :disabled="observation.name === ''" @click="recordObservation" class="btn btn-default" type="button" >Record observation!</button>-->
     </div>
     <!--Get logs-->
     <div class="input-group">
-      <button @click="getObservations" class="btn btn-default" type="button" >Get logs!</button>
+      <button @click="inputGetLogs('observations')" class="btn btn-default" type="button" >Get logs!</button>
       <!--<button :disabled="observation.name === ''" @click="recordObservation" class="btn btn-default" type="button" >Record observation!</button>-->
     </div>
 
     <!--When Get logs is pressed, display a list of text items logs array-->
-    <li v-for="i in logs">
+    <li v-for="i in observations">
     {{i}}
     </li>
 
@@ -92,7 +92,7 @@ export default {
   }, // data
   computed: mapState({
         dataTestState: state => state.data.test,
-        logs: state => state.data.logs,
+        observations: state => state.data.logs.observations,
         logCount: state => state.data.logCount
       }),
 
@@ -144,7 +144,7 @@ export default {
     },
     */
 
-    recordObservation () {
+    inputMakeLog (logType) {
       console.log('Observation recorded');
       //Open database and create new table if needed
 
@@ -153,15 +153,15 @@ export default {
       //this.$store.dispatch('makeLog', this.observation, 'observations');
 
       //For now, I will pass only this.observation, and insert 'observations' in the makeLog action
-      this.$store.dispatch('makeLog', this.observation);
+      this.$store.dispatch('makeLog', {log: this.observation, logType: logType});
 
       //this.DataModule.$emit('didSubmitObservation', this.observation);
     },
 
-    getObservations () {
+    inputGetLogs (logType) {
       console.log('Retrieving observations');
       //Now I'm getting a log, the data of which will populate to logs
-      this.$store.dispatch('getAll', 'observations');
+      this.$store.dispatch('getAll', {log: this.observation, logType: logType});
       //Set to display as text in the template with v-for
     },
 
