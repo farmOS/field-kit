@@ -10,14 +10,12 @@
       <input v-model="observation.name" placeholder="Enter name" type="text" class="form-control">
     </div>
     <div class="input-group">
-      <input v-model="observation.date" placeholder="Enter date" type="text" class="form-control">
+      <input v-model="observation.timestamp" placeholder="Enter date" type="text" class="form-control">
     </div>
     <div class="input-group">
       <input v-model="observation.notes" placeholder="Enter notes" type="text" class="form-control">
     </div>
-    <div class="input-group">
-      <input v-model="observation.quantity" placeholder="Enter quantity" type="text" class="form-control">
-    </div>
+
 
 
     <!--Not yet functional
@@ -40,7 +38,7 @@
     </div>
     <!--Get logs-->
     <div class="input-group">
-      <button @click="getLogs" class="btn btn-default" type="button" >Get logs!</button>
+      <button @click="getObservations" class="btn btn-default" type="button" >Get logs!</button>
       <!--<button :disabled="observation.name === ''" @click="recordObservation" class="btn btn-default" type="button" >Record observation!</button>-->
     </div>
 
@@ -85,7 +83,7 @@ export default {
     obsFields: [],
 
     //Temporarily creating static observation record:
-    observation: {name: '', date: '', notes: '', quantity: ''}
+    observation: {name: '', timestamp: '', notes: '', synced: 'false'}
 
     //Pass on to the data module.  I watch newRecordCount, and get data from newRecord when it increments
     //newRecord: [],
@@ -149,16 +147,21 @@ export default {
     recordObservation () {
       console.log('Observation recorded');
       //Open database and create new table if needed
-      this.$store.dispatch('recordObservation', this.observation);
-      //I am using a watcher on dbReady, which will change to true when table is made.  I will then save the log.
+
+      //Problem: I can't seem to pass multiple params to the action.  Will need to compile into one object.
+      // Passing form data to a new log of type observation
+      //this.$store.dispatch('makeLog', this.observation, 'observations');
+
+      //For now, I will pass only this.observation, and insert 'observations' in the makeLog action
+      this.$store.dispatch('makeLog', this.observation);
 
       //this.DataModule.$emit('didSubmitObservation', this.observation);
     },
 
-    getLogs () {
+    getObservations () {
       console.log('Retrieving observations');
       //Now I'm getting a log, the data of which will populate to logs
-      this.$store.dispatch('getLogs', this.observation);
+      this.$store.dispatch('getAll', 'observations');
       //Set to display as text in the template with v-for
     },
 

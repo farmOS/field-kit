@@ -3,7 +3,7 @@ import testObs from './testObs';
 export default {
   state: {
     test: 'this is some test state',
-    logs: [],
+    logs: {observations: []},
     areas: [],
     assets: [],
     logCount: 0
@@ -16,60 +16,104 @@ export default {
       state.logCount++;
     },
     addUnsyncedLogsToState(state, payload) {
-      state.logs = state.logs.concat(payload);
+      //This mutation currently receives one simple object
+      console.log('adding this');
+      console.log(payload);
+      console.log('to this state');
+      console.log(state);
+
+      state.logs.observations = payload;
+
+      //state.logs = state.logs.observations.concat(payload);
+      /*for (var i in payload) {
+      state.logs = state.logs.observations.concat(i);
+    } // end payload for */
     }
   },
   actions: {
 
-    changeTestState ({commit}, msg) {
-      commit('changeTestState', msg);
+    /* Actions are called directly from the SPA.  I am passing 'state' as a param to these
+    actions to give them access to the store */
+
+    getAll ({commit}, logType) {
+      openDatabase()
+      /* getAll uses the promise callback structure.  When onFulfilled of openDatabase
+      is called, getLogs is called with the .then trigger.  The value returned by onFulfilled
+      of getLogs is then committed via the addUnsynchedLogsToState mutation */
+      .then(function(db) {
+        return getLogs(db, logType)
+      })
+      .then(function(results) {
+        console.log('This is the form data:');
+        console.log(results);
+
+        commit('addUnsyncedLogsToState', results)
+        // The results being passed to addUnsyncedLogsToState are currently a simple object.
+      })
     },
 
-    loadCachedLogs({commit}) {
-      // Maybe some WebSQL Queries could happen here instead?
-      const payload = () => {
-        return {
-          id: testObs.id,
-          name: testObs.name,
-          uid: testObs.uid,
-          timestamp: testObs.timestamp,
-          notes: testObs.field_farm_notes,
-          synced: false
-        }
-      };
-      commit('addUnsyncedLogsToState', payload())
-    },
-
-    recordObservation ({commit}, obs) {
+    makeLog ({commit}, log) {
 
       // Pass this in to set the table name
       const table = 'observations';
 
+
       openDatabase()
       .then(function(db) {
-        return makeTable(db, table, obs)
+        return makeTable(db, table, log)
       })
       .then(function(tx) {
-        saveRecord(tx, table, obs)
+        saveRecord(tx, table, log)
       })
-    },
+      //saveRecord(tx, table, log);
 
-    getLogs ({commit}, obs) {
-      openDatabase()
-      .then(function(db) {
-        return getLogs(db, obs)
-      })
-      .then(function(results) {
-        commit('addUnsyncedLogsToState', results)
-      })
-    },
+    }, //end makeLog
 
     // Push records to farmOS via REST API.
     pushRecords () {
       // AJAX request...
     },
-  }
-}
+
+    loadCachedLogs({commit}) {
+      // Maybe some WebSQL Queries could happen here instead?
+
+      //Temporarily converting timestamp and synced to string; find my way around this later.
+      const payload = () => {
+        return {
+          id: Number(testObs.id),
+          name: testObs.name,
+          //uid: testObs.uid,
+          timestamp: String(testObs.timestamp),
+          notes: testObs.field_farm_notes.value,
+          synced: String(false)
+        }
+      };
+      //Local state will have to hold a copy that lacks the id
+      var payloadNoId = payload();
+      delete payloadNoId.id;
+
+            openDatabase()
+            .then(function(db) {
+              return makeTable(db, 'observations', payloadNoId);
+            })
+            .then(function(tx) {
+              saveRecord(tx, 'observations', payloadNoId);
+            })
+            .then(function() {
+              console.log('this the unsynced log added to state');
+              console.log(payload());
+              commit('addUnsyncedLogsToState', payload());
+            })
+
+    }, //end loadCachedLogs
+
+    changeTestState ({commit}, msg) {
+      commit('changeTestState', msg);
+    },
+  } //end actions
+} //end export default
+
+/*Helper funcitons called by actions.  Many of these helper functions execute SQL queries */
 
 function openDatabase () {
   return new Promise(function(resolve, reject) {
@@ -87,20 +131,25 @@ function openDatabase () {
 
 }
 
-function makeTable(db, table, tableRecord) {
+function makeTable(db, table, log) {
   return new Promise(function(resolve, reject) {
     console.log("db instance from makeTable", db);
-    console.log('making table');
+    console.log('making table with name');
+    console.log(table);
     //Creates a table called 'tableName' in the DB if none yet exists
 
     console.log('with the following data template:');
-    console.log(tableRecord);
+    console.log(log);
     db.transaction(function (tx) {
-      //I will start by eraising all preexisting records
-      tx.executeSql(`DROP TABLE IF EXISTS ${table}`);
+
+      //Start by eraising all preexisting records
+      //tx.executeSql(`DROP TABLE IF EXISTS `+table);
+      //console.log('Dropping table if exists:');
+      //console.log(table);
+      //tx.executeSql(`DROP TABLE IF EXISTS ${table}`);
 
       var fieldString = "";
-      for (var i in tableRecord){
+      for (var i in log){
         fieldString = fieldString+i+" VARCHAR(50), ";
       }
       //I need to trim the last two characters to avoid a trailing comma
@@ -136,16 +185,16 @@ function makeTable(db, table, tableRecord) {
 }
 
 // Save a log to the local database.
-function saveRecord (tx, table, tableRecord) {
+function saveRecord (tx, table, log) {
   console.log("tx instance from saveRecord(): ", tx);
   console.log('adding record');
   var fieldString = "";
   var queryString = "";
   var values = [];
-  for (var i in tableRecord){
+  for (var i in log){
     fieldString = fieldString+i+", ";
     queryString = queryString+"?, ";
-    values.push(tableRecord[i]);
+    values.push(log[i]);
   }
   //I need to trim the last two characters of each string to avoid trailing commas
   fieldString = fieldString.substring(0, fieldString.length - 2);
@@ -162,11 +211,6 @@ function saveRecord (tx, table, tableRecord) {
   " ("+fieldString+") " +
   "VALUES ("+queryString+")";
 
-  /*
-  "(text, plantings, locations, livestock) " +
-  "VALUES (?, ?, ?, ?)";
-  */
-
   //tx.executeSql(sql, [tableRecord.text, tableRecord.plantings, tableRecord.locations, tableRecord.livestock],
   tx.executeSql(sql, values, function () {
     console.log('INSERT success');
@@ -176,25 +220,26 @@ function saveRecord (tx, table, tableRecord) {
   });
 }
 
-function getLogs (db, tableRecord) {
+function getLogs (db, logType) {
   return new Promise(function(resolve, reject) {
     //Get a record from the local DB by local ID.
     //This is an asynchronous callback.
     console.log('getting record');
 
-    //I am avoiding using jQuery $.Deferred()
-    //var deferred = $.Deferred();
-
     //This is called if the db.transaction obtains data
     function dataHandler(tx, results) {
       console.log(results);
 
-      //Create an array to populate with result strings
-      //Each string consists of all data from a single DB row
+
       var displayResults = [];
 
       for (var i = 0; i < results.rows.length; i++) {
         var oneResult = results.rows.item(i);
+
+        //I am adding result objects to the state, not strings.
+        /*
+        //Create an array to populate with result strings
+        //Each string consists of all data from a single DB row
         var resultString = '';
         for (var j in oneResult){
           resultString = resultString+j+": "+oneResult[j]+", ";
@@ -203,11 +248,17 @@ function getLogs (db, tableRecord) {
         console.log("resultString", resultString);
         //Set status text within the newly created self scope
         displayResults.push(resultString);
-      } //end results for
-      //deferred.resolve(resultString);
+        */
+      } // end results
+      //resolve(displayResults);
 
-      resolve(displayResults);
-      // commit('addUnsyncedLogsToState', displayResults);
+
+
+
+      //Right now, this should only return the last DB row
+
+      resolve(oneResult)
+      //These results will are passed to addUnsynchedLogsToState via getAll
     }
 
     //This is called if the db.transaction fails to obtain data
@@ -232,7 +283,8 @@ function getLogs (db, tableRecord) {
       " * " +
       //queryString +
       "FROM " +
-      "observations ";
+      logType;
+      //"observations ";
       //"WHERE id=? ";
 
       tx.executeSql(sql, [],
