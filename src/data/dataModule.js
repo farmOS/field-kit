@@ -6,7 +6,10 @@ export default {
     logs: [],
     areas: [],
     assets: [],
-    logCount: 0
+    logCount: 0,
+    currentLog: {
+      index: 0,
+    }
   },
   mutations: {
     changeTestState (state, msg) {
@@ -17,12 +20,33 @@ export default {
     },
     addUnsyncedLogsToState(state, payload) {
       state.logs = state.logs.concat(payload);
+    },
+    addLogAndMakeCurrent(state, newLog) {
+      state.currentLog.index = state.logs.push(newLog) -1;
     }
   },
   actions: {
 
     changeTestState ({commit}, msg) {
       commit('changeTestState', msg);
+    },
+
+    initializeLog({commit, rootState}, logType) {
+      // TODO: The User ID will also be needed to sync with server
+      const username = rootState.user.name ? rootState.user.name : '';
+      const timestamp = Date.now().toString();
+      const newLog = {
+        id: null,
+        local_id: null,
+        type: logType,
+        name: username,
+        timestamp: timestamp,
+        notes: '',
+        quantity: 0,
+        isCachedLocally: false,
+        isSyncedWithServer: false,
+      };
+      commit('addLogAndMakeCurrent', newLog);
     },
 
     loadCachedLogs({commit}) {
