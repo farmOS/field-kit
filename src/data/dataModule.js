@@ -2,23 +2,12 @@ import testObs from './testObs';
 
 export default {
   state: {
-    test: 'this is some test state',
     logs: [],
-    areas: [],
     assets: [],
-    logCount: 0,
     currentLogIndex: 0,
-    currentLog: {
-      index: 0,
-    }
   },
+
   mutations: {
-    changeTestState (state, msg) {
-      state.test = msg;
-    },
-    iterateLogCount (state) {
-      state.logCount++;
-    },
     addUnsyncedLogsToState(state, payload) {
       state.logs = state.logs.concat(payload);
     },
@@ -32,11 +21,8 @@ export default {
       };
     },
   },
-  actions: {
 
-    changeTestState ({commit}, msg) {
-      commit('changeTestState', msg);
-    },
+  actions: {
 
     initializeLog({commit, rootState}, logType) {
       // TODO: The User ID will also be needed to sync with server

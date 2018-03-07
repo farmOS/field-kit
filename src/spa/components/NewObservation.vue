@@ -80,11 +80,8 @@ export default {
     }
   },
   computed: mapState({
-        dataTestState: state => state.data.test,
         logs: state => state.data.logs,
         currentLogIndex: state => state.data.currentLogIndex,
-        // currentLog: state => state.data.logs[state.data.currentLogIndex],
-        logCount: state => state.data.logCount
       }),
 
   created: function () {
