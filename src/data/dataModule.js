@@ -7,6 +7,7 @@ export default {
     areas: [],
     assets: [],
     logCount: 0,
+    currentLogIndex: 0,
     currentLog: {
       index: 0,
     }
@@ -22,11 +23,11 @@ export default {
       state.logs = state.logs.concat(payload);
     },
     addLogAndMakeCurrent(state, newLog) {
-      state.currentLog.index = state.logs.push(newLog) -1;
+      state.currentLogIndex = state.logs.push(newLog) -1;
     },
     updateCurrentLog (state, newProperty) {
-      state.logs[state.currentLog.index] = {
-        ...state.logs[state.currentLog.index],
+      state.logs[state.currentLogIndex] = {
+        ...state.logs[state.currentLogIndex],
         ...newProperty
       };
     },

@@ -6,7 +6,7 @@
       <div class="input-group">
         <!-- TODO: Replace this with a dropdown to select names from list of valid users -->
         <input
-          :value="currentLog.name"
+          :value="logs[currentLogIndex].name"
           @input="updateCurrentLog('name', $event.target.value)"
           placeholder="Enter name"
           type="text"
@@ -15,7 +15,7 @@
       </div>
       <div class="input-group">
         <input
-          :value="convertOutOfUnix(currentLog.timestamp)"
+          :value="convertOutOfUnix(logs[currentLogIndex].timestamp)"
           @input="updateCurrentLog('timestamp', $event.target.value)"
           type="date"
           class="form-control"
@@ -23,7 +23,7 @@
       </div>
       <div class="input-group">
         <input
-          :value="currentLog.notes"
+          :value="logs[currentLogIndex].notes"
           @input="updateCurrentLog('notes', $event.target.value)"
           placeholder="Enter notes"
           type="text"
@@ -32,7 +32,7 @@
       </div>
       <div class="input-group">
         <input
-          :value="currentLog.quantity"
+          :value="logs[currentLogIndex].quantity"
           @input="updateCurrentLog('quantity', $event.target.value)"
           placeholder="Enter quantity"
           type="number"
@@ -82,7 +82,8 @@ export default {
   computed: mapState({
         dataTestState: state => state.data.test,
         logs: state => state.data.logs,
-        currentLog: state => state.data.logs[state.data.currentLog.index],
+        currentLogIndex: state => state.data.currentLogIndex,
+        // currentLog: state => state.data.logs[state.data.currentLogIndex],
         logCount: state => state.data.logCount
       }),
 
