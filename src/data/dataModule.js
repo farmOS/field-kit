@@ -23,7 +23,13 @@ export default {
     },
     addLogAndMakeCurrent(state, newLog) {
       state.currentLog.index = state.logs.push(newLog) -1;
-    }
+    },
+    updateCurrentLog (state, newProperty) {
+      state.logs[state.currentLog.index] = {
+        ...state.logs[state.currentLog.index],
+        ...newProperty
+      };
+    },
   },
   actions: {
 

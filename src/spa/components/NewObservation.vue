@@ -4,7 +4,7 @@
     <!-- Display input form if chooser is inactive -->
     <div class="well" v-if="!isChoosing">
       <div class="input-group">
-        <input v-model="observation.name" placeholder="Enter name" type="text" class="form-control">
+        <input :value="currentLog.name" @input="updateCurrentLog('name', $event.target.value)" placeholder="Enter name" type="text" class="form-control">
       </div>
       <div class="input-group">
         <input v-model="observation.date" placeholder="Enter date" type="text" class="form-control">
@@ -56,6 +56,7 @@ export default {
   computed: mapState({
         dataTestState: state => state.data.test,
         logs: state => state.data.logs,
+        currentLog: state => state.data.logs[state.data.currentLog.index],
         logCount: state => state.data.logCount
       }),
 
@@ -66,6 +67,12 @@ export default {
   methods: {
     recordObservation () {
       this.$store.dispatch('recordObservation', this.observation);
+    },
+
+    updateCurrentLog (key, val) {
+      let newProperty = {};
+      newProperty[key] = val;
+      this.$store.commit('updateCurrentLog', newProperty)
     },
 
     getLogs () {
