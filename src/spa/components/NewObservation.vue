@@ -93,7 +93,14 @@ export default {
   },
   methods: {
     recordObservation () {
-      this.$store.dispatch('recordObservation', this.observation);
+      const currentLog = this.logs[this.currentLogIndex];
+      const obs = {
+        name: currentLog.name,
+        timestamp: currentLog.timestamp,
+        notes: currentLog.notes,
+        quantity: currentLog.quantity,
+      };
+      this.$store.dispatch('recordObservation', obs);
     },
 
     convertOutOfUnix (unixTimestamp) {
