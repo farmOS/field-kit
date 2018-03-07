@@ -40,7 +40,7 @@ export default {
     initializeLog({commit, rootState}, logType) {
       // TODO: The User ID will also be needed to sync with server
       const username = rootState.user.name ? rootState.user.name : '';
-      const timestamp = Date.now().toString();
+      const timestamp = Math.floor(Date.now() / 1000).toString();
       const newLog = {
         id: null,
         local_id: null,

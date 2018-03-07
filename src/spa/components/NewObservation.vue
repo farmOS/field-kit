@@ -4,10 +4,22 @@
     <!-- Display input form if chooser is inactive -->
     <div class="well" v-if="!isChoosing">
       <div class="input-group">
-        <input :value="currentLog.name" @input="updateCurrentLog('name', $event.target.value)" placeholder="Enter name" type="text" class="form-control">
+        <!-- TODO: Replace this with a dropdown to select names from list of valid users -->
+        <input
+          :value="currentLog.name"
+          @input="updateCurrentLog('name', $event.target.value)"
+          placeholder="Enter name"
+          type="text"
+          class="form-control"
+        >
       </div>
       <div class="input-group">
-        <input v-model="observation.date" placeholder="Enter date" type="text" class="form-control">
+        <input
+          :value="convertOutOfUnix(currentLog.timestamp)"
+          @input="updateCurrentLog('timestamp', $event.target.value)"
+          type="date"
+          class="form-control"
+        >
       </div>
       <div class="input-group">
         <input v-model="observation.notes" placeholder="Enter notes" type="text" class="form-control">
@@ -33,6 +45,7 @@
 
 <script>
 import { mapState } from 'vuex';
+import moment from 'moment';
 import Chooser from './Chooser';
 import DataNative from './DataNative';
 import DataModule from './DataModule';
@@ -69,9 +82,18 @@ export default {
       this.$store.dispatch('recordObservation', this.observation);
     },
 
+    convertOutOfUnix (unixTimestamp) {
+      return moment.unix(unixTimestamp).format('YYYY-MM-DD')
+    },
+
     updateCurrentLog (key, val) {
       let newProperty = {};
-      newProperty[key] = val;
+      if (key === 'timestamp') {
+        const dateVal = Math.floor(new Date(val).getTime() / 1000).toString()
+        newProperty[key] = dateVal;
+      } else {
+        newProperty[key] = val;
+      };
       this.$store.commit('updateCurrentLog', newProperty)
     },
 
