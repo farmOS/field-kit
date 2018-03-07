@@ -48,7 +48,7 @@ export default {
         name: username,
         timestamp: timestamp,
         notes: '',
-        quantity: 0,
+        quantity: '',
         isCachedLocally: false,
         isSyncedWithServer: false,
       };

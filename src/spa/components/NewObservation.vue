@@ -22,10 +22,23 @@
         >
       </div>
       <div class="input-group">
-        <input v-model="observation.notes" placeholder="Enter notes" type="text" class="form-control">
+        <input
+          :value="currentLog.notes"
+          @input="updateCurrentLog('notes', $event.target.value)"
+          placeholder="Enter notes"
+          type="text"
+          class="form-control"
+        >
       </div>
       <div class="input-group">
-        <input v-model="observation.quantity" placeholder="Enter quantity" type="text" class="form-control">
+        <input
+          :value="currentLog.quantity"
+          @input="updateCurrentLog('quantity', $event.target.value)"
+          placeholder="Enter quantity"
+          type="number"
+          min="0"
+          class="form-control"
+        >
       </div>
       <br>
       <div class="input-group">
