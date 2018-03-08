@@ -67,21 +67,6 @@ export default {
         saveRecord(tx, table, obs)
       })
     },
-
-    getLogs ({commit}, obs) {
-      openDatabase()
-      .then(function(db) {
-        return getLogs(db, obs)
-      })
-      .then(function(results) {
-        commit('addUnsyncedLogsToState', results)
-      })
-    },
-
-    // Push records to farmOS via REST API.
-    pushRecords () {
-      // AJAX request...
-    },
   }
 }
 
