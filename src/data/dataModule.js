@@ -7,23 +7,11 @@ export default {
 
   mutations: {
     addCachedLogs(state, payload) {
-      const emptyLog = {
-        id: null,
-        local_id: null,
-        type: '',
-        name: '',
-        timestamp: '',
-        notes: '',
-        quantity: '',
-        isCachedLocally: false,
-        isSyncedWithServer: false,
-      };
       const cachedLogs = payload.map(function(cachedLog) {
-        return {
-          ...emptyLog,
+        return logFactory({
           ...cachedLog,
           isCachedLocally: true
-        }
+        })
       })
       state.logs = state.logs.concat(cachedLogs);
     },
@@ -43,26 +31,17 @@ export default {
 
     initializeLog({commit, rootState}, logType) {
       // TODO: The User ID will also be needed to sync with server
-      const username = rootState.user.name ? rootState.user.name : '';
-      const timestamp = Math.floor(Date.now() / 1000).toString();
-      const newLog = {
-        id: null,
-        local_id: null,
+      const newLog = logFactory({
         type: logType,
-        name: username,
-        timestamp: timestamp,
-        notes: '',
-        quantity: '',
-        isCachedLocally: false,
-        isSyncedWithServer: false,
-      };
+        name: rootState.user.name ? rootState.user.name : '',
+        timestamp: Math.floor(Date.now() / 1000).toString()
+      })
       commit('addLogAndMakeCurrent', newLog);
     },
 
     loadCachedLogs({commit}, logType) {
       openDatabase()
       .then(function(db) {
-        // TODO: replace this with a fucntion that really calls the local db
         return getRecords(db, logType)
       })
       .then(function(result) {
@@ -192,4 +171,30 @@ function getRecords (db, table) {
       );
     });
   })
+}
+
+// A helper function for creating new log items with default properties
+// TODO: a User ID will also be needed to sync with server
+function logFactory ({
+  id = null,
+  local_id = null,
+  type = '',
+  name = '',
+  timestamp = '',
+  notes = '',
+  quantity = '',
+  isCachedLocally = false,
+  isSyncedWithServer = false,
+} = {}) {
+  return {
+    id,
+    local_id,
+    type,
+    name,
+    timestamp,
+    notes,
+    quantity,
+    isCachedLocally,
+    isSyncedWithServer,
+  }
 }
