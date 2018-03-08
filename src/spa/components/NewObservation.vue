@@ -61,9 +61,9 @@ export default {
     }
   },
   computed: mapState({
-        logs: state => state.data.logs,
-        currentLogIndex: state => state.data.currentLogIndex,
-      }),
+    logs: state => state.data.logs,
+    currentLogIndex: state => state.data.currentLogIndex,
+  }),
 
   created: function () {
     this.$store.dispatch('loadCachedLogs', 'farm_observation');
