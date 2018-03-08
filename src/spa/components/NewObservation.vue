@@ -85,7 +85,7 @@ export default {
       }),
 
   created: function () {
-    this.$store.dispatch('loadCachedLogs');
+    this.$store.dispatch('loadCachedLogs', 'farm_observation');
     this.$store.dispatch('initializeLog', 'farm_observation')
   },
   methods: {
@@ -96,6 +96,7 @@ export default {
         timestamp: currentLog.timestamp,
         notes: currentLog.notes,
         quantity: currentLog.quantity,
+        type: currentLog.type,
       };
       this.$store.dispatch('recordObservation', obs);
     },

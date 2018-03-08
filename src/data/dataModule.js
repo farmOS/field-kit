@@ -1,5 +1,3 @@
-import testObs from './testObs';
-
 export default {
   state: {
     logs: [],
@@ -42,25 +40,24 @@ export default {
       commit('addLogAndMakeCurrent', newLog);
     },
 
-    loadCachedLogs({commit}) {
-      // Maybe some WebSQL Queries could happen here instead?
-      const payload = () => {
-        return {
-          id: testObs.id,
-          name: testObs.name,
-          uid: testObs.uid,
-          timestamp: testObs.timestamp,
-          notes: testObs.field_farm_notes,
-          synced: false
-        }
-      };
-      commit('addUnsyncedLogsToState', payload())
+    loadCachedLogs({commit}, logType) {
+      openDatabase()
+      .then(function(db) {
+        // TODO: replace this with a fucntion that really calls the local db
+        return getRecords(db, logType)
+      })
+      .then(function(result) {
+        commit('addUnsyncedLogsToState', result.rows)
+      })
+      .catch(function(error) {
+        console.error(error);
+      })
     },
 
     recordObservation ({commit}, obs) {
 
       // Pass this in to set the table name
-      const table = 'observations';
+      const table = obs.type;
 
       openDatabase()
       .then(function(db) {
@@ -168,7 +165,7 @@ function saveRecord (tx, table, tableRecord) {
   });
 }
 
-function getLogs (db, tableRecord) {
+function getRecords (db, table) {
   return new Promise(function(resolve, reject) {
 
     //This is called if the db.transaction obtains data
@@ -199,10 +196,7 @@ function getLogs (db, tableRecord) {
     }
 
     db.transaction(function (tx) {
-      var sql = "SELECT " +
-      " * " +
-      "FROM " +
-      "observations ";
+      var sql = `SELECT * FROM ${table}`;
 
       tx.executeSql(sql, [],
         dataHandler,
