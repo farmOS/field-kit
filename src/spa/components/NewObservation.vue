@@ -16,7 +16,7 @@
       <div class="input-group">
         <input
           :value="convertOutOfUnix(logs[currentLogIndex].timestamp)"
-          @input="updateCurrentLog('timestamp', $event.target.value)"
+          @input="updateCurrentLog('timestamp', convertIntoUnix($event.target.value))"
           type="date"
           class="form-control"
         >
@@ -104,14 +104,13 @@ export default {
       return moment.unix(unixTimestamp).format('YYYY-MM-DD')
     },
 
+    convertIntoUnix (nonUnixTimestamp) {
+      return Math.floor(new Date(nonUnixTimestamp).getTime() / 1000).toString()
+    },
+
     updateCurrentLog (key, val) {
       let newProperty = {};
-      if (key === 'timestamp') {
-        const dateVal = Math.floor(new Date(val).getTime() / 1000).toString()
-        newProperty[key] = dateVal;
-      } else {
-        newProperty[key] = val;
-      };
+      newProperty[key] = val;
       this.$store.commit('updateCurrentLog', newProperty)
     },
 
