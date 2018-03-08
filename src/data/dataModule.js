@@ -6,8 +6,26 @@ export default {
   },
 
   mutations: {
-    addUnsyncedLogsToState(state, payload) {
-      state.logs = state.logs.concat(payload);
+    addCachedLogs(state, payload) {
+      const emptyLog = {
+        id: null,
+        local_id: null,
+        type: '',
+        name: '',
+        timestamp: '',
+        notes: '',
+        quantity: '',
+        isCachedLocally: false,
+        isSyncedWithServer: false,
+      };
+      const cachedLogs = payload.map(function(cachedLog) {
+        return {
+          ...emptyLog,
+          ...cachedLog,
+          isCachedLocally: true
+        }
+      })
+      state.logs = state.logs.concat(cachedLogs);
     },
     addLogAndMakeCurrent(state, newLog) {
       state.currentLogIndex = state.logs.push(newLog) -1;
@@ -47,7 +65,7 @@ export default {
         return getRecords(db, logType)
       })
       .then(function(result) {
-        commit('addUnsyncedLogsToState', result.rows)
+        commit('addCachedLogs', result)
       })
       .catch(function(error) {
         console.error(error);
@@ -87,8 +105,8 @@ function openDatabase () {
 function makeTable(db, table, tableRecord) {
   return new Promise(function(resolve, reject) {
     db.transaction(function (tx) {
-      //I will start by eraising all preexisting records
-      tx.executeSql(`DROP TABLE IF EXISTS ${table}`);
+      // JG: commenting this out. Don't we want to keep these records?
+      // tx.executeSql(`DROP TABLE IF EXISTS ${table}`);
 
       var fieldString = "";
       for (var i in tableRecord){
@@ -155,29 +173,13 @@ function getRecords (db, table) {
 
     //This is called if the db.transaction obtains data
     function dataHandler(tx, results) {
-      console.log(results);
-
-      //Create an array to populate with result strings
-      //Each string consists of all data from a single DB row
-      var displayResults = [];
-
-      for (var i = 0; i < results.rows.length; i++) {
-        var oneResult = results.rows.item(i);
-        var resultString = '';
-        for (var j in oneResult){
-          resultString = resultString+j+": "+oneResult[j]+", ";
-        }
-        console.log("resultString", resultString);
-        //Set status text within the newly created self scope
-        displayResults.push(resultString);
-      }
-      resolve(displayResults);
+      resolve([...results.rows]);
     }
 
     //This is called if the db.transaction fails to obtain data
     function errorHandler(tx, error) {
-      reject('INSERT error: ' + error.message);
-
+      console.log("No old logs found in cache.");
+      resolve([]);
     }
 
     db.transaction(function (tx) {
