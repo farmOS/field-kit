@@ -9,11 +9,9 @@
     <div class="input-group">
       <input v-model="observation.name" placeholder="Enter name" type="text" class="form-control">
     </div>
+
     <div class="input-group">
-      <input v-model="observation.timestamp" placeholder="Enter date" type="text" class="form-control">
-    </div>
-    <div class="input-group">
-      <input v-model="observation.notes" placeholder="Enter notes" type="text" class="form-control">
+      <input v-model="observation.field_farm_notes" placeholder="Enter notes" type="text" class="form-control">
     </div>
 
 
@@ -52,9 +50,9 @@
     <!--<data-module :newRecordCount="newRecordCount" :newRecord="newRecord"></data-module>-->
 
     </div>
-    <!-- Display chooser -->
+    <!-- Display chooser to link to assets
     <chooser v-if="isChoosing" :toChoose="toChoose" @didChoose="registerChoice" ></chooser>
-
+    -->
 
 
   </div>
@@ -82,8 +80,8 @@ export default {
     toChoose: [],
     obsFields: [],
 
-    //Temporarily creating static observation record:
-    observation: {name: '', timestamp: '', notes: '', synced: 'false'}
+    //Form to be pupulated by user and sent to inputMakeLog
+    observation: {name: '', timestamp: Date.now(), field_farm_notes: ''}
 
     //Pass on to the data module.  I watch newRecordCount, and get data from newRecord when it increments
     //newRecord: [],
@@ -161,7 +159,8 @@ export default {
     inputGetLogs (logType) {
       console.log('Retrieving observations');
       //Now I'm getting a log, the data of which will populate to logs
-      this.$store.dispatch('getAll', {log: this.observation, logType: logType});
+      //this.$store.dispatch('getAll', {log: this.observation, logType: logType});
+      this.$store.dispatch('getAll', logType);
       //Set to display as text in the template with v-for
     },
 
