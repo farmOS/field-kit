@@ -91,8 +91,7 @@ export default {
     },
 
     updateCurrentLog (key, val) {
-      let newProperty = {};
-      newProperty[key] = val;
+      const newProperty = {key, val};
       this.$store.commit('updateCurrentLog', newProperty)
     },
 

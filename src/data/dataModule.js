@@ -19,11 +19,7 @@ export default {
       state.currentLogIndex = state.logs.push(newLog) -1;
     },
     updateCurrentLog (state, newProperty) {
-      const updatedLog = {
-        ...state.logs[state.currentLogIndex],
-        ...newProperty
-      };
-      state.logs.splice(state.currentLogIndex, 1, updatedLog)
+      state.logs[state.currentLogIndex][newProperty.key] = newProperty.val
     },
   },
 
