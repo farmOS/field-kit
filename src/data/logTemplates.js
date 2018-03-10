@@ -39,10 +39,9 @@ export default {
   feed_nid: null
 } //end observations
 }, //end rawTemplates
-/*For each table, we have a template with keys corresponding to the properties that we want to save in the local DB
-  If the table template value is null, the data value will be a simple string
-  If table template value is a string, the data value is an object were the string is key to the variable of interest
-  if the table template value is an array of strings, the data value is an array of objects, where the strings are key to the variables of interest
+/*For each table, we have a template with keys corresponding to properties stored as something other than a simple string
+  each property key is associated with an object containing a prefix and suffix
+  these are appended to values with the same property key using the parseProp function
 */
 propTemplates: {observations: {
   field_farm_notes: {
