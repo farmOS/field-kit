@@ -85,16 +85,29 @@ export default {
       //Open the template for the log type.  For each template property matching a property in log, write log values into template
       for (var rawProp in rawTemplates) {
         if( rawTemplates.hasOwnProperty(rawProp) && table === rawProp) {
-          var logFull = rawTemplates[rawProp]
-          for (var rawSubProp in logFull) {
+          //var logFull = rawTemplates[rawProp]
+          var logFull = {};
+          for (var rawSubProp in rawTemplates[rawProp]) {
+            var subPropTemplate = rawTemplates[rawProp][rawSubProp];
+
+            //First, place a string version of the template data into the new record
+            if (isObject(JSON.stringify(subPropTemplate)) || isArray(JSON.stringify(subPropTemplate))){
+              logFull[rawSubProp] = JSON.stringify(subPropTemplate);
+            } else {
+              logFull[rawSubProp] = subPropTemplate;
+            }
+
+            //If the user has entered a value for a prop, overwrite it!
             for (var logItem in log){
               if (logItem === rawSubProp) {
                   //Write a new value to template
                   //Use parseProp, isObject and isArray to append prefix and suffix where needed to achieve farmOS format
-                  var oneProp = log[logItem];
-                  //if (isObject(oneProp) || isArray(oneProp)){
-                    oneProp = JSON.stringify(oneProp)
-                //  }
+                  var oneProp;
+                  if (isObject(JSON.stringify(log[logItem])) || isArray(JSON.stringify(log[logItem]))){
+                    oneProp = JSON.stringify(log[logItem]);
+                  } else {
+                    oneProp = log[logItem];
+                  }
                   logFull[rawSubProp] = parseProp(table, logItem, oneProp);
               }
             } // end for log
@@ -151,15 +164,13 @@ export default {
 
           for (var rawSubProp in rawTemplates[rawProp]) {
 
-            var rawKey = rawSubProp;
-            var parsedValue = rawTemplates[rawProp][rawSubProp];
-          //  if (isObject(parsedValue) || isArray(parsedValue)){
-              parsedValue = JSON.stringify(parsedValue);
-          //  }
-            var testObject = isObject(parsedValue);
-            var testArray = isArray(parsedValue);
-
-            payLoadBuilder[rawKey] = parsedValue;
+            var parsedValue;
+            if (isObject(JSON.stringify(rawTemplates[rawProp][rawSubProp])) || isArray(JSON.stringify(rawTemplates[rawProp][rawSubProp]))){
+            parsedValue = JSON.stringify(rawTemplates[rawProp][rawSubProp]);
+            } else {
+            parsedValue = rawTemplates[rawProp][rawSubProp];
+            }
+            payLoadBuilder[rawSubProp] = parsedValue;
 
           }// end sub raw
 
@@ -172,6 +183,12 @@ export default {
           console.log('MODIFIED PAYLOAD:')
           console.log(modPayload)
 
+          /* TODO
+          createdDB does not belong in the store!  It needs to be persistent state, which it currently isn't.
+          */
+          //Turn this OFF when resetting the database, then back ON after reset in order to avoid duplication of the template record
+          commit('toggleCreatedDB');
+
           //And finally, we can go ahead and add the payload to the state
           if (!state.didCreateDB) {
             openDatabase()
@@ -182,7 +199,7 @@ export default {
               saveRecord(tx, tableName, modPayload);
             })
             .then(function(){
-              commit('addUnsyncedLogsToState', {logType:tableName, log:{payload()}});
+              commit('addUnsyncedLogsToState', {logType:tableName, log:[payload()]});
               // set didCreateDB to true
               commit('toggleCreatedDB');
             })
@@ -291,8 +308,9 @@ function makeTable(db, table, log) {
 
 // Save a log to the local database.
 function saveRecord (tx, table, log) {
-  console.log("tx instance from saveRecord(): ", tx);
-  console.log('adding record');
+console.log('SAVING THE FOLLOWING RECORDS:');
+console.log(log);
+
   var fieldString = "";
   var queryString = "";
   var values = [];
@@ -344,7 +362,12 @@ function getLogs (tx, logType) {
         var allResults = [];
 
         for (var i = 0; i < results.rows.length; i++) {
-          var oneResult = results.rows.item(i);
+          var oneResult;
+          //if (isObject(results.rows.item(i)) || isArray(results.rows.item(i))){
+          //  oneResult = JSON.stringify(results.rows.item(i));
+          //} else {
+            oneResult = results.rows.item(i)
+          //}
           allResults.push(oneResult);
         } // end results
 
