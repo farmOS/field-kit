@@ -113,22 +113,28 @@ export default {
             } // end for log
           }// end for rawSubProp
 
-          //Before adding to database, we must modify the template by deleting ID and adding synced
-          delete logFull.id;
+          //Before adding to database, we must add the synced property
           logFull.synced = false;
-          console.log('MODIFIED LOG TO SAVE:')
-          console.log(logFull)
+
+          /* TEST
+          ADD A local_id PROP TO OVER-WRITE AN EXISTING RECORD
+          */
+          logFull.local_id = 3;
+
+
+          console.log('MODIFIED LOG TO SAVE:');
+          console.log(logFull);
 
 
           openDatabase()
           .then(function(db) {
-            return getTX(db, table)
+            return getTX(db, table);
           })
           .then(function(tx) {
-            saveRecord(tx, table, logFull)
+            saveRecord(tx, table, logFull);
           })
           .then(function() {
-            dispatch('getAll', table)
+            dispatch('getAll', table);
           })
 
         }//if hasOwn
@@ -177,8 +183,8 @@ export default {
           return payLoadBuilder;
           } //end payload
 
+          //Before sending to the database, we must add the synced property
           var modPayload = payload();
-          delete modPayload.id;
           modPayload.synced = false;
           console.log('MODIFIED PAYLOAD:')
           console.log(modPayload)
@@ -239,7 +245,6 @@ function getTX(db, table) {
       tx.executeSql(sql, null, function (_tx, result) {
         console.log('Get TX success. Result: ', result);
         resolve(_tx);
-
       }, function (_tx, error) {
         console.log('Get TX error: ' + error.message);
         // Reject will return the tx object in case you want to try again.
@@ -253,11 +258,11 @@ function getTX(db, table) {
 
 function makeTable(db, table, log) {
   return new Promise(function(resolve, reject) {
+
     console.log("db instance from makeTable", db);
     console.log('making table with name');
     console.log(table);
     //Creates a table called 'tableName' in the DB if none yet exists
-
     console.log('with the following data template:');
     console.log(log);
     db.transaction(function (tx) {
@@ -286,7 +291,7 @@ function makeTable(db, table, log) {
       //the id field will autoincrement beginning with 1
       var sql = "CREATE TABLE IF NOT EXISTS " +
       table +
-      " ( id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+      " ( local_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
       fieldString +
       ")";
 
@@ -305,8 +310,16 @@ function makeTable(db, table, log) {
   })
 }
 
+/*
+saveRecord either saves a new record or updates an existing one.
+If log contains a property called local_id, the database updates the record with that local_id
+If log contains no local_id property, a new record is created!
+Params:
+tx - the database context
+table - string name of the table, AKA logType
+log - object following the template for that logType
+*/
 
-// Save a log to the local database.
 function saveRecord (tx, table, log) {
 console.log('SAVING THE FOLLOWING RECORDS:');
 console.log(log);
@@ -328,11 +341,21 @@ console.log(log);
   console.log(queryString);
   console.log(values);
 
-  //I am going to try skipping the id field, and see if it autoincrements
-  var sql = "INSERT OR REPLACE INTO " +
-  table +
-  " ("+fieldString+") " +
-  "VALUES ("+queryString+")";
+  //Set SQL based on whether the log contains a local_id fieldString
+  var sql;
+  /*
+  if(log.hasOwnProperty(local_id)) {
+    sql = "INSERT OR REPLACE INTO " +
+    table +
+    " ("+fieldString+") " +
+    "VALUES ("+queryString+")"
+  } else {
+  */
+    sql = "INSERT OR REPLACE INTO " +
+    table +
+    " ("+fieldString+") " +
+    "VALUES ("+queryString+")";
+  //}
 
   //tx.executeSql(sql, [tableRecord.text, tableRecord.plantings, tableRecord.locations, tableRecord.livestock],
   tx.executeSql(sql, values, function () {
@@ -342,6 +365,8 @@ console.log(log);
     console.log('INSERT error: ' + error.message);
   });
 }
+
+
 
 function getLogs (tx, logType) {
   return new Promise(function(resolve, reject) {
@@ -374,6 +399,7 @@ function getLogs (tx, logType) {
         resolve(allResults)
       }, function (_tx, error) {
         console.log('INSERT error: ' + error.message);
+        reject();
       });
 
   })
