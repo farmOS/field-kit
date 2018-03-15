@@ -30,13 +30,15 @@ export default {
 
     initializeLog({commit, rootState}, logType) {
       // TODO: The User ID will also be needed to sync with server
-      const curDate = Math.floor(Date.now() / 1000).toString();
-      const curTime = '5:00pm';
+      const curDate = new Date(Date.now());
+      const timestamp = Math.floor(curDate / 1000).toString();
+      const curTimeString = curDate.toLocaleTimeString('en-US');
+      const curDateString = curDate.toLocaleDateString('en-US');
       const newLog = logFactory({
         type: logType,
-        name: `Observation: ${curDate} - ${curTime}`,
+        name: `Observation: ${curDateString} - ${curTimeString}`,
         field_farm_log_owner: rootState.user.name ? rootState.user.name : '',
-        timestamp: curDate,
+        timestamp: timestamp,
       });
       commit('addLogAndMakeCurrent', newLog);
     },
