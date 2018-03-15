@@ -3,6 +3,8 @@
     <h4>{{vueHeader}}</h4>
     <!-- Display input form if chooser is inactive -->
     <div class="well" >
+      <!-- TODO: make these input fields into child components and load them with v-for -->
+      <!-- TODO: pass down arguments for updateCurrentLog() as props, from the computed values of the current log -->
       <div class="input-group">
         <!-- TODO: Replace this with a dropdown to select names from list of valid users -->
         <input
@@ -23,8 +25,8 @@
       </div>
       <div class="input-group">
         <input
-          :value="logs[currentLogIndex].notes"
-          @input="updateCurrentLog('notes', $event.target.value)"
+          :value="logs[currentLogIndex].field_farm_notes"
+          @input="updateCurrentLog('field_farm_notes', $event.target.value)"
           placeholder="Enter notes"
           type="text"
           class="form-control"
@@ -32,8 +34,8 @@
       </div>
       <div class="input-group">
         <input
-          :value="logs[currentLogIndex].quantity"
-          @input="updateCurrentLog('quantity', $event.target.value)"
+          :value="logs[currentLogIndex].field_farm_quantity"
+          @input="updateCurrentLog('field_farm_quantity', $event.target.value)"
           placeholder="Enter quantity"
           type="number"
           min="0"
@@ -70,13 +72,14 @@ export default {
     this.$store.dispatch('initializeLog', 'farm_observation')
   },
   methods: {
+    // TODO: remove this method and let updateCurrentLog() handle all this
     recordObservation () {
       const currentLog = this.logs[this.currentLogIndex];
       const obs = {
         name: currentLog.name,
         timestamp: currentLog.timestamp,
-        notes: currentLog.notes,
-        quantity: currentLog.quantity,
+        field_farm_notes: currentLog.field_farm_notes,
+        field_farm_quantity: currentLog.field_farm_quantity,
         type: currentLog.type,
       };
       this.$store.dispatch('recordObservation', obs);

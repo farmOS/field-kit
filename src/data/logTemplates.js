@@ -1,4 +1,10 @@
-// This is the output of a call to http://farmos-base-url/log/1, converted from JSON to a plain object literal.
+/**
+  * jgaehring: `logTemplates` is not being used currently, in favor of `logFactory()`.
+  * However, I'm keeping it for reference, along with `makeLog()` and `getLog()`
+  * and their helper functions from `dataModule.js` until we know where to put
+  * that serialization logic, or if we need to keep them at all.
+*/
+
 const logTemplates = {
   rawTemplates: {
     observations: {

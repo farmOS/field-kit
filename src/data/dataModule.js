@@ -1,9 +1,10 @@
-// import logTemplates from './logTemplates';
+import {logFactory} from './logFactory';
 
 export default {
   state: {
     logs: [],
     assets: [],
+    areas: [],
     currentLogIndex: 0,
   },
 
@@ -29,11 +30,14 @@ export default {
 
     initializeLog({commit, rootState}, logType) {
       // TODO: The User ID will also be needed to sync with server
+      const curDate = Math.floor(Date.now() / 1000).toString();
+      const curTime = '5:00pm';
       const newLog = logFactory({
         type: logType,
-        name: rootState.user.name ? rootState.user.name : '',
-        timestamp: Math.floor(Date.now() / 1000).toString()
-      })
+        name: `Observation: ${curDate} - ${curTime}`,
+        field_farm_log_owner: rootState.user.name ? rootState.user.name : '',
+        timestamp: curDate,
+      });
       commit('addLogAndMakeCurrent', newLog);
     },
 
@@ -213,30 +217,4 @@ function getRecords (db, table) {
       );
     });
   })
-}
-
-// A helper function for creating new log items with default properties
-// TODO: a User ID will also be needed to sync with server
-function logFactory ({
-  id = null,
-  local_id = null,
-  type = '',
-  name = '',
-  timestamp = '',
-  notes = '',
-  quantity = '',
-  isCachedLocally = false,
-  isSyncedWithServer = false,
-} = {}) {
-  return {
-    id,
-    local_id,
-    type,
-    name,
-    timestamp,
-    notes,
-    quantity,
-    isCachedLocally,
-    isSyncedWithServer,
-  }
 }
