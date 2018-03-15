@@ -1,3 +1,5 @@
+// import logTemplates from './logTemplates';
+
 export default {
   state: {
     logs: [],
@@ -49,13 +51,10 @@ export default {
     },
 
     recordObservation ({commit}, obs) {
-
-      // Pass this in to set the table name
       const table = obs.type;
-
       openDatabase()
       .then(function(db) {
-        return makeTable(db, table, obs)
+        return makeTable(db, table, obs);
       })
       .then(function(tx) {
         saveRecord(tx, table, obs)
@@ -64,6 +63,7 @@ export default {
   }
 }
 
+/*Helper funcitons called by actions.  Many of these helper functions execute SQL queries */
 function openDatabase () {
   return new Promise(function(resolve, reject) {
     //Here I am both opening the database and making a new table if necessary.
@@ -78,15 +78,47 @@ function openDatabase () {
   })
 }
 
-function makeTable(db, table, tableRecord) {
+//This function obtains the tx database object.  It assumes the table has already been created.
+function getTX(db, table) {
   return new Promise(function(resolve, reject) {
     db.transaction(function (tx) {
-      // JG: commenting this out. Don't we want to keep these records?
-      // tx.executeSql(`DROP TABLE IF EXISTS ${table}`);
 
-      var fieldString = "";
-      for (var i in tableRecord){
-        fieldString = fieldString+i+" VARCHAR(50), ";
+      var sql = "CREATE TABLE IF NOT EXISTS " +table +" (id INTEGER PRIMARY KEY AUTOINCREMENT, blankColumn TEXT)";
+
+      console.log("tx instance from getTX(): ", tx);
+      tx.executeSql(sql, null, function (_tx, result) {
+        console.log('Get TX success. Result: ', result);
+        resolve(_tx);
+      }, function (_tx, error) {
+        console.log('Get TX error: ' + error.message);
+        // Reject will return the tx object in case you want to try again.
+        reject(_tx);
+      });
+
+    }) //end db.transaction
+  }) //end promise
+} //end getTable
+
+
+function makeTable(db, table, log) {
+  return new Promise(function(resolve, reject) {
+
+    console.log("db instance from makeTable", db);
+    console.log('making table with name');
+    console.log(table);
+    //Creates a table called 'tableName' in the DB if none yet exists
+    console.log('with the following data template:');
+    console.log(log);
+    db.transaction(function (tx) {
+      var fieldString = '';
+      for (var i in log){
+        var suffix = "";
+        if (typeof i === "number" ){
+          suffix = " INT, "
+        } else {
+          suffix = " VARCHAR(150), "
+        }
+        fieldString = fieldString+i+suffix;
       }
       //I need to trim the last two characters to avoid a trailing comma
       fieldString = fieldString.substring(0, fieldString.length - 2);
@@ -94,11 +126,7 @@ function makeTable(db, table, tableRecord) {
       //the id field will autoincrement beginning with 1
       var sql = "CREATE TABLE IF NOT EXISTS " +
       table +
-      " ( id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-      /*"text VARCHAR(50), " +
-      "plantings VARCHAR(50), " +
-      "locations VARCHAR(50), " +
-      "livestock VARCHAR(50) " + */
+      " ( local_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
       fieldString +
       ")";
 
@@ -114,35 +142,54 @@ function makeTable(db, table, tableRecord) {
     });
 
   })
-}
+};
 
-// Save a log to the local database.
-function saveRecord (tx, table, tableRecord) {
+/*
+saveRecord either saves a new record or updates an existing one.
+If log contains a property called local_id, the database updates the record with that local_id
+If log contains no local_id property, a new record is created!
+Params:
+tx - the database context
+table - string name of the table, AKA logType
+log - object following the template for that logType
+*/
+
+function saveRecord (tx, table, log) {
+  console.log('SAVING THE FOLLOWING RECORDS:');
+  console.log(log);
+
   var fieldString = "";
   var queryString = "";
   var values = [];
-  for (var i in tableRecord){
+  for (var i in log){
     fieldString = fieldString+i+", ";
     queryString = queryString+"?, ";
-    values.push(tableRecord[i]);
+    values.push(log[i]);
   }
   //I need to trim the last two characters of each string to avoid trailing commas
   fieldString = fieldString.substring(0, fieldString.length - 2);
   queryString = queryString.substring(0, queryString.length - 2);
 
-  //I am going to try skipping the id field, and see if it autoincrements
-  var sql = "INSERT OR REPLACE INTO " +
-  table +
-  " ("+fieldString+") " +
-  "VALUES ("+queryString+")";
 
+    console.log("add record strings")
+    console.log(fieldString);
+    console.log(queryString);
+    console.log(values);
+
+    //Set SQL based on whether the log contains a local_id fieldString
+    var sql;
+      sql = "INSERT OR REPLACE INTO " +
+      table +
+      " ("+fieldString+") " +
+      "VALUES ("+queryString+")";
+    //}
   //tx.executeSql(sql, [tableRecord.text, tableRecord.plantings, tableRecord.locations, tableRecord.livestock],
   tx.executeSql(sql, values, function () {
     console.log('INSERT success');
   }, function (_tx, error) {
     console.log('INSERT error: ' + error.message);
   });
-}
+};
 
 function getRecords (db, table) {
   return new Promise(function(resolve, reject) {
@@ -151,7 +198,6 @@ function getRecords (db, table) {
     function dataHandler(tx, results) {
       resolve([...results.rows]);
     }
-
     //This is called if the db.transaction fails to obtain data
     function errorHandler(tx, error) {
       console.log("No old logs found in cache.");
