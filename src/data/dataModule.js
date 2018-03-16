@@ -1,9 +1,10 @@
-// import logTemplates from './logTemplates';
+import {logFactory} from './logFactory';
 
 export default {
   state: {
     logs: [],
     assets: [],
+    areas: [],
     currentLogIndex: 0,
   },
 
@@ -14,12 +15,13 @@ export default {
           ...cachedLog,
           isCachedLocally: true
         })
-      })
+      });
       state.logs = state.logs.concat(cachedLogs);
     },
     addLogAndMakeCurrent(state, newLog) {
       state.currentLogIndex = state.logs.push(newLog) -1;
     },
+    // TODO: accept multiple properties
     updateCurrentLog (state, newProperty) {
       state.logs[state.currentLogIndex][newProperty.key] = newProperty.val
     },
@@ -29,12 +31,35 @@ export default {
 
     initializeLog({commit, rootState}, logType) {
       // TODO: The User ID will also be needed to sync with server
+      const curDate = new Date(Date.now());
+      const timestamp = Math.floor(curDate / 1000).toString();
+      const curTimeString = curDate.toLocaleTimeString('en-US');
+      const curDateString = curDate.toLocaleDateString('en-US');
       const newLog = logFactory({
         type: logType,
-        name: rootState.user.name ? rootState.user.name : '',
-        timestamp: Math.floor(Date.now() / 1000).toString()
-      })
+        name: `Observation: ${curDateString} - ${curTimeString}`,
+        field_farm_log_owner: rootState.user.name ? rootState.user.name : '',
+        timestamp: timestamp,
+      });
       commit('addLogAndMakeCurrent', newLog);
+
+      // TODO: Separate this into its own action
+      let newRecord = newLog;
+      delete newRecord.local_id
+      openDatabase()
+      .then(function(db) {
+        return makeTable(db, logType, newRecord);
+      })
+      .then(function(tx) {
+        return saveRecord(tx, logType, newRecord)
+      })
+      .then(function(results) {
+        // Can we be sure this will always be the CURRENT log?
+        commit('updateCurrentLog', { key: 'isCachedLocally', val: true });
+        commit('updateCurrentLog', { key: 'local_id', val: results.insertId });
+
+      })
+
     },
 
     loadCachedLogs({commit}, logType) {
@@ -50,16 +75,30 @@ export default {
       })
     },
 
-    recordObservation ({commit}, obs) {
-      const table = obs.type;
+    updateCurrentLog({commit, dispatch, rootState}, newProperty) {
+      commit('updateCurrentLog', newProperty);
+      let newLog = logFactory({
+        ...rootState.data.logs[rootState.data.currentLogIndex]
+      })
+      newLog[newProperty.key] = newProperty.val;
+      dispatch('updateRecord', newLog);
+    },
+
+    updateRecord ({commit}, newLog) {
+      const table = newLog.type;
       openDatabase()
       .then(function(db) {
-        return makeTable(db, table, obs);
+        return getTX(db, table);
       })
       .then(function(tx) {
-        saveRecord(tx, table, obs)
+        saveRecord(tx, table, newLog)
+      })
+      .then(function(tx, result) {
+        // Can we be sure this will always be the CURRENT log?
+        commit('updateCurrentLog', { key: 'isCachedLocally', val: true })
       })
     },
+
   }
 }
 
@@ -72,7 +111,6 @@ function openDatabase () {
     //Check whether a local webSQL database exists.  If a local database does not yet exist, make it!
     const db = window.openDatabase("farmOSLocalDB", "1.0", "farmOS Local Database", 200000);
     // window.openDatabase either opens an existing DB or creates a new one.
-    console.log("db instance from openDatabase(): ", db);
     resolve(db);
 
   })
@@ -85,7 +123,6 @@ function getTX(db, table) {
 
       var sql = "CREATE TABLE IF NOT EXISTS " +table +" (id INTEGER PRIMARY KEY AUTOINCREMENT, blankColumn TEXT)";
 
-      console.log("tx instance from getTX(): ", tx);
       tx.executeSql(sql, null, function (_tx, result) {
         console.log('Get TX success. Result: ', result);
         resolve(_tx);
@@ -103,12 +140,8 @@ function getTX(db, table) {
 function makeTable(db, table, log) {
   return new Promise(function(resolve, reject) {
 
-    console.log("db instance from makeTable", db);
-    console.log('making table with name');
-    console.log(table);
+    console.log(`making table with name ${table} and the following data tempate: `, log);
     //Creates a table called 'tableName' in the DB if none yet exists
-    console.log('with the following data template:');
-    console.log(log);
     db.transaction(function (tx) {
       var fieldString = '';
       for (var i in log){
@@ -155,20 +188,21 @@ log - object following the template for that logType
 */
 
 function saveRecord (tx, table, log) {
-  console.log('SAVING THE FOLLOWING RECORDS:');
-  console.log(log);
+  return new Promise((resolve, reject) => {
+    console.log('SAVING THE FOLLOWING RECORDS:');
+    console.log(log);
 
-  var fieldString = "";
-  var queryString = "";
-  var values = [];
-  for (var i in log){
-    fieldString = fieldString+i+", ";
-    queryString = queryString+"?, ";
-    values.push(log[i]);
-  }
-  //I need to trim the last two characters of each string to avoid trailing commas
-  fieldString = fieldString.substring(0, fieldString.length - 2);
-  queryString = queryString.substring(0, queryString.length - 2);
+    var fieldString = "";
+    var queryString = "";
+    var values = [];
+    for (var i in log){
+      fieldString = fieldString+i+", ";
+      queryString = queryString+"?, ";
+      values.push(log[i]);
+    }
+    //I need to trim the last two characters of each string to avoid trailing commas
+    fieldString = fieldString.substring(0, fieldString.length - 2);
+    queryString = queryString.substring(0, queryString.length - 2);
 
 
     console.log("add record strings")
@@ -178,17 +212,21 @@ function saveRecord (tx, table, log) {
 
     //Set SQL based on whether the log contains a local_id fieldString
     var sql;
-      sql = "INSERT OR REPLACE INTO " +
-      table +
-      " ("+fieldString+") " +
-      "VALUES ("+queryString+")";
+    sql = "INSERT OR REPLACE INTO " +
+    table +
+    " ("+fieldString+") " +
+    "VALUES ("+queryString+")";
     //}
-  //tx.executeSql(sql, [tableRecord.text, tableRecord.plantings, tableRecord.locations, tableRecord.livestock],
-  tx.executeSql(sql, values, function () {
-    console.log('INSERT success');
-  }, function (_tx, error) {
-    console.log('INSERT error: ' + error.message);
-  });
+    //tx.executeSql(sql, [tableRecord.text, tableRecord.plantings, tableRecord.locations, tableRecord.livestock],
+    tx.executeSql(sql, values, function (_tx, results) {
+      console.log('INSERT success');
+      resolve(results);
+    }, function (_tx, error) {
+      console.log('INSERT error: ' + error.message);
+      reject(error.message)
+    });
+
+  })
 };
 
 function getRecords (db, table) {
@@ -213,30 +251,4 @@ function getRecords (db, table) {
       );
     });
   })
-}
-
-// A helper function for creating new log items with default properties
-// TODO: a User ID will also be needed to sync with server
-function logFactory ({
-  id = null,
-  local_id = null,
-  type = '',
-  name = '',
-  timestamp = '',
-  notes = '',
-  quantity = '',
-  isCachedLocally = false,
-  isSyncedWithServer = false,
-} = {}) {
-  return {
-    id,
-    local_id,
-    type,
-    name,
-    timestamp,
-    notes,
-    quantity,
-    isCachedLocally,
-    isSyncedWithServer,
-  }
 }
