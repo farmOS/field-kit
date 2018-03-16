@@ -1,5 +1,4 @@
 // A helper function for creating new log items with default properties
-// TODO: a User ID will also be needed to sync with server
 export function logFactory ({
   field_farm_images = [],
   // TODO: Are we allowing for multiple images/uris?
@@ -21,7 +20,49 @@ export function logFactory ({
   isCachedLocally = false,
   // TODO: A timestamp might be better than a boolean for tracking remote sync
   isSyncedWithServer = false,
-} = {}) {
+} = {}, dest) {
+  if (dest === 'SQL') {
+    // Return a different format if outputting for SQL
+    return {
+      field_farm_images,
+      local_image_uris,
+      field_farm_area,
+      field_farm_asset,
+      field_farm_geofield,
+      field_farm_log_owner,
+      field_farm_notes,
+      field_farm_quantity,
+      id,
+      local_id,
+      name,
+      type,
+      timestamp,
+      done,
+      isCachedLocally,
+      isSyncedWithServer,
+    };
+  } else if (dest === 'STORE') {
+    // Return a different format if outputting for the Vuex Store
+    return {
+      field_farm_images,
+      local_image_uris,
+      field_farm_area,
+      field_farm_asset,
+      field_farm_geofield,
+      field_farm_log_owner,
+      field_farm_notes,
+      field_farm_quantity,
+      id,
+      local_id,
+      name,
+      type,
+      timestamp,
+      done,
+      isCachedLocally,
+      isSyncedWithServer,
+    };
+  }
+  // A default to return if no destination is specified
   return {
     field_farm_images,
     local_image_uris,
@@ -39,5 +80,5 @@ export function logFactory ({
     done,
     isCachedLocally,
     isSyncedWithServer,
-  }
+  };
 }
