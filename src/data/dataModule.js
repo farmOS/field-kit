@@ -29,7 +29,7 @@ export default {
 
   actions: {
 
-    initializeLog({commit, rootState}, logType) {
+    initializeLog({commit, dispatch, rootState}, logType) {
       // TODO: The User ID will also be needed to sync with server
       const curDate = new Date(Date.now());
       const timestamp = Math.floor(curDate / 1000).toString();
@@ -42,24 +42,24 @@ export default {
         timestamp: timestamp,
       });
       commit('addLogAndMakeCurrent', newLog);
+      dispatch('createRecord', newLog);
+    },
 
-      // TODO: Separate this into its own action
-      let newRecord = newLog;
+    createRecord ({commit, dispatch, rootstate}, newRecord) {
+      const tableName = newRecord.type
       delete newRecord.local_id
       openDatabase()
       .then(function(db) {
-        return makeTable(db, logType, newRecord);
+        return makeTable(db, tableName, newRecord);
       })
       .then(function(tx) {
-        return saveRecord(tx, logType, newRecord)
+        return saveRecord(tx, tableName, newRecord)
       })
       .then(function(results) {
         // Can we be sure this will always be the CURRENT log?
         commit('updateCurrentLog', { key: 'isCachedLocally', val: true });
         commit('updateCurrentLog', { key: 'local_id', val: results.insertId });
-
       })
-
     },
 
     loadCachedLogs({commit}, logType) {
