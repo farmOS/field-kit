@@ -43,9 +43,6 @@
         >
       </div>
       <br>
-      <div class="input-group">
-        <button @click="recordObservation" class="btn btn-default" type="button" >Record observation!</button>
-      </div>
       <li v-for="i in logs">
         {{i}}
       </li>
@@ -72,18 +69,6 @@ export default {
     this.$store.dispatch('initializeLog', 'farm_observation')
   },
   methods: {
-    // TODO: remove this method and let updateCurrentLog() handle all this
-    recordObservation () {
-      const currentLog = this.logs[this.currentLogIndex];
-      const obs = {
-        name: currentLog.name,
-        timestamp: currentLog.timestamp,
-        field_farm_notes: currentLog.field_farm_notes,
-        field_farm_quantity: currentLog.field_farm_quantity,
-        type: currentLog.type,
-      };
-      this.$store.dispatch('recordObservation', obs);
-    },
 
     convertOutOfUnix (unixTimestamp) {
       return moment.unix(unixTimestamp).format('YYYY-MM-DD')
@@ -95,7 +80,7 @@ export default {
 
     updateCurrentLog (key, val) {
       const newProperty = {key, val};
-      this.$store.commit('updateCurrentLog', newProperty)
+      this.$store.dispatch('updateCurrentLog', newProperty)
     },
 
   },
