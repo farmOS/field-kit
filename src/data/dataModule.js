@@ -13,6 +13,7 @@ export default {
       const cachedLogs = payload.map(function(cachedLog) {
         return logFactory({
           ...cachedLog,
+          // TODO: The DB action should set `isCachedLocally` before committing
           isCachedLocally: true
         })
       });
@@ -29,7 +30,14 @@ export default {
 
   actions: {
 
-    initializeLog({commit, dispatch, rootState}, logType) {
+    // INPUT ACTION
+    initializeLogs ({commit, dispatch}, logType) {
+      dispatch('createLog', logType);
+      dispatch('loadCachedLogs', logType);
+    },
+
+    // INPUT ACTION
+    createLog({commit, dispatch, rootState}, logType) {
       // TODO: The User ID will also be needed to sync with server
       const curDate = new Date(Date.now());
       const timestamp = Math.floor(curDate / 1000).toString();
@@ -45,6 +53,7 @@ export default {
       dispatch('createRecord', newLog);
     },
 
+    // DB ACTION
     createRecord ({commit, dispatch, rootstate}, newRecord) {
       const tableName = newRecord.type
       delete newRecord.local_id
@@ -62,6 +71,7 @@ export default {
       })
     },
 
+    // DB ACTION
     loadCachedLogs({commit}, logType) {
       openDatabase()
       .then(function(db) {
@@ -75,6 +85,7 @@ export default {
       })
     },
 
+    // INPUT ACTION
     updateCurrentLog({commit, dispatch, rootState}, newProperty) {
       commit('updateCurrentLog', newProperty);
       let newLog = logFactory({
@@ -84,6 +95,7 @@ export default {
       dispatch('updateRecord', newLog);
     },
 
+    // DB ACTION
     updateRecord ({commit}, newLog) {
       const table = newLog.type;
       openDatabase()

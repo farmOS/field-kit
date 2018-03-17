@@ -65,8 +65,7 @@ export default {
   }),
 
   created: function () {
-    this.$store.dispatch('loadCachedLogs', 'farm_observation');
-    this.$store.dispatch('initializeLog', 'farm_observation')
+    this.$store.dispatch('initializeLogs', 'farm_observation')
   },
   methods: {
 
