@@ -4,7 +4,6 @@ import Calendar from '../components/Calendar';
 import Observations from '../components/Observations';
 import NewObservation from '../components/NewObservation';
 import DataNative from '../components/DataNative';
-import TestStateData from '../components/TestStateData'
 
 Vue.use(Router)
 
@@ -34,11 +33,6 @@ export default new Router({
       name: 'DataNative',
       component: DataNative
     },
-    {
-      path: '/test-state-data',
-      name: 'TestStateData',
-      component: TestStateData
-    }
-    
+
   ]
 })

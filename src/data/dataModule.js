@@ -1,225 +1,108 @@
-import logTemplates from './logTemplates';
+import {logFactory} from './logFactory';
 
 export default {
   state: {
-    logs: {observations: {}},
-    didCreateDB: false
+    logs: [],
+    assets: [],
+    areas: [],
+    currentLogIndex: 0,
   },
+
   mutations: {
-    /*
-      Accepts an object payload consisting of logType (a string) and log (an object)
-    */
-    addUnsyncedLogsToState(state, payload) {
-      var logs = payload.log;
-      var logType = payload.logType;
-      console.log('ADDING UNSYNCED LOGS:');
-      console.log(logs);
-      console.log('OF TYPE:');
-      console.log(logType)
-      state.logs[logType] = logs;
-      console.log('THIS IS THE STATE OF OBSERVATIONS');
-      console.log(state.logs.observations);
+    addCachedLogs(state, payload) {
+      const cachedLogs = payload.map(function(cachedLog) {
+        return logFactory({
+          ...cachedLog,
+          isCachedLocally: true
+        })
+      });
+      state.logs = state.logs.concat(cachedLogs);
     },
-    toggleCreatedDB (state) {
-      state.didCreateDB = true;
-    }
+    addLogAndMakeCurrent(state, newLog) {
+      state.currentLogIndex = state.logs.push(newLog) -1;
+    },
+    // TODO: accept multiple properties
+    updateCurrentLog (state, newProperty) {
+      state.logs[state.currentLogIndex][newProperty.key] = newProperty.val
+    },
   },
+
   actions: {
 
-    /*
-    getAll obtains all records from the database and loads them into the application state as logs{}
-    it requires a simple string parameter - logType.  logType must be one of the types included in logTemplates.js
-     */
-    getAll ({commit, state}, logType) {
-      //getAll will be called by other actions, so I am wrapping it in a Promise
-      //getAll must also be able to read state, because it needs to create a table based on existing templates
-    return new Promise(function(resolve, reject) {
+    initializeLog({commit, rootState}, logType) {
+      // TODO: The User ID will also be needed to sync with server
+      const curDate = new Date(Date.now());
+      const timestamp = Math.floor(curDate / 1000).toString();
+      const curTimeString = curDate.toLocaleTimeString('en-US');
+      const curDateString = curDate.toLocaleDateString('en-US');
+      const newLog = logFactory({
+        type: logType,
+        name: `Observation: ${curDateString} - ${curTimeString}`,
+        field_farm_log_owner: rootState.user.name ? rootState.user.name : '',
+        timestamp: timestamp,
+      });
+      commit('addLogAndMakeCurrent', newLog);
 
-      var log = {};
-      console.log('HERE IS STATE.LOGS:')
-      console.log(state.logs)
-
-      for (var i in state.logs){
-        if (i.hasOwnProperty(logType)) {
-              log = i;
-              console.log('LOGS SET TO:');
-              console.log(log);
-        }
-      }
-
+      // TODO: Separate this into its own action
+      let newRecord = newLog;
+      delete newRecord.local_id
       openDatabase()
       .then(function(db) {
-        return getTX(db, logType);
+        return makeTable(db, logType, newRecord);
       })
       .then(function(tx) {
-        return getLogs(tx, logType);
-        console.log('LOGS OBTAINED AND RETURNED');
+        return saveRecord(tx, logType, newRecord)
       })
       .then(function(results) {
-        console.log('This is the form data:');
-        console.log(results);
-        commit('addUnsyncedLogsToState', {logType:logType, log:results});
+        // Can we be sure this will always be the CURRENT log?
+        commit('updateCurrentLog', { key: 'isCachedLocally', val: true });
+        commit('updateCurrentLog', { key: 'local_id', val: results.insertId });
 
-        resolve(results);
       })
 
-    })//end promise
-    },// end getAll
-
-    /*
-    makeLog is called by the UI with a payload of input provided by the user
-    it packages the values into farmOS format and saves them to the database.
-    the payload is an object with log and logType properties
-    log is an object containing of string values.  logType is a simple string.
-    */
-
-    makeLog ({commit, dispatch, state}, payload) {
-
-      //Unpacking the payload into log and table
-      const log = payload.log;
-      console.log('MAKELOG CALLED WITH LOG:');
-      console.log(log);
-      const table = payload.logType;
-
-      var rawTemplates = logTemplates.rawTemplates;
-      //Open the template for the log type.  For each template property matching a property in log, write log values into template
-      for (var rawProp in rawTemplates) {
-        if( rawTemplates.hasOwnProperty(rawProp) && table === rawProp) {
-          //var logFull = rawTemplates[rawProp]
-          var logFull = {};
-          for (var rawSubProp in rawTemplates[rawProp]) {
-            var subPropTemplate = rawTemplates[rawProp][rawSubProp];
-
-            //First, place a string version of the template data into the new record
-            if (isObject(JSON.stringify(subPropTemplate)) || isArray(JSON.stringify(subPropTemplate))){
-              logFull[rawSubProp] = JSON.stringify(subPropTemplate);
-            } else {
-              logFull[rawSubProp] = subPropTemplate;
-            }
-
-            //If the user has entered a value for a prop, overwrite it!
-            for (var logItem in log){
-              if (logItem === rawSubProp) {
-                  //Write a new value to template
-                  //Use parseProp, isObject and isArray to append prefix and suffix where needed to achieve farmOS format
-                  var oneProp;
-                  if (isObject(JSON.stringify(log[logItem])) || isArray(JSON.stringify(log[logItem]))){
-                    oneProp = JSON.stringify(log[logItem]);
-                  } else {
-                    oneProp = log[logItem];
-                  }
-                  logFull[rawSubProp] = parseProp(table, logItem, oneProp);
-              }
-            } // end for log
-          }// end for rawSubProp
-
-          //Before adding to database, we must add the synced property
-          logFull.synced = false;
-
-          /* TEST
-          ADD A local_id PROP TO OVER-WRITE AN EXISTING RECORD
-          */
-          logFull.local_id = 3;
-
-
-          console.log('MODIFIED LOG TO SAVE:');
-          console.log(logFull);
-
-
-          openDatabase()
-          .then(function(db) {
-            return getTX(db, table);
-          })
-          .then(function(tx) {
-            saveRecord(tx, table, logFull);
-          })
-          .then(function() {
-            dispatch('getAll', table);
-          })
-
-        }//if hasOwn
-      }//for rawProp
-
-    }, //end makeLog
-
-    // Push records to farmOS via REST API.
-    pushRecords () {
-      // AJAX request...
     },
 
-    /*
-    loadCachedLogs creates tables based on all log templates stored in logTemplates.js
-    It also loads the values from each template into the newly created tables
-    logTemplates.rawTemplates contains properly formatted logs of each possible type
-    These correspond to the expected raw server output for each log type
-    */
+    loadCachedLogs({commit}, logType) {
+      openDatabase()
+      .then(function(db) {
+        return getRecords(db, logType)
+      })
+      .then(function(result) {
+        commit('addCachedLogs', result)
+      })
+      .catch(function(error) {
+        console.error(error);
+      })
+    },
 
-    loadCachedLogs({commit, dispatch, state}) {
+    updateCurrentLog({commit, dispatch, rootState}, newProperty) {
+      commit('updateCurrentLog', newProperty);
+      let newLog = logFactory({
+        ...rootState.data.logs[rootState.data.currentLogIndex]
+      })
+      newLog[newProperty.key] = newProperty.val;
+      dispatch('updateRecord', newLog);
+    },
 
-      var rawTemplates = logTemplates.rawTemplates;
-      console.log('RAW TEMPLATES');
-      console.log(rawTemplates);
+    updateRecord ({commit}, newLog) {
+      const table = newLog.type;
+      openDatabase()
+      .then(function(db) {
+        return getTX(db, table);
+      })
+      .then(function(tx) {
+        saveRecord(tx, table, newLog)
+      })
+      .then(function(tx, result) {
+        // Can we be sure this will always be the CURRENT log?
+        commit('updateCurrentLog', { key: 'isCachedLocally', val: true })
+      })
+    },
 
-      //Iterating through raw data template, obtaining keys and values for each property
-      for (var rawProp in rawTemplates) {
-        if( rawTemplates.hasOwnProperty(rawProp) ) {
-
-          var tableName = rawProp;
-          const payload = () => {
-          var payLoadBuilder = {};
-
-          for (var rawSubProp in rawTemplates[rawProp]) {
-
-            var parsedValue;
-            if (isObject(JSON.stringify(rawTemplates[rawProp][rawSubProp])) || isArray(JSON.stringify(rawTemplates[rawProp][rawSubProp]))){
-            parsedValue = JSON.stringify(rawTemplates[rawProp][rawSubProp]);
-            } else {
-            parsedValue = rawTemplates[rawProp][rawSubProp];
-            }
-            payLoadBuilder[rawSubProp] = parsedValue;
-
-          }// end sub raw
-
-          return payLoadBuilder;
-          } //end payload
-
-          //Before sending to the database, we must add the synced property
-          var modPayload = payload();
-          modPayload.synced = false;
-          console.log('MODIFIED PAYLOAD:')
-          console.log(modPayload)
-
-          /* TODO
-          createdDB does not belong in the store!  It needs to be persistent state, which it currently isn't.
-          */
-          //Turn this OFF when resetting the database, then back ON after reset in order to avoid duplication of the template record
-          commit('toggleCreatedDB');
-
-          //And finally, we can go ahead and add the payload to the state
-          if (!state.didCreateDB) {
-            openDatabase()
-              .then(function(db) {
-                  return makeTable(db, tableName, modPayload);
-            })
-            .then(function(tx) {
-              saveRecord(tx, tableName, modPayload);
-            })
-            .then(function(){
-              commit('addUnsyncedLogsToState', {logType:tableName, log:[payload()]});
-              // set didCreateDB to true
-              commit('toggleCreatedDB');
-            })
-          }// end if !didCreateDB
-
-        }//end if has raw
-      }//end for var raw
-    }, //end loadCachedLogs
-
-  } //end actions
-} //end export default
+  }
+}
 
 /*Helper funcitons called by actions.  Many of these helper functions execute SQL queries */
-
 function openDatabase () {
   return new Promise(function(resolve, reject) {
     //Here I am both opening the database and making a new table if necessary.
@@ -228,7 +111,6 @@ function openDatabase () {
     //Check whether a local webSQL database exists.  If a local database does not yet exist, make it!
     const db = window.openDatabase("farmOSLocalDB", "1.0", "farmOS Local Database", 200000);
     // window.openDatabase either opens an existing DB or creates a new one.
-    console.log("db instance from openDatabase(): ", db);
     resolve(db);
 
   })
@@ -241,7 +123,6 @@ function getTX(db, table) {
 
       var sql = "CREATE TABLE IF NOT EXISTS " +table +" (id INTEGER PRIMARY KEY AUTOINCREMENT, blankColumn TEXT)";
 
-      console.log("tx instance from getTX(): ", tx);
       tx.executeSql(sql, null, function (_tx, result) {
         console.log('Get TX success. Result: ', result);
         resolve(_tx);
@@ -259,19 +140,9 @@ function getTX(db, table) {
 function makeTable(db, table, log) {
   return new Promise(function(resolve, reject) {
 
-    console.log("db instance from makeTable", db);
-    console.log('making table with name');
-    console.log(table);
+    console.log(`making table with name ${table} and the following data tempate: `, log);
     //Creates a table called 'tableName' in the DB if none yet exists
-    console.log('with the following data template:');
-    console.log(log);
     db.transaction(function (tx) {
-
-      //Start by eraising all preexisting records
-      //tx.executeSql(`DROP TABLE IF EXISTS `+table);
-      //console.log('Dropping table if exists:');
-      //console.log(table);
-
       var fieldString = '';
       for (var i in log){
         var suffix = "";
@@ -285,9 +156,6 @@ function makeTable(db, table, log) {
       //I need to trim the last two characters to avoid a trailing comma
       fieldString = fieldString.substring(0, fieldString.length - 2);
 
-      console.log("create table strings")
-      console.log(fieldString);
-
       //the id field will autoincrement beginning with 1
       var sql = "CREATE TABLE IF NOT EXISTS " +
       table +
@@ -295,7 +163,6 @@ function makeTable(db, table, log) {
       fieldString +
       ")";
 
-      console.log("tx instance from makeTable(): ", tx);
       tx.executeSql(sql, null, function (_tx, result) {
         console.log('Make table success. Result: ', result);
         resolve(_tx);
@@ -308,7 +175,7 @@ function makeTable(db, table, log) {
     });
 
   })
-}
+};
 
 /*
 saveRecord either saves a new record or updates an existing one.
@@ -321,150 +188,67 @@ log - object following the template for that logType
 */
 
 function saveRecord (tx, table, log) {
-console.log('SAVING THE FOLLOWING RECORDS:');
-console.log(log);
+  return new Promise((resolve, reject) => {
+    console.log('SAVING THE FOLLOWING RECORDS:');
+    console.log(log);
 
-  var fieldString = "";
-  var queryString = "";
-  var values = [];
-  for (var i in log){
-    fieldString = fieldString+i+", ";
-    queryString = queryString+"?, ";
-    values.push(log[i]);
-  }
-  //I need to trim the last two characters of each string to avoid trailing commas
-  fieldString = fieldString.substring(0, fieldString.length - 2);
-  queryString = queryString.substring(0, queryString.length - 2);
+    var fieldString = "";
+    var queryString = "";
+    var values = [];
+    for (var i in log){
+      fieldString = fieldString+i+", ";
+      queryString = queryString+"?, ";
+      values.push(log[i]);
+    }
+    //I need to trim the last two characters of each string to avoid trailing commas
+    fieldString = fieldString.substring(0, fieldString.length - 2);
+    queryString = queryString.substring(0, queryString.length - 2);
 
-  console.log("add record strings")
-  console.log(fieldString);
-  console.log(queryString);
-  console.log(values);
 
-  //Set SQL based on whether the log contains a local_id fieldString
-  var sql;
-  /*
-  if(log.hasOwnProperty(local_id)) {
-    sql = "INSERT OR REPLACE INTO " +
-    table +
-    " ("+fieldString+") " +
-    "VALUES ("+queryString+")"
-  } else {
-  */
+    console.log("add record strings")
+    console.log(fieldString);
+    console.log(queryString);
+    console.log(values);
+
+    //Set SQL based on whether the log contains a local_id fieldString
+    var sql;
     sql = "INSERT OR REPLACE INTO " +
     table +
     " ("+fieldString+") " +
     "VALUES ("+queryString+")";
-  //}
-
-  //tx.executeSql(sql, [tableRecord.text, tableRecord.plantings, tableRecord.locations, tableRecord.livestock],
-  tx.executeSql(sql, values, function () {
-    console.log('INSERT success');
-    // commit('iterateLogCount');
-  }, function (_tx, error) {
-    console.log('INSERT error: ' + error.message);
-  });
-}
-
-
-
-function getLogs (tx, logType) {
-  return new Promise(function(resolve, reject) {
-    //Get a record from the local DB by local ID.
-    //This is an asynchronous callback.
-    console.log('getting record');
-
-      var sql = "SELECT " +
-      " * " +
-      "FROM " +
-      logType;
-
-      tx.executeSql(sql, [], function (_tx, results) {
-        console.log('GET LOG success');
-        console.log(results);
-
-        //This function strings all result objects into an array, and returns the array.
-        var allResults = [];
-
-        for (var i = 0; i < results.rows.length; i++) {
-          var oneResult;
-          //if (isObject(results.rows.item(i)) || isArray(results.rows.item(i))){
-          //  oneResult = JSON.stringify(results.rows.item(i));
-          //} else {
-            oneResult = results.rows.item(i)
-          //}
-          allResults.push(oneResult);
-        } // end results
-
-        resolve(allResults)
-      }, function (_tx, error) {
-        console.log('INSERT error: ' + error.message);
-        reject();
-      });
+    //}
+    //tx.executeSql(sql, [tableRecord.text, tableRecord.plantings, tableRecord.locations, tableRecord.livestock],
+    tx.executeSql(sql, values, function (_tx, results) {
+      console.log('INSERT success');
+      resolve(results);
+    }, function (_tx, error) {
+      console.log('INSERT error: ' + error.message);
+      reject(error.message)
+    });
 
   })
-}
+};
 
-/*
-  Appends a prefix and suffix to certain object property values
-  This allows us to store records in the data format required by farmOS
-*/
-function parseProp(logType, key, value){
-  var parsedValue = '';
-  var propTemplates = logTemplates.propTemplates;
-  for (var prop in propTemplates){
-    if (propTemplates.hasOwnProperty(prop) && prop === logType) {
-    var typeTemplate = propTemplates[prop];
-    for (var subProp in typeTemplate){
-      if (subProp === key) {
-        var propTemplate = typeTemplate[subProp];
-        parsedValue = propTemplate.prefix+String(value)+propTemplate.suffix;
-        console.log('PARSED THE FOLLOWING:')
-        console.log(parsedValue)
-        return parsedValue;
-      }
+function getRecords (db, table) {
+  return new Promise(function(resolve, reject) {
+
+    //This is called if the db.transaction obtains data
+    function dataHandler(tx, results) {
+      resolve([...results.rows]);
     }
-  }// end if equals
-  }// end for propTemplates
-  return value;
-}
-
-/*
-Tests whether a string can be converted to a key:value object
-This will be used in interpreting results of database queries
-*/
-function isObject(string) {
-  var value;
-  try {
-    value = JSON.parse(string);
-  } catch (e) {
-    return false;
-  }
-  if(value && typeof value === 'object' && value.constructor === Object) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-/*
-Tests whether a string can be converted to an array with more than 0 entries
-This will be used in interpreting results of database queries
-*/
-function isArray(string) {
-  var value;
-  try {
-    value = JSON.parse(string);
-  } catch (e) {
-    return false;
-  }
-  if (value && typeof value === 'object' && value.constructor === Array) {
-    if (value.length > 0) {
-      return true;
-    } else {
-    return false;
+    //This is called if the db.transaction fails to obtain data
+    function errorHandler(tx, error) {
+      console.log("No old logs found in cache.");
+      resolve([]);
     }
-  } else {
-    return false;
-  }
+
+    db.transaction(function (tx) {
+      var sql = `SELECT * FROM ${table}`;
+
+      tx.executeSql(sql, [],
+        dataHandler,
+        errorHandler
+      );
+    });
+  })
 }

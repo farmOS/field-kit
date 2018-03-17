@@ -43,9 +43,7 @@ export default {
         username: this.username,
         password: this.password
       }
-      //Rather than directly triggering the mutation, I will trigger the didSubmitCredentials action
-      this.$store.dispatch('didSubmitCredentials', creds);
-      //this.$store.commit('login', creds);
+      this.$store.commit('login', creds);
       this.$router.push({path: '/'})
     }
 

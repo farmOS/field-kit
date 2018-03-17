@@ -16,6 +16,7 @@ export default {
       console.log('STATUS TEXT:');
       console.log(state.statusText);
     }
+<<<<<<< HEAD
   },
   actions: {
 /*
@@ -130,4 +131,7 @@ function submitCredentials(username, password) {
       alert( "complete" );
     });
    */
+=======
+  }
+>>>>>>> origin/jamie
 }
