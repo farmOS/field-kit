@@ -9,15 +9,8 @@ export default {
   },
 
   mutations: {
-    addCachedLogs(state, payload) {
-      const cachedLogs = payload.map(function(cachedLog) {
-        return logFactory({
-          ...cachedLog,
-          // TODO: The DB action should set `isCachedLocally` before committing
-          isCachedLocally: true
-        })
-      });
-      state.logs = state.logs.concat(cachedLogs);
+    addLogs(state, logs) {
+      state.logs = state.logs.concat(logs);
     },
     addLogAndMakeCurrent(state, newLog) {
       state.currentLogIndex = state.logs.push(newLog) -1;
@@ -32,6 +25,7 @@ export default {
 
     // INPUT ACTION
     initializeLogs ({commit, dispatch}, logType) {
+      // BUG: This is creating duplicate records on startup
       dispatch('createLog', logType);
       dispatch('loadCachedLogs', logType);
     },
@@ -77,8 +71,14 @@ export default {
       .then(function(db) {
         return getRecords(db, logType)
       })
-      .then(function(result) {
-        commit('addCachedLogs', result)
+      .then(function(results) {
+        const cachedLogs = results.map(function(log) {
+          return logFactory({
+            ...log,
+            isCachedLocally: true
+          })
+        });
+        commit('addLogs', cachedLogs)
       })
       .catch(function(error) {
         console.error(error);
