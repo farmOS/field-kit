@@ -3,135 +3,100 @@ export default {
     isLoggedIn: false,
     name: null,
     //statusText is for testing purposes only
-    statusText: 'AWAITING RESPONSE'
+    statusText: 'Waiting for credentials',
+    //responseReceived is for testing purposes only
+    responseReceived: null,
   },
   mutations: {
     login(state, creds) {
       state.isLoggedIn = true;
       state.name = creds.username;
+      console.log('LOGGED IN AS: '+creds.username)
     },
 //the setStatusText mutation is for testing purposes only
     setStatusText(state, text) {
       state.statusText = text;
       console.log('STATUS TEXT:');
       console.log(state.statusText);
+    },
+//likewise, responseWasReceived is for testing purposes only
+    responseWasReceived(state, response) {
+      state.responseReceived = response;
     }
-<<<<<<< HEAD
+
   },
   actions: {
+
 /*
 TODO
-- Ensure that basic page request works in native app
-- Enable login request following steps devised in iOS project
-- Enable permanent settings store for username, cookie, token
+- Enable persistant settings store for url, username, token
+- On load, check whether the device is online.  If not, proceed directly to main view
+- If online, check if the app is already authenticated on the server.
+If not, present login.  If so, get username, token from settings
 */
 
     didSubmitCredentials ({commit}, payload) {
 
     console.log('RUNNING didSubmitCredentials')
-    var username = payload.user;
-    var password = payload.pass;
+    var url = payload.farmosUrl;
+    var username = payload.username;
+    var password = payload.password;
 
-    const url = 'http://www.beetclock.com/farmOS/'
+    commit('setStatusText', 'Credentials submitted; waiting for response from server');
 
-    //Trying CORS request
-    var xhr = createCORSRequest('GET', url);
-    if (!xhr) {
-      throw new Error('CORS not supported');
-    }
+        submitCredentials(url, username, password)
+        .then( function (response){
 
-    xhr.onload = function() {
- var responseText = xhr.responseText;
- console.log(responseText);
- commit('setStatusText', responseText);
-};
+          commit('responseWasReceived', 'ok');
+          commit('setStatusText', 'Server response: '+JSON.stringify(response));
+          //commit('login', {username:username});
+        },
+        function (error){
 
-xhr.onerror = function() {
-  console.log('There was an error!');
-  commit('setStatusText', 'There was an error!');
-};
-
-xhr.send();
-
-
-    //submitCredentials(username, password)
-     //the 'then' callback method is not yet working
-     /*
-    .then( function (result){
-      if (result === 'success') {
-        commit('login', {username:username});
-        console.log('RETURNED SUCCESS RESULT TO ACTION');
-      } else {
-
-      }
-    })//then after commit
-    */
-
-
-        //Log in without checking credentials
-        //commit('login', {username:username});
+          commit('responseWasReceived', 'error');
+          commit('setStatusText', 'Server response: '+JSON.stringify(error));
+        }
+      ); //end promise then
 
   } //end didSubmitCreds
   } //end actions
 } // end export
 
+function submitCredentials(url, username, password) {
+  var submissionPromise = new Promise (function (resolve, reject) {
+console.log('SIGNING IN WITH USERNAME: '+username+'; password: '+password)
+//Set login parameters that will be attached as the data payload of the ajax request
 
-// Function by Nicholas Zakas, from https://www.html5rocks.com/en/tutorials/cors/
-function createCORSRequest(method, url) {
-  var xhr = new XMLHttpRequest();
-  if ("withCredentials" in xhr) {
+var loginUrl = url+'/?q=user/login'
 
-    // Check if the XMLHttpRequest object has a "withCredentials" property.
-    // "withCredentials" only exists on XMLHTTPRequest2 objects.
-    xhr.open(method, url, true);
-
-  } else if (typeof XDomainRequest != "undefined") {
-
-    // Otherwise, check if XDomainRequest.
-    // XDomainRequest only exists in IE, and is IE's way of making CORS requests.
-    xhr = new XDomainRequest();
-    xhr.open(method, url);
-
-  } else {
-
-    // Otherwise, CORS is not supported by the browser.
-    xhr = null;
-
-  }
-  return xhr;
-}
-
-function submitCredentials(username, password) {
+var requestData = {'form_id': 'user_login', 'name': username, 'pass': password};
+//Following header guidance from https://www.quora.com/How-do-I-send-custom-headers-using-jquery-Ajax-and-consume-the-same-header-in-WCF-using-C
+//var requestHeaders = {'Content-Type':'application/json'}
+var requestHeaders = {"Content-Type": "application/x-www-form-urlencoded", "Accept": "application/json"};
 
   $.ajax({
-      url: 'http://www.farmos.org',
-      success: function(data) {
+      type: 'POST',
+      url: loginUrl,
+      headers: requestHeaders,
+      data: requestData,
+      dataType:'json',
+      success: function(response) {
           console.log('REQUEST SUCCESS!!');
-          console.log(data);
+          console.log('STATUS: '+response.status);
+          console.log('STATUS TEXT: '+response.statusText);
+          //commit('setStatusText', response);
+          resolve(response);
       },
-      error: function(data) {
+      error: function(error) {
           console.log('REQUEST FAILURE...');
-          console.log(data);
+          console.log('STATUS: '+error.status);
+          console.log('STATUS TEXT: '+error.statusText);
+          console.log('RESPONSE: '+ JSON.stringify(error));
+          //commit('setStatusText', response);
+          reject(error);
       },
-      dataType:'json'
-  });
+  }); //end ajax
 
-/*
-  // jqxhr implements promise logic for ajax requests
-  //Unsure if I need this
-  var jqxhr = $.ajax(
-   )
-    .done(function() {
-      alert( "success" );
-    })
-    .fail(function() {
-      alert( "error" );
-    })
-    .always(function() {
-      alert( "complete" );
-    });
-   */
-=======
-  }
->>>>>>> origin/jamie
-}
+}); // end promise
+return submissionPromise;
+} //end submitCredentials
