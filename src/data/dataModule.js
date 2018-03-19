@@ -15,9 +15,12 @@ export default {
     addLogAndMakeCurrent(state, newLog) {
       state.currentLogIndex = state.logs.push(newLog) -1;
     },
-    // TODO: accept multiple properties
-    updateCurrentLog (state, newProperty) {
-      state.logs[state.currentLogIndex][newProperty.key] = newProperty.val
+    updateCurrentLog (state, newProps) {
+      const updatedLog = logFactory({
+        ...state.logs[state.currentLogIndex],
+        ...newProps
+      });
+      state.logs.splice(state.currentLogIndex, 1, updatedLog);
     },
   },
 
@@ -60,8 +63,11 @@ export default {
       })
       .then(function(results) {
         // Can we be sure this will always be the CURRENT log?
-        commit('updateCurrentLog', { key: 'isCachedLocally', val: true });
-        commit('updateCurrentLog', { key: 'local_id', val: results.insertId });
+        // Not if we use this action to add new records received from the server
+        commit('updateCurrentLog', {
+          local_id: results.insertId,
+          isCachedLocally: true
+        });
       })
     },
 
@@ -86,12 +92,13 @@ export default {
     },
 
     // INPUT ACTION
-    updateCurrentLog({commit, dispatch, rootState}, newProperty) {
-      commit('updateCurrentLog', newProperty);
+    updateCurrentLog({commit, dispatch, rootState}, newProps) {
+      commit('updateCurrentLog', newProps);
+      // TODO: updateRecord should build the new log and be passed newProps instead
       let newLog = logFactory({
-        ...rootState.data.logs[rootState.data.currentLogIndex]
-      })
-      newLog[newProperty.key] = newProperty.val;
+        ...rootState.data.logs[rootState.data.currentLogIndex],
+        ...newProps
+      });
       dispatch('updateRecord', newLog);
     },
 
@@ -107,7 +114,7 @@ export default {
       })
       .then(function(tx, result) {
         // Can we be sure this will always be the CURRENT log?
-        commit('updateCurrentLog', { key: 'isCachedLocally', val: true })
+        commit('updateCurrentLog', { isCachedLocally: true })
       })
     },
 

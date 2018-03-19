@@ -78,8 +78,11 @@ export default {
     },
 
     updateCurrentLog (key, val) {
-      const newProperty = {key, val};
-      this.$store.dispatch('updateCurrentLog', newProperty)
+      const newProps = {
+        [key]: val,
+        isCachedLocally: false
+      };
+      this.$store.dispatch('updateCurrentLog', newProps)
     },
 
   },
