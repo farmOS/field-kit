@@ -17,7 +17,6 @@ const shellModule = {
 
 const farmModule = {
   state: {
-    test: 'some state',
     logs: [],
     assets: [],
     areas: [],
