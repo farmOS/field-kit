@@ -65,7 +65,12 @@ export default {
   }),
 
   created: function () {
-    this.$store.dispatch('initializeLogs', 'farm_observation')
+    // TODO: It probably makes more sense to remember the last log the user was working on,
+    //    and only initialize a new log when they deliberately choose to.
+    this.$store.dispatch('initializeLog', 'farm_observation')
+  },
+  beforeDestroy: function () {
+    this.$store.commit('clearLogs')
   },
   methods: {
 
@@ -82,7 +87,7 @@ export default {
         [key]: val,
         isCachedLocally: false
       };
-      this.$store.dispatch('updateCurrentLog', newProps)
+      this.$store.commit('updateCurrentLog', newProps)
     },
 
   },

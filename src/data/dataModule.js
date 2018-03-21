@@ -22,19 +22,18 @@ export default {
       });
       state.logs.splice(state.currentLogIndex, 1, updatedLog);
     },
+    clearLogs (state, payload) {
+      state.logs.splice(0, state.logs.length);
+    }
   },
 
   actions: {
 
     // INPUT ACTION
-    initializeLogs ({commit, dispatch}, logType) {
-      // BUG: This is creating duplicate records on startup
-      dispatch('createLog', logType);
-      dispatch('loadCachedLogs', logType);
-    },
-
-    // INPUT ACTION
-    createLog({commit, dispatch, rootState}, logType) {
+    // TODO: Should this logic be moved to the 'addLogAndMakeCurrent' mutation?
+    //    Or perhaps just the logFactory, and pass in the date and logType as
+    //    a `newProps` object from a component method.
+    initializeLog({commit, rootState}, logType) {
       // TODO: The User ID will also be needed to sync with server
       const curDate = new Date(Date.now());
       const timestamp = Math.floor(curDate / 1000).toString();
@@ -47,7 +46,6 @@ export default {
         timestamp: timestamp,
       });
       commit('addLogAndMakeCurrent', newLog);
-      dispatch('createRecord', newLog);
     },
 
     // DB ACTION
@@ -91,19 +89,12 @@ export default {
       })
     },
 
-    // INPUT ACTION
-    updateCurrentLog({commit, dispatch, rootState}, newProps) {
-      commit('updateCurrentLog', newProps);
-      // TODO: updateRecord should build the new log and be passed newProps instead
-      let newLog = logFactory({
+    // DB ACTION
+    updateRecord ({commit, rootState}, newProps) {
+      const newLog = logFactory({
         ...rootState.data.logs[rootState.data.currentLogIndex],
         ...newProps
       });
-      dispatch('updateRecord', newLog);
-    },
-
-    // DB ACTION
-    updateRecord ({commit}, newLog) {
       const table = newLog.type;
       openDatabase()
       .then(function(db) {
