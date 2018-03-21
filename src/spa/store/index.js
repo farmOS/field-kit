@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import {logFactory} from '../../data/logFactory';
+import {logFactory} from './logFactory';
 
 Vue.use(Vuex);
 
@@ -24,6 +24,7 @@ const farmModule = {
   },
   mutations: {
     addLogs(state, logs) {
+      // TODO: Should logs pass through logFactory() to make sure props are valid?
       state.logs = state.logs.concat(logs);
     },
     addLogAndMakeCurrent(state, newLog) {
