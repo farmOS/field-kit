@@ -60,8 +60,8 @@ export default {
     }
   },
   computed: mapState({
-    logs: state => state.data.logs,
-    currentLogIndex: state => state.data.currentLogIndex,
+    logs: state => state.farm.logs,
+    currentLogIndex: state => state.farm.currentLogIndex,
   }),
 
   created: function () {
