@@ -25,8 +25,8 @@
       </div>
       <div class="input-group">
         <input
-          :value="logs[currentLogIndex].field_farm_notes"
-          @input="updateCurrentLog('field_farm_notes', $event.target.value)"
+          :value="logs[currentLogIndex].notes"
+          @input="updateCurrentLog('notes', $event.target.value)"
           placeholder="Enter notes"
           type="text"
           class="form-control"
@@ -34,8 +34,8 @@
       </div>
       <div class="input-group">
         <input
-          :value="logs[currentLogIndex].field_farm_quantity"
-          @input="updateCurrentLog('field_farm_quantity', $event.target.value)"
+          :value="logs[currentLogIndex].quantity"
+          @input="updateCurrentLog('quantity', $event.target.value)"
           placeholder="Enter quantity"
           type="number"
           min="0"
