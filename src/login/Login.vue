@@ -13,11 +13,23 @@
     </div>
     <br>
     <div class="input-group">
+      <button :disabled="this.farmosUrl === ''" title="Check login status" @click="checkLogin" class="btn btn-default" type="button" >Check login status</button>
+    </div>
+    <br>
+    <div class="input-group">
+      <button :disabled="this.username === ''" title="Save username" @click="saveName" class="btn btn-default" type="button" >Save username</button>
+    </div>
+    <br>
+    <div class="input-group">
       <button :disabled="!this.valuesEntered" title="Submit credentials" @click="submitCredentials" class="btn btn-default" type="button" >Submit credentials</button>
     </div>
     <br>
     <div class="input-group">
       <button :disabled="this.responseReceived != 'ok' && this.responseReceived != 'error'" title="Proceed to new observation" @click="doLogin" class="btn btn-default" type="button" >Proceed to new observation</button>
+    </div>
+    <br>
+    <div class="well">
+    <p>{{savedName}}</p>
     </div>
     <br>
     <div class="well">
@@ -28,6 +40,7 @@
 
 <script>
 import { mapState } from 'vuex';
+
 export default {
   name: 'Login',
   data () {
@@ -35,7 +48,8 @@ export default {
       valuesEntered: false,
       username: '',
       password: '',
-      farmosUrl: ''
+      farmosUrl: '',
+      savedName: 'No name saved'
     }
   },
   computed: mapState({
@@ -66,9 +80,57 @@ export default {
       //eventually, we can call the commit from the didSubmitCredentials action
       const userLogin = {username: this.username}
       this.$store.commit('login', userLogin);
-    }
+    },
+    checkLogin () {
+      this.$store.dispatch('checkLoginStatus', this.farmosUrl)
+    },
+
+    onDeviceReady () {
+      console.log('RECEIVED DEVICEREADY')
+      var storage = window.localStorage;
+      var value = storage.getItem('user');
+      if(value){
+        this.savedName = value;
+        console.log('RETRIEVED USERNAME: '+value)
+      } else {
+        console.log('NO USERNAME RETRIEVED: '+value)
+      }
+      //THEN CHECK NETWORK status
+      var networkState = navigator.connection.type;
+      console.log('NETWORK STATE IS: '+networkState)
+      this.$store.commit('setStatusText', 'NETWORK STATE IS: '+networkState);
+    },
+
+
+    saveName () {
+      console.log('SAVING USERNAME: '+this.username)
+      var storage = window.localStorage;
+      storage.setItem('user', this.username)
+    },
 
   }, //methods
+  created: function() {
+    console.log('VUE IS READY')
+    document.addEventListener("deviceready", this.onDeviceReady(), false);
+  }, //ready
+
+/*
+  events: {
+
+    deviceready: function () {
+      console.log('RECEIVED DEVICEREADY')
+      var storage = window.localStorage;
+      var value = storage.getItem(user);
+      if(value){
+        this.savedName = value;
+        console.log('RETRIEVED USERNAME: '+value)
+      }
+    }, //end deviceready
+
+  },
+  */
+
+
   watch: {
     isLoggedIn: function () {
       console.log('isLoggedIn HAS CHANGED!!!')

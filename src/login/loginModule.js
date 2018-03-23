@@ -58,9 +58,56 @@ If not, present login.  If so, get username, token from settings
         }
       ); //end promise then
 
-  } //end didSubmitCreds
+  }, //end didSubmitCreds
+
+  checkLoginStatus ({commit}, url) {
+    console.log('RUNNING checkLoginStatus URL: '+url)
+    commit('setStatusText', 'Get user submitted; waiting for response');
+
+    checkUser(url)
+    .then( function (response){
+      commit('setStatusText', 'Get user response: '+JSON.stringify(response));
+      //commit('login', {username:username});
+    },
+    function (error){
+      commit('setStatusText', 'Get user error: '+JSON.stringify(error));
+    }
+    )//end then
+  }//end checkLoginStatus
+
   } //end actions
 } // end export
+
+function checkUser(url) {
+  var submissionPromise = new Promise (function (resolve, reject) {
+console.log('CHECKING WHETHER USER IS LOGGED IN')
+
+var userUrl = url+'/?q=user'
+console.log('REQUEST URL: '+userUrl)
+var requestHeaders = {"Content-Type": "application/x-www-form-urlencoded", "Accept": "application/json"};
+
+  $.ajax({
+      type: 'GET',
+      url: userUrl,
+      headers: requestHeaders,
+      success: function(response) {
+          console.log('USER REQUEST SUCCESS!!');
+          console.log('STATUS: '+response.status);
+          console.log('STATUS TEXT: '+response.statusText);
+          //commit('setStatusText', response);
+          resolve(response);
+      },
+      error: function(error) {
+          console.log('USER REQUEST ERROR...');
+          console.log('USER RESPONSE: '+ JSON.stringify(error));
+          //commit('setStatusText', response);
+          reject(error);
+      },
+  }); //end ajax
+
+}); // end promise
+return submissionPromise;
+} //end checkUser
 
 function submitCredentials(url, username, password) {
   var submissionPromise = new Promise (function (resolve, reject) {
