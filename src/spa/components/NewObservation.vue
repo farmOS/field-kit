@@ -25,8 +25,8 @@
       </div>
       <div class="input-group">
         <input
-          :value="logs[currentLogIndex].field_farm_notes"
-          @input="updateCurrentLog('field_farm_notes', $event.target.value)"
+          :value="logs[currentLogIndex].notes"
+          @input="updateCurrentLog('notes', $event.target.value)"
           placeholder="Enter notes"
           type="text"
           class="form-control"
@@ -34,8 +34,8 @@
       </div>
       <div class="input-group">
         <input
-          :value="logs[currentLogIndex].field_farm_quantity"
-          @input="updateCurrentLog('field_farm_quantity', $event.target.value)"
+          :value="logs[currentLogIndex].quantity"
+          @input="updateCurrentLog('quantity', $event.target.value)"
           placeholder="Enter quantity"
           type="number"
           min="0"
@@ -60,13 +60,17 @@ export default {
     }
   },
   computed: mapState({
-    logs: state => state.data.logs,
-    currentLogIndex: state => state.data.currentLogIndex,
+    logs: state => state.farm.logs,
+    currentLogIndex: state => state.farm.currentLogIndex,
   }),
 
   created: function () {
-    this.$store.dispatch('loadCachedLogs', 'farm_observation');
+    // TODO: It probably makes more sense to remember the last log the user was working on,
+    //    and only initialize a new log when they deliberately choose to.
     this.$store.dispatch('initializeLog', 'farm_observation')
+  },
+  beforeDestroy: function () {
+    this.$store.commit('clearLogs')
   },
   methods: {
 
@@ -79,8 +83,11 @@ export default {
     },
 
     updateCurrentLog (key, val) {
-      const newProperty = {key, val};
-      this.$store.dispatch('updateCurrentLog', newProperty)
+      const newProps = {
+        [key]: val,
+        isCachedLocally: false
+      };
+      this.$store.commit('updateCurrentLog', newProps)
     },
 
   },
