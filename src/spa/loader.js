@@ -9,7 +9,7 @@ Vue.config.productionTip = false;
 
 export default (data, login) => {
   // TODO: Error handling for required args, better control flow for optional args
-  Vue.use(data, {store})
+  Vue.use(data, {store, router})
   if (typeof login !== 'undefined') {
     Vue.use(login, {router, store})
   }

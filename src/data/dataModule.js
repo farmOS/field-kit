@@ -1,65 +1,27 @@
 import {logFactory} from './logFactory';
 
 export default {
-  state: {
-    logs: [],
-    assets: [],
-    areas: [],
-    currentLogIndex: 0,
-  },
-
-  mutations: {
-    addCachedLogs(state, payload) {
-      const cachedLogs = payload.map(function(cachedLog) {
-        return logFactory({
-          ...cachedLog,
-          isCachedLocally: true
-        })
-      });
-      state.logs = state.logs.concat(cachedLogs);
-    },
-    addLogAndMakeCurrent(state, newLog) {
-      state.currentLogIndex = state.logs.push(newLog) -1;
-    },
-    // TODO: accept multiple properties
-    updateCurrentLog (state, newProperty) {
-      state.logs[state.currentLogIndex][newProperty.key] = newProperty.val
-    },
-  },
 
   actions: {
 
-    initializeLog({commit, rootState}, logType) {
-      // TODO: The User ID will also be needed to sync with server
-      const curDate = new Date(Date.now());
-      const timestamp = Math.floor(curDate / 1000).toString();
-      const curTimeString = curDate.toLocaleTimeString('en-US');
-      const curDateString = curDate.toLocaleDateString('en-US');
-      const newLog = logFactory({
-        type: logType,
-        name: `Observation: ${curDateString} - ${curTimeString}`,
-        field_farm_log_owner: rootState.user.name ? rootState.user.name : '',
-        timestamp: timestamp,
-      });
-      commit('addLogAndMakeCurrent', newLog);
-
-      // TODO: Separate this into its own action
-      let newRecord = newLog;
+    createRecord ({commit, dispatch, rootstate}, newRecord) {
+      const tableName = newRecord.type
       delete newRecord.local_id
       openDatabase()
       .then(function(db) {
-        return makeTable(db, logType, newRecord);
+        return makeTable(db, tableName, newRecord);
       })
       .then(function(tx) {
-        return saveRecord(tx, logType, newRecord)
+        return saveRecord(tx, tableName, newRecord)
       })
       .then(function(results) {
         // Can we be sure this will always be the CURRENT log?
-        commit('updateCurrentLog', { key: 'isCachedLocally', val: true });
-        commit('updateCurrentLog', { key: 'local_id', val: results.insertId });
-
+        // Not if we use this action to add new records received from the server
+        commit('updateCurrentLog', {
+          local_id: results.insertId,
+          isCachedLocally: true
+        });
       })
-
     },
 
     loadCachedLogs({commit}, logType) {
@@ -67,24 +29,25 @@ export default {
       .then(function(db) {
         return getRecords(db, logType)
       })
-      .then(function(result) {
-        commit('addCachedLogs', result)
+      .then(function(results) {
+        const cachedLogs = results.map(function(log) {
+          return logFactory({
+            ...log,
+            isCachedLocally: true
+          })
+        });
+        commit('addLogs', cachedLogs)
       })
       .catch(function(error) {
         console.error(error);
       })
     },
 
-    updateCurrentLog({commit, dispatch, rootState}, newProperty) {
-      commit('updateCurrentLog', newProperty);
-      let newLog = logFactory({
-        ...rootState.data.logs[rootState.data.currentLogIndex]
-      })
-      newLog[newProperty.key] = newProperty.val;
-      dispatch('updateRecord', newLog);
-    },
-
-    updateRecord ({commit}, newLog) {
+    updateRecord ({commit, rootState}, newProps) {
+      const newLog = logFactory({
+        ...rootState.farm.logs[rootState.farm.currentLogIndex],
+        ...newProps
+      });
       const table = newLog.type;
       openDatabase()
       .then(function(db) {
@@ -95,7 +58,7 @@ export default {
       })
       .then(function(tx, result) {
         // Can we be sure this will always be the CURRENT log?
-        commit('updateCurrentLog', { key: 'isCachedLocally', val: true })
+        commit('updateCurrentLog', { isCachedLocally: true })
       })
     },
 
