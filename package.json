@@ -12,10 +12,13 @@
     "build-mobile": "node build/build-mobile.js"
   },
   "dependencies": {
+    "cordova-android": "^7.0.0",
     "cordova-ios": "^4.5.4",
+    "cordova-plugin-network-information": "^2.0.1",
     "cordova-plugin-whitelist": "^1.3.3",
     "moment": "^2.21.0",
     "vue": "^2.5.2",
+    "vue-cordova": "^0.1.2",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1"
   },
@@ -77,10 +80,12 @@
   ],
   "cordova": {
     "plugins": {
-      "cordova-plugin-whitelist": {}
+      "cordova-plugin-whitelist": {},
+      "cordova-plugin-network-information": {}
     },
     "platforms": [
-      "ios"
+      "ios",
+      "android"
     ]
   }
 }
