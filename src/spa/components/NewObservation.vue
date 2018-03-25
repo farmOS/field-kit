@@ -43,6 +43,18 @@
         >
       </div>
       <br>
+      <div class="input-group">
+        <button :disabled='false' title="Check settings" @click="checkSettings" class="btn btn-default" type="button" >Check settings</button>
+      </div>
+      <div class="input-group">
+        <button :disabled='false' title="Send logs to farmOS server" @click="pushToServer" class="btn btn-default" type="button" >Send logs to farmOS server</button>
+      </div>
+      <br>
+      <br>
+      <div class="well">
+      <p>{{statusText}}</p>
+      </div>
+      <br>
       <li v-for="i in logs">
         {{i}}
       </li>
@@ -57,6 +69,7 @@ export default {
   data () {
   return {
     vueHeader: 'Enter your new observation:',
+    statusText: 'No settings saved'
     }
   },
   computed: mapState({
@@ -89,6 +102,24 @@ export default {
       };
       this.$store.commit('updateCurrentLog', newProps)
     },
+
+    checkSettings () {
+      var storage = window.localStorage;
+      var storedName = storage.getItem('user');
+      var storedUrl = storage.getItem('url');
+      var storedToken = storage.getItem('token');
+
+      this.statusText = 'Username: '+storedName+' URL: '+storedUrl+' Token: '+storedToken;
+    },
+
+    pushToServer () {
+      var storage = window.localStorage;
+      var storedUrl = storage.getItem('url');
+      var storedToken = storage.getItem('token');
+
+      const pushProps = {url: storedUrl, token: storedToken}
+      this.$store.dispatch('pushToServer', pushProps)
+    }
 
   },
 }

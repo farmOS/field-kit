@@ -46,17 +46,35 @@ If not, present login.  If so, get username, token from settings
 
         submitCredentials(url, username, password)
         .then( function (response){
-
           commit('responseWasReceived', 'ok');
           commit('setStatusText', 'Server response: '+JSON.stringify(response));
+
+          //If we receive an affirmative login response, we will save our username and password to the persistant store
+          var storage = window.localStorage;
+          storage.setItem('url', url);
+          storage.setItem('user', username);
+          //Then request a token from the server
+          requestToken(url)
+          .then( function (tokenResponse){
+            //Store token as setting
+            storage.setItem('token', tokenResponse);
+            commit('setStatusText', 'Token received: '+tokenResponse);
+            //Go ahead and log in
+            const userLogin = {username: username};
+            commit('login', userLogin);
+
+          },
+          function (tokenError){
+            commit('setStatusText', 'Token error: '+JSON.stringify(tokenError));
+          }); // end promise token
+
           //commit('login', {username:username});
         },
         function (error){
-
           commit('responseWasReceived', 'error');
           commit('setStatusText', 'Server response: '+JSON.stringify(error));
         }
-      ); //end promise then
+      ); //end promise submitted
 
   }, //end didSubmitCreds
 
@@ -67,7 +85,10 @@ If not, present login.  If so, get username, token from settings
     checkUser(url)
     .then( function (response){
       commit('setStatusText', 'Get user response: '+JSON.stringify(response));
-      //commit('login', {username:username});
+      var storage = window.localStorage;
+      var storedName = storage.getItem('user');
+      const userLogin = {username: storedName}
+      commit('login', userLogin);
     },
     function (error){
       commit('setStatusText', 'Get user error: '+JSON.stringify(error));
@@ -147,3 +168,32 @@ var requestHeaders = {"Content-Type": "application/x-www-form-urlencoded", "Acce
 }); // end promise
 return submissionPromise;
 } //end submitCredentials
+
+
+function requestToken(url) {
+  var submissionPromise = new Promise (function (resolve, reject) {
+
+var tokenUrl = url+'/?q=restws/session/token'
+
+//Following header guidance from https://www.quora.com/How-do-I-send-custom-headers-using-jquery-Ajax-and-consume-the-same-header-in-WCF-using-C
+//var requestHeaders = {'Content-Type':'application/json'}
+var requestHeaders = {"Content-Type": "application/x-www-form-urlencoded", "Accept": "application/json"};
+
+  $.ajax({
+      type: 'POST',
+      url: tokenUrl,
+      headers: requestHeaders,
+      success: function(response) {
+          console.log('TOKEN OBTAINED: '+response);
+          var storage = window.localStorage;
+          resolve(response);
+      },
+      error: function(error) {
+          console.log('TOKEN ERROR: NO TOKEN OBTAINED');
+          console.log('RESPONSE: '+ JSON.stringify(error));
+          reject(error);
+      },
+  }); //end ajax
+}); // end promise
+return submissionPromise;
+} //end requestToken

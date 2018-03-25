@@ -62,10 +62,122 @@ export default {
       })
     },
 
-  }
-}
+
+      //SEND RECORDS TO SERVER
+      pushToServer ({commit, rootState}, props) {
+
+        console.log("PUSHING TO SERVER:")
+        var logObject = rootState.farm.logs;
+        console.log(JSON.stringify(logObject))
+
+        var formattedLogs = formatState(logObject);
+          console.log("LOGS FORMATTED TO: ")
+          console.log(JSON.stringify(formattedLogs))
+        pushRecords (props.url, props.token, formattedLogs)
+        .then( function (response) {
+          console.log("PUSH TO SERVER SUCCESS: ")
+          console.log(JSON.stringify(response))
+        },
+        function (error){
+          console.log("PUSH TO SERVER ERROR: ")
+          console.log(JSON.stringify(error))
+        })//end then
+
+      } //pushToServer
+
+  } //actions
+} //export default
 
 /*Helper funcitons called by actions.  Many of these helper functions execute SQL queries */
+
+
+// Outputs an object consisting of all records in state, formatted for farmOS
+function formatState (rawLogs) {
+
+var newLogs = [];
+
+for (var i in rawLogs){
+  var newLog = {};
+  var currentLog = rawLogs[i];
+  console.log('RAW LOG: ')
+  console.log(JSON.stringify(currentLog))
+
+//Proceed if log i was not pushed to Server
+if (!currentLog.wasPushedToServer) {
+  for (var j in currentLog) {
+
+    switch(j) {
+    case 'name':
+        newLog.name = currentLog[j];
+        break;
+    case 'type':
+        newLog.type = currentLog[j];
+        break;
+    case 'timestamp':
+        newLog.timestamp = currentLog[j];
+        break;
+    case 'notes':
+        newLog.field_farm_notes = {"format": "farm_format", "value": currentLog[j]};
+    break;
+
+    //default:
+  } //end switch
+} //end for j
+}// end if log not pushed to server
+newLogs.push(newLog);
+console.log('NEW LOG: ')
+console.log(JSON.stringify(newLog))
+} //end for i
+
+return(newLogs)
+
+//from iOS
+/*
+
+        let toCompile = [
+            "name": nameInput,
+            "type": "farm_observation",
+            //timestamp disabled for now
+            //"timestamp": currentTimeString,
+            "field_farm_notes": ["format": "farm_format", "value": bodyInput]
+            //"field_farm_log_owner": [["id": currentUserId, "resource": "user", "uri": currentURI]],
+
+            //Need to query assets and select from a list in order to construct links
+            //"field_farm_asset": [["id": "2", "resource": "farm_asset", "uri": "http://www.beetclock.com/farmOS/?q=farm_asset/2"]]
+            ] as! [String: AnyObject]
+            */
+} //end formatState
+
+// Executes AJAX to send records to server
+function pushRecords (url, token, records) {
+  return new Promise(function(resolve, reject) {
+
+var logUrl = url+'/?q=log'
+console.log('PUSHING RECORDS TO: '+logUrl)
+console.log('RECORDS SENDING: '+records)
+
+var requestHeaders = {"X-CSRF-Token": token, "Content-Type": "application/json", "Accept": "application/json"};
+
+  $.ajax({
+      type: 'POST',
+      url: logUrl,
+      headers: requestHeaders,
+      data: records,
+      dataType:'json',
+      success: function(response) {
+          console.log('POST SUCCESS!!');
+          resolve(response);
+      },
+      error: function(error) {
+          console.log('POST ERROR...');
+          reject(error);
+      },
+  }); //end ajax
+
+}); // end promise
+return submissionPromise;
+}
+
 function openDatabase () {
   return new Promise(function(resolve, reject) {
     //Here I am both opening the database and making a new table if necessary.
