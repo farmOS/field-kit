@@ -54,7 +54,8 @@ const farmModule = {
       const newLog = logFactory({
         type: logType,
         name: `Observation: ${curDateString} - ${curTimeString}`,
-        log_owner: rootState.user.name ? rootState.user.name : '',
+        // TODO: Try to decouple this further from the login plugin
+        log_owner: (rootState.user) ? rootState.user.name : '',
         timestamp: timestamp,
       });
       commit('addLogAndMakeCurrent', newLog);
