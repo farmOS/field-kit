@@ -32,6 +32,7 @@
           class="form-control"
         >
       </div>
+      <!--
       <div class="input-group">
         <input
           :value="logs[currentLogIndex].quantity"
@@ -42,18 +43,21 @@
           class="form-control"
         >
       </div>
+    -->
       <br>
       <div class="input-group">
-        <button :disabled='false' title="Check settings" @click="checkSettings" class="btn btn-default" type="button" >Check settings</button>
+        <button :disabled='false' title="Send current log to farmOS server" @click="pushToServer" class="btn btn-default" type="button" >Send current log to farmOS server</button>
       </div>
-      <div class="input-group">
-        <button :disabled='false' title="Send logs to farmOS server" @click="pushToServer" class="btn btn-default" type="button" >Send logs to farmOS server</button>
-      </div>
-      <br>
       <br>
       <div class="well">
-      <p>{{statusText}}</p>
+        <p>{{statusText}}</p>
+        <spinner :size="30" v-if="isWorking"></spinner>
+        <!--
+        <br>
+        <p v-if="isWorking">SPINNER SPIN!</p>
+      -->
       </div>
+
       <br>
       <li v-for="i in logs">
         {{i}}
@@ -65,18 +69,23 @@
 <script>
 import { mapState } from 'vuex';
 import moment from 'moment';
+//adding spinner plugin
+import Spinner from 'vue-spinner-component/src/Spinner.vue';
 export default {
+  components: {
+    Spinner
+  },
   data () {
   return {
     vueHeader: 'Enter your new observation:',
-    statusText: 'No settings saved'
     }
   },
   computed: mapState({
     logs: state => state.farm.logs,
     currentLogIndex: state => state.farm.currentLogIndex,
+    isWorking: state => state.farm.isWorking,
+    statusText: state => state.farm.statusText,
   }),
-
   created: function () {
     // TODO: It probably makes more sense to remember the last log the user was working on,
     //    and only initialize a new log when they deliberately choose to.
@@ -101,15 +110,6 @@ export default {
         isCachedLocally: false
       };
       this.$store.commit('updateCurrentLog', newProps)
-    },
-
-    checkSettings () {
-      var storage = window.localStorage;
-      var storedName = storage.getItem('user');
-      var storedUrl = storage.getItem('url');
-      var storedToken = storage.getItem('token');
-
-      this.statusText = 'Username: '+storedName+' URL: '+storedUrl+' Token: '+storedToken;
     },
 
     pushToServer () {

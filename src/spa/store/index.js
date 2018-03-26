@@ -21,6 +21,8 @@ const farmModule = {
     assets: [],
     areas: [],
     currentLogIndex: 0,
+    isWorking: false,
+    statusText: '',
   },
   mutations: {
     addLogs(state, logs) {
@@ -39,7 +41,13 @@ const farmModule = {
     },
     clearLogs (state, payload) {
       state.logs.splice(0, state.logs.length);
-    }
+    },
+    setIsWorking (state, booleanValue) {
+      state.isWorking = booleanValue;
+    },
+    setStatusText (state, text) {
+      state.statusText = text;
+    },
   },
   actions: {
     // TODO: Should this logic be moved to the 'addLogAndMakeCurrent' mutation?

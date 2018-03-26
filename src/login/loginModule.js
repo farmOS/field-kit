@@ -6,6 +6,7 @@ export default {
     statusText: 'Waiting for credentials',
     //responseReceived is for testing purposes only
     responseReceived: null,
+    isWorking: false,
   },
   mutations: {
     login(state, creds) {
@@ -22,6 +23,9 @@ export default {
 //likewise, responseWasReceived is for testing purposes only
     responseWasReceived(state, response) {
       state.responseReceived = response;
+    },
+    setIsWorking(state, booleanValue) {
+      state.isWorking = booleanValue;
     }
 
   },
@@ -43,7 +47,7 @@ If not, present login.  If so, get username, token from settings
     var password = payload.password;
 
     commit('setStatusText', 'Credentials submitted; waiting for response from server');
-
+    commit('setIsWorking', true)
         submitCredentials(url, username, password)
         .then( function (response){
           commit('responseWasReceived', 'ok');
@@ -61,11 +65,13 @@ If not, present login.  If so, get username, token from settings
             commit('setStatusText', 'Token received: '+tokenResponse);
             //Go ahead and log in
             const userLogin = {username: username};
+            commit('setIsWorking', false)
             commit('login', userLogin);
 
           },
           function (tokenError){
             commit('setStatusText', 'Token error: '+JSON.stringify(tokenError));
+            commit('setIsWorking', false)
           }); // end promise token
 
           //commit('login', {username:username});
@@ -73,6 +79,7 @@ If not, present login.  If so, get username, token from settings
         function (error){
           commit('responseWasReceived', 'error');
           commit('setStatusText', 'Server response: '+JSON.stringify(error));
+          commit('setIsWorking', false)
         }
       ); //end promise submitted
 

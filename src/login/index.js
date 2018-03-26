@@ -4,7 +4,6 @@ import mixinLogic from './mixin.js';
 // adding in VueCordova plugin
 import VueCordova from 'vue-cordova';
 
-
 export default {
   install( Vue, { router, store }) {
     const LoginComponent = Vue.component(Login.name, Login)

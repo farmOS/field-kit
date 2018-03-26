@@ -10,7 +10,8 @@
     </div>
     <br>
     <div class="input-group">
-      <input v-model="password" placeholder="Enter your password" type="text" class="form-control" v-on:input="checkValues">
+      <input v-model="password" placeholder="Enter your password" type="password" class="form-control" v-on:input="checkValues">
+      <!--<input v-model="password" placeholder="Enter your password" type="text" class="form-control" v-on:input="checkValues">-->
     </div>
     <br>
     <div class="input-group">
@@ -18,15 +19,25 @@
     </div>
     <br>
     <div class="well">
-    <p>{{statusText}}</p>
+      <p>{{statusText}}</p>
+      <spinner :size="30" v-if="isWorking"></spinner>
+      <!--
+      <br>
+      <p v-if="isWorking">SPINNER SPIN!</p>
+    -->
     </div>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
+//adding spinner plugin
+import Spinner from 'vue-spinner-component/src/Spinner.vue';
 
 export default {
+  components: {
+    Spinner
+  },
   name: 'Login',
   data () {
     return {
@@ -40,8 +51,10 @@ export default {
   computed: mapState({
         statusText: state => state.user.statusText,
         isLoggedIn: state => state.user.isLoggedIn,
-        responseReceived: state => state.user.responseReceived
+        responseReceived: state => state.user.responseReceived,
+        isWorking: state=> state.user.isWorking,
       }),
+
   methods: {
     //We have the template calling addItem, so we need an addItem method within the component
     checkValues () {

@@ -65,22 +65,27 @@ export default {
 
       //SEND RECORDS TO SERVER
       pushToServer ({commit, rootState}, props) {
-
+        commit('setIsWorking', true)
+        commit('setStatusText', "Sending record to server...")
         console.log("PUSHING TO SERVER:")
-        var logObject = rootState.farm.logs;
+        var logObject = rootState.farm.logs[rootState.farm.currentLogIndex];
         console.log(JSON.stringify(logObject))
 
-        var formattedLogs = formatState(logObject);
+        var formattedLog = formatState(logObject);
           console.log("LOGS FORMATTED TO: ")
-          console.log(JSON.stringify(formattedLogs))
-        pushRecords (props.url, props.token, formattedLogs)
+          console.log(JSON.stringify(formattedLog))
+        pushRecords (props.url, props.token, formattedLog)
         .then( function (response) {
           console.log("PUSH TO SERVER SUCCESS: ")
           console.log(JSON.stringify(response))
+          commit('setIsWorking', false)
+          commit('setStatusText', "Sent to server successfully!")
         },
         function (error){
           console.log("PUSH TO SERVER ERROR: ")
           console.log(JSON.stringify(error))
+          commit('setIsWorking', false)
+          commit('setStatusText', "Error sending to server...")
         })//end then
 
       } //pushToServer
@@ -92,16 +97,13 @@ export default {
 
 
 // Outputs an object consisting of all records in state, formatted for farmOS
-function formatState (rawLogs) {
+function formatState (currentLog) {
 
-var newLogs = [];
-
-for (var i in rawLogs){
   var newLog = {};
-  var currentLog = rawLogs[i];
   console.log('RAW LOG: ')
   console.log(JSON.stringify(currentLog))
 
+  //newLog.field_farm_files = [];
 //Proceed if log i was not pushed to Server
 if (!currentLog.wasPushedToServer) {
   for (var j in currentLog) {
@@ -117,19 +119,19 @@ if (!currentLog.wasPushedToServer) {
         newLog.timestamp = currentLog[j];
         break;
     case 'notes':
-        newLog.field_farm_notes = {"format": "farm_format", "value": currentLog[j]};
-    break;
+        newLog.field_farm_notes = {format: "farm_format", value: '<p>'+currentLog[j]+'</p>\n'};
+        break;
+
 
     //default:
   } //end switch
 } //end for j
 }// end if log not pushed to server
-newLogs.push(newLog);
 console.log('NEW LOG: ')
 console.log(JSON.stringify(newLog))
-} //end for i
+//Returning object in an array, per suggestion
+return(newLog);
 
-return(newLogs)
 
 //from iOS
 /*
@@ -151,18 +153,22 @@ return(newLogs)
 // Executes AJAX to send records to server
 function pushRecords (url, token, records) {
   return new Promise(function(resolve, reject) {
-
-var logUrl = url+'/?q=log'
+var loc = '/?q=log'
+//var loc = '/log.json'
+//var loc = '/?q=log.json'
+var logUrl = url+loc
 console.log('PUSHING RECORDS TO: '+logUrl)
-console.log('RECORDS SENDING: '+records)
+console.log('RECORDS SENDING: '+JSON.stringify(records))
 
 var requestHeaders = {"X-CSRF-Token": token, "Content-Type": "application/json", "Accept": "application/json"};
+//var requestHeaders = {"X-CSRF-Token": token, "Content-Type": "application/hal+json", "Accept": "application/json"};
 
   $.ajax({
       type: 'POST',
       url: logUrl,
       headers: requestHeaders,
-      data: records,
+      //contentType: "application/json; charset=utf-8",
+      data: JSON.stringify(records),
       dataType:'json',
       success: function(response) {
           console.log('POST SUCCESS!!');
