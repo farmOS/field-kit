@@ -115,9 +115,12 @@ if (!currentLog.wasPushedToServer) {
     case 'type':
         newLog.type = currentLog[j];
         break;
+        //farmier returns '403 not authorized to set property timestamp'
+        /*
     case 'timestamp':
         newLog.timestamp = currentLog[j];
         break;
+        */
     case 'notes':
         newLog.field_farm_notes = {format: "farm_format", value: '<p>'+currentLog[j]+'</p>\n'};
         break;
@@ -153,14 +156,18 @@ return(newLog);
 // Executes AJAX to send records to server
 function pushRecords (url, token, records) {
   return new Promise(function(resolve, reject) {
-var loc = '/?q=log'
-//var loc = '/log.json'
-//var loc = '/?q=log.json'
-var logUrl = url+loc
-console.log('PUSHING RECORDS TO: '+logUrl)
+  var loc = '/log'
+  //var loc = '/?q=log'
+  //var loc = '/log.json'
+  //var loc = '/?q=log.json'
+  var logUrl = url+loc
+
+console.log('PUSHING REQUEST URL : '+logUrl)
 console.log('RECORDS SENDING: '+JSON.stringify(records))
 
-var requestHeaders = {"X-CSRF-Token": token, "Content-Type": "application/json", "Accept": "application/json"};
+//var requestHeaders = {"X-CSRF-Token": token, "Content-Type":"application/json"};
+//var requestHeaders = {"X-CSRF-Token": token, "Content-Type": "application/json", "Accept": "application/json"};
+var requestHeaders = {"X-CSRF-Token": token, "Content-Type": "application/json", "Accept": "json"};
 //var requestHeaders = {"X-CSRF-Token": token, "Content-Type": "application/hal+json", "Accept": "application/json"};
 
   $.ajax({
@@ -169,7 +176,7 @@ var requestHeaders = {"X-CSRF-Token": token, "Content-Type": "application/json",
       headers: requestHeaders,
       //contentType: "application/json; charset=utf-8",
       data: JSON.stringify(records),
-      dataType:'json',
+      //dataType:'json',
       success: function(response) {
           console.log('POST SUCCESS!!');
           resolve(response);
