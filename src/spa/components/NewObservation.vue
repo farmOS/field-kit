@@ -5,8 +5,8 @@
     <div class="well" >
       <!-- TODO: make these input fields into child components and load them with v-for -->
       <!-- TODO: pass down arguments for updateCurrentLog() as props, from the computed values of the current log -->
-      <div class="input-group">
-        <!-- TODO: Replace this with a dropdown to select names from list of valid users -->
+      <div class="form-item form-item-name form-group">
+        <label for="name" class="control-label">Name</label>
         <input
           :value="logs[currentLogIndex].name"
           @input="updateCurrentLog('name', $event.target.value)"
@@ -15,7 +15,8 @@
           class="form-control"
         >
       </div>
-      <div class="input-group">
+      <div class="form-item form-item-name form-group">
+        <label for="Date" class="control-label">Date</label>
         <input
           :value="convertOutOfUnix(logs[currentLogIndex].timestamp)"
           @input="updateCurrentLog('timestamp', convertIntoUnix($event.target.value))"
@@ -23,7 +24,8 @@
           class="form-control"
         >
       </div>
-      <div class="input-group">
+      <div class="form-item form-item-name form-group">
+        <label for="notes" class="control-label">Notes</label>
         <input
           :value="logs[currentLogIndex].notes"
           @input="updateCurrentLog('notes', $event.target.value)"
@@ -32,8 +34,13 @@
           class="form-control"
         >
       </div>
+<<<<<<< HEAD
       <!--
       <div class="input-group">
+=======
+      <div class="form-item form-item-name form-group">
+        <label for="quantity" class="control-label">Quantity</label>
+>>>>>>> 425f16474365c1ddbe8dfa35097549abdef91d81
         <input
           :value="logs[currentLogIndex].quantity"
           @input="updateCurrentLog('quantity', $event.target.value)"
