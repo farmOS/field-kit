@@ -24,5 +24,6 @@ export function logFactory ({
     timestamp,
     done,
     isCachedLocally,
+    wasPushedToServer,
   };
 }

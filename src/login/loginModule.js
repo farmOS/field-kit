@@ -5,7 +5,7 @@ export default {
     //statusText is for testing purposes only
     statusText: 'Waiting for credentials',
     //responseReceived is for testing purposes only
-    responseReceived: null,
+    //responseReceived: null,
     isWorking: false,
   },
   mutations: {
@@ -21,9 +21,11 @@ export default {
       console.log(state.statusText);
     },
 //likewise, responseWasReceived is for testing purposes only
+/*
     responseWasReceived(state, response) {
       state.responseReceived = response;
     },
+    */
     setIsWorking(state, booleanValue) {
       state.isWorking = booleanValue;
     }
@@ -33,7 +35,6 @@ export default {
 
 /*
 TODO
-- Enable persistant settings store for url, username, token
 - On load, check whether the device is online.  If not, proceed directly to main view
 - If online, check if the app is already authenticated on the server.
 If not, present login.  If so, get username, token from settings
@@ -113,10 +114,7 @@ function checkUser(url) {
 console.log('CHECKING WHETHER USER IS LOGGED IN')
 
 var userUrl = url+'/user'
-//var userUrl = url+'/?q=user'
 console.log('USER REQUEST URL: '+userUrl)
-//var requestHeaders = {"Content-Type":"application/json"};
-//var requestHeaders = {"Content-Type": "application/x-www-form-urlencoded", "Accept": "application/json"};
 var requestHeaders = {"Content-Type": "application/x-www-form-urlencoded", "Accept": "json"};
   $.ajax({
       type: 'GET',
@@ -147,12 +145,8 @@ console.log('SIGNING IN WITH USERNAME: '+username+'; password: '+password)
 //Set login parameters that will be attached as the data payload of the ajax request
 
 var loginUrl = url+'/user/login'
-//var loginUrl = url+'/?q=user/login'
 console.log('LOGIN REQUEST URL '+loginUrl);
 var requestData = {'form_id': 'user_login', 'name': username, 'pass': password};
-//Following header guidance from https://www.quora.com/How-do-I-send-custom-headers-using-jquery-Ajax-and-consume-the-same-header-in-WCF-using-C
-//var requestHeaders = {"Content-Type":"application/json"};
-//var requestHeaders = {"Content-Type": "application/x-www-form-urlencoded", "Accept": "application/json"};
 var requestHeaders = {"Content-Type": "application/x-www-form-urlencoded", "Accept": "json"};
   $.ajax({
       type: 'POST',
@@ -186,15 +180,10 @@ function requestToken(url) {
   var submissionPromise = new Promise (function (resolve, reject) {
 
 var tokenUrl = url+'/restws/session/token'
-//var tokenUrl = url+'/?q=restws/session/token'
 console.log('TOKEN REQUEST URL: '+tokenUrl)
-//Following header guidance from https://www.quora.com/How-do-I-send-custom-headers-using-jquery-Ajax-and-consume-the-same-header-in-WCF-using-C
-//var requestHeaders = {"Content-Type":"application/json"};
-//var requestHeaders = {"Content-Type": "application/x-www-form-urlencoded", "Accept": "application/json"};
 var requestHeaders = {"Content-Type": "application/x-www-form-urlencoded", "Accept": "json"};
 
   $.ajax({
-      //type: 'GET',
       type: 'GET',
       url: tokenUrl,
       headers: requestHeaders,

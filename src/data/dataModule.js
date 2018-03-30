@@ -64,7 +64,7 @@ export default {
 
 
       //SEND RECORDS TO SERVER
-      pushToServer ({commit, rootState}, props) {
+      pushToServer ({commit, dispatch, rootState}, props) {
         commit('setIsWorking', true)
         commit('setStatusText', "Sending record to server...")
         console.log("PUSHING TO SERVER:")
@@ -80,6 +80,16 @@ export default {
           console.log(JSON.stringify(response))
           commit('setIsWorking', false)
           commit('setStatusText', "Sent to server successfully!")
+
+          //Set wasPushedToServer true
+          logObject.wasPushedToServer = true;
+          //Save to state
+          commit('updateCurrentLog', logObject);
+          console.log('SAVED TO STATE: '+logObject);
+          //Save to Database
+          dispatch('updateRecord');
+          console.log('SAVED TO DATABASE')
+
         },
         function (error){
           console.log("PUSH TO SERVER ERROR: ")
@@ -134,41 +144,18 @@ console.log('NEW LOG: ')
 console.log(JSON.stringify(newLog))
 //Returning object in an array, per suggestion
 return(newLog);
-
-
-//from iOS
-/*
-
-        let toCompile = [
-            "name": nameInput,
-            "type": "farm_observation",
-            //timestamp disabled for now
-            //"timestamp": currentTimeString,
-            "field_farm_notes": ["format": "farm_format", "value": bodyInput]
-            //"field_farm_log_owner": [["id": currentUserId, "resource": "user", "uri": currentURI]],
-
-            //Need to query assets and select from a list in order to construct links
-            //"field_farm_asset": [["id": "2", "resource": "farm_asset", "uri": "http://www.beetclock.com/farmOS/?q=farm_asset/2"]]
-            ] as! [String: AnyObject]
-            */
 } //end formatState
 
 // Executes AJAX to send records to server
 function pushRecords (url, token, records) {
   return new Promise(function(resolve, reject) {
   var loc = '/log'
-  //var loc = '/?q=log'
-  //var loc = '/log.json'
-  //var loc = '/?q=log.json'
   var logUrl = url+loc
 
 console.log('PUSHING REQUEST URL : '+logUrl)
 console.log('RECORDS SENDING: '+JSON.stringify(records))
 
-//var requestHeaders = {"X-CSRF-Token": token, "Content-Type":"application/json"};
-//var requestHeaders = {"X-CSRF-Token": token, "Content-Type": "application/json", "Accept": "application/json"};
 var requestHeaders = {"X-CSRF-Token": token, "Content-Type": "application/json", "Accept": "json"};
-//var requestHeaders = {"X-CSRF-Token": token, "Content-Type": "application/hal+json", "Accept": "application/json"};
 
   $.ajax({
       type: 'POST',
