@@ -15,6 +15,7 @@
           class="form-control"
         >
       </div>
+      <!-- Not able to send timestamps right now
       <div class="form-item form-item-name form-group">
         <label for="Date" class="control-label">Date</label>
         <input
@@ -24,6 +25,7 @@
           class="form-control"
         >
       </div>
+    -->
       <div class="form-item form-item-name form-group">
         <label for="notes" class="control-label">Notes</label>
         <input
@@ -34,13 +36,9 @@
           class="form-control"
         >
       </div>
-<<<<<<< HEAD
-      <!--
-      <div class="input-group">
-=======
+      <!-- not able to send quantities right now
       <div class="form-item form-item-name form-group">
         <label for="quantity" class="control-label">Quantity</label>
->>>>>>> 425f16474365c1ddbe8dfa35097549abdef91d81
         <input
           :value="logs[currentLogIndex].quantity"
           @input="updateCurrentLog('quantity', $event.target.value)"
@@ -65,7 +63,6 @@
       -->
       </div>
 
-      <br>
       <li v-for="i in logs">
         {{i}}
       </li>

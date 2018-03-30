@@ -62,7 +62,8 @@ If not, present login.  If so, get username, token from settings
           .then( function (tokenResponse){
             //Store token as setting
             storage.setItem('token', tokenResponse);
-            commit('setStatusText', 'Token received: '+tokenResponse);
+            //commit('setStatusText', 'Token received: '+tokenResponse);
+            commit('setStatusText', 'Login complete!');
             //Go ahead and log in
             const userLogin = {username: username};
             commit('setIsWorking', false)
@@ -87,7 +88,7 @@ If not, present login.  If so, get username, token from settings
 
   checkLoginStatus ({commit}, url) {
     console.log('RUNNING checkLoginStatus URL: '+url)
-    commit('setStatusText', 'Get user submitted; waiting for response');
+    //commit('setStatusText', 'Get user submitted; waiting for response');
 
     checkUser(url)
     .then( function (response){
