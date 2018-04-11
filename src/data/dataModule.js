@@ -4,9 +4,9 @@ export default {
 
   actions: {
 
-    createRecord ({commit, dispatch, rootstate}, newRecord) {
-      const tableName = newRecord.type
-      delete newRecord.local_id
+    createRecord ({commit, dispatch, rootstate}, newLog) {
+      const tableName = newLog.type;
+      const newRecord = logFactory(newLog);
       openDatabase()
       .then(function(db) {
         return makeTable(db, tableName, newRecord);
