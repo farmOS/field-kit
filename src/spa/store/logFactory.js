@@ -11,6 +11,7 @@ export function logFactory ({
   timestamp = '',
   done = false,
   isCachedLocally = false,
+  wasPushedToServer = false
 } = {}) {
   return {
     log_owner,
@@ -23,5 +24,6 @@ export function logFactory ({
     timestamp,
     done,
     isCachedLocally,
+    wasPushedToServer
   };
 }

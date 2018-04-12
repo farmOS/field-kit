@@ -1,11 +1,15 @@
-// A helper function for creating new log items with default properties
+/**
+  * A utility function for structuring logs within the data plugin,
+  * before storing in the database, posting to the server, or for
+  * otherwise rendering logs in a standard format.
+**/
 export function logFactory ({
-  // TODO: Owner should be identified by user id, once we have authentication
+  // Assign default properties or leave them as optional
   log_owner = '',
   notes = '',
   quantity = '',
-  id = null,
-  local_id = null,
+  id,
+  local_id,
   name = '',
   type = '',
   timestamp = '',
@@ -13,12 +17,11 @@ export function logFactory ({
   isCachedLocally = false,
   wasPushedToServer = false,
 } = {}) {
-  return {
+  let log = {
     log_owner,
     notes,
     quantity,
     id,
-    local_id,
     name,
     type,
     timestamp,
@@ -26,4 +29,13 @@ export function logFactory ({
     isCachedLocally,
     wasPushedToServer,
   };
+  // Only return the id property if one has already been assigned by the server, otherwise omit it so the server can assign a new one.
+  if (id) {
+    log.id = id;
+  };
+  // Only return the local_id property if one has already been assigned by WebSQL, otherwise let WebSQL assign a new one.
+  if (local_id) {
+    log.local_id = local_id;
+  };
+  return log;
 }
