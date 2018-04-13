@@ -27,6 +27,7 @@ export function logFactory ({
     timestamp,
     done,
     isCachedLocally,
+    wasPushedToServer
   };
   // Only return the id property if one has already been assigned by the server, otherwise omit it so the server can assign a new one.
   if (id) {
