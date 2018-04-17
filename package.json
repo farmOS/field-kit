@@ -1,6 +1,6 @@
 {
   "name": "farmos-client",
-  "version": "0.2.0-1",
+  "version": "0.2.0-2",
   "description": "A pluggable client library for farmOS",
   "author": "farmOS team",
   "private": true,
