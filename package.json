@@ -1,6 +1,6 @@
 {
-  "name": "farmos_native_0.1",
-  "version": "1.0.0",
+  "name": "farmos-native",
+  "version": "0.2.0",
   "description": "Native app for farmOS!",
   "author": "farmOS team",
   "private": true,
@@ -16,6 +16,7 @@
     "cordova-ios": "^4.5.4",
     "cordova-plugin-network-information": "^2.0.1",
     "cordova-plugin-whitelist": "^1.3.3",
+    "farmos-client": "farmOS/farmOS-client",
     "moment": "^2.22.0",
     "vue": "^2.5.16",
     "vue-cordova": "^0.1.2",
