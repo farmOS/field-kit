@@ -1,7 +1,7 @@
 {
-  "name": "farmos_native_0.1",
-  "version": "1.0.0",
-  "description": "Native app for farmOS!",
+  "name": "farmos-client",
+  "version": "0.2.0-1",
+  "description": "A pluggable client library for farmOS",
   "author": "farmOS team",
   "private": true,
   "main": "src/app.js",
