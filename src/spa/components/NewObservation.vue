@@ -49,6 +49,10 @@
         >
       </div>
     -->
+    <br>
+    <div class="input-group">
+      <button :disabled='false' title="Get picture" @click="getPhoto" class="btn btn-default" type="button" >Get picture</button>
+    </div>
       <br>
       <div class="input-group">
         <button :disabled='false' title="Send current log to farmOS server" @click="pushToServer" class="btn btn-default" type="button" >Send current log to farmOS server</button>
@@ -89,6 +93,7 @@ export default {
     currentLogIndex: state => state.farm.currentLogIndex,
     isWorking: state => state.farm.isWorking,
     statusText: state => state.farm.statusText,
+    photoLoc: state => state.farm.photoLoc,
   }),
   created: function () {
     // TODO: It probably makes more sense to remember the last log the user was working on,
@@ -111,7 +116,8 @@ export default {
     updateCurrentLog (key, val) {
       const newProps = {
         [key]: val,
-        isCachedLocally: false
+        isCachedLocally: false,
+        photo_loc: this.photoLoc
       };
       this.$store.commit('updateCurrentLog', newProps)
     },
@@ -120,9 +126,20 @@ export default {
       var storage = window.localStorage;
       var storedUrl = storage.getItem('url');
       var storedToken = storage.getItem('token');
+      this.updateCurrentLog('photo_loc', this.photoLoc);
 
-      const pushProps = {url: storedUrl, token: storedToken}
+      const pushProps = {url: storedUrl, token: storedToken};
       this.$store.dispatch('pushToServer', pushProps)
+    },
+
+    getPhoto () {
+      //I want to update the current log after obtaining the image location!
+      //Having difficulty triggering an action after the asynch task completes
+      //Tried to followhttps://forum.vuejs.org/t/accessing-vuex-store-after-dispatch/14686/2
+      return this.$store.dispatch('getPhotoLoc')
+      .then(function() {
+        this.updateCurrentLog('photo_loc', this.photoLoc);
+      })
     }
 
   },

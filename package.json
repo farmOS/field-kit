@@ -14,6 +14,8 @@
   "dependencies": {
     "cordova-android": "^7.1.0",
     "cordova-ios": "^4.5.4",
+    "cordova-plugin-camera": "^4.0.3",
+    "cordova-plugin-ios-camera-permissions": "^1.2.0",
     "cordova-plugin-network-information": "^2.0.1",
     "cordova-plugin-whitelist": "^1.3.3",
     "moment": "^2.22.0",
@@ -84,11 +86,21 @@
   "cordova": {
     "plugins": {
       "cordova-plugin-whitelist": {},
-      "cordova-plugin-network-information": {}
+      "cordova-plugin-network-information": {},
+      "cordova-plugin-camera": {
+        "CAMERA_USAGE_DESCRIPTION": "farmOS would like access to the camera",
+        "PHOTOLIBRARY_USAGE_DESCRIPTION": "farmOS would like access to the camera"
+      },
+      "cordova-plugin-ios-camera-permissions": {
+        "CAMERA_USAGE_DESCRIPTION": "This app needs camera access",
+        "MICROPHONE_USAGE_DESCRIPTION": "This app needs microphone access",
+        "PHOTOLIBRARY_ADD_USAGE_DESCRIPTION": "This app needs write-access to photo library",
+        "PHOTOLIBRARY_USAGE_DESCRIPTION": "This app needs read/write-access photo library access"
+      }
     },
     "platforms": [
-      "ios",
-      "android"
+      "android",
+      "ios"
     ]
   }
 }

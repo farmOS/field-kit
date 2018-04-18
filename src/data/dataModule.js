@@ -88,7 +88,18 @@ export default {
           commit('setStatusText', "Error sending to server...")
         })//end then
 
-      } //pushToServer
+      }, //pushToServer
+
+      getPhotoLoc({commit}) {
+        getPhotoFromCamera ()
+        .then( function (photoLoc) {
+          commit('setStatusText', "Took the following photo: "+photoLoc);
+          commit('setPhotoLoc', photoLoc);
+        },
+        function (error){
+          commit('setStatusText', "Error capturing photo: "+error)
+        })//end then
+      },
 
   } //actions
 } //export default
@@ -338,5 +349,26 @@ function getRecords (db, table) {
         errorHandler
       );
     });
+  })
+}
+
+function getPhotoFromCamera () {
+  return new Promise(function(resolve, reject) {
+console.log('GETTING IMAGE FROM CAMERA')
+    navigator.camera.getPicture(onSuccess, onFail, { quality: 50,
+        destinationType: Camera.DestinationType.FILE_URI });
+
+    function onSuccess(imageURI) {
+        //var image = document.getElementById('myImage');
+        //image.src = imageURI;
+        console.log('RETRIEVED THE FOLLOWING IMAGE: '+imageURI)
+        resolve(imageURI);
+    }
+
+    function onFail(message) {
+      console.log('FAILED TO RETRIEVE IMAGE BECAUSE: ' + message)
+        reject(message)
+    }
+
   })
 }

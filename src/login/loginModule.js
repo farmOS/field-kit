@@ -92,7 +92,7 @@ If not, present login.  If so, get username, token from settings
 
     checkUser(url)
     .then( function (response){
-      commit('setStatusText', 'Get user response: '+JSON.stringify(response));
+      //commit('setStatusText', 'Get user response: '+JSON.stringify(response));
       var storage = window.localStorage;
       var storedName = storage.getItem('user');
       const userLogin = {username: storedName}

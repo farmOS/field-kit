@@ -24,6 +24,10 @@
         <allow-intent href="itms-apps:*" />
     </platform>
     <plugin name="cordova-plugin-network-information" spec="^2.0.1" />
-    <engine name="ios" spec="^4.5.4" />
+    <plugin name="cordova-plugin-camera" spec="^4.0.3">
+        <variable name="CAMERA_USAGE_DESCRIPTION" value="farmOS would like access to the camera" />
+        <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="farmOS would like access to the photo library" />
+    </plugin>
     <engine name="android" spec="^7.1.0" />
+    <engine name="ios" spec="^4.5.4" />
 </widget>
