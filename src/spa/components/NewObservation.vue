@@ -66,10 +66,19 @@
         <p v-if="isWorking">SPINNER SPIN!</p>
       -->
       </div>
-
+      <ul>
       <li v-for="i in logs">
-        {{i}}
+        <!-- Added structure to the display of logs to fix an iOS-only bug.
+        For some reason, iOS messes up the display of unstructured logs when fields are updated. -->
+        <div class="well">
+          <ul>
+          <li v-for="(value, key) in i">
+            {{key}}: {{value}}
+          </li>
+        </ul>
+        </div>
       </li>
+    </ul>
     </div>
   </div>
 </template>
@@ -94,10 +103,12 @@ export default {
     isWorking: state => state.farm.isWorking,
     statusText: state => state.farm.statusText,
     photoLoc: state => state.farm.photoLoc,
+    isOnline: state =>state.user.isOnline
   }),
   created: function () {
     // TODO: It probably makes more sense to remember the last log the user was working on,
     //    and only initialize a new log when they deliberately choose to.
+    this.$store.commit('setStatusText', 'NETWORK STATUS: '+this.isOnline)
     this.$store.dispatch('initializeLog', 'farm_observation')
   },
   beforeDestroy: function () {
@@ -117,7 +128,6 @@ export default {
       const newProps = {
         [key]: val,
         isCachedLocally: false,
-        photo_loc: this.photoLoc
       };
       this.$store.commit('updateCurrentLog', newProps)
     },
@@ -133,16 +143,19 @@ export default {
     },
 
     getPhoto () {
-      //I want to update the current log after obtaining the image location!
-      //Having difficulty triggering an action after the asynch task completes
-      //Tried to followhttps://forum.vuejs.org/t/accessing-vuex-store-after-dispatch/14686/2
+      //Obtains an image location from the camera!
       return this.$store.dispatch('getPhotoLoc')
-      .then(function() {
-        this.updateCurrentLog('photo_loc', this.photoLoc);
-      })
     }
 
-  },
+  },  //end methods
+
+  watch: {
+    //When photoLoc changes, this updates the photo_loc property of the current log
+    photoLoc: function () {
+      console.log('UPDATING CURRENT RECORD PHOTO LOC: '+this.photoLoc)
+        this.updateCurrentLog('photo_loc', this.photoLoc);
+   }
+  }
 }
 
 </script>

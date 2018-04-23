@@ -64,7 +64,12 @@ export default {
 
 
       //SEND RECORDS TO SERVER
-      pushToServer ({commit, rootState}, props) {
+  pushToServer ({commit, rootState}, props) {
+/*
+send records to the server if the device is online
+*/
+      if(rootState.user.isOnline === true) {
+
         commit('setIsWorking', true)
         commit('setStatusText', "Sending record to server...")
         console.log("PUSHING TO SERVER:")
@@ -79,7 +84,11 @@ export default {
           console.log("PUSH TO SERVER SUCCESS: ")
           console.log(JSON.stringify(response))
           commit('setIsWorking', false)
-          commit('setStatusText', "Sent to server successfully!")
+          if(formattedLog.field_farm_files !== null){
+            commit('setStatusText', "LOG SENT TO SERVER WITH PHOTO: "+formattedLog.field_farm_files)
+          } else {
+            commit('setStatusText', "LOG SENT TO SERVER!")
+          }
         },
         function (error){
           console.log("PUSH TO SERVER ERROR: ")
@@ -88,9 +97,17 @@ export default {
           commit('setStatusText', "Error sending to server...")
         })//end then
 
+      } else {
+        commit('setStatusText', "Cannot send - no network connection")
+      }   //end isOnline if else
+
       }, //pushToServer
 
       getPhotoLoc({commit}) {
+        /*
+        called when the get photo button is tapped; setPhotoLoc sets the captured
+        image URI to a variable in the store called photo_loc
+        */
         getPhotoFromCamera ()
         .then( function (photoLoc) {
           commit('setStatusText', "Took the following photo: "+photoLoc);
@@ -135,7 +152,25 @@ if (!currentLog.wasPushedToServer) {
     case 'notes':
         newLog.field_farm_notes = {format: "farm_format", value: '<p>'+currentLog[j]+'</p>\n'};
         break;
+    case 'photo_loc':
+    //Attach the photo only of a photo has been taken
+      if(currentLog[j] !== ''){
+        //Thanks to ourCodeWorld https://ourcodeworld.com/articles/read/80/how-to-convert-a-image-from-the-device-to-base64-with-javascript-in-cordova
+        getFileContentAsBase64(currentLog[j],function(base64Image){
 
+/*
+OK, this is where I had to stop.  I can get the images into base64, but I can't get
+farmOS to accept them!  I tried including the image in field_farm_files , and
+I also tried field_image based on the restws_file examples.  Neither worked!
+https://www.drupal.org/project/restws_file
+*/
+        console.log('THE ENCODED IMAGE: '+base64Image);
+        newLog.field_farm_files = [base64Image];
+        //newLog.field_image = base64Image;
+
+        });
+      }
+        break;
 
     //default:
   } //end switch
@@ -146,22 +181,6 @@ console.log(JSON.stringify(newLog))
 //Returning object in an array, per suggestion
 return(newLog);
 
-
-//from iOS
-/*
-
-        let toCompile = [
-            "name": nameInput,
-            "type": "farm_observation",
-            //timestamp disabled for now
-            //"timestamp": currentTimeString,
-            "field_farm_notes": ["format": "farm_format", "value": bodyInput]
-            //"field_farm_log_owner": [["id": currentUserId, "resource": "user", "uri": currentURI]],
-
-            //Need to query assets and select from a list in order to construct links
-            //"field_farm_asset": [["id": "2", "resource": "farm_asset", "uri": "http://www.beetclock.com/farmOS/?q=farm_asset/2"]]
-            ] as! [String: AnyObject]
-            */
 } //end formatState
 
 // Executes AJAX to send records to server
@@ -239,7 +258,7 @@ function getTX(db, table) {
 function makeTable(db, table, log) {
   return new Promise(function(resolve, reject) {
 
-    console.log(`making table with name ${table} and the following data tempate: `, log);
+    console.log(`making table with name ${table} and the following data template: `+JSON.stringify(log));
     //Creates a table called 'tableName' in the DB if none yet exists
     db.transaction(function (tx) {
       var fieldString = '';
@@ -333,7 +352,19 @@ function getRecords (db, table) {
 
     //This is called if the db.transaction obtains data
     function dataHandler(tx, results) {
-      resolve([...results.rows]);
+      var resultSet = [];
+      for(var i=0; i<results.rows.length; i++) {
+        var row = results.rows.item(i)
+          console.log('RAW GETRECORDS RESULT '+i+': '+JSON.stringify(row));
+          resultSet.push(row);
+        }
+      resolve(resultSet)
+      /*
+      I'm not sure why, but the following line does not work in Cordova, though
+      it does seem to work in the web app.  The resultSet code above replaces it.
+      */
+      //resolve([...results.rows]);
+
     }
     //This is called if the db.transaction fails to obtain data
     function errorHandler(tx, error) {
@@ -353,6 +384,10 @@ function getRecords (db, table) {
 }
 
 function getPhotoFromCamera () {
+  /*
+Utilizes the Cordova camera plugin to obtain an image URI
+  */
+
   return new Promise(function(resolve, reject) {
 console.log('GETTING IMAGE FROM CAMERA')
     navigator.camera.getPicture(onSuccess, onFail, { quality: 50,
@@ -371,4 +406,29 @@ console.log('GETTING IMAGE FROM CAMERA')
     }
 
   })
+}
+
+/*
+Turns an image URI into a base64 encoded file
+Thanks to ourCodeWorld https://ourcodeworld.com/articles/read/80/how-to-convert-a-image-from-the-device-to-base64-with-javascript-in-cordova
+*/
+
+function getFileContentAsBase64(path,callback){
+    window.resolveLocalFileSystemURL(path, gotFile, fail);
+
+    function fail(e) {
+          console.log('Cannot find requested file');
+    }
+
+    function gotFile(fileEntry) {
+           fileEntry.file(function(file) {
+              var reader = new FileReader();
+              reader.onloadend = function(e) {
+                   var content = this.result;
+                   callback(content);
+              };
+              // The most important point, use the readAsDatURL Method from the file plugin
+              reader.readAsDataURL(file);
+           });
+    }
 }

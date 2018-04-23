@@ -7,6 +7,7 @@ export default {
     //responseReceived is for testing purposes only
     responseReceived: null,
     isWorking: false,
+    isOnline: false,
   },
   mutations: {
     login(state, creds) {
@@ -17,8 +18,7 @@ export default {
 //the setStatusText mutation is for testing purposes only
     setStatusText(state, text) {
       state.statusText = text;
-      console.log('STATUS TEXT:');
-      console.log(state.statusText);
+      console.log('STATUS TEXT: '+state.statusText);
     },
 //likewise, responseWasReceived is for testing purposes only
     responseWasReceived(state, response) {
@@ -26,18 +26,14 @@ export default {
     },
     setIsWorking(state, booleanValue) {
       state.isWorking = booleanValue;
+    },
+    setIsOnline(state, booleanValue){
+      state.isOnline = booleanValue;
+      console.log('SET IS ONLINE: '+state.isOnline);
     }
 
   },
   actions: {
-
-/*
-TODO
-- Enable persistant settings store for url, username, token
-- On load, check whether the device is online.  If not, proceed directly to main view
-- If online, check if the app is already authenticated on the server.
-If not, present login.  If so, get username, token from settings
-*/
 
     didSubmitCredentials ({commit}, payload) {
 
@@ -64,6 +60,8 @@ If not, present login.  If so, get username, token from settings
             storage.setItem('token', tokenResponse);
             //commit('setStatusText', 'Token received: '+tokenResponse);
             commit('setStatusText', 'Login complete!');
+            //set isOnline to true, in case user went online after loading the app
+            commit('setIsOnline', true)
             //Go ahead and log in
             const userLogin = {username: username};
             commit('setIsWorking', false)
@@ -86,31 +84,59 @@ If not, present login.  If so, get username, token from settings
 
   }, //end didSubmitCreds
 
+
+/*
+checkLoginStatus is a bit misnamed, becuase it actually checks both network status
+AND login status.  First calls networkInfo to get network status from the cordova
+network information plugin.  If online, it calls the checkUser function to see if the
+stored username, cookie and token are valid
+*/
   checkLoginStatus ({commit}, url) {
     console.log('RUNNING checkLoginStatus URL: '+url)
-    //commit('setStatusText', 'Get user submitted; waiting for response');
 
+networkInfo()
+.then(function(state) {
+  var networkMessage = 'NETWORK STATE IS: '+state;
+  console.log(networkMessage);
+  commit('setStatusText', networkMessage);
+
+  if (state !== Connection.NONE) {
+    commit('setIsOnline', true)
     checkUser(url)
-    .then( function (response){
-      //commit('setStatusText', 'Get user response: '+JSON.stringify(response));
-      var storage = window.localStorage;
-      var storedName = storage.getItem('user');
-      const userLogin = {username: storedName}
-      commit('login', userLogin);
-    },
-    function (error){
-      console.log('Get user error: '+JSON.stringify(error))
-      //commit('setStatusText', 'Get user error: '+JSON.stringify(error));
+        .then( function (response){
+          //commit('setStatusText', 'Get user response: '+JSON.stringify(response));
+          var storage = window.localStorage;
+          var storedName = storage.getItem('user');
+          const userLogin = {username: storedName}
+          commit('login', userLogin);
+        },
+        function (error){
+          console.log('Get user error: '+JSON.stringify(error))
+          //commit('setStatusText', 'Get user error: '+JSON.stringify(error));
+        }
+        )//end then
+  } else {
+    //If the user is not online but has logged in previously, skip login and go directly to newObservation
+    var storage = window.localStorage;
+    var storedName = storage.getItem('user');
+    console.log('STORED USERNAME OFFLINE: '+storedName)
+    if (storedName !== null) {
+    const userLogin = {username: storedName}
+    commit('login', userLogin);
     }
-    )//end then
-  }//end checkLoginStatus
+  } //end if else online
+
+
+}) //end networkInfo Then
+
+  },//end checkLoginStatus
 
   } //end actions
-} // end export
+} //end export
 
 function checkUser(url) {
   var submissionPromise = new Promise (function (resolve, reject) {
-console.log('CHECKING WHETHER USER IS LOGGED IN')
+console.log('CHECKING WHETHER THE USER IS LOGGED IN')
 
 var userUrl = url+'/user'
 //var userUrl = url+'/?q=user'
@@ -212,3 +238,22 @@ var requestHeaders = {"Content-Type": "application/x-www-form-urlencoded", "Acce
 }); // end promise
 return submissionPromise;
 } //end requestToken
+
+/*
+Detects network status using the Cordova network info plugin
+*/
+function networkInfo(){
+  var submissionPromise = new Promise (function (resolve, reject) {
+    console.log('RUNNING networkInfo');
+    /*
+    I had a hell of a time figuring out how to make this work.
+    Ultimately I had to delay the navigator call for 2 seconds
+    If this call is made immediately onDeviceReady, it crashes the app...
+    */
+    setTimeout(function() {
+      var networkState = navigator.connection.type;
+      resolve(networkState);
+    }, 2000);
+    }); // end promise
+    return submissionPromise;
+} //end networkInfo
