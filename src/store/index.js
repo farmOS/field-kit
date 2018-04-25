@@ -23,6 +23,7 @@ const farmModule = {
     currentLogIndex: 0,
     isWorking: false,
     statusText: '',
+    photoLoc: '',
   },
   mutations: {
     addLogs(state, logs) {
@@ -47,6 +48,9 @@ const farmModule = {
     },
     setStatusText (state, text) {
       state.statusText = text;
+    },
+    setPhotoLoc (state, loc) {
+      state.photoLoc = loc;
     },
   },
   actions: {

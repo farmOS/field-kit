@@ -49,6 +49,10 @@
         >
       </div>
     -->
+    <br>
+    <div class="input-group">
+      <button :disabled='false' title="Get picture" @click="getPhoto" class="btn btn-default" type="button" >Get picture</button>
+    </div>
       <br>
       <div class="input-group">
         <button :disabled='false' title="Send current log to farmOS server" @click="pushToServer" class="btn btn-default" type="button" >Send current log to farmOS server</button>
@@ -62,10 +66,19 @@
         <p v-if="isWorking">SPINNER SPIN!</p>
       -->
       </div>
-
+      <ul>
       <li v-for="i in logs">
-        {{i}}
+        <!-- Added structure to the display of logs to fix an iOS-only bug.
+        For some reason, iOS messes up the display of unstructured logs when fields are updated. -->
+        <div class="well">
+          <ul>
+          <li v-for="(value, key) in i">
+            {{key}}: {{value}}
+          </li>
+        </ul>
+        </div>
       </li>
+    </ul>
     </div>
   </div>
 </template>
@@ -89,10 +102,13 @@ export default {
     currentLogIndex: state => state.farm.currentLogIndex,
     isWorking: state => state.farm.isWorking,
     statusText: state => state.farm.statusText,
+    photoLoc: state => state.farm.photoLoc,
+    isOnline: state =>state.user.isOnline
   }),
   created: function () {
     // TODO: It probably makes more sense to remember the last log the user was working on,
     //    and only initialize a new log when they deliberately choose to.
+    this.$store.commit('setStatusText', 'NETWORK STATUS: '+this.isOnline)
     this.$store.dispatch('initializeLog', 'farm_observation')
   },
   beforeDestroy: function () {
@@ -111,7 +127,7 @@ export default {
     updateCurrentLog (key, val) {
       const newProps = {
         [key]: val,
-        isCachedLocally: false
+        isCachedLocally: false,
       };
       this.$store.commit('updateCurrentLog', newProps)
     },
@@ -120,12 +136,26 @@ export default {
       var storage = window.localStorage;
       var storedUrl = storage.getItem('url');
       var storedToken = storage.getItem('token');
+      this.updateCurrentLog('photo_loc', this.photoLoc);
 
-      const pushProps = {url: storedUrl, token: storedToken}
+      const pushProps = {url: storedUrl, token: storedToken};
       this.$store.dispatch('pushToServer', pushProps)
+    },
+
+    getPhoto () {
+      //Obtains an image location from the camera!
+      return this.$store.dispatch('getPhotoLoc')
     }
 
-  },
+  },  //end methods
+
+  watch: {
+    //When photoLoc changes, this updates the photo_loc property of the current log
+    photoLoc: function () {
+      console.log('UPDATING CURRENT RECORD PHOTO LOC: '+this.photoLoc)
+        this.updateCurrentLog('photo_loc', this.photoLoc);
+   }
+  }
 }
 
 </script>

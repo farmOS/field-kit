@@ -9,6 +9,7 @@ export function logFactory ({
   name = '',
   type = '',
   timestamp = '',
+  photo_loc = '',
   done = false,
   isCachedLocally = false,
   wasPushedToServer = false
@@ -22,6 +23,7 @@ export function logFactory ({
     name,
     type,
     timestamp,
+    photo_loc,
     done,
     isCachedLocally,
     wasPushedToServer
