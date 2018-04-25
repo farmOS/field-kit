@@ -18,6 +18,7 @@
       <button :disabled="!this.valuesEntered" title="Submit credentials" @click="submitCredentials" class="btn btn-default" type="button" >Submit credentials</button>
     </div>
     <br>
+
     <div class="well">
       <p>{{statusText}}</p>
       <spinner :size="30" v-if="isWorking"></spinner>
@@ -53,6 +54,7 @@ export default {
         isLoggedIn: state => state.user.isLoggedIn,
         responseReceived: state => state.user.responseReceived,
         isWorking: state=> state.user.isWorking,
+        isOnline: state=> state.user.isOnline,
       }),
 
   methods: {
@@ -73,37 +75,45 @@ export default {
       //Call didSubmitCredentials action, which will initiate the login process
       this.$store.dispatch('didSubmitCredentials', creds)
     },
-    doLogin () {
-      //doLogin and the associated button are for testing porposes only
-      //eventually, we can call the commit from the didSubmitCredentials action
-      const userLogin = {username: this.username}
-      this.$store.commit('login', userLogin);
-    },
+
     onDeviceReady () {
+
       console.log('RECEIVED DEVICEREADY')
+
       var storage = window.localStorage;
       var savedUrl = storage.getItem('url');
       this.$store.dispatch('checkLoginStatus', savedUrl)
 
-      //THEN CHECK NETWORK status
-      /*
-      var networkState = navigator.connection.type;
-      console.log('NETWORK STATE IS: '+networkState)
-      this.$store.commit('setStatusText', 'NETWORK STATE IS: '+networkState);
-      */
     },
+    // These network event handlers don't trigger on load, contrary to what I've read
+/*
+    onOnline() {
+      this.$store.commit('setIsOnline', true)
+    },
+    onOffline() {
+      this.$store.commit('setIsOnline', false)
+    },
+*/
 
   }, //methods
   created: function() {
     console.log('VUE IS READY')
+    /*
+    These listeners for Cordova network information events could be useful,
+    but they don't trigger on load
+    */
+    //document.addEventListener("offline", this.onOnline(), false);
+    //document.addEventListener("online", this.onOffline(), false);
+
     //Listens for deviceReady event emitted by Cordova
     document.addEventListener("deviceready", this.onDeviceReady(), false);
-
+    //document.addEventListener("deviceready", this.onDeviceReady(), false);
 /*
 BYPASS LOGIN FOR TESTING
-*/
+//******
 const userLogin = {user: 'testerUser'}
 this.$store.commit('login', userLogin);
+*/
 
   }, //created
 
