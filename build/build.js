@@ -7,12 +7,20 @@ const ora = require('ora')
 const rm = require('rimraf')
 const path = require('path')
 const chalk = require('chalk')
+const commander = require('commander')
 const webpack = require('webpack')
 const config = require('../config')
 const webpackConfig = require('./webpack.prod.conf')
 
 const spinner = ora('building for production...')
 spinner.start()
+
+// Accept a flag argument for the 'build:watch' npm script
+commander.option('-w, --watch', 'Rebuild /dist/ folder on saved changes')
+  .parse(process.argv)
+if (commander.watch) {
+  Object.assign(webpackConfig, { watch: true })
+}
 
 rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
   if (err) throw err
