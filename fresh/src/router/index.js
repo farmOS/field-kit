@@ -1,15 +1,38 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import HelloWorld from '@/components/HelloWorld';
+import Calendar from '../components/Calendar';
+import Observations from '../components/Observations';
+import NewObservation from '../components/NewObservation';
+import DataNative from '../components/DataNative';
 
-Vue.use(Router);
+Vue.use(Router)
 
 export default new Router({
   routes: [
     {
       path: '/',
-      name: 'HelloWorld',
-      component: HelloWorld,
+      redirect: '/new-observation'
     },
-  ],
-});
+    {
+      path: '/calendar',
+      name: 'Calendar',
+      component: Calendar
+    },
+    {
+      path: '/observations',
+      name: 'Observations',
+      component: Observations
+    },
+    {
+      path: '/new-observation',
+      name: 'NewObservation',
+      component: NewObservation
+    },
+    {
+      path: '/data-native',
+      name: 'DataNative',
+      component: DataNative
+    },
+
+  ]
+})
