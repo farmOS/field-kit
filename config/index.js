@@ -75,14 +75,14 @@ module.exports = {
   },
 
   mobile: {
-	env: require('./mobile.env'),
-	index: path.resolve(__dirname, '../www/index.html'),
-	assetsRoot: path.resolve(__dirname, '../www'),
-	assetsSubDirectory: 'static',
-	assetsPublicPath: './',
-	productionSourceMap: false,
-	productionGzip: false,
-	productionGzipExtensions: ['js', 'css'],
-	bundleAnalyzerReport: process.env.npm_config_report,
+    env: require('./mobile.env'),
+    index: path.resolve(__dirname, '../www/index.html'),
+    assetsRoot: path.resolve(__dirname, '../www'),
+    assetsSubDirectory: 'static',
+    assetsPublicPath: './',
+    productionSourceMap: false,
+    productionGzip: false,
+    productionGzipExtensions: ['js', 'css'],
+    bundleAnalyzerReport: process.env.npm_config_report,
   }
 }
