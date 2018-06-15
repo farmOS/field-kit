@@ -6,13 +6,12 @@
   "private": true,
   "main": "dist/index.js",
   "scripts": {
-    "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
     "unit": "jest --config test/unit/jest.conf.js --coverage",
     "test": "npm run unit",
     "lint": "eslint --ext .js,.vue src test/unit",
     "build": "node build/build.js",
-    "build:watch": "node build/build.js --watch"
+    "dev": "node build/build.js --watch"
   },
   "dependencies": {
     "moment": "^2.22.2",
