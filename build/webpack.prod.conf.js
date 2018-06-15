@@ -15,7 +15,7 @@ const env = process.env.NODE_ENV === 'testing'
   ? require('../config/test.env')
   : require('../config/prod.env')
 
-const clientWebpackConfig = merge(baseWebpackConfig, {
+const prodWebpackConfig = merge(baseWebpackConfig, {
   module: {
     rules: utils.styleLoaders({
       sourceMap: config.build.productionSourceMap,
@@ -56,7 +56,9 @@ const clientWebpackConfig = merge(baseWebpackConfig, {
   ]
 })
 
-const nativeWebpackConfig = merge(clientWebpackConfig, {
+// This is currently just for reference, and is not being used
+// TODO: Migrate this to the native repo
+const nativeWebpackConfig = merge(prodWebpackConfig, {
   output: {
     path: config.build.assetsRoot,
     filename: utils.assetsPath('js/[name].[chunkhash].js'),
@@ -158,5 +160,4 @@ if (config.build.bundleAnalyzerReport) {
   webpackConfig.plugins.push(new BundleAnalyzerPlugin())
 }
 
-module.exports = clientWebpackConfig
-// module.exports = nativeWebpackConfig
+module.exports = prodWebpackConfig

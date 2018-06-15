@@ -1,8 +1,6 @@
 'use strict'
 require('./check-versions')()
 
-process.env.NODE_ENV = 'production'
-
 const ora = require('ora')
 const rm = require('rimraf')
 const path = require('path')
@@ -10,17 +8,27 @@ const chalk = require('chalk')
 const commander = require('commander')
 const webpack = require('webpack')
 const config = require('../config')
-const webpackConfig = require('./webpack.prod.conf')
 
-const spinner = ora('building for production...')
-spinner.start()
-
-// Accept a flag argument for the 'build:watch' npm script
+/** Accept a flag argument for the 'build:watch' npm script
+  * and run the development build.
+  * This has grown way beyond the simple 'watch' option
+  * and should probably be rethought. However, because the
+  * vue-webpack template's config is such a mess to start with,
+  * this seems like the cleanest way of handling the way it has
+  * env variables spread all over the place.
+**/
 commander.option('-w, --watch', 'Rebuild /dist/ folder on saved changes')
   .parse(process.argv)
 if (commander.watch) {
-  Object.assign(webpackConfig, { watch: true })
+  var webpackConfig = require('./webpack.dev.conf')
+  var spinner = ora('building for development...')
+} else {
+  process.env.NODE_ENV = 'production'
+  var webpackConfig = require('./webpack.prod.conf')
+  var spinner = ora('building for production...')
 }
+
+spinner.start()
 
 rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
   if (err) throw err
