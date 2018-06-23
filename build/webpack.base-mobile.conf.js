@@ -42,8 +42,7 @@ module.exports = {
   },
   module: {
     rules: [
-      // Commenting out the linter  temporarily for testing
-      // ...(config.dev.useEslint ? [createLintingRule()] : []),
+      ...(config.dev.useEslint ? [createLintingRule()] : []),
       {
         test: /\.vue$/,
         loader: 'vue-loader',
@@ -56,7 +55,6 @@ module.exports = {
           resolve('src'),
           resolve('test'),
           resolve('node_modules/webpack-dev-server/client'),
-          resolve('node_modules/farmos-client')
         ]
       },
       {
