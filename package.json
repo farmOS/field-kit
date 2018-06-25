@@ -20,7 +20,6 @@
     "cordova-plugin-network-information": "^2.0.1",
     "cordova-plugin-whitelist": "^1.3.3",
     "farmos-client": "farmOS/farmOS-client",
-    "vue-cordova": "^0.1.2",
     "vuex": "^3.0.1"
   },
   "devDependencies": {

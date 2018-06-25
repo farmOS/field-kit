@@ -1,8 +1,6 @@
 import Login from './Login.vue';
 import loginModule from './loginModule';
 import mixinLogic from './mixin.js';
-// adding in VueCordova plugin
-import VueCordova from 'vue-cordova';
 
 export default {
   install( Vue, { router, store }) {
@@ -14,7 +12,5 @@ export default {
     }]);
     store.registerModule('user', loginModule);
     Vue.mixin(mixinLogic)
-    // adding in VueCordova plugin
-    Vue.use(VueCordova)
   }
 };
