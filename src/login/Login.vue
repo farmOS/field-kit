@@ -21,7 +21,7 @@
 
     <div class="well">
       <p>{{statusText}}</p>
-      <spinner :size="30" v-if="isWorking"></spinner>
+      <!-- <spinner :size="30" v-if="isWorking"></spinner> -->
       <!--
       <br>
       <p v-if="isWorking">SPINNER SPIN!</p>
@@ -33,11 +33,11 @@
 <script>
 import { mapState } from 'vuex';
 //adding spinner plugin
-import Spinner from 'vue-spinner-component/src/Spinner.vue';
+// import Spinner from 'vue-spinner-component/src/Spinner.vue';
 
 export default {
   components: {
-    Spinner
+    // Spinner
   },
   name: 'Login',
   data () {
