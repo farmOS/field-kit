@@ -19,6 +19,14 @@ module.exports = {
   plugins: [
     'vue'
   ],
+  // check if imports actually resolve
+  settings: {
+    'import/resolver': {
+      webpack: {
+        config: 'build/webpack.base.conf.js'
+      }
+    }
+  },
   // add your custom rules here
   rules: {
     // don't require .vue extension when importing
