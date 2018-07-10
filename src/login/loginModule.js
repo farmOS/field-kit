@@ -240,7 +240,7 @@ function networkInfo() {
     If this call is made immediately onDeviceReady, it crashes the app...
     */
     setTimeout(() => {
-      const networkState = navigator.connection.type;
+      const networkState = navigator.connection.type || navigator.connection.effectiveType;
       resolve(networkState);
     }, 2000);
   }); // end promise
