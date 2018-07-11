@@ -60,7 +60,10 @@ export default {
   methods: {
     //We have the template calling addItem, so we need an addItem method within the component
     checkValues () {
-      if (this.username !== '' && this.password !== '' && this.farmosUrl !== '') {
+      const urlIsValid = process.env.NODE_ENV === 'development' || this.username !== '';
+      const usernameIsValid = this.username !== '';
+      const passwordIsValid = this.password !== '';
+      if (urlIsValid && usernameIsValid && passwordIsValid) {
         this.valuesEntered = true;
       }
     },
