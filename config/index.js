@@ -10,7 +10,25 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxy: [{
+      logLevel: 'debug',
+      context: [
+        '/user/',
+        '/login/',
+        '/restws/',
+        '/log',
+      ],
+      target: 'http://localhost:80',
+      changeOrigin: true,
+      secure: false
+    }],
+    // Add headers to all http requests (for CORS)
+    headers: {
+      // 'Access-Control-Allow-Origin': '*',
+      // "Access-Control-Allow-Credentials": "true",
+      // "Access-Control-Allow-Headers": "Content-Type, Authorization, x-id, Content-Length, X-Requested-With",
+      // "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS"
+    },
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
