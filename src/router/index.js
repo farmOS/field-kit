@@ -2,7 +2,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Calendar from '../components/Calendar';
 import Observations from '../components/Observations';
-import NewObservation from '../components/NewObservation';
+import EditObservation from '../components/EditObservation';
 import DataNative from '../components/DataNative';
 
 Vue.use(Router)
@@ -11,7 +11,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/new-observation'
+      redirect: '/edit-observation'
     },
     {
       path: '/calendar',
@@ -24,9 +24,9 @@ export default new Router({
       component: Observations
     },
     {
-      path: '/new-observation',
-      name: 'NewObservation',
-      component: NewObservation
+      path: '/edit-observation',
+      name: 'EditObservation',
+      component: EditObservation
     },
     {
       path: '/data-native',
