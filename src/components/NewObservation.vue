@@ -3,8 +3,11 @@
     <h4>{{vueHeader}}</h4>
     <!-- Display input form if chooser is inactive -->
     <div class="well" >
-      <!-- TODO: make these input fields into child components and load them with v-for -->
-      <!-- TODO: pass down arguments for updateCurrentLog() as props, from the computed values of the current log -->
+      <!--
+        TODO: make these input fields into child components and load them with
+        v-for; pass down arguments for updateCurrentLog() as props, from the
+        computed values of the current log
+      -->
       <div class="form-item form-item-name form-group">
         <label for="name" class="control-label">Name</label>
         <input
@@ -27,7 +30,7 @@
       </div>
     -->
       <div class="form-item form-item-name form-group">
-        <label for="notes" class="control-label">Notes</label>
+        <label for="notes" class="control-label">Notessssss</label>
         <input
           :value="logs[currentLogIndex].notes"
           @input="updateCurrentLog('notes', $event.target.value)"
@@ -51,11 +54,27 @@
     -->
     <br>
     <div class="input-group">
-      <button :disabled='false' title="Get picture" @click="getPhoto" class="btn btn-default" type="button" >Get picture</button>
+      <button
+        :disabled='false'
+        title="Get picture"
+        @click="getPhoto"
+        class="btn btn-default"
+        type="button"
+      >
+        Get picture
+      </button>
     </div>
       <br>
       <div class="input-group">
-        <button :disabled='false' title="Send current log to farmOS server" @click="pushToServer" class="btn btn-default" type="button" >Send current log to farmOS server</button>
+        <button
+          :disabled='false'
+          title="Send current log to farmOS server"
+          @click="pushToServer"
+          class="btn btn-default"
+          type="button"
+        >
+          Send current log to farmOS server
+        </button>
       </div>
       <br>
       <div class="well">
@@ -67,12 +86,18 @@
       -->
       </div>
       <ul>
-      <li v-for="i in logs">
+      <li
+        v-for="log in logs"
+        :key='logs.indexOf(log)'
+      >
         <!-- Added structure to the display of logs to fix an iOS-only bug.
         For some reason, iOS messes up the display of unstructured logs when fields are updated. -->
         <div class="well">
           <ul>
-          <li v-for="(value, key) in i">
+          <li
+            v-for='(value, key) in log'
+            :key='key'
+          >
             {{key}}: {{value}}
           </li>
         </ul>
@@ -86,16 +111,16 @@
 <script>
 import { mapState } from 'vuex';
 import moment from 'moment';
-//adding spinner plugin
+// removed spinner b/c it caused compilation errors
 // import Spinner from 'vue-spinner-component/src/Spinner.vue';
 export default {
   components: {
     // Spinner
   },
-  data () {
-  return {
-    vueHeader: 'Enter your new observation:',
-    }
+  data() {
+    return {
+      vueHeader: 'Enter your new observation:',
+    };
   },
   computed: mapState({
     logs: state => state.farm.logs,
@@ -103,60 +128,60 @@ export default {
     isWorking: state => state.farm.isWorking,
     statusText: state => state.farm.statusText,
     photoLoc: state => state.farm.photoLoc,
-    isOnline: state =>state.user.isOnline
+    isOnline: state => state.user.isOnline,
   }),
-  created: function () {
+  created() {
+    this.$store.commit('setStatusText', `NETWORK STATUS: ${this.isOnline}`);
     // TODO: It probably makes more sense to remember the last log the user was working on,
     //    and only initialize a new log when they deliberately choose to.
-    this.$store.commit('setStatusText', 'NETWORK STATUS: '+this.isOnline)
-    this.$store.dispatch('initializeLog', 'farm_observation')
+    this.$store.dispatch('initializeLog', 'farm_observation');
   },
-  beforeDestroy: function () {
-    this.$store.commit('clearLogs')
+  beforeDestroy() {
+    this.$store.commit('clearLogs');
   },
   methods: {
 
-    convertOutOfUnix (unixTimestamp) {
-      return moment.unix(unixTimestamp).format('YYYY-MM-DD')
+    convertOutOfUnix(unixTimestamp) {
+      return moment.unix(unixTimestamp).format('YYYY-MM-DD');
     },
 
-    convertIntoUnix (nonUnixTimestamp) {
-      return Math.floor(new Date(nonUnixTimestamp).getTime() / 1000).toString()
+    convertIntoUnix(nonUnixTimestamp) {
+      return Math.floor(new Date(nonUnixTimestamp).getTime() / 1000).toString();
     },
 
-    updateCurrentLog (key, val) {
+    updateCurrentLog(key, val) {
       const newProps = {
         [key]: val,
         isCachedLocally: false,
       };
-      this.$store.commit('updateCurrentLog', newProps)
+      this.$store.commit('updateCurrentLog', newProps);
     },
 
-    pushToServer () {
-      var storage = window.localStorage;
-      var storedUrl = storage.getItem('url');
-      var storedToken = storage.getItem('token');
+    pushToServer() {
+      const storage = window.localStorage;
+      const storedUrl = storage.getItem('url');
+      const storedToken = storage.getItem('token');
       this.updateCurrentLog('photo_loc', this.photoLoc);
 
-      const pushProps = {url: storedUrl, token: storedToken};
-      this.$store.dispatch('pushToServer', pushProps)
+      const pushProps = { url: storedUrl, token: storedToken };
+      this.$store.dispatch('pushToServer', pushProps);
     },
 
-    getPhoto () {
-      //Obtains an image location from the camera!
-      return this.$store.dispatch('getPhotoLoc')
-    }
+    getPhoto() {
+      // Obtains an image location from the camera!
+      return this.$store.dispatch('getPhotoLoc');
+    },
 
-  },  //end methods
+  },
 
   watch: {
-    //When photoLoc changes, this updates the photo_loc property of the current log
-    photoLoc: function () {
-      console.log('UPDATING CURRENT RECORD PHOTO LOC: '+this.photoLoc)
-        this.updateCurrentLog('photo_loc', this.photoLoc);
-   }
-  }
-}
+    // When photoLoc changes, this updates the photo_loc property of the current log
+    photoLoc() {
+      console.log(`UPDATING CURRENT RECORD PHOTO LOC: ${this.photoLoc}`);
+      this.updateCurrentLog('photo_loc', this.photoLoc);
+    },
+  },
+};
 
 </script>
 
