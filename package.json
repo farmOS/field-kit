@@ -10,6 +10,7 @@
     "unit": "jest --config test/unit/jest.conf.js --coverage",
     "test": "npm run unit",
     "lint": "eslint --color --ext .js,.vue src test/unit | less -R",
+    "lint-files": "node --eval 'process.argv.reduce((acc, cur) => `${acc} ${cur}`, ``)' | eslint --color",
     "build": "node build/build.js",
     "dev": "node build/build.js --watch"
   },
