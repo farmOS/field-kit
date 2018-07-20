@@ -35,16 +35,17 @@ export default {
   computed: mapState({
     headerText: state => state.shell.greeting,
   }),
-  methods: {
-
-    // I should parse this in an iterative way, cycling through object properties
-    saveObservation (obs) {
-
-
-      this.displayState = 'displayNewObservation'
-    },
-
-  }//methods
+  // TODO: Looks like dead code; follow up and delete.
+  // methods: {
+  //
+  //   // I should parse this in an iterative way, cycling through object properties
+  //   saveObservation (obs) {
+  //
+  //
+  //     this.displayState = 'displayNewObservation'
+  //   },
+  //
+  // }//methods
 
 }
 </script>
