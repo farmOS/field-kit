@@ -1,7 +1,6 @@
 <template>
   <div>
     <h4>{{vueHeader}}</h4>
-    <!-- Display input form if chooser is inactive -->
     <div class="well" >
       <!--
         TODO: make these input fields into child components and load them with
