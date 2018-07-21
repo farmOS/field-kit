@@ -111,7 +111,7 @@ export default {
               });
           } else {
             // If the user is not online but has logged in previously,
-            // skip login and go directly to newObservation
+            // skip login and go directly to EditObservation
             const storage = window.localStorage;
             const storedName = storage.getItem('user');
             console.log(`STORED USERNAME OFFLINE: ${storedName}`);

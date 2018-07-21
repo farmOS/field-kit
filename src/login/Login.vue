@@ -141,9 +141,13 @@ export default {
     */
   },
   watch: {
+    /**
+    TODO: It might be best to do this check at a higher level. It's possible
+    this is causing issue #18: https://github.com/farmOS/farmOS-native/issues/18
+    **/
     isLoggedIn() {
       console.log('isLoggedIn HAS CHANGED!!!');
-      this.$router.push({ path: '/new-observation' });
+      this.$router.push({ path: '/edit-observation' });
     },
   },
 };

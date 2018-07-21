@@ -4,7 +4,7 @@ export default {
   install(Vue, {store, router}) {
     store.registerModule('data', dataModule);
     router.afterEach( (to, from) => {
-      if (to.name === 'NewObservation') {
+      if (to.name === 'EditObservation') {
         store.commit('clearLogs');
         store.dispatch('loadCachedLogs', 'farm_observation');
       }
