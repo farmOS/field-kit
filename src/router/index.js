@@ -5,34 +5,34 @@ import Observations from '../components/Observations';
 import EditObservation from '../components/EditObservation';
 import DataNative from '../components/DataNative';
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/edit-observation'
+      redirect: '/edit-observation',
     },
     {
       path: '/calendar',
       name: 'Calendar',
-      component: Calendar
+      component: Calendar,
     },
     {
       path: '/observations',
       name: 'Observations',
-      component: Observations
+      component: Observations,
     },
     {
       path: '/edit-observation',
       name: 'EditObservation',
-      component: EditObservation
+      component: EditObservation,
     },
     {
       path: '/data-native',
       name: 'DataNative',
-      component: DataNative
+      component: DataNative,
     },
 
-  ]
-})
+  ],
+});
