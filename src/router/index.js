@@ -10,7 +10,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/edit-observation',
+      redirect: '/observations',
     },
     {
       path: '/observations',
