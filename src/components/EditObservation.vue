@@ -85,24 +85,25 @@
       -->
       </div>
       <ul>
-      <li
-        v-for="log in logs"
-        :key='logs.indexOf(log)'
-      >
-        <!-- Added structure to the display of logs to fix an iOS-only bug.
-        For some reason, iOS messes up the display of unstructured logs when fields are updated. -->
-        <div class="well">
-          <ul>
-          <li
-            v-for='(value, key) in log'
-            :key='key'
-          >
-            {{key}}: {{value}}
-          </li>
-        </ul>
-        </div>
-      </li>
-    </ul>
+        <li
+          v-for="log in logs"
+          :key='logs.indexOf(log)'
+        >
+          <!-- Added structure to the display of logs to fix an iOS-only bug.
+          For some reason, iOS messes up the display of unstructured logs
+          when fields are updated. -->
+          <div class="well">
+            <ul>
+              <li
+                v-for='(value, key) in log'
+                :key='key'
+              >
+                {{key}}: {{value}}
+              </li>
+            </ul>
+          </div>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
