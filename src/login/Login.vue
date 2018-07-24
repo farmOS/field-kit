@@ -147,7 +147,7 @@ export default {
     **/
     isLoggedIn() {
       console.log('isLoggedIn HAS CHANGED!!!');
-      this.$router.push({ path: '/edit-observation' });
+      this.$router.push({ path: '/observations' });
     },
   },
 };
