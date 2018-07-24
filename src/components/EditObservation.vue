@@ -29,7 +29,7 @@
       </div>
     -->
       <div class="form-item form-item-name form-group">
-        <label for="notes" class="control-label">Notessssss</label>
+        <label for="notes" class="control-label">Notes</label>
         <input
           :value="logs[currentLogIndex].notes"
           @input="updateCurrentLog('notes', $event.target.value)"
