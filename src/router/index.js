@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Observations from '../components/Observations';
 import EditObservation from '../components/EditObservation';
+import AllObservations from '../components/AllObservations';
 
 Vue.use(Router);
 
@@ -21,6 +22,10 @@ export default new Router({
       name: 'EditObservation',
       component: EditObservation,
     },
-
+    {
+      path: '/all-observation',
+      name: 'AllObservations',
+      component: AllObservations,
+    },
   ],
 });
