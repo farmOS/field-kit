@@ -23,7 +23,7 @@ export default new Router({
       component: EditObservation,
     },
     {
-      path: '/all-observation',
+      path: '/all-observations',
       name: 'AllObservations',
       component: AllObservations,
     },
