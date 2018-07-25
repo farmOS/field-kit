@@ -1,6 +1,16 @@
 <template lang="html">
   <div>
     <h1>All Observations</h1>
+    <button
+      type="button"
+      class="btn btn-success btn-navbar">
+      Create observation
+    </button>
+    <button
+      type="button"
+      class="btn btn-info btn-navbar navbar-right">
+      Sync all to farmOS
+    </button>
     <table class="table table-bordered">
       <thead>
         <tr>
@@ -10,15 +20,16 @@
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="log in logs"
-          :key='logs.indexOf(log)'
-        >
+        <tr v-for="log in logs" :key='logs.indexOf(log)'>
           <td>{{showDate(log.timestamp)}}</td>
           <td>{{log.name}}</td>
-          <td v-if="log.wasPushedToServer"><a href="#">synced</a> ({{syncTime(log.timestamp)}})</td>
-          <td v-else-if="log.done"><div class="glyphicon glyphicon-refresh spin" aria-hidden="true"></div></td>
-          <td v-else="log.done">unsynced</td>
+          <td v-if="log.wasPushedToServer">
+            <a href="#">synced</a> ({{syncTime(log.timestamp)}})
+          </td>
+          <td v-else-if="log.done">
+            <div class="glyphicon glyphicon-refresh spin" aria-hidden="true" />
+          </td>
+          <td v-else>unsynced</td>
         </tr>
       </tbody>
     </table>
@@ -38,7 +49,7 @@ export default {
     statusText: state => state.farm.statusText,
     photoLoc: state => state.farm.photoLoc,
     isOnline: state => state.user.isOnline,
-    moment: moment,
+    moment,
   }),
   methods: {
     syncTime(unixTimestamp) {
