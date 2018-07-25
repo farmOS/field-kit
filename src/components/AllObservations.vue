@@ -1,29 +1,34 @@
 <template lang="html">
-  <!-- <h1>All Observations</h1> -->
-  <ul>
-    <li
-      v-for="log in logs"
-      :key='logs.indexOf(log)'
-    >
-      <!-- Added structure to the display of logs to fix an iOS-only bug.
-      For some reason, iOS messes up the display of unstructured logs
-      when fields are updated. -->
-      <div class="well">
-        <ul>
-          <li
-            v-for='(value, key) in log'
-            :key='key'
-          >
-            {{key}}: {{value}}
-          </li>
-        </ul>
-      </div>
-    </li>
-  </ul>
+  <div>
+    <h1>All Observations</h1>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Log name</th>
+          <th>Sync status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="log in logs"
+          :key='logs.indexOf(log)'
+        >
+          <td>{{showDate(log.timestamp)}}</td>
+          <td>{{log.name}}</td>
+          <td v-if="log.wasPushedToServer"><a href="#">synced</a> ({{syncTime(log.timestamp)}})</td>
+          <td v-else-if="log.done"><div class="glyphicon glyphicon-refresh spin" aria-hidden="true"></div></td>
+          <td v-else="log.done">unsynced</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
 </template>
 
 <script>
 import { mapState } from 'vuex';
+import moment from 'moment';
 
 export default {
   computed: mapState({
@@ -33,9 +38,63 @@ export default {
     statusText: state => state.farm.statusText,
     photoLoc: state => state.farm.photoLoc,
     isOnline: state => state.user.isOnline,
+    moment: moment,
   }),
+  methods: {
+    syncTime(unixTimestamp) {
+      return moment.unix(unixTimestamp).format('YYYY-MM-DD');
+    },
+    showDate(unixTimestamp) {
+      return moment.unix(unixTimestamp).format('MMM DD YYYY');
+    },
+  },
 };
 </script>
 
-<style scoped>
+<style>
+  .spin {
+      -webkit-animation-name: spin;
+      -webkit-animation-duration: 4000ms;
+      -webkit-animation-iteration-count: infinite;
+      -webkit-animation-timing-function: linear;
+      -moz-animation-name: spin;
+      -moz-animation-duration: 4000ms;
+      -moz-animation-iteration-count: infinite;
+      -moz-animation-timing-function: linear;
+      -ms-animation-name: spin;
+      -ms-animation-duration: 4000ms;
+      -ms-animation-iteration-count: infinite;
+      -ms-animation-timing-function: linear;
+
+      animation-name: spin;
+      animation-duration: 4000ms;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
+
+      width: 15px;
+      height: 15px;
+      transform: translateY(-%50);
+      overflow: visible;
+      background-color: tomato;
+  }
+  @-ms-keyframes spin {
+      from { -ms-transform: rotate(0deg); }
+      to { -ms-transform: rotate(360deg); }
+  }
+  @-moz-keyframes spin {
+      from { -moz-transform: rotate(0deg); }
+      to { -moz-transform: rotate(360deg); }
+  }
+  @-webkit-keyframes spin {
+      from { -webkit-transform: rotate(0deg); }
+      to { -webkit-transform: rotate(360deg); }
+  }
+  @keyframes spin {
+      from {
+          transform: rotate(0deg);
+      }
+      to {
+          transform: rotate(360deg);
+      }
+  }
 </style>
