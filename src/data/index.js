@@ -3,8 +3,9 @@ import dataModule from './dataModule';
 export default {
   install(Vue, {store, router}) {
     store.registerModule('data', dataModule);
+    // TODO: give the client more control over when to retrieve cached logs
     router.afterEach( (to, from) => {
-      if (to.name === 'EditObservation') {
+      if (to.name === 'Observations') {
         store.commit('clearLogs');
         store.dispatch('loadCachedLogs', 'farm_observation');
       }
