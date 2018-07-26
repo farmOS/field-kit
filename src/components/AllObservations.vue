@@ -28,7 +28,9 @@
           <td v-if="log.wasPushedToServer">
             <a href="#">synced</a> ({{syncTime(log.timestamp)}})
           </td>
+          <!-- TODO: replace log.done with log.isReadyToSync -->
           <td v-else-if="log.done">
+            <!-- TODO: add proper spinner once glyphicon font is working -->
             <div class="glyphicon glyphicon-refresh spin" aria-hidden="true" />
           </td>
           <td v-else>unsynced</td>
@@ -62,10 +64,22 @@ export default {
     },
     createObservation() {
       // TODO: Add proper method body here
+      /**
+        * This just needs to fire the initializeLog() method on EditObservation.
+        * If we presume it will be opening Edit observation as a separate page
+        * then it should only need to push its path to the router, and then
+        * EditObservation's own lifecycle hooks will fire initializeLog().
+      **/
       console.log("createObservation() fired!");
     },
     syncAll() {
       // TODO: Add proper method body here
+      /**
+        * This should be a refactor of pushToServer() method on EditObservation;
+        * however, it needs to enforce separation between the repos, and so
+        * it will require some commits to the native data plugin to make sure
+        * localStorate requests are handled there, not here.
+      **/
       console.log("syncAll() fired!");
     },
   },
@@ -92,6 +106,8 @@ export default {
       animation-iteration-count: infinite;
       animation-timing-function: linear;
 
+      /* These styles are just filler (literally) */
+      /* until the glyphicon font set is available */
       width: 15px;
       height: 15px;
       transform: translateY(-%50);
