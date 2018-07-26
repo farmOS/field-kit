@@ -2,11 +2,13 @@
   <div>
     <h1>All Observations</h1>
     <button
+      @click="createObservation"
       type="button"
       class="btn btn-success btn-navbar">
       Create observation
     </button>
     <button
+      @click="syncAll"
       type="button"
       class="btn btn-info btn-navbar navbar-right">
       Sync all to farmOS
@@ -57,6 +59,14 @@ export default {
     },
     showDate(unixTimestamp) {
       return moment.unix(unixTimestamp).format('MMM DD YYYY');
+    },
+    createObservation() {
+      // TODO: Add proper method body here
+      console.log("createObservation() fired!");
+    },
+    syncAll() {
+      // TODO: Add proper method body here
+      console.log("syncAll() fired!");
     },
   },
 };
