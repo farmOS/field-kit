@@ -63,14 +63,7 @@ export default {
       return moment.unix(unixTimestamp).format('MMM DD YYYY');
     },
     createObservation() {
-      // TODO: Add proper method body here
-      /**
-        * This just needs to fire the initializeLog() method on EditObservation.
-        * If we presume it will be opening Edit observation as a separate page
-        * then it should only need to push its path to the router, and then
-        * EditObservation's own lifecycle hooks will fire initializeLog().
-      **/
-      console.log("createObservation() fired!");
+      this.$router.push('edit-observation');
     },
     syncAll() {
       // TODO: Add proper method body here
