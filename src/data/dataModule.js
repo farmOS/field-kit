@@ -49,11 +49,14 @@ export default {
 
 
     // SEND RECORDS TO SERVER
-    pushToServer({ commit, rootState }, props) {
+    pushToServer({ commit, rootState }) {
       const logObject = rootState.farm.logs[rootState.farm.currentLogIndex];
       console.log('PUSHING TO SERVER: ', JSON.stringify(logObject));
       const formattedLog = formatState(logObject); // eslint-disable-line no-use-before-define
       console.log('LOGS FORMATTED TO: ', JSON.stringify(formattedLog));
+      const storage = window.localStorage;
+      const storedUrl = storage.getItem('url');
+      const storedToken = storage.getItem('token');
 
       function handleResponse(response) {
         console.log('PUSH TO SERVER SUCCESS: ', JSON.stringify(response));
@@ -74,7 +77,7 @@ export default {
       if (rootState.user.isOnline === true) {
         commit('setIsWorking', true);
         commit('setStatusText', 'Sending record to server...');
-        pushRecords(props.url, props.token, formattedLog) // eslint-disable-line no-use-before-define, max-len
+        pushRecords(storedUrl, storedToken, formattedLog) // eslint-disable-line no-use-before-define, max-len
           .then(handleResponse, handleError);
       } else {
         commit('setStatusText', 'Cannot send - no network connection');
