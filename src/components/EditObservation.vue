@@ -137,10 +137,14 @@ export default {
       this.$store.commit('updateCurrentLog', newProps);
     },
 
+    // TODO: refactor this here first before moving to AllObservations
     pushToServer() {
+      // TODO: move calls to localStorage to dataModule
       const storage = window.localStorage;
       const storedUrl = storage.getItem('url');
       const storedToken = storage.getItem('token');
+
+      // FIXME: Why is this being called here? Why not in getPhoto or getPhotoLoc?
       this.updateCurrentLog('photo_loc', this.photoLoc);
 
       const pushProps = { url: storedUrl, token: storedToken };
