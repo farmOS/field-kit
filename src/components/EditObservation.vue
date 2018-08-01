@@ -64,18 +64,6 @@
       </button>
     </div>
       <br>
-      <div class="input-group">
-        <button
-          :disabled='false'
-          title="Send current log to farmOS server"
-          @click="pushToServer"
-          class="btn btn-default"
-          type="button"
-        >
-          Send current log to farmOS server
-        </button>
-      </div>
-      <br>
       <div class="well">
         <p>{{statusText}}</p>
         <!-- <spinner :size="30" v-if="isWorking"></spinner> -->
@@ -135,20 +123,6 @@ export default {
         isCachedLocally: false,
       };
       this.$store.commit('updateCurrentLog', newProps);
-    },
-
-    // TODO: refactor this here first before moving to AllObservations
-    pushToServer() {
-      // TODO: move calls to localStorage to dataModule
-      const storage = window.localStorage;
-      const storedUrl = storage.getItem('url');
-      const storedToken = storage.getItem('token');
-
-      // FIXME: Why is this being called here? Why not in getPhoto or getPhotoLoc?
-      this.updateCurrentLog('photo_loc', this.photoLoc);
-
-      const pushProps = { url: storedUrl, token: storedToken };
-      this.$store.dispatch('pushToServer', pushProps);
     },
 
     getPhoto() {

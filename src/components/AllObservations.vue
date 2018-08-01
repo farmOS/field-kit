@@ -66,22 +66,9 @@ export default {
       this.$router.push('edit-observation');
     },
     syncAll() {
-      /*
-        This should be a refactor of pushToServer() method on EditObservation;
-        however, it needs to enforce separation between the repos, and so
-        it will require some commits to the native data plugin to make sure
-        localStorate requests are handled there, not here.
-      */
-      // TODO: move calls to localStorage to dataModule
-      const storage = window.localStorage;
-      const storedUrl = storage.getItem('url');
-      const storedToken = storage.getItem('token');
-
       // FIXME: Why is this being called here? Why not in getPhoto or getPhotoLoc?
       // this.updateCurrentLog('photo_loc', this.photoLoc);
-
-      const pushProps = { url: storedUrl, token: storedToken };
-      this.$store.dispatch('pushToServer', pushProps);
+      this.$store.dispatch('pushToServer');
     },
   },
 };
