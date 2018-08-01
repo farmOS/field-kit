@@ -1,269 +1,239 @@
-import {logFactory} from './logFactory';
+import { logFactory } from './logFactory';
 
 export default {
 
   actions: {
 
-    createRecord ({commit, dispatch, rootstate}, newLog) {
+    createRecord({ commit }, newLog) {
       const tableName = newLog.type;
       const newRecord = logFactory(newLog);
-      openDatabase()
-      .then(function(db) {
-        return makeTable(db, tableName, newRecord);
-      })
-      .then(function(tx) {
-        return saveRecord(tx, tableName, newRecord)
-      })
-      .then(function(results) {
-        // Can we be sure this will always be the CURRENT log?
-        // Not if we use this action to add new records received from the server
-        commit('updateCurrentLog', {
-          local_id: results.insertId,
-          isCachedLocally: true
-        });
-      })
+      openDatabase() // eslint-disable-line no-use-before-define
+        .then(db => makeTable(db, tableName, newRecord)) // eslint-disable-line no-use-before-define
+        .then(tx => saveRecord(tx, tableName, newRecord)) // eslint-disable-line no-use-before-define, max-len
+        .then(results => (
+          // Can we be sure this will always be the CURRENT log?
+          // Not if we use this action to add new records received from the server
+          commit('updateCurrentLog', {
+            local_id: results.insertId,
+            isCachedLocally: true,
+          })));
     },
 
-    loadCachedLogs({commit}, logType) {
-      openDatabase()
-      .then(function(db) {
-        return getRecords(db, logType)
-      })
-      .then(function(results) {
-        const cachedLogs = results.map(function(log) {
-          return logFactory({
-            ...log,
-            isCachedLocally: true
-          })
-        });
-        commit('addLogs', cachedLogs)
-      })
-      .catch(function(error) {
-        console.error(error);
-      })
+    loadCachedLogs({ commit }, logType) {
+      openDatabase() // eslint-disable-line no-use-before-define
+        .then(db => getRecords(db, logType)) // eslint-disable-line no-use-before-define
+        .then((results) => {
+          const cachedLogs = results.map(log => (
+            logFactory({
+              ...log,
+              isCachedLocally: true,
+            })
+          ));
+          commit('addLogs', cachedLogs);
+        })
+        .catch(console.error);
     },
 
-    updateRecord ({commit, rootState}, newProps) {
+    updateRecord({ commit, rootState }, newProps) {
       const newLog = logFactory({
         ...rootState.farm.logs[rootState.farm.currentLogIndex],
-        ...newProps
+        ...newProps,
       });
       const table = newLog.type;
-      openDatabase()
-      .then(function(db) {
-        return getTX(db, table);
-      })
-      .then(function(tx) {
-        saveRecord(tx, table, newLog)
-      })
-      .then(function(tx, result) {
+      openDatabase() // eslint-disable-line no-use-before-define
+        .then(db => getTX(db, table)) // eslint-disable-line no-use-before-define
+        .then(tx => saveRecord(tx, table, newLog)) // eslint-disable-line no-use-before-define
         // Can we be sure this will always be the CURRENT log?
-        commit('updateCurrentLog', { isCachedLocally: true })
-      })
+        .then(() => commit('updateCurrentLog', { isCachedLocally: true }));
     },
 
 
-      //SEND RECORDS TO SERVER
-  pushToServer ({commit, rootState}, props) {
-/*
-send records to the server if the device is online
-*/
-      if(rootState.user.isOnline === true) {
+    // SEND RECORDS TO SERVER
+    pushToServer({ commit, rootState }, props) {
+      const logObject = rootState.farm.logs[rootState.farm.currentLogIndex];
+      console.log('PUSHING TO SERVER: ', JSON.stringify(logObject));
+      const formattedLog = formatState(logObject); // eslint-disable-line no-use-before-define
+      console.log('LOGS FORMATTED TO: ', JSON.stringify(formattedLog));
 
-        commit('setIsWorking', true)
-        commit('setStatusText', "Sending record to server...")
-        console.log("PUSHING TO SERVER:")
-        var logObject = rootState.farm.logs[rootState.farm.currentLogIndex];
-        console.log(JSON.stringify(logObject))
+      function handleResponse(response) {
+        console.log('PUSH TO SERVER SUCCESS: ', JSON.stringify(response));
+        commit('setIsWorking', false);
+        if (formattedLog.field_farm_files !== null) {
+          commit('setStatusText', `LOG SENT TO SERVER WITH PHOTO: ${formattedLog.field_farm_files}`);
+        } else {
+          commit('setStatusText', 'LOG SENT TO SERVER!');
+        }
+      }
+      function handleError(error) {
+        console.log('PUSH TO SERVER ERROR: ', JSON.stringify(error));
+        commit('setIsWorking', false);
+        commit('setStatusText', 'Error sending to server...');
+      }
 
-        var formattedLog = formatState(logObject);
-          console.log("LOGS FORMATTED TO: ")
-          console.log(JSON.stringify(formattedLog))
-        pushRecords (props.url, props.token, formattedLog)
-        .then( function (response) {
-          console.log("PUSH TO SERVER SUCCESS: ")
-          console.log(JSON.stringify(response))
-          commit('setIsWorking', false)
-          if(formattedLog.field_farm_files !== null){
-            commit('setStatusText', "LOG SENT TO SERVER WITH PHOTO: "+formattedLog.field_farm_files)
-          } else {
-            commit('setStatusText', "LOG SENT TO SERVER!")
-          }
-        },
-        function (error){
-          console.log("PUSH TO SERVER ERROR: ")
-          console.log(JSON.stringify(error))
-          commit('setIsWorking', false)
-          commit('setStatusText', "Error sending to server...")
-        })//end then
-
+      // send records to the server if the device is online
+      if (rootState.user.isOnline === true) {
+        commit('setIsWorking', true);
+        commit('setStatusText', 'Sending record to server...');
+        pushRecords(props.url, props.token, formattedLog) // eslint-disable-line no-use-before-define, max-len
+          .then(handleResponse, handleError);
       } else {
-        commit('setStatusText', "Cannot send - no network connection")
-      }   //end isOnline if else
+        commit('setStatusText', 'Cannot send - no network connection');
+      }
+    },
 
-      }, //pushToServer
+    /*
+      called when the get photo button is tapped; setPhotoLoc sets the captured
+      image URI to a variable in the store called photo_loc
+    */
+    getPhotoLoc({ commit }) {
+      function handleResponse(photoLoc) {
+        commit('setStatusText', `Took the following photo: ${photoLoc}`);
+        commit('setPhotoLoc', photoLoc);
+      }
+      function handleError(error) {
+        commit('setStatusText', `Error capturing photo: ${error}`);
+      }
+      getPhotoFromCamera() // eslint-disable-line no-use-before-define
+        .then(handleResponse, handleError);
+    },
 
-      getPhotoLoc({commit}) {
-        /*
-        called when the get photo button is tapped; setPhotoLoc sets the captured
-        image URI to a variable in the store called photo_loc
-        */
-        getPhotoFromCamera ()
-        .then( function (photoLoc) {
-          commit('setStatusText', "Took the following photo: "+photoLoc);
-          commit('setPhotoLoc', photoLoc);
-        },
-        function (error){
-          commit('setStatusText', "Error capturing photo: "+error)
-        })//end then
-      },
+  },
+};
 
-  } //actions
-} //export default
-
-/*Helper funcitons called by actions.  Many of these helper functions execute SQL queries */
+/*
+  Helper funcitons called by actions.  Many of these helper functions
+  execute SQL queries or AJAX requests.
+*/
 
 
+// TODO: break out helper functions into separate module
+// FIXME: so many conditionals driving the linter crazy, can we eliminate?
+// TODO: finish liting this after a good refactor
 // Outputs an object consisting of all records in state, formatted for farmOS
-function formatState (currentLog) {
+function formatState(currentLog) {
+  let newLog = {};
+  console.log('RAW LOG: ', JSON.stringify(currentLog));
 
-  var newLog = {};
-  console.log('RAW LOG: ')
-  console.log(JSON.stringify(currentLog))
+  // Proceed if log i was not pushed to Server
+  if (!currentLog.wasPushedToServer) {
+    for (var j in currentLog) {
 
-  //newLog.field_farm_files = [];
-//Proceed if log i was not pushed to Server
-if (!currentLog.wasPushedToServer) {
-  for (var j in currentLog) {
-
-    switch(j) {
-    case 'name':
+      switch(j) {
+        case 'name':
         newLog.name = currentLog[j];
         break;
-    case 'type':
+        case 'type':
         newLog.type = currentLog[j];
         break;
         //farmier returns '403 not authorized to set property timestamp'
         /*
-    case 'timestamp':
+        case 'timestamp':
         newLog.timestamp = currentLog[j];
         break;
         */
-    case 'notes':
+        case 'notes':
         newLog.field_farm_notes = {format: "farm_format", value: '<p>'+currentLog[j]+'</p>\n'};
         break;
-    case 'photo_loc':
-    //Attach the photo only of a photo has been taken
-      if(currentLog[j] !== ''){
-        //Thanks to ourCodeWorld https://ourcodeworld.com/articles/read/80/how-to-convert-a-image-from-the-device-to-base64-with-javascript-in-cordova
-        getFileContentAsBase64(currentLog[j],function(base64Image){
+        case 'photo_loc':
+        //Attach the photo only of a photo has been taken
+        if(currentLog[j] !== ''){
+          //Thanks to ourCodeWorld https://ourcodeworld.com/articles/read/80/how-to-convert-a-image-from-the-device-to-base64-with-javascript-in-cordova
+          getFileContentAsBase64(currentLog[j],function(base64Image){
 
-/*
-OK, this is where I had to stop.  I can get the images into base64, but I can't get
-farmOS to accept them!  I tried including the image in field_farm_files , and
-I also tried field_image based on the restws_file examples.  Neither worked!
-https://www.drupal.org/project/restws_file
-*/
-        console.log('THE ENCODED IMAGE: '+base64Image);
-        newLog.field_farm_files = [base64Image];
-        //newLog.field_image = base64Image;
+            /*
+            OK, this is where I had to stop.  I can get the images into base64, but I can't get
+            farmOS to accept them!  I tried including the image in field_farm_files , and
+            I also tried field_image based on the restws_file examples.  Neither worked!
+            https://www.drupal.org/project/restws_file
+            */
+            console.log('THE ENCODED IMAGE: '+base64Image);
+            newLog.field_farm_files = [base64Image];
+            //newLog.field_image = base64Image;
 
-        });
-      }
+          });
+        }
         break;
 
-    //default:
-  } //end switch
-} //end for j
-}// end if log not pushed to server
-console.log('NEW LOG: ')
-console.log(JSON.stringify(newLog))
-//Returning object in an array, per suggestion
-return(newLog);
+        //default:
+      }
+    }
+  }
+  console.log('NEW LOG: ')
+  console.log(JSON.stringify(newLog))
+  //Returning object in an array, per suggestion
+  return(newLog);
 
-} //end formatState
+}
 
 // Executes AJAX to send records to server
-function pushRecords (url, token, records) {
-  return new Promise(function(resolve, reject) {
-  var loc = '/log'
-  //var loc = '/?q=log'
-  //var loc = '/log.json'
-  //var loc = '/?q=log.json'
-  var logUrl = url+loc
+function pushRecords(url, token, records) {
+  return new Promise((resolve, reject) => {
+    const loc = '/log';
+    const logUrl = url + loc;
+    const requestHeaders = {
+      'X-CSRF-Token': token,
+      'Content-Type': 'application/json',
+      Accept: 'json',
+    };
+    console.log(`PUSHING REQUEST URL : ${logUrl}`);
+    console.log('RECORDS SENDING: ', JSON.stringify(records));
 
-console.log('PUSHING REQUEST URL : '+logUrl)
-console.log('RECORDS SENDING: '+JSON.stringify(records))
-
-//var requestHeaders = {"X-CSRF-Token": token, "Content-Type":"application/json"};
-//var requestHeaders = {"X-CSRF-Token": token, "Content-Type": "application/json", "Accept": "application/json"};
-var requestHeaders = {"X-CSRF-Token": token, "Content-Type": "application/json", "Accept": "json"};
-//var requestHeaders = {"X-CSRF-Token": token, "Content-Type": "application/hal+json", "Accept": "application/json"};
-
-  $.ajax({
+    $.ajax({ // eslint-disable-line no-undef
       type: 'POST',
       url: logUrl,
       headers: requestHeaders,
-      //contentType: "application/json; charset=utf-8",
       data: JSON.stringify(records),
-      //dataType:'json',
-      success: function(response) {
-          console.log('POST SUCCESS!!');
-          resolve(response);
+      success(response) {
+        console.log('POST SUCCESS!!');
+        resolve(response);
       },
-      error: function(error) {
-          console.log('POST ERROR...');
-          reject(error);
+      error(error) {
+        console.log('POST ERROR...');
+        reject(error);
       },
-  }); //end ajax
-
-}); // end promise
-return submissionPromise;
+    });
+  });
 }
 
-function openDatabase () {
-  return new Promise(function(resolve, reject) {
-    //Here I am both opening the database and making a new table if necessary.
-
+// TODO: break out helper functions into separate module
+function openDatabase() {
+  return new Promise((resolve) => {
     console.log('opening database');
-    //Check whether a local webSQL database exists.  If a local database does not yet exist, make it!
-    const db = window.openDatabase("farmOSLocalDB", "1.0", "farmOS Local Database", 200000);
+    // Check whether a local webSQL database exists.  If not, make it!
+    const db = window.openDatabase('farmOSLocalDB', '1.0', 'farmOS Local Database', 200000);
     // window.openDatabase either opens an existing DB or creates a new one.
     resolve(db);
-
-  })
+  });
 }
 
-//This function obtains the tx database object.  It assumes the table has already been created.
+// This function obtains the transaction object; it assumes the table is already created.
 function getTX(db, table) {
-  return new Promise(function(resolve, reject) {
-    db.transaction(function (tx) {
-
-      var sql = "CREATE TABLE IF NOT EXISTS " +table +" (id INTEGER PRIMARY KEY AUTOINCREMENT, blankColumn TEXT)";
-
-      tx.executeSql(sql, null, function (_tx, result) {
-        console.log('Get TX success. Result: ', result);
-        resolve(_tx);
-      }, function (_tx, error) {
-        console.log('Get TX error: ' + error.message);
-        // Reject will return the tx object in case you want to try again.
-        reject(_tx);
-      });
-
-    }) //end db.transaction
-  }) //end promise
-} //end getTable
+  return new Promise((resolve, reject) => {
+    function handleResponse(_tx, result) {
+      console.log('Get TX success. Result: ', result);
+      resolve(_tx);
+    }
+    function handleError(_tx, error) {
+      console.log('Get TX error: ', error.message);
+      // Reject will return the tx object in case you want to try again.
+      reject(_tx);
+    }
+    db.transaction((tx) => {
+      const sql = `CREATE TABLE IF NOT EXISTS ${table} (id INTEGER PRIMARY KEY AUTOINCREMENT, blankColumn TEXT)`;
+      tx.executeSql(sql, null, handleResponse, handleError);
+    });
+  });
+}
 
 
 function makeTable(db, table, log) {
-  return new Promise(function(resolve, reject) {
-
-    console.log(`making table with name ${table} and the following data template: `+JSON.stringify(log));
-    //Creates a table called 'tableName' in the DB if none yet exists
-    db.transaction(function (tx) {
+  return new Promise((resolve, reject) => {
+    console.log(`making table with name ${table} and the following data template: ${JSON.stringify(log)}`);
+    // Creates a table called 'tableName' in the DB if none yet exists
+    db.transaction((tx) => {
       var fieldString = '';
-      for (var i in log){
-        var suffix = "";
+      for (var i in log) { // eslint-disable-line guard-for-in, no-restricted-syntax
+        var suffix = '';
         if (typeof i === "number" ){
           suffix = " INT, "
         } else {
@@ -355,9 +325,9 @@ function getRecords (db, table) {
       var resultSet = [];
       for(var i=0; i<results.rows.length; i++) {
         var row = results.rows.item(i)
-          console.log('RAW GETRECORDS RESULT '+i+': '+JSON.stringify(row));
-          resultSet.push(row);
-        }
+        console.log('RAW GETRECORDS RESULT '+i+': '+JSON.stringify(row));
+        resultSet.push(row);
+      }
       resolve(resultSet)
       /*
       I'm not sure why, but the following line does not work in Cordova, though
@@ -383,29 +353,28 @@ function getRecords (db, table) {
   })
 }
 
-function getPhotoFromCamera () {
-  /*
+/*
 Utilizes the Cordova camera plugin to obtain an image URI
-  */
-
-  return new Promise(function(resolve, reject) {
-console.log('GETTING IMAGE FROM CAMERA')
-    navigator.camera.getPicture(onSuccess, onFail, { quality: 50,
-        destinationType: Camera.DestinationType.FILE_URI });
+*/
+function getPhotoFromCamera() {
+  return new Promise((resolve, reject) => {
+    console.log('GETTING IMAGE FROM CAMERA');
 
     function onSuccess(imageURI) {
-        //var image = document.getElementById('myImage');
-        //image.src = imageURI;
-        console.log('RETRIEVED THE FOLLOWING IMAGE: '+imageURI)
-        resolve(imageURI);
+      console.log(`RETRIEVED THE FOLLOWING IMAGE: ${imageURI}`);
+      resolve(imageURI);
     }
-
     function onFail(message) {
-      console.log('FAILED TO RETRIEVE IMAGE BECAUSE: ' + message)
-        reject(message)
+      console.log(`FAILED TO RETRIEVE IMAGE BECAUSE: ${message}`);
+      reject(message);
     }
 
-  })
+    const options = {
+      quality: 50,
+      destinationType: Camera.DestinationType.FILE_URI, // eslint-disable-line no-undef
+    };
+    navigator.camera.getPicture(onSuccess, onFail, options);
+  });
 }
 
 /*
@@ -413,22 +382,22 @@ Turns an image URI into a base64 encoded file
 Thanks to ourCodeWorld https://ourcodeworld.com/articles/read/80/how-to-convert-a-image-from-the-device-to-base64-with-javascript-in-cordova
 */
 
-function getFileContentAsBase64(path,callback){
-    window.resolveLocalFileSystemURL(path, gotFile, fail);
+function getFileContentAsBase64(path, callback) {
+  function fail() {
+    console.log('Cannot find requested file');
+  }
 
-    function fail(e) {
-          console.log('Cannot find requested file');
-    }
+  function gotFile(fileEntry) {
+    fileEntry.file((file) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const content = this.result;
+        callback(content);
+      };
+      // The most important point, use the readAsDatURL Method from the file plugin
+      reader.readAsDataURL(file);
+    });
+  }
 
-    function gotFile(fileEntry) {
-           fileEntry.file(function(file) {
-              var reader = new FileReader();
-              reader.onloadend = function(e) {
-                   var content = this.result;
-                   callback(content);
-              };
-              // The most important point, use the readAsDatURL Method from the file plugin
-              reader.readAsDataURL(file);
-           });
-    }
+  window.resolveLocalFileSystemURL(path, gotFile, fail);
 }
