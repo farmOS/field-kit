@@ -46,11 +46,7 @@ import { mapState } from 'vuex';
 import moment from 'moment';
 
 export default {
-  computed: mapState({
-    logs: state => state.farm.logs,
-    // FIXME: see syncAll below
-    // photoLoc: state => state.farm.photoLoc,
-  }),
+  props: ['logs'],
   methods: {
     syncTime(unixTimestamp) {
       return moment.unix(unixTimestamp).format('YYYY-MM-DD');

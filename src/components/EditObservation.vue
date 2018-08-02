@@ -83,7 +83,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
 import moment from 'moment';
 // removed spinner b/c it caused compilation errors
 // import Spinner from 'vue-spinner-component/src/Spinner.vue';
@@ -96,14 +95,14 @@ export default {
       vueHeader: 'Enter your new observation:',
     };
   },
-  computed: mapState({
-    logs: state => state.farm.logs,
-    currentLogIndex: state => state.farm.currentLogIndex,
-    isWorking: state => state.farm.isWorking,
-    statusText: state => state.farm.statusText,
-    photoLoc: state => state.farm.photoLoc,
-    isOnline: state => state.user.isOnline,
-  }),
+  props: [
+    'logs',
+    'currentLogIndex',
+    'isWorking',
+    'statusText',
+    'photoLoc',
+    'isOnline',
+  ],
   created() {
     this.$store.commit('setStatusText', `NETWORK STATUS: ${this.isOnline}`);
     // TODO: It probably makes more sense to remember the last log the user was working on,

@@ -2,11 +2,19 @@
   <div>
     <div v-if='showEditObs'>
       <EditObservation
+        :logs='logs'
+        :currentLogIndex='currentLogIndex'
+        :isWorking='isWorking'
+        :statusText='statusText'
+        :photoLoc='photoLoc'
+        :isOnline='isOnline'
+
         v-on:view-all='toggleObs'
       />
     </div>
     <div v-if='showAllObs'>
       <AllObservations
+        :logs='logs'
         v-on:create-observation='toggleObs'
       />
     </div>
@@ -25,6 +33,14 @@ export default {
       showAllObs: true,
     };
   },
+  computed: mapState({
+    logs: state => state.farm.logs,
+    currentLogIndex: state => state.farm.currentLogIndex,
+    isWorking: state => state.farm.isWorking,
+    statusText: state => state.farm.statusText,
+    photoLoc: state => state.farm.photoLoc,
+    isOnline: state => state.user.isOnline,
+  }),
   components: {
     AllObservations,
     EditObservation,
