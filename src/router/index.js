@@ -16,6 +16,7 @@ export default new Router({
       path: '/observations',
       name: 'Observations',
       component: Observations,
+      alias: ['/edit-observation', '/all-observations'],
     },
     {
       path: '/edit-observation',
