@@ -28,8 +28,7 @@
           <td v-if="log.wasPushedToServer">
             <a href="#">synced</a> ({{syncTime(log.timestamp)}})
           </td>
-          <!-- TODO: replace log.done with log.isReadyToSync -->
-          <td v-else-if="log.done">
+          <td v-else-if="log.isReadyToSync">
             <!-- TODO: add proper spinner once glyphicon font is working -->
             <div class="glyphicon glyphicon-refresh spin" aria-hidden="true" />
           </td>
