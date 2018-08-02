@@ -2,7 +2,7 @@
   <div>
     <h1>All Observations</h1>
     <button
-      @click="createObservation"
+      @click="$emit('create-observation')"
       type="button"
       class="btn btn-success btn-navbar">
       Create observation
@@ -48,12 +48,8 @@ import moment from 'moment';
 export default {
   computed: mapState({
     logs: state => state.farm.logs,
-    currentLogIndex: state => state.farm.currentLogIndex,
-    isWorking: state => state.farm.isWorking,
-    statusText: state => state.farm.statusText,
-    photoLoc: state => state.farm.photoLoc,
-    isOnline: state => state.user.isOnline,
-    moment,
+    // FIXME: see syncAll below
+    // photoLoc: state => state.farm.photoLoc,
   }),
   methods: {
     syncTime(unixTimestamp) {
@@ -61,9 +57,6 @@ export default {
     },
     showDate(unixTimestamp) {
       return moment.unix(unixTimestamp).format('MMM DD YYYY');
-    },
-    createObservation() {
-      this.$router.push('edit-observation');
     },
     syncAll() {
       // FIXME: Why is this being called here? Why not in getPhoto or getPhotoLoc?

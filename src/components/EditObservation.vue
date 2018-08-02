@@ -58,9 +58,15 @@
         title="Get picture"
         @click="getPhoto"
         class="btn btn-default"
-        type="button"
-      >
+        type="button">
         Get picture
+      </button>
+      <button
+        :disabled='false'
+        title="Done Editing"
+        @click="$emit('view-all')"
+        type="button">
+        Done Editing
       </button>
     </div>
       <br>
@@ -103,9 +109,6 @@ export default {
     // TODO: It probably makes more sense to remember the last log the user was working on,
     //    and only initialize a new log when they deliberately choose to.
     this.$store.dispatch('initializeLog', 'farm_observation');
-  },
-  beforeDestroy() {
-    this.$store.commit('clearLogs');
   },
   methods: {
 
