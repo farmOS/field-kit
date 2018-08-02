@@ -13,6 +13,7 @@ export default function ({
   done = false,
   isCachedLocally = false,
   wasPushedToServer = false,
+  isReadyToSync = false,
 } = {}) {
   return {
     log_owner,
@@ -27,5 +28,6 @@ export default function ({
     done,
     isCachedLocally,
     wasPushedToServer,
+    isReadyToSync,
   };
 }
