@@ -22,9 +22,9 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import AllObservations from './AllObservations';
 import EditObservation from './EditObservation';
-import { mapState } from 'vuex';
 
 export default {
   data() {
