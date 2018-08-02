@@ -1,18 +1,18 @@
 // A helper function for creating new log items with default properties
-export function logFactory ({
+export default function ({
   // TODO: Owner should be identified by user id, once we have authentication
-  log_owner = '',
+  log_owner = '', // eslint-disable-line camelcase
   notes = '',
   quantity = '',
   id = null,
-  local_id = null,
+  local_id = null, // eslint-disable-line camelcase
   name = '',
   type = '',
   timestamp = '',
-  photo_loc = '',
+  photo_loc = '', // eslint-disable-line camelcase
   done = false,
   isCachedLocally = false,
-  wasPushedToServer = false
+  wasPushedToServer = false,
 } = {}) {
   return {
     log_owner,
@@ -26,6 +26,6 @@ export function logFactory ({
     photo_loc,
     done,
     isCachedLocally,
-    wasPushedToServer
+    wasPushedToServer,
   };
 }

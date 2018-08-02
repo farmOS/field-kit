@@ -25,18 +25,14 @@
 
 <script>
 import { mapState } from 'vuex';
+
 export default {
   name: 'App',
-  data () {
-    return {
-
-    }
-  },
   computed: mapState({
     headerText: state => state.shell.greeting,
   }),
 
-}
+};
 </script>
 
 <style>
