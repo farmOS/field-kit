@@ -49,11 +49,19 @@ export default {
 
 
     // SEND RECORDS TO SERVER
-    pushToServer({ commit, rootState }) {
+    pushToServer({ commit, rootState }, indices) {
+      // New procedure for formatting an array of logs
+      const logsToPush = indices
+        .map(i => formatState(rootState.farm.logs[i]));
+      console.log('Logs to push: ', logsToPush);
+
+      // Old procedure for formatting a single log object
+      // TODO: Delete this once new procedure is fully implemented
       const logObject = rootState.farm.logs[rootState.farm.currentLogIndex];
       console.log('PUSHING TO SERVER: ', JSON.stringify(logObject));
       const formattedLog = formatState(logObject); // eslint-disable-line no-use-before-define
       console.log('LOGS FORMATTED TO: ', JSON.stringify(formattedLog));
+
       const storage = window.localStorage;
       const storedUrl = storage.getItem('url');
       const storedToken = storage.getItem('token');
