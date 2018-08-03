@@ -30,6 +30,10 @@ const farmModule = {
       // TODO: Should logs pass through logFactory() to make sure props are valid?
       state.logs = state.logs.concat(logs);
     },
+    /*
+      This pushes the new log onto the `logs` array, and b/c `.push()` returns
+      the length of the new array, it resets the index to the new item too
+    */
     addLogAndMakeCurrent(state, newLog) {
       state.currentLogIndex = state.logs.push(newLog) - 1;
     },
