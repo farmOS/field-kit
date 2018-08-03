@@ -53,9 +53,17 @@ export default {
       return moment.unix(unixTimestamp).format('MMM DD YYYY');
     },
     syncAll() {
+      function logSyncer(log) {
+        return {
+          ...log,
+          isReadyToSync: true,
+        };
+      }
+      this.$store.commit('updateAllLogs', logSyncer)
+      this.$store.dispatch('pushToServer');
+
       // FIXME: Why is this being called here? Why not in getPhoto or getPhotoLoc?
       // this.updateCurrentLog('photo_loc', this.photoLoc);
-      this.$store.dispatch('pushToServer');
     },
   },
 };

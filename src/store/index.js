@@ -40,6 +40,10 @@ const farmModule = {
       });
       state.logs.splice(state.currentLogIndex, 1, updatedLog);
     },
+    // Takes a function as payload and applies it to each log object
+    updateAllLogs(state, fn) {
+      state.logs = state.logs.map(log => fn(log));
+    },
     clearLogs(state) {
       state.logs.splice(0, state.logs.length);
     },
