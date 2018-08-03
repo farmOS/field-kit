@@ -1,5 +1,16 @@
 import dataModule from './dataModule';
 
+/*
+  A reducer function that filters for logs ready to sync,
+  and returns an array of only those logs' indices.
+*/
+function syncReducer(indices, curLog, curIndex) {
+  if (curLog.isReadyToSync && !curLog.wasPushedToServer) {
+    return indices.concat(curIndex);
+  }
+  return indices;
+}
+
 export default {
   install(Vue, { store /* , router */ }) {
     store.registerModule('data', dataModule);
@@ -11,9 +22,8 @@ export default {
         store.dispatch('updateRecord', mutation.payload);
       }
       if (mutation.type === 'updateAllLogs') {
-        // TODO: Uncomment this once `pushToServer` can handle multiple logs
-        // const payload = store.logs.filter(log => log.isReadyToSync);
-        store.dispatch('pushToServer'/* , payload */);
+        const payload = store.logs.reduce(syncReducer, []);
+        store.dispatch('pushToServer', payload);
       }
     });
   },
