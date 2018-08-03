@@ -123,39 +123,37 @@ function formatState(currentLog) {
 
       switch(j) {
         case 'name':
-        newLog.name = currentLog[j];
-        break;
+          newLog.name = currentLog[j];
+          break;
         case 'type':
-        newLog.type = currentLog[j];
-        break;
+          newLog.type = currentLog[j];
+          break;
         //farmier returns '403 not authorized to set property timestamp'
-        /*
-        case 'timestamp':
-        newLog.timestamp = currentLog[j];
-        break;
-        */
+        // case 'timestamp':
+        //   newLog.timestamp = currentLog[j];
+        //   break;
         case 'notes':
-        newLog.field_farm_notes = {format: "farm_format", value: '<p>'+currentLog[j]+'</p>\n'};
-        break;
+          newLog.field_farm_notes = {format: "farm_format", value: '<p>'+currentLog[j]+'</p>\n'};
+          break;
         case 'photo_loc':
-        //Attach the photo only of a photo has been taken
-        if(currentLog[j] !== ''){
-          //Thanks to ourCodeWorld https://ourcodeworld.com/articles/read/80/how-to-convert-a-image-from-the-device-to-base64-with-javascript-in-cordova
-          getFileContentAsBase64(currentLog[j],function(base64Image){
+          //Attach the photo only of a photo has been taken
+          if (currentLog[j] !== '') {
+            //Thanks to ourCodeWorld https://ourcodeworld.com/articles/read/80/how-to-convert-a-image-from-the-device-to-base64-with-javascript-in-cordova
+            getFileContentAsBase64(currentLog[j],function(base64Image){
 
-            /*
-            OK, this is where I had to stop.  I can get the images into base64, but I can't get
-            farmOS to accept them!  I tried including the image in field_farm_files , and
-            I also tried field_image based on the restws_file examples.  Neither worked!
-            https://www.drupal.org/project/restws_file
-            */
-            console.log('THE ENCODED IMAGE: '+base64Image);
-            newLog.field_farm_files = [base64Image];
-            //newLog.field_image = base64Image;
+              /*
+              OK, this is where I had to stop.  I can get the images into base64, but I can't get
+              farmOS to accept them!  I tried including the image in field_farm_files , and
+              I also tried field_image based on the restws_file examples.  Neither worked!
+              https://www.drupal.org/project/restws_file
+              */
+              console.log('THE ENCODED IMAGE: '+base64Image);
+              newLog.field_farm_files = [base64Image];
+              //newLog.field_image = base64Image;
 
-          });
-        }
-        break;
+            });
+          }
+          break;
 
         //default:
       }
