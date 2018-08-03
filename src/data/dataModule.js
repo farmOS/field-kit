@@ -1,4 +1,4 @@
-import { logFactory } from './logFactory';
+import logFactory from './logFactory';
 
 export default {
 
@@ -6,7 +6,7 @@ export default {
 
     createRecord({ commit }, newLog) {
       const tableName = newLog.type;
-      const newRecord = logFactory(newLog);
+      const newRecord = logFactory(newLog, 'WEBSQL');
       openDatabase() // eslint-disable-line no-use-before-define
         .then(db => makeTable(db, tableName, newRecord)) // eslint-disable-line no-use-before-define
         .then(tx => saveRecord(tx, tableName, newRecord)) // eslint-disable-line no-use-before-define, max-len
@@ -27,7 +27,7 @@ export default {
             logFactory({
               ...log,
               isCachedLocally: true,
-            })
+            }, 'VUEX')
           ));
           commit('addLogs', cachedLogs);
         })
@@ -38,7 +38,7 @@ export default {
       const newLog = logFactory({
         ...rootState.farm.logs[rootState.farm.currentLogIndex],
         ...newProps,
-      });
+      }, 'WEBSQL');
       const table = newLog.type;
       openDatabase() // eslint-disable-line no-use-before-define
         .then(db => getTX(db, table)) // eslint-disable-line no-use-before-define
@@ -50,12 +50,12 @@ export default {
 
     // SEND RECORDS TO SERVER
     pushToServer({ commit, rootState }, indices) {
-      // New procedure for formatting an array of logs
+      // New procedure for formatting an array of logs with logFactory()
       const logsToPush = indices
-        .map(i => formatState(rootState.farm.logs[i]));
+        .map(i => logFactory(rootState.farm.logs[i]), 'SERVER');
       console.log('Logs to push: ', logsToPush);
 
-      // Old procedure for formatting a single log object
+      // Old procedure for formatting a single log object with formatState()
       // TODO: Delete this once new procedure is fully implemented
       const logObject = rootState.farm.logs[rootState.farm.currentLogIndex];
       console.log('PUSHING TO SERVER: ', JSON.stringify(logObject));
@@ -118,8 +118,8 @@ export default {
 
 
 // TODO: break out helper functions into separate module
-// FIXME: so many conditionals driving the linter crazy, can we eliminate?
-// TODO: finish liting this after a good refactor
+// TODO: Delete or comment this out once pushToServer and pushRecords
+// can handle an array of logs, and logFactory is used in all formatting tasks.
 // Outputs an object consisting of all records in state, formatted for farmOS
 function formatState(currentLog) {
   let newLog = {};
