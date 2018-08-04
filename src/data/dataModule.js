@@ -52,7 +52,7 @@ export default {
     pushToServer({ commit, rootState }, indices) {
       // New procedure for formatting an array of logs with logFactory()
       const logsToPush = indices
-        .map(i => logFactory(rootState.farm.logs[i]), 'SERVER');
+        .map(i => logFactory(rootState.farm.logs[i], 'SERVER'));
       console.log('Logs to push: ', logsToPush);
 
       // Old procedure for formatting a single log object with formatState()

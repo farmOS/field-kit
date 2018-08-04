@@ -22,7 +22,7 @@ export default {
         store.dispatch('updateRecord', mutation.payload);
       }
       if (mutation.type === 'updateAllLogs') {
-        const payload = store.logs.reduce(syncReducer, []);
+        const payload = store.state.farm.logs.reduce(syncReducer, []);
         store.dispatch('pushToServer', payload);
       }
     });
