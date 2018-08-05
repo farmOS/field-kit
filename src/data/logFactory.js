@@ -1,12 +1,26 @@
 /*
+  DESTINATIONS
+  Import these destination constants when you import the logFactory, and use
+  them instead of using the raw strings. This will make it easier to update the
+  logFactory's API in the future without committing breaking changes. The
+  constants are assigned to string values representing the possible destinations
+  to which the logs may be sent.
+*/
+export const SQL = 'WEBSQL';
+export const SERVER = 'FARMOS_SERVER';
+export const STORE = 'VUEX_STORE';
+
+/*
   LOGFACTORY
   A utility function for structuring logs within the data plugin. It can be
-  applied to an existing log before storing it in the database, posting it
-  to the server, or for otherwise rendering logs in a standard format.
+  applied to an existing log before storing it in the database, posting it to
+  the server, or for otherwise rendering logs in a standard format. It can also
+  be used to generate a new log for the Vuex store by passing in no parameters.
+  Provide an optional `dest` parameter to ensure the proper formatting for its
+  destination. TODO: It could be wise to add a source parameter as well.
 
-  Provide an optional `dest` parameter to ensure it receives the proper
-  formatting for its destination. It can also be used to generate a new log
-  for the Vuex store by passing in no parameters.
+  A CodeSandbox for experimenting with it can be found here:
+  https://codesandbox.io/s/github/jgaehring/farmos-logfactory
 */
 export default function (
   // Assign default properties or leave them as optional
@@ -31,7 +45,7 @@ export default function (
     The format for adding logs to the Vuex store; this is also the default
     if there is no destination argument passed.
   */
-  if (dest === 'VUEX' || dest === undefined) {
+  if (dest === STORE || dest === undefined) {
     log = {
       log_owner,
       notes,
@@ -48,7 +62,7 @@ export default function (
     };
   }
   // The format for sending logs to the farmOS REST Server.
-  if (dest === 'SERVER') {
+  if (dest === SERVER) {
     log = {
       notes,
       // quantity,
@@ -66,7 +80,7 @@ export default function (
     }
   }
   // The format for inserting logs in WebSQL for local persistence.
-  if (dest === 'WEBSQL') {
+  if (dest === SQL) {
     log = {
       log_owner,
       notes,

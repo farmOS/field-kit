@@ -1,4 +1,4 @@
-import logFactory from './logFactory';
+import logFactory, { STORE, SQL, SERVER } from './logFactory';
 
 export default {
 
@@ -6,7 +6,7 @@ export default {
 
     createRecord({ commit }, newLog) {
       const tableName = newLog.type;
-      const newRecord = logFactory(newLog, 'WEBSQL');
+      const newRecord = logFactory(newLog, SQL);
       openDatabase() // eslint-disable-line no-use-before-define
         .then(db => makeTable(db, tableName, newRecord)) // eslint-disable-line no-use-before-define
         .then(tx => saveRecord(tx, tableName, newRecord)) // eslint-disable-line no-use-before-define, max-len
@@ -27,7 +27,7 @@ export default {
             logFactory({
               ...log,
               isCachedLocally: true,
-            }, 'VUEX')
+            }, STORE)
           ));
           commit('addLogs', cachedLogs);
         })
@@ -38,7 +38,7 @@ export default {
       const newLog = logFactory({
         ...rootState.farm.logs[rootState.farm.currentLogIndex],
         ...newProps,
-      }, 'WEBSQL');
+      }, SQL);
       const table = newLog.type;
       openDatabase() // eslint-disable-line no-use-before-define
         .then(db => getTX(db, table)) // eslint-disable-line no-use-before-define
@@ -52,7 +52,7 @@ export default {
     pushToServer({ commit, rootState }, indices) {
       // New procedure for formatting an array of logs with logFactory()
       const logsToPush = indices
-        .map(i => logFactory(rootState.farm.logs[i], 'SERVER'));
+        .map(i => logFactory(rootState.farm.logs[i], SERVER));
       console.log('Logs to push: ', logsToPush);
 
       // Old procedure for formatting a single log object with formatState()
