@@ -1,6 +1,7 @@
 /*
+  LOGFACTORY
   A utility function for structuring logs within the data plugin. It can be
-  applied to existing logs before storing it the database, posting it
+  applied to an existing log before storing it in the database, posting it
   to the server, or for otherwise rendering logs in a standard format.
 
   Provide an optional `dest` parameter to ensure it receives the proper
@@ -56,8 +57,10 @@ export default function (
       // timestamp,
       photo_loc,
     };
-    // Only return id property if one has already been assigned by the server,
-    // otherwise omit it so the server can assign a new one.
+    /*
+      Only return id property if one has already been assigned by the server,
+      otherwise omit it so the server can assign a new one.
+    */
     if (id) {
       log.id = id;
     }
@@ -76,8 +79,10 @@ export default function (
       done,
       wasPushedToServer,
     };
-    // Only return local_id property if one has already been assigned by WebSQL,
-    // otherwise let WebSQL assign a new one.
+    /*
+      Only return local_id property if one has already been assigned by WebSQL,
+      otherwise let WebSQL assign a new one.
+    */
     if (local_id) { // eslint-disable-line camelcase
       log.local_id = local_id; // eslint-disable-line camelcase
     }
