@@ -12,7 +12,7 @@ function syncReducer(indices, curLog, curIndex) {
 }
 
 export default {
-  install(Vue, { store /* , router */ }) {
+  install(Vue, { store, router }) {
     store.registerModule('data', dataModule);
     store.subscribe((mutation) => {
       if (mutation.type === 'addLogAndMakeCurrent') {
@@ -22,8 +22,8 @@ export default {
         store.dispatch('updateRecord', mutation.payload);
       }
       if (mutation.type === 'updateAllLogs') {
-        const payload = store.state.farm.logs.reduce(syncReducer, []);
-        store.dispatch('pushToServer', payload);
+        const indices = store.state.farm.logs.reduce(syncReducer, []);
+        store.dispatch('pushToServer', { indices, router });
       }
     });
   },

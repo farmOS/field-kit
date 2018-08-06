@@ -49,9 +49,9 @@ export default {
 
 
     // SEND RECORDS TO SERVER
-    pushToServer({ commit, rootState }, indices) {
+    pushToServer({ commit, rootState }, payload) {
       // New procedure for formatting an array of logs with logFactory()
-      const logsToPush = indices
+      const logsToPush = payload.indices
         .map(i => logFactory(rootState.farm.logs[i], SERVER));
       console.log('Logs to push: ', logsToPush);
 
@@ -74,12 +74,15 @@ export default {
         commit('setStatusText', 'Error sending to server...');
       }
 
-      // send records to the server if the device is online
-      if (rootState.user.isOnline === true) {
+      // Send new records to the server, unless the user isn't logged in
+      if (rootState.user.isLoggedIn === true) {
         logsToPush.map(log => pushRecords(storedUrl, storedToken, log) // eslint-disable-line no-use-before-define, max-len
           .then(handleResponse, handleError));
       } else {
-        commit('setStatusText', 'Cannot send - no network connection');
+        commit('setStatusText', 'Not logged in. Redirecting to login page...');
+        // FIXME: This should probably done from within the client's AllObservations.vue,
+        // but only after the login module's store has been reintegrated with client.
+        payload.router.push('/login');
       }
     },
 
