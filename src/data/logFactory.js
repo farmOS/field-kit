@@ -64,12 +64,15 @@ export default function (
   // The format for sending logs to the farmOS REST Server.
   if (dest === SERVER) {
     log = {
-      notes,
+      field_farm_notes: {
+        format: 'farm_format',
+        value: `<p>${notes}</p>\n`,
+      },
       // quantity,
       name,
       type,
       // timestamp,
-      photo_loc,
+      // photo_loc,
     };
     /*
       Only return id property if one has already been assigned by the server,

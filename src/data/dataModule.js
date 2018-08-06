@@ -55,13 +55,6 @@ export default {
         .map(i => logFactory(rootState.farm.logs[i], SERVER));
       console.log('Logs to push: ', logsToPush);
 
-      // Old procedure for formatting a single log object with formatState()
-      // TODO: Delete this once new procedure is fully implemented
-      const logObject = rootState.farm.logs[rootState.farm.currentLogIndex];
-      console.log('PUSHING TO SERVER: ', JSON.stringify(logObject));
-      const formattedLog = formatState(logObject); // eslint-disable-line no-use-before-define
-      console.log('LOGS FORMATTED TO: ', JSON.stringify(formattedLog));
-
       const storage = window.localStorage;
       const storedUrl = storage.getItem('url');
       const storedToken = storage.getItem('token');
@@ -70,7 +63,7 @@ export default {
         console.log('PUSH TO SERVER SUCCESS: ', JSON.stringify(response));
         commit('setIsWorking', false);
         if (formattedLog.field_farm_files !== null) {
-          commit('setStatusText', `LOG SENT TO SERVER WITH PHOTO: ${formattedLog.field_farm_files}`);
+          // commit('setStatusText', `LOG SENT TO SERVER WITH PHOTO: ${formattedLog.field_farm_files}`);
         } else {
           commit('setStatusText', 'LOG SENT TO SERVER!');
         }
@@ -83,10 +76,8 @@ export default {
 
       // send records to the server if the device is online
       if (rootState.user.isOnline === true) {
-        commit('setIsWorking', true);
-        commit('setStatusText', 'Sending record to server...');
-        pushRecords(storedUrl, storedToken, formattedLog) // eslint-disable-line no-use-before-define, max-len
-          .then(handleResponse, handleError);
+        logsToPush.map(log => pushRecords(storedUrl, storedToken, log) // eslint-disable-line no-use-before-define, max-len
+          .then(handleResponse, handleError));
       } else {
         commit('setStatusText', 'Cannot send - no network connection');
       }
