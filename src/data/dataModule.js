@@ -50,34 +50,36 @@ export default {
 
     // SEND RECORDS TO SERVER
     pushToServer({ commit, rootState }, payload) {
-      // New procedure for formatting an array of logs with logFactory()
-      const logsToPush = payload.indices
-        .map(i => logFactory(rootState.farm.logs[i], SERVER));
-      console.log('Logs to push: ', logsToPush);
-
       const storage = window.localStorage;
       const storedUrl = storage.getItem('url');
       const storedToken = storage.getItem('token');
 
-      function handleResponse(response) {
-        console.log('PUSH TO SERVER SUCCESS: ', JSON.stringify(response));
-        commit('setIsWorking', false);
-        if (formattedLog.field_farm_files !== null) {
-          // commit('setStatusText', `LOG SENT TO SERVER WITH PHOTO: ${formattedLog.field_farm_files}`);
-        } else {
-          commit('setStatusText', 'LOG SENT TO SERVER!');
-        }
-      }
+      // FIXME: This error handler is weird and callback-y, when we should be able
+      // to use the promise's then/catch. Also, this isn't helpful for the user.
       function handleError(error) {
         console.log('PUSH TO SERVER ERROR: ', JSON.stringify(error));
         commit('setIsWorking', false);
         commit('setStatusText', 'Error sending to server...');
       }
 
-      // Send new records to the server, unless the user isn't logged in
+      // Send records to the server, unless the user isn't logged in
       if (rootState.user.isLoggedIn === true) {
-        logsToPush.map(log => pushRecords(storedUrl, storedToken, log) // eslint-disable-line no-use-before-define, max-len
-          .then(handleResponse, handleError));
+        payload.indices
+          .map(index => pushRecords( // eslint-disable-line no-use-before-define
+            storedUrl,
+            storedToken,
+            logFactory(rootState.farm.logs[index], SERVER),
+          ).then(response => commit('updateLogs', {
+            indices: [index],
+            mapper(log) {
+              return logFactory({
+                ...log,
+                id: response.id,
+                wasPushedToServer: true,
+                remoteUri: response.uri,
+              });
+            },
+          }, handleError)));
       } else {
         commit('setStatusText', 'Not logged in. Redirecting to login page...');
         // FIXME: This should probably done from within the client's AllObservations.vue,

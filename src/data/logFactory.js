@@ -37,6 +37,7 @@ export default function (
     done = false,
     isCachedLocally = false,
     wasPushedToServer = false,
+    remoteUri = '',
   } = {},
   dest,
 ) {
@@ -59,6 +60,7 @@ export default function (
       done,
       isCachedLocally,
       wasPushedToServer,
+      remoteUri,
     };
   }
   // The format for sending logs to the farmOS REST Server.
@@ -95,6 +97,7 @@ export default function (
       photo_loc,
       done,
       wasPushedToServer,
+      remoteUri,
     };
     /*
       Only return local_id property if one has already been assigned by WebSQL,
