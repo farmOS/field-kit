@@ -59,7 +59,7 @@ export default {
           isReadyToSync: true,
         };
       }
-      this.$store.commit('updateAllLogs', logSyncer)
+      this.$store.commit('updateAllLogs', logSyncer);
 
       // FIXME: Why is this being called here? Why not in getPhoto or getPhotoLoc?
       // this.updateCurrentLog('photo_loc', this.photoLoc);
