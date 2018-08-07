@@ -14,6 +14,7 @@ export default function ({
   isCachedLocally = false,
   wasPushedToServer = false,
   isReadyToSync = false,
+  remoteUri = '',
 } = {}) {
   return {
     log_owner,
@@ -29,5 +30,6 @@ export default function ({
     isCachedLocally,
     wasPushedToServer,
     isReadyToSync,
+    remoteUri,
   };
 }
