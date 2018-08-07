@@ -112,64 +112,6 @@ export default {
   execute SQL queries or AJAX requests.
 */
 
-
-// TODO: break out helper functions into separate module
-// TODO: Delete or comment this out once pushToServer and pushRecords
-// can handle an array of logs, and logFactory is used in all formatting tasks.
-// Outputs an object consisting of all records in state, formatted for farmOS
-function formatState(currentLog) {
-  let newLog = {};
-  console.log('RAW LOG: ', JSON.stringify(currentLog));
-
-  // Proceed if log i was not pushed to Server
-  if (!currentLog.wasPushedToServer) {
-    for (var j in currentLog) {
-
-      switch(j) {
-        case 'name':
-          newLog.name = currentLog[j];
-          break;
-        case 'type':
-          newLog.type = currentLog[j];
-          break;
-        //farmier returns '403 not authorized to set property timestamp'
-        // case 'timestamp':
-        //   newLog.timestamp = currentLog[j];
-        //   break;
-        case 'notes':
-          newLog.field_farm_notes = {format: "farm_format", value: '<p>'+currentLog[j]+'</p>\n'};
-          break;
-        case 'photo_loc':
-          //Attach the photo only of a photo has been taken
-          if (currentLog[j] !== '') {
-            //Thanks to ourCodeWorld https://ourcodeworld.com/articles/read/80/how-to-convert-a-image-from-the-device-to-base64-with-javascript-in-cordova
-            getFileContentAsBase64(currentLog[j],function(base64Image){
-
-              /*
-              OK, this is where I had to stop.  I can get the images into base64, but I can't get
-              farmOS to accept them!  I tried including the image in field_farm_files , and
-              I also tried field_image based on the restws_file examples.  Neither worked!
-              https://www.drupal.org/project/restws_file
-              */
-              console.log('THE ENCODED IMAGE: '+base64Image);
-              newLog.field_farm_files = [base64Image];
-              //newLog.field_image = base64Image;
-
-            });
-          }
-          break;
-
-        //default:
-      }
-    }
-  }
-  console.log('NEW LOG: ')
-  console.log(JSON.stringify(newLog))
-  //Returning object in an array, per suggestion
-  return(newLog);
-
-}
-
 // Executes AJAX to send records to server
 function pushRecords(url, token, records) {
   return new Promise((resolve, reject) => {
@@ -386,8 +328,14 @@ function getPhotoFromCamera() {
 Turns an image URI into a base64 encoded file
 Thanks to ourCodeWorld https://ourcodeworld.com/articles/read/80/how-to-convert-a-image-from-the-device-to-base64-with-javascript-in-cordova
 */
-
-function getFileContentAsBase64(path, callback) {
+/*
+TODO: This might need to be moved to logFactory.js when the time comes, or deleted.
+It was only being used by formatState, which I removed after replacing it with logfactory
+for formatting logs prior to sending them to the server. This may need to be replaced
+too, since I don't think Alex ever got it to work, but it could be useful for reference
+and could even gain new life if it turns out the problem was on the server-end, not here.
+*/
+function getFileContentAsBase64(path, callback) { // eslint-disable-line no-unused-vars
   function fail() {
     console.log('Cannot find requested file');
   }
