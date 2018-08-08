@@ -69,22 +69,20 @@ export default {
 
       // Send records to the server, unless the user isn't logged in
       if (rootState.user.isLoggedIn === true) {
-        payload.indices
-          .map(index => pushRecords( // eslint-disable-line no-use-before-define
-            storedUrl,
-            storedToken,
-            logFactory(rootState.farm.logs[index], SERVER),
-          ).then(response => commit('updateLogs', {
-            indices: [index],
-            mapper(log) {
-              return logFactory({
-                ...log,
-                id: response.id,
-                wasPushedToServer: true,
-                remoteUri: response.uri,
-              });
-            },
-          })).catch(handleError));
+        payload.indices.map(index => (
+          pushRecord(storedUrl, storedToken, rootState.farm.logs[index]) // eslint-disable-line no-use-before-define, max-len
+            .then(response => commit('updateLogs', {
+              indices: [index],
+              mapper(log) {
+                return logFactory({
+                  ...log,
+                  id: response.id,
+                  wasPushedToServer: true,
+                  remoteUri: response.uri,
+                });
+              },
+            })).catch(handleError)
+        ));
       } else {
         commit('setStatusText', 'Not logged in. Redirecting to login page...');
         // FIXME: This should probably done from within the client's AllObservations.vue,
@@ -118,22 +116,23 @@ export default {
 */
 
 // Executes AJAX to send records to server
-function pushRecords(url, token, records) {
+function pushRecord(url, token, log) {
   const loc = '/log';
   const logUrl = url + loc;
+  const formattedLog = logFactory(log, SERVER);
   const requestHeaders = {
     'X-CSRF-Token': token,
     'Content-Type': 'application/json',
     Accept: 'json',
   };
   console.log(`PUSHING REQUEST URL : ${logUrl}`);
-  console.log('RECORDS SENDING: ', JSON.stringify(records));
+  console.log('RECORDS SENDING: ', JSON.stringify(formattedLog));
   return new Promise((resolve, reject) => {
     fetch(logUrl, {
       method: 'POST',
       headers: requestHeaders,
       credentials: 'include',
-      body: JSON.stringify(records),
+      body: JSON.stringify(formattedLog),
     }).then((response) => {
       console.log('fetch response: ', response);
       if (!response.ok) {
