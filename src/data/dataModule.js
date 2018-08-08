@@ -54,12 +54,17 @@ export default {
       const storedUrl = storage.getItem('url');
       const storedToken = storage.getItem('token');
 
-      // FIXME: This error handler is weird and callback-y, when we should be able
-      // to use the promise's then/catch. Also, this isn't helpful for the user.
       function handleError(error) {
-        console.log('PUSH TO SERVER ERROR: ', JSON.stringify(error));
-        commit('setIsWorking', false);
-        commit('setStatusText', 'Error sending to server...');
+        if (typeof error === 'object' && error.status === undefined) {
+          // do something with the TypeError (no connection)
+          console.error('No connection available. Error: ', error);
+        } else if (typeof error === 'object') {
+          // do something with status code
+          console.error('Status code error: ', error);
+        } else {
+          // handle some other type of runtime error (if possible)
+          console.error('Runtime error: ', error);
+        }
       }
 
       // Send records to the server, unless the user isn't logged in
@@ -79,7 +84,7 @@ export default {
                 remoteUri: response.uri,
               });
             },
-          }, handleError)));
+          })).catch(handleError));
       } else {
         commit('setStatusText', 'Not logged in. Redirecting to login page...');
         // FIXME: This should probably done from within the client's AllObservations.vue,
@@ -114,31 +119,28 @@ export default {
 
 // Executes AJAX to send records to server
 function pushRecords(url, token, records) {
+  const loc = '/log';
+  const logUrl = url + loc;
+  const requestHeaders = {
+    'X-CSRF-Token': token,
+    'Content-Type': 'application/json',
+    Accept: 'json',
+  };
+  console.log(`PUSHING REQUEST URL : ${logUrl}`);
+  console.log('RECORDS SENDING: ', JSON.stringify(records));
   return new Promise((resolve, reject) => {
-    const loc = '/log';
-    const logUrl = url + loc;
-    const requestHeaders = {
-      'X-CSRF-Token': token,
-      'Content-Type': 'application/json',
-      Accept: 'json',
-    };
-    console.log(`PUSHING REQUEST URL : ${logUrl}`);
-    console.log('RECORDS SENDING: ', JSON.stringify(records));
-
-    $.ajax({ // eslint-disable-line no-undef
-      type: 'POST',
-      url: logUrl,
+    fetch(logUrl, {
+      method: 'POST',
       headers: requestHeaders,
-      data: JSON.stringify(records),
-      success(response) {
-        console.log('POST SUCCESS!!');
-        resolve(response);
-      },
-      error(error) {
-        console.log('POST ERROR...');
-        reject(error);
-      },
-    });
+      credentials: 'include',
+      body: JSON.stringify(records),
+    }).then((response) => {
+      console.log('fetch response: ', response);
+      if (!response.ok) {
+        throw response;
+      }
+      return response.json();
+    }).then(resolve).catch(reject);
   });
 }
 
