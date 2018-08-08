@@ -73,7 +73,7 @@ export default function (
       // quantity,
       name,
       type,
-      // timestamp,
+      timestamp,
       // photo_loc,
     };
     /*
