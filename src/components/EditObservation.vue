@@ -15,7 +15,8 @@
           placeholder="Enter name"
           type="text"
           class="form-control"
-        >
+          autofocus>
+          <!-- TODO: is the autofocus attr good accessibility? -->
       </div>
       <div class="form-item form-item-name form-group">
         <label for="Date" class="control-label">Date</label>
@@ -23,8 +24,7 @@
           :value="convertOutOfUnix(logs[currentLogIndex].timestamp)"
           @input="updateCurrentLog('timestamp', convertIntoUnix($event.target.value))"
           type="date"
-          class="form-control"
-        >
+          class="form-control">
       </div>
 
       <div class="form-item form-item-name form-group">
@@ -34,10 +34,9 @@
           @input="updateCurrentLog('notes', $event.target.value)"
           placeholder="Enter notes"
           type="text"
-          class="form-control"
-        >
+          class="form-control">
       </div>
-      <!-- not able to send quantities right now
+      <!-- not able to send quantities right now -->
       <div class="form-item form-item-name form-group">
         <label for="quantity" class="control-label">Quantity</label>
         <input
@@ -46,10 +45,9 @@
           placeholder="Enter quantity"
           type="number"
           min="0"
-          class="form-control"
-        >
+          class="form-control">
       </div>
-    -->
+
     <br>
     <div class="input-group">
       <button
