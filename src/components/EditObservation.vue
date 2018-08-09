@@ -40,6 +40,7 @@
       <div class="form-item form-item-name form-group">
         <label for="quantity" class="control-label">Quantity</label>
         <select
+          @input="updateQuantityField('measure', $event.target.value)"
           class="form-control">
           <option value='' selected>Select a measurement</option>
           <option value='temperature'>Temperature</option>
@@ -52,6 +53,7 @@
           min="0"
           class="form-control">
         <select
+          @input="updateQuantityField('unit', $event.target.value)"
           class="form-control">
           <option value='' selected>Select a unit of measure</option>
           <option value='F'>F</option>
@@ -132,6 +134,14 @@ export default {
         isCachedLocally: false,
       };
       this.$store.commit('updateCurrentLog', newProps);
+    },
+
+    updateQuantityField(key, val) {
+      // TODO: figure out how this gets stored in SQL before uncommenting
+      // this.updateCurrentLog('quantity', {
+      //   ...this.logs[this.currentLogIndex].quantity,
+      //   [key]: val,
+      // })
     },
 
     getPhoto() {
