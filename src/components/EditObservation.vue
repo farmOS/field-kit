@@ -17,7 +17,6 @@
           class="form-control"
         >
       </div>
-      <!-- Not able to send timestamps right now
       <div class="form-item form-item-name form-group">
         <label for="Date" class="control-label">Date</label>
         <input
@@ -27,7 +26,7 @@
           class="form-control"
         >
       </div>
-    -->
+
       <div class="form-item form-item-name form-group">
         <label for="notes" class="control-label">Notes</label>
         <input
