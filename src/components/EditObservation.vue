@@ -39,6 +39,11 @@
       <!-- not able to send quantities right now -->
       <div class="form-item form-item-name form-group">
         <label for="quantity" class="control-label">Quantity</label>
+        <select
+          class="form-control">
+          <option value='' selected>Select a measurement</option>
+          <option value='temperature'>Temperature</option>
+        </select>
         <input
           :value="logs[currentLogIndex].quantity"
           @input="updateCurrentLog('quantity', $event.target.value)"
@@ -46,6 +51,11 @@
           type="number"
           min="0"
           class="form-control">
+        <select
+          class="form-control">
+          <option value='' selected>Select a unit of measure</option>
+          <option value='F'>F</option>
+        </select>
       </div>
 
     <br>
