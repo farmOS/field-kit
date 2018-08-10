@@ -83,7 +83,7 @@
     </div>
       <br>
       <div class="well">
-        <p>{{statusText}}</p>
+        <!-- <p>{{statusText}}</p> -->
         <!-- <spinner :size="30" v-if="isWorking"></spinner> -->
         <!--
         <br>
