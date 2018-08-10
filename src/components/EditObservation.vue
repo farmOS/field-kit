@@ -8,41 +8,41 @@
         computed values of the current log
       -->
       <div class="form-item form-item-name form-group">
-        <label for="name" class="control-label row">Name</label>
+        <label for="name" class="control-label">Name</label>
         <input
           :value="logs[currentLogIndex].name"
           @input="updateCurrentLog('name', $event.target.value)"
           placeholder="Enter name"
           type="text"
-          class="form-control row"
+          class="form-control"
           autofocus>
           <!-- TODO: is the autofocus attr good accessibility? -->
       </div>
       <div class="form-item form-item-name form-group">
-        <label for="Date" class="control-label row">Date</label>
+        <label for="Date" class="control-label">Date</label>
         <input
           :value="convertOutOfUnix(logs[currentLogIndex].timestamp)"
           @input="updateCurrentLog('timestamp', convertIntoUnix($event.target.value))"
           type="date"
-          class="form-control row">
+          class="form-control">
       </div>
 
       <div class="form-item form-item-name form-group">
-        <label for="notes" class="control-label row">Notes</label>
+        <label for="notes" class="control-label ">Notes</label>
         <input
           :value="logs[currentLogIndex].notes"
           @input="updateCurrentLog('notes', $event.target.value)"
           placeholder="Enter notes"
           type="text"
-          class="form-control row">
+          class="form-control">
       </div>
       <!-- not able to send quantities right now -->
       <div class="form-item form-item-name form-group">
-        <label for="quantity" class="control-label row">Quantity</label>
-        <div class="row">
+        <label for="quantity" class="control-label ">Quantity</label>
+        <div class="row reset-margin">
           <select
             @input="updateQuantityField('measure', $event.target.value)"
-            class="custom-select col-3 ">
+            class="custom-select col-sm-3 ">
             <option value='' selected>Select a measurement</option>
             <option value='temperature'>Temperature</option>
           </select>
@@ -52,10 +52,10 @@
             placeholder="Enter quantity"
             type="number"
             min="0"
-            class="form-control col-3">
+            class="form-control col-sm-3">
           <select
             @input="updateQuantityField('unit', $event.target.value)"
-            class="custom-select col-3 form-control">
+            class="custom-select col-sm-3 form-control">
             <option value='' selected>Select a unit of measure</option>
             <option value='F'>F</option>
           </select>
@@ -63,7 +63,7 @@
       </div>
 
     <br>
-    <div class="input-group row">
+    <div class="input-group ">
       <button
         :disabled='false'
         title="Get picture"
@@ -166,8 +166,8 @@ export default {
 </script>
 
 <style scoped>
-  /* select {
-    display: inline-block;
-  } */
+  .reset-margin {
+    margin: 0 0;
+  }
 
 </style>
