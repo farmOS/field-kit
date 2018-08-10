@@ -8,60 +8,62 @@
         computed values of the current log
       -->
       <div class="form-item form-item-name form-group">
-        <label for="name" class="control-label">Name</label>
+        <label for="name" class="control-label row">Name</label>
         <input
           :value="logs[currentLogIndex].name"
           @input="updateCurrentLog('name', $event.target.value)"
           placeholder="Enter name"
           type="text"
-          class="form-control"
+          class="form-control row"
           autofocus>
           <!-- TODO: is the autofocus attr good accessibility? -->
       </div>
       <div class="form-item form-item-name form-group">
-        <label for="Date" class="control-label">Date</label>
+        <label for="Date" class="control-label row">Date</label>
         <input
           :value="convertOutOfUnix(logs[currentLogIndex].timestamp)"
           @input="updateCurrentLog('timestamp', convertIntoUnix($event.target.value))"
           type="date"
-          class="form-control">
+          class="form-control row">
       </div>
 
       <div class="form-item form-item-name form-group">
-        <label for="notes" class="control-label">Notes</label>
+        <label for="notes" class="control-label row">Notes</label>
         <input
           :value="logs[currentLogIndex].notes"
           @input="updateCurrentLog('notes', $event.target.value)"
           placeholder="Enter notes"
           type="text"
-          class="form-control">
+          class="form-control row">
       </div>
       <!-- not able to send quantities right now -->
       <div class="form-item form-item-name form-group">
-        <label for="quantity" class="control-label">Quantity</label>
-        <select
-          @input="updateQuantityField('measure', $event.target.value)"
-          class="form-control">
-          <option value='' selected>Select a measurement</option>
-          <option value='temperature'>Temperature</option>
-        </select>
-        <input
-          :value="logs[currentLogIndex].quantity"
-          @input="updateCurrentLog('quantity', $event.target.value)"
-          placeholder="Enter quantity"
-          type="number"
-          min="0"
-          class="form-control">
-        <select
-          @input="updateQuantityField('unit', $event.target.value)"
-          class="form-control">
-          <option value='' selected>Select a unit of measure</option>
-          <option value='F'>F</option>
-        </select>
+        <label for="quantity" class="control-label row">Quantity</label>
+        <div class="row">
+          <select
+            @input="updateQuantityField('measure', $event.target.value)"
+            class="custom-select col-3 ">
+            <option value='' selected>Select a measurement</option>
+            <option value='temperature'>Temperature</option>
+          </select>
+          <input
+            :value="logs[currentLogIndex].quantity"
+            @input="updateCurrentLog('quantity', $event.target.value)"
+            placeholder="Enter quantity"
+            type="number"
+            min="0"
+            class="form-control col-3">
+          <select
+            @input="updateQuantityField('unit', $event.target.value)"
+            class="custom-select col-3 form-control">
+            <option value='' selected>Select a unit of measure</option>
+            <option value='F'>F</option>
+          </select>
+        </div>
       </div>
 
     <br>
-    <div class="input-group">
+    <div class="input-group row">
       <button
         :disabled='false'
         title="Get picture"
@@ -163,5 +165,8 @@ export default {
 </script>
 
 <style scoped>
+  /* select {
+    display: inline-block;
+  } */
 
 </style>
