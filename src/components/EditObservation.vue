@@ -68,7 +68,7 @@
         :disabled='false'
         title="Get picture"
         @click="getPhoto"
-        class="btn btn-default"
+        class="btn btn-info btn-navbar navbar-right"
         type="button">
         Get picture
       </button>
@@ -76,7 +76,8 @@
         :disabled='false'
         title="Done Editing"
         @click="$emit('view-all')"
-        type="button">
+        type="button"
+        class="btn btn-success btn-navbar">
         Done Editing
       </button>
     </div>
