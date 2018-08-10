@@ -50,11 +50,11 @@
     </div>
     <br>
     <div class="well">
-      <p>{{statusText}}</p>
+      <!-- <p>{{statusText}}</p> -->
       <!-- Spinner removed due to compilation errors; need replacement -->
       <!-- <spinner :size="30" v-if="isWorking"></spinner> -->
       <br>
-      <p v-if="isWorking">SPINNER SPIN!</p>
+      <!-- <p v-if="isWorking">SPINNER SPIN!</p> -->
     </div>
   </div>
 </template>
