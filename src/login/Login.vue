@@ -42,7 +42,7 @@
         :disabled="!this.valuesEntered"
         title="Submit credentials"
         @click="submitCredentials"
-        class="btn btn-default"
+        class="btn btn-success btn-navbar"
         type="button"
       >
         Submit credentials
