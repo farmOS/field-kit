@@ -68,11 +68,20 @@ export default {
         });
       }
 
-      function handleError(error) {
+      function handleSyncError(error, index) {
+        // Do something with a TypeError object (mostly likely no connection)
         if (typeof error === 'object' && error.status === undefined) {
-          // do something with the TypeError (no connection)
+          commit('updateLogs', {
+            indices: [index],
+            mapper(log) {
+              return logFactory({
+                ...log,
+                isReadyToSync: false,
+              });
+            },
+          });
           console.error('No connection available. Error: ', error);
-        } else if (typeof error === 'object') {
+        } else if (typeof error === 'object' && error.status === 401) {
           // do something with status code
           console.error('Status code error: ', error);
         } else {
@@ -86,7 +95,7 @@ export default {
         payload.indices.map(index => (
           pushRecord(storedUrl, storedToken, rootState.farm.logs[index]) // eslint-disable-line no-use-before-define, max-len
             .then(res => handleSyncResponse(res, index))
-            .catch(handleError)
+            .catch(err => handleSyncError(err, index))
         ));
       } else {
         commit('setStatusText', 'Not logged in. Redirecting to login page...');
