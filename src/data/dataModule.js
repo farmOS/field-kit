@@ -54,6 +54,20 @@ export default {
       const storedUrl = storage.getItem('url');
       const storedToken = storage.getItem('token');
 
+      function handleSyncResponse(response, index) {
+        commit('updateLogs', {
+          indices: [index],
+          mapper(log) {
+            return logFactory({
+              ...log,
+              id: response.id,
+              wasPushedToServer: true,
+              remoteUri: response.uri,
+            });
+          },
+        });
+      }
+
       function handleError(error) {
         if (typeof error === 'object' && error.status === undefined) {
           // do something with the TypeError (no connection)
@@ -71,17 +85,8 @@ export default {
       if (rootState.user.isLoggedIn === true) {
         payload.indices.map(index => (
           pushRecord(storedUrl, storedToken, rootState.farm.logs[index]) // eslint-disable-line no-use-before-define, max-len
-            .then(response => commit('updateLogs', {
-              indices: [index],
-              mapper(log) {
-                return logFactory({
-                  ...log,
-                  id: response.id,
-                  wasPushedToServer: true,
-                  remoteUri: response.uri,
-                });
-              },
-            })).catch(handleError)
+            .then(res => handleSyncResponse(res, index))
+            .catch(handleError)
         ));
       } else {
         commit('setStatusText', 'Not logged in. Redirecting to login page...');
