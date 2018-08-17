@@ -19,6 +19,14 @@
 
         </section>
       </div>
+
+      <div
+        v-for="err in errors"
+        :key="`err-${errors.indexOf(err)}`"
+        class="alert alert-warning row">
+        {{err.message}}
+      </div>
+
     </div>
   </div>
 </template>
@@ -30,6 +38,7 @@ export default {
   name: 'App',
   computed: mapState({
     headerText: state => state.shell.greeting,
+    errors: state => state.shell.errors,
   }),
 
 };
