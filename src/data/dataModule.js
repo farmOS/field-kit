@@ -87,10 +87,12 @@ export default {
               });
             },
           });
-          console.error('No connection available. Error: ', error);
-        } else if (typeof error === 'object' && error.status === 401) {
-          // do something with status code
-          console.error('Status code error: ', error);
+        } else if (
+          typeof error === 'object'
+          && (error.status === 401 || error.status === 403)
+        ) {
+          // Reroute authentication or authorization errors to login page
+          payload.router.push('/login');
         } else {
           // handle some other type of runtime error (if possible)
           console.error('Runtime error: ', error);
