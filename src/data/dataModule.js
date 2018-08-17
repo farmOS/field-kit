@@ -71,6 +71,13 @@ export default {
       function handleSyncError(error, index) {
         // Do something with a TypeError object (mostly likely no connection)
         if (typeof error === 'object' && error.status === undefined) {
+          const errorPayload = {
+            message: `Unable to sync "${rootState.farm.logs[index].name}" because the network is currently unavailable. Please try syncing again later.`,
+            errorCode: error.statusText,
+            level: 'warning',
+            show: true,
+          };
+          commit('logError', errorPayload);
           commit('updateLogs', {
             indices: [index],
             mapper(log) {
