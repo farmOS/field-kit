@@ -16,6 +16,13 @@ const shellModule = {
     logError(state, error) {
       state.errors = state.errors.concat([error]);
     },
+    dismissError(state, index) {
+      const updatedError = {
+        ...state.errors[index],
+        show: false,
+      };
+      state.errors.splice(index, 1, updatedError);
+    },
   },
 };
 

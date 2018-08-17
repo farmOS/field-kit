@@ -10,10 +10,20 @@
           </header>
 
           <div
-            v-for="err in errors"
-            :key="`err-${errors.indexOf(err)}`"
-            class="alert alert-warning">
-            {{err.message}}
+            v-for="(err, index) in errors"
+            :key="`err-${errors.indexOf(err)}`">
+            <div
+              v-if="err.show"
+              class="alert alert-warning alert-dismissable" >
+              {{err.message}}
+              <button
+                type="button"
+                @click="closeError(index)"
+                class="close"
+                aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
           </div>
 
           <div class="region region-content">
@@ -39,7 +49,11 @@ export default {
     headerText: state => state.shell.greeting,
     errors: state => state.shell.errors,
   }),
-
+  methods: {
+    closeError(index) {
+      this.$store.commit('dismissError', index)
+    }
+  }
 };
 </script>
 
