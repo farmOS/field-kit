@@ -9,6 +9,13 @@
             <h3 class="page-header">{{headerText}}</h3>
           </header>
 
+          <div
+            v-for="err in errors"
+            :key="`err-${errors.indexOf(err)}`"
+            class="alert alert-warning">
+            {{err.message}}
+          </div>
+
           <div class="region region-content">
             <div class="block block-system">
 
@@ -19,14 +26,6 @@
 
         </section>
       </div>
-
-      <div
-        v-for="err in errors"
-        :key="`err-${errors.indexOf(err)}`"
-        class="alert alert-warning row">
-        {{err.message}}
-      </div>
-
     </div>
   </div>
 </template>
