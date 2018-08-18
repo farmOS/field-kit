@@ -1,4 +1,5 @@
 import dataModule from './dataModule';
+import httpModule from './httpModule';
 
 /*
   A reducer function that filters for logs ready to sync,
@@ -14,6 +15,7 @@ function syncReducer(indices, curLog, curIndex) {
 export default {
   install(Vue, { store, router }) {
     store.registerModule('data', dataModule);
+    store.registerModule('http', httpModule);
     store.subscribe((mutation) => {
       if (mutation.type === 'addLogAndMakeCurrent') {
         store.dispatch('createRecord', mutation.payload);
