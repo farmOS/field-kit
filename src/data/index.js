@@ -1,5 +1,6 @@
 import dbModule from './dbModule';
 import httpModule from './httpModule';
+import camModule from './camModule';
 
 /*
   A reducer function that filters for logs ready to sync,
@@ -16,6 +17,7 @@ export default {
   install(Vue, { store, router }) {
     store.registerModule('data', dbModule);
     store.registerModule('http', httpModule);
+    store.registerModule('camera', camModule);
     store.subscribe((mutation) => {
       if (mutation.type === 'addLogAndMakeCurrent') {
         store.dispatch('createRecord', mutation.payload);
