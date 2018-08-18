@@ -1,4 +1,4 @@
-import dataModule from './dataModule';
+import dbModule from './dbModule';
 import httpModule from './httpModule';
 
 /*
@@ -14,7 +14,7 @@ function syncReducer(indices, curLog, curIndex) {
 
 export default {
   install(Vue, { store, router }) {
-    store.registerModule('data', dataModule);
+    store.registerModule('data', dbModule);
     store.registerModule('http', httpModule);
     store.subscribe((mutation) => {
       if (mutation.type === 'addLogAndMakeCurrent') {
