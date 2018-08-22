@@ -33,15 +33,6 @@ export default {
             show: true,
           };
           commit('logError', errorPayload);
-          commit('updateLogs', {
-            indices: [index],
-            mapper(log) {
-              return logFactory({
-                ...log,
-                isReadyToSync: false,
-              });
-            },
-          });
         } else if (error.status === 401 || error.status === 403) {
           // Reroute authentication or authorization errors to login page
           payload.router.push('/login');
@@ -49,6 +40,15 @@ export default {
           // handle some other type of runtime error (if possible)
           console.error('Runtime error: ', error);
         }
+        commit('updateLogs', {
+          indices: [index],
+          mapper(log) {
+            return logFactory({
+              ...log,
+              isReadyToSync: false,
+            });
+          },
+        });
       }
 
       // Send records to the server, unless the user isn't logged in
