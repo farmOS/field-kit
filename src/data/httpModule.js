@@ -42,10 +42,7 @@ export default {
               });
             },
           });
-        } else if (
-          typeof error === 'object'
-          && (error.status === 401 || error.status === 403)
-        ) {
+        } else if (error.status === 401 || error.status === 403) {
           // Reroute authentication or authorization errors to login page
           payload.router.push('/login');
         } else {
