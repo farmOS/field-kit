@@ -33,7 +33,7 @@ export default function (
     name = '',
     type = '',
     timestamp = '',
-    photo_loc = '', // eslint-disable-line camelcase
+    images = [],
     done = false,
     isCachedLocally = false,
     wasPushedToServer = false,
@@ -56,7 +56,7 @@ export default function (
       name,
       type,
       timestamp,
-      photo_loc,
+      images,
       done,
       isCachedLocally,
       wasPushedToServer,
@@ -74,7 +74,7 @@ export default function (
       name,
       type,
       timestamp,
-      // photo_loc,
+      field_farm_images: images,
     };
     /*
       Only return id property if one has already been assigned by the server,
@@ -94,7 +94,7 @@ export default function (
       name,
       type,
       timestamp,
-      photo_loc,
+      images,
       done,
       wasPushedToServer,
       remoteUri,

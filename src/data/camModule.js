@@ -16,6 +16,16 @@ export default {
       getPhotoFromCamera() // eslint-disable-line no-use-before-define
         .then(handleResponse, handleError);
     },
+    loadPhotoBlob({ commit, rootState }, file) {
+      const prevLog = rootState.farm.logs[rootState.farm.currentLogIndex];
+      readFileData(file).then((data) => { // eslint-disable-line no-use-before-define
+        const newProps = {
+          images: prevLog.images.concat(data),
+          isCachedLocally: false,
+        };
+        commit('updateCurrentLog', newProps);
+      });
+    },
   },
 };
 
@@ -72,4 +82,13 @@ function getFileContentAsBase64(path, callback) { // eslint-disable-line no-unus
   }
 
   window.resolveLocalFileSystemURL(path, gotFile, fail);
+}
+
+function readFileData(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
 }
