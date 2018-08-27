@@ -9,7 +9,7 @@ export default function ({
   name = '',
   type = '',
   timestamp = '',
-  photo_loc = '', // eslint-disable-line camelcase
+  images = [],
   done = false,
   isCachedLocally = false,
   wasPushedToServer = false,
@@ -25,7 +25,7 @@ export default function ({
     name,
     type,
     timestamp,
-    photo_loc,
+    images,
     done,
     isCachedLocally,
     wasPushedToServer,

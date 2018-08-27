@@ -62,25 +62,44 @@
         </div>
       </div>
 
-    <br>
-    <div class="input-group ">
-      <button
-        :disabled='false'
-        title="Get picture"
-        @click="getPhoto"
-        class="btn btn-info btn-navbar navbar-right"
-        type="button">
-        Get picture
-      </button>
-      <button
-        :disabled='false'
-        title="Done Editing"
-        @click="$emit('view-all')"
-        type="button"
-        class="btn btn-success btn-navbar">
-        Done Editing
-      </button>
-    </div>
+      <br>
+      <div class="input-group ">
+        <button
+          :disabled='false'
+          title="Take picture with camera"
+          @click="getPhoto"
+          class="btn btn-info btn-navbar navbar-right"
+          type="button">
+          Take picture with camera
+        </button>
+        <button
+          :disabled='false'
+          title="Done Editing"
+          @click="$emit('view-all')"
+          type="button"
+          class="btn btn-success btn-navbar">
+          Done Editing
+        </button>
+      </div>
+      <div class="input-group">
+        <label
+          class="custom-file-label"
+          for="customFile">
+          Select photo from file
+        </label>
+        <input
+          type="file"
+          class="custom-file-input"
+          ref="photo"
+          @change="loadPhoto($event.target.files)">
+      </div>
+      <div class="col">
+        <img
+          v-for="url in imageUrls"
+          :src="url"
+          :key="`preview-${imageUrls.indexOf(url)}`"
+          class="preview" />
+      </div>
       <br>
       <div class="well">
         <!-- <p>{{statusText}}</p> -->
@@ -105,6 +124,7 @@ export default {
   data() {
     return {
       vueHeader: 'Enter your new observation:',
+      imageUrls: [],
     };
   },
   props: [
@@ -139,7 +159,7 @@ export default {
       this.$store.commit('updateCurrentLog', newProps);
     },
 
-    updateQuantityField(key, val) {
+    updateQuantityField(key, val) { // eslint-disable-line no-unused-vars
       // TODO: figure out how this gets stored in SQL before uncommenting
       // this.updateCurrentLog('quantity', {
       //   ...this.logs[this.currentLogIndex].quantity,
@@ -152,13 +172,20 @@ export default {
       return this.$store.dispatch('getPhotoLoc');
     },
 
+    loadPhoto(files) {
+      for (let i = 0; i < files.length; i += 1) {
+        this.imageUrls.push(window.URL.createObjectURL(files[i]));
+        this.$store.dispatch('loadPhotoBlob', files[i]);
+      }
+    },
+
   },
 
   watch: {
-    // When photoLoc changes, this updates the photo_loc property of the current log
+    // When photoLoc changes, this updates the images property of the current log
     photoLoc() {
       console.log(`UPDATING CURRENT RECORD PHOTO LOC: ${this.photoLoc}`);
-      this.updateCurrentLog('photo_loc', this.photoLoc);
+      this.updateCurrentLog('images', this.photoLoc);
     },
   },
 };
@@ -168,6 +195,10 @@ export default {
 <style scoped>
   .reset-margin {
     margin: 0 0;
+  }
+  .preview {
+    width: 100%;
+    height: 100%;
   }
 
 </style>
