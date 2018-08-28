@@ -4,7 +4,9 @@
       <input
         v-model="farmosUrl"
         placeholder="Enter your farmOS URL"
+        autofocus
         type="text"
+        autocomplete="url"
         class="form-control"
         v-on:input="checkValues"
       >
@@ -15,6 +17,7 @@
         v-model="username"
         placeholder="Enter your username"
         type="text"
+        autocomplete="username"
         class="form-control"
         v-on:input="checkValues"
       >
@@ -25,6 +28,7 @@
         v-model="password"
         placeholder="Enter your password"
         type="password"
+        autocomplete="current-password"
         class="form-control"
         v-on:input="checkValues"
       >
