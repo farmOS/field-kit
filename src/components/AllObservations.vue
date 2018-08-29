@@ -26,7 +26,7 @@
           <td>{{showDate(log.timestamp)}}</td>
           <td>{{log.name}}</td>
           <td v-if="log.wasPushedToServer">
-            <a href="#">synced</a> ({{syncTime(log.timestamp)}})
+            <a :href="log.remoteUri">synced</a> ({{syncTime(log.timestamp)}})
           </td>
           <td v-else-if="log.isReadyToSync">
             <!-- TODO: add proper spinner once glyphicon font is working -->
