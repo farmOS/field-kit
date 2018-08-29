@@ -5,10 +5,17 @@ export default {
     called when the get photo button is tapped; setPhotoLoc sets the captured
     image URI to a variable in the store called photo_loc
     */
-    getPhotoLoc({ commit }) {
+    getPhotoLoc({ commit, rootState }) {
       function handleResponse(photoLoc) {
         commit('setStatusText', `Took the following photo: ${photoLoc}`);
-        commit('setPhotoLoc', photoLoc);
+        // commit('setPhotoLoc', photoLoc);
+        const prevLog = rootState.farm.logs[rootState.farm.currentLogIndex];
+        const dataURL = `data:image/jpeg;base64,${photoLoc}`;
+        const newProps = {
+          images: prevLog.images.concat(dataURL),
+          isCachedLocally: false,
+        };
+        commit('updateCurrentLog', newProps);
       }
       function handleError(error) {
         commit('setStatusText', `Error capturing photo: ${error}`);
@@ -47,7 +54,7 @@ function getPhotoFromCamera() {
 
     const options = {
       quality: 50,
-      destinationType: Camera.DestinationType.FILE_URI, // eslint-disable-line no-undef
+      destinationType: Camera.DestinationType.DATA_URL, // eslint-disable-line no-undef
     };
     navigator.camera.getPicture(onSuccess, onFail, options);
   });

@@ -87,7 +87,7 @@ function pushRecord(url, token, log) {
     Accept: 'json',
   };
   console.log(`PUSHING REQUEST URL : ${logUrl}`);
-  console.log('RECORDS SENDING: ', JSON.stringify(formattedLog));
+  console.log('RECORDS SENDING: ', formattedLog);
   return new Promise((resolve, reject) => {
     fetch(logUrl, {
       method: 'POST',
