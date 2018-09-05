@@ -56,7 +56,11 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-            <button type="button" class="close" aria-label="Close">
+            <button
+              type="button"
+              class="close"
+              @click='cancelDelete'
+              aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
@@ -64,8 +68,17 @@
             ...
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" >Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
+            <button
+            type="button"
+            class="btn btn-secondary"
+            @click='cancelDelete'>
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary">
+            Delete
+          </button>
           </div>
         </div>
       </div>
@@ -95,6 +108,9 @@ export default {
     openDeleteDialog(index) {
       this.showDeleteDialog = true;
       this.logIndexToDelete = index;
+    },
+    cancelDelete() {
+      this.showDeleteDialog = false;
     },
     syncAll() {
       function logSyncer(log) {
