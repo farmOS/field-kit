@@ -76,7 +76,8 @@
           </button>
           <button
             type="button"
-            class="btn btn-primary">
+            class="btn btn-primary"
+            @click='confirmDelete()'>
             Delete
           </button>
           </div>
@@ -111,6 +112,12 @@ export default {
     },
     cancelDelete() {
       this.showDeleteDialog = false;
+    },
+    confirmDelete() {
+      const index = this.logIndexToDelete;
+      this.showDeleteDialog = false;
+      // this.$store.commit('deleteLog', index)
+      console.log(`Deleting log "${this.logs[index].name}"`)
     },
     syncAll() {
       function logSyncer(log) {
