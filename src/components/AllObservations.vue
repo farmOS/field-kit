@@ -38,6 +38,7 @@
             <button
               type="button"
               :name='`delete-${logs.indexOf(log)}`'
+              class="btn btn-danger"
               @click='openDeleteDialog(logs.indexOf(log))'>
               Delete
             </button>
@@ -55,7 +56,7 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+            <h5 class="modal-title" id="exampleModalLabel">Confirm Deletion</h5>
             <button
               type="button"
               class="close"
@@ -65,7 +66,14 @@
             </button>
           </div>
           <div class="modal-body">
-            ...
+            Are sure you'd like to delete the observation "{{logs[logIndexToDelete].name}}"?&nbsp;
+            <span
+              v-if='logs[logIndexToDelete].wasPushedToServer'>
+              Deleting it on this device will not remove the log from the server.
+            </span>
+            <span v-else>
+              It has not yet been synced to the server and cannot be recovered after it's deleted.
+            </span>
           </div>
           <div class="modal-footer">
             <button
@@ -76,7 +84,7 @@
           </button>
           <button
             type="button"
-            class="btn btn-primary"
+            class="btn btn-danger"
             @click='confirmDelete()'>
             Delete
           </button>
