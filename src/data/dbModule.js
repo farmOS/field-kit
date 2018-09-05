@@ -91,39 +91,37 @@ function makeTable(db, table, log) {
     console.log(`making table with name ${table} and the following data template: ${JSON.stringify(log)}`);
     // Creates a table called 'tableName' in the DB if none yet exists
     db.transaction((tx) => {
-      var fieldString = '';
-      for (var i in log) { // eslint-disable-line guard-for-in, no-restricted-syntax
-        var suffix = '';
-        if (typeof i === "number" ){
-          suffix = " INT, "
+      let fieldString = '';
+      for (const i in log) { // eslint-disable-line guard-for-in, no-restricted-syntax
+        let suffix = '';
+        if (typeof i === 'number') {
+          suffix = ' INT, ';
         } else {
-          suffix = " VARCHAR(150), "
+          suffix = ' VARCHAR(150), ';
         }
-        fieldString = fieldString+i+suffix;
+        fieldString = fieldString + i + suffix;
       }
-      //I need to trim the last two characters to avoid a trailing comma
+      // I need to trim the last two characters to avoid a trailing comma
       fieldString = fieldString.substring(0, fieldString.length - 2);
 
-      //the id field will autoincrement beginning with 1
-      var sql = "CREATE TABLE IF NOT EXISTS " +
-      table +
-      " ( local_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-      fieldString +
-      ")";
+      // the id field will autoincrement beginning with 1
+      const sql = `CREATE TABLE IF NOT EXISTS ${
+        table
+      } ( local_id INTEGER PRIMARY KEY AUTOINCREMENT, ${
+        fieldString
+      })`;
 
-      tx.executeSql(sql, null, function (_tx, result) {
+      tx.executeSql(sql, null, (_tx, result) => {
         console.log('Make table success. Result: ', result);
         resolve(_tx);
-      }, function (_tx, error) {
-        console.log('Make table error: ' + error.message);
+      }, (_tx, error) => {
+        console.log(`Make table error: ${error.message}`);
         // Reject will return the tx object in case you want to try again.
         reject(_tx);
       });
-
     });
-
-  })
-};
+  });
+}
 
 /*
 saveRecord either saves a new record or updates an existing one.
@@ -135,80 +133,74 @@ table - string name of the table, AKA logType
 log - object following the template for that logType
 */
 
-function saveRecord (tx, table, log) {
+function saveRecord(tx, table, log) {
   return new Promise((resolve, reject) => {
     console.log('SAVING THE FOLLOWING RECORDS:');
     console.log(log);
 
-    var fieldString = "";
-    var queryString = "";
-    var values = [];
-    for (var i in log){
-      fieldString = fieldString+i+", ";
-      queryString = queryString+"?, ";
+    let fieldString = '';
+    let queryString = '';
+    const values = [];
+    for (var i in log) {
+      fieldString = `${fieldString + i}, `;
+      queryString = `${queryString}?, `;
       values.push(log[i]);
     }
-    //I need to trim the last two characters of each string to avoid trailing commas
+    // I need to trim the last two characters of each string to avoid trailing commas
     fieldString = fieldString.substring(0, fieldString.length - 2);
     queryString = queryString.substring(0, queryString.length - 2);
 
 
-    console.log("add record strings")
+    console.log('add record strings');
     console.log(fieldString);
     console.log(queryString);
     console.log(values);
 
-    //Set SQL based on whether the log contains a local_id fieldString
-    var sql;
-    sql = "INSERT OR REPLACE INTO " +
-    table +
-    " ("+fieldString+") " +
-    "VALUES ("+queryString+")";
-    //}
-    //tx.executeSql(sql, [tableRecord.text, tableRecord.plantings, tableRecord.locations, tableRecord.livestock],
-    tx.executeSql(sql, values, function (_tx, results) {
+    // Set SQL based on whether the log contains a local_id fieldString
+    const sql = `INSERT OR REPLACE INTO ${
+      table
+    } (${fieldString}) `
+    + `VALUES (${queryString})`;
+
+    tx.executeSql(sql, values, (_tx, results) => {
       console.log('INSERT success');
       resolve(results);
-    }, function (_tx, error) {
-      console.log('INSERT error: ' + error.message);
-      reject(error.message)
+    }, (_tx, error) => {
+      console.log(`INSERT error: ${error.message}`);
+      reject(error.message);
     });
+  });
+}
 
-  })
-};
-
-function getRecords (db, table) {
-  return new Promise(function(resolve, reject) {
-
-    //This is called if the db.transaction obtains data
+function getRecords(db, table) {
+  return new Promise(((resolve) => {
+    // This is called if the db.transaction obtains data
     function dataHandler(tx, results) {
-      var resultSet = [];
-      for(var i=0; i<results.rows.length; i++) {
-        var row = results.rows.item(i)
-        console.log('RAW GETRECORDS RESULT '+i+': '+JSON.stringify(row));
+      const resultSet = [];
+      for (let i = 0; i < results.rows.length; i += 1) {
+        const row = results.rows.item(i);
+        console.log(`RAW GETRECORDS RESULT ${i}: ${JSON.stringify(row)}`);
         resultSet.push(row);
       }
-      resolve(resultSet)
+      resolve(resultSet);
       /*
       I'm not sure why, but the following line does not work in Cordova, though
       it does seem to work in the web app.  The resultSet code above replaces it.
       */
-      //resolve([...results.rows]);
-
+      // resolve([...results.rows]);
     }
-    //This is called if the db.transaction fails to obtain data
+    // This is called if the db.transaction fails to obtain data
     function errorHandler(tx, error) {
-      console.log("No old logs found in cache.");
+      console.log('No old logs found in cache.');
       resolve([]);
     }
 
-    db.transaction(function (tx) {
-      var sql = `SELECT * FROM ${table}`;
+    db.transaction((tx) => {
+      const sql = `SELECT * FROM ${table}`;
 
       tx.executeSql(sql, [],
         dataHandler,
-        errorHandler
-      );
+        errorHandler);
     });
-  })
+  }));
 }
