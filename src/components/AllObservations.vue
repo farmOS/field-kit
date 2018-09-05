@@ -36,6 +36,31 @@
         </tr>
       </tbody>
     </table>
+    <div
+      v-if="showDeleteDialog"
+      class="modal"
+      id="delete-dialog"
+      tabindex="-1"
+      role="dialog">
+      <div class="modal-filter"></div>
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+            <button type="button" class="close" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            ...
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" >Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
 </template>
@@ -45,6 +70,12 @@ import moment from 'moment';
 
 export default {
   props: ['logs'],
+  data() {
+    return {
+      showDeleteDialog: false,
+      logIndexToDelete: null,
+    }
+  },
   methods: {
     syncTime(unixTimestamp) {
       return moment.unix(unixTimestamp).format('YYYY-MM-DD');
@@ -116,4 +147,32 @@ export default {
           transform: rotate(360deg);
       }
   }
+
+  .modal {
+    display: block;
+    padding-right: 15px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    opacity: 1;
+  }
+  .modal-filter {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: #ccc;
+    opacity: .5;
+  }
+  .modal-dialog {
+    transform: translate(0,0);
+    width: auto;
+    margin: 3rem;
+    pointer-events: none;
+  }
+  @media (min-width: 576px) {
+    .modal-dialog {
+      max-width: 500px;
+      margin: 1.75rem auto;
+    }
+  }
+
 </style>
