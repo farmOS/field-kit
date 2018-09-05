@@ -19,6 +19,7 @@
           <th>Date</th>
           <th>Log name</th>
           <th>Sync status</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -33,6 +34,14 @@
             <div class="glyphicon glyphicon-refresh spin" aria-hidden="true" />
           </td>
           <td v-else>unsynced</td>
+          <td>
+            <button
+              type="button"
+              :name='`delete-${logs.indexOf(log)}`'
+              @click='openDeleteDialog(logs.indexOf(log))'>
+              Delete
+            </button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -82,6 +91,10 @@ export default {
     },
     showDate(unixTimestamp) {
       return moment.unix(unixTimestamp).format('MMM DD YYYY');
+    },
+    openDeleteDialog(index) {
+      this.showDeleteDialog = true;
+      this.logIndexToDelete = index;
     },
     syncAll() {
       function logSyncer(log) {
