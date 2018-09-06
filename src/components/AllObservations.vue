@@ -122,10 +122,19 @@ export default {
       this.showDeleteDialog = false;
     },
     confirmDelete() {
-      const index = this.logIndexToDelete;
+      const log = this.logs[this.logIndexToDelete];
+      console.log('Log to be deleted: ', log);
+      const payload = {
+        index: this.logIndexToDelete,
+        local_id: log.local_id,
+        id: log.id,
+        remoteUri: log.remoteUri,
+        name: log.name,
+        type: log.type,
+      };
+      this.$store.commit('deleteLog', payload);
       this.showDeleteDialog = false;
-      // this.$store.commit('deleteLog', index)
-      console.log(`Deleting log "${this.logs[index].name}"`)
+      console.log(`Deleting log "${payload.name}"...`);
     },
     syncAll() {
       function logSyncer(log) {

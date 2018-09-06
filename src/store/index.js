@@ -71,6 +71,9 @@ const farmModule = {
         payload.mapper(state.logs[i]),
       ));
     },
+    deleteLog(state, { index }) {
+      state.logs.splice(index, 1);
+    },
     clearLogs(state) {
       state.logs.splice(0, state.logs.length);
     },
