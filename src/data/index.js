@@ -34,6 +34,9 @@ export default {
           store.dispatch('updateRecord', store.state.farm.logs[i]);
         });
       }
+      if (mutation.type === 'deleteLog') {
+        store.dispatch('deleteRecord', mutation.payload);
+      }
     });
   },
 };

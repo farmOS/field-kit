@@ -47,6 +47,17 @@ export default {
         .then(() => commit('updateCurrentLog', { isCachedLocally: true }));
     },
 
+    deleteRecord({ commit, dispatch, rootState }, { local_id, type, name }) {
+      // delete record from WebSQL
+      console.log(
+        'deleteRecord() action dispatched on ',
+        name,
+      );
+      openDatabase() // eslint-disable-line no-use-before-define
+        .then(db => getTX(db, type)) // eslint-disable-line no-use-before-define
+        .then(tx => deleteRecord(tx, type, local_id)) // eslint-disable-line no-use-before-define
+    },
+
   },
 };
 
@@ -203,4 +214,10 @@ function getRecords(db, table) {
         errorHandler);
     });
   }));
+}
+
+function deleteRecord(tx, table, local_id) {
+  return new Promise((resolve, reject) => {
+    // delete record here...
+  })
 }
