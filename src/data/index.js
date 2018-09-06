@@ -29,6 +29,11 @@ export default {
         const indices = store.state.farm.logs.reduce(syncReducer, []);
         store.dispatch('pushToServer', { indices, router });
       }
+      if (mutation.type === 'updateLogs') {
+        mutation.payload.indices.forEach((i) => {
+          store.dispatch('updateRecord', store.state.farm.logs[i]);
+        });
+      }
     });
   },
 };

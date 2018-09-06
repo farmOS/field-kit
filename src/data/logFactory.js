@@ -56,10 +56,12 @@ export default function (
       name,
       type,
       timestamp,
-      images,
-      done,
-      isCachedLocally,
-      wasPushedToServer,
+      // Use Array.concat() to make sure this is an array
+      images: parseImages(images),
+      // Use JSON.parse() to convert strings back to booleans
+      done: JSON.parse(done),
+      isCachedLocally: JSON.parse(isCachedLocally),
+      wasPushedToServer: JSON.parse(wasPushedToServer),
       remoteUri,
     };
   }
@@ -108,4 +110,22 @@ export default function (
     }
   }
   return log;
+}
+
+/*
+  This utility function, along with the use of `JSON.parse()` above,
+  provide a quick hacky solution, but we need something better
+  for parsing data when it goes between Vuex and WebSQL. See:
+  https://github.com/farmOS/farmOS-native/issues/27#issuecomment-412093491
+  https://github.com/farmOS/farmOS-native/issues/40#issuecomment-419131892
+  https://github.com/farmOS/farmOS-native/issues/45
+*/
+function parseImages(x) {
+  if (typeof x === 'object') {
+    return x;
+  }
+  if (typeof x === 'string') {
+    return (x === '') ? [] : [].concat(x);
+  }
+  throw new Error(`${x} cannot be parsed as an image array`);
 }
