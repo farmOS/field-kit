@@ -56,6 +56,8 @@ export default {
       openDatabase() // eslint-disable-line no-use-before-define
         .then(db => getTX(db, type)) // eslint-disable-line no-use-before-define
         .then(tx => deleteRecord(tx, type, local_id)) // eslint-disable-line no-use-before-define
+        .then(console.log)
+        .catch(console.error);
     },
 
   },
@@ -216,8 +218,9 @@ function getRecords(db, table) {
   }));
 }
 
-function deleteRecord(tx, table, local_id) {
+function deleteRecord(tx, table, id) {
   return new Promise((resolve, reject) => {
-    // delete record here...
-  })
+    const sql = `DELETE FROM ${table} WHERE local_id = ${id}`;
+    tx.executeSql(sql, [], (_tx, res) => resolve(res), reject);
+  });
 }
