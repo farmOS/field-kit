@@ -30,6 +30,9 @@
     <edit-config file="*-Info.plist" mode="merge" target="NSCameraUsageDescription">
         <string>farmOS would like access to the camera</string>
     </edit-config>
+    <edit-config file="*-Info.plist" mode="merge" target="NSPhotoLibraryUsageDescription">
+        <string>farmOS would like access to the photo library</string>
+    </edit-config>
     <plugin name="cordova-plugin-network-information" spec="^2.0.1" />
     <plugin name="cordova-plugin-file" spec="^6.0.1" />
     <engine name="android" spec="^7.1.0" />
