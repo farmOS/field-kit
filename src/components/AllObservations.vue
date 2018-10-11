@@ -1,18 +1,20 @@
 <template lang="html">
   <div>
     <h1>All Observations</h1>
-    <button
-      @click="$emit('create-observation')"
-      type="button"
-      class="btn btn-success btn-navbar">
-      Create observation
-    </button>
-    <button
-      @click="syncAll"
-      type="button"
-      class="btn btn-info btn-navbar navbar-right">
-      Sync all to farmOS
-    </button>
+    <div class="btn-wrapper">
+      <button
+        @click="$emit('create-observation')"
+        type="button"
+        class="btn btn-success btn-navbar">
+        Create observation
+      </button>
+      <button
+        @click="syncAll"
+        type="button"
+        class="btn btn-info btn-navbar navbar-right">
+        Sync all to farmOS
+      </button>
+    </div>
     <table class="table table-bordered">
       <thead>
         <tr>
@@ -153,6 +155,14 @@ export default {
 </script>
 
 <style>
+  .btn-wrapper {
+    margin: 1rem 0;
+  }
+
+  .btn-wrapper > button {
+    margin-right: 1rem;
+  }
+
   .spin {
       -webkit-animation-name: spin;
       -webkit-animation-duration: 4000ms;
