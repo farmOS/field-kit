@@ -15,39 +15,47 @@
         Sync all to farmOS
       </button>
     </div>
-    <table class="table table-bordered">
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Log name</th>
-          <th>Sync status</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="log in logs" :key='logs.indexOf(log)'>
-          <td>{{showDate(log.timestamp)}}</td>
-          <td>{{log.name}}</td>
-          <td v-if="log.wasPushedToServer">
-            <a :href="log.remoteUri">synced</a> ({{syncTime(log.timestamp)}})
-          </td>
-          <td v-else-if="log.isReadyToSync">
-            <!-- TODO: add proper spinner once glyphicon font is working -->
-            <div class="glyphicon glyphicon-refresh spin" aria-hidden="true" />
-          </td>
-          <td v-else>unsynced</td>
-          <td>
-            <button
-              type="button"
-              :name='`delete-${logs.indexOf(log)}`'
-              class="btn btn-danger"
-              @click='openDeleteDialog(logs.indexOf(log))'>
-              Delete
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="card-deck">
+      <div
+        class="card"
+        v-for="log in logs"
+        :key="`card-${logs.indexOf(log)}`"
+      >
+        <div class="card-body">
+          <p>
+            {{showDate(log.timestamp)}}
+            <span
+              v-if="log.wasPushedToServer"
+              class="sync-status"
+            >
+              <a :href="log.remoteUri">synced</a>
+              ({{syncTime(log.timestamp)}})
+            </span>
+            <span
+              v-else-if="log.isReadyToSync"
+              class="sync-status"
+            >
+              <!-- TODO: add proper spinner once glyphicon font is working -->
+              <div
+                class="glyphicon glyphicon-refresh spin"
+                aria-hidden="true"
+              />
+            </span>
+            <span v-else class="sync-status">
+              unsynced
+            </span>
+          </p>
+          <h5>{{log.name}}</h5>
+          <button
+            type="button"
+            :name='`delete-${logs.indexOf(log)}`'
+            class="btn btn-danger"
+            @click='openDeleteDialog(logs.indexOf(log))'>
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
     <div
       v-if="showDeleteDialog"
       class="modal"
@@ -161,6 +169,11 @@ export default {
 
   .btn-wrapper > button {
     margin-right: 1rem;
+  }
+
+  .sync-status {
+    position: absolute;
+    right: 1.25rem;
   }
 
   .spin {
