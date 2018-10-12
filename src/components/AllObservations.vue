@@ -1,6 +1,6 @@
 <template lang="html">
   <div>
-    <h1>All Observations</h1>
+    <h1>Observations</h1>
     <div class="btn-wrapper">
       <button
         @click="$emit('create-observation')"
