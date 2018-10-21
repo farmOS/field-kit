@@ -6,13 +6,9 @@ Vue.use(Vuex);
 
 const shellModule = {
   state: {
-    greeting: 'Welcome to farmOS!',
     errors: [],
   },
   mutations: {
-    changeGreeting(state, newGreeting) {
-      state.greeting = newGreeting;
-    },
     logError(state, error) {
       state.errors = state.errors.concat([error]);
     },

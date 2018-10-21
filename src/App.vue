@@ -6,7 +6,6 @@
 
           <header>
             <img src='./farmOS.png' alt="" style="max-width: 200px; margin: 0.5rem 0">
-            <h3 class="page-header">{{headerText}}</h3>
           </header>
 
           <div
@@ -46,7 +45,6 @@ import { mapState } from 'vuex';
 export default {
   name: 'App',
   computed: mapState({
-    headerText: state => state.shell.greeting,
     errors: state => state.shell.errors,
   }),
   methods: {
