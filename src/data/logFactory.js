@@ -57,7 +57,7 @@ export default function (
       type,
       timestamp,
       // Use Array.concat() to make sure this is an array
-      images: parseImages(images),
+      images: parseImages(images), // eslint-disable-line no-use-before-define
       // Use JSON.parse() to convert strings back to booleans
       done: JSON.parse(done),
       isCachedLocally: JSON.parse(isCachedLocally),

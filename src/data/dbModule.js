@@ -47,7 +47,7 @@ export default {
         .then(() => commit('updateCurrentLog', { isCachedLocally: true }));
     },
 
-    deleteRecord({ commit, dispatch, rootState }, { local_id, type, name }) {
+    deleteRecord(_, { local_id, type, name }) { // eslint-disable-line camelcase
       // delete record from WebSQL
       console.log(
         'deleteRecord() action dispatched on ',
@@ -105,15 +105,18 @@ function makeTable(db, table, log) {
     // Creates a table called 'tableName' in the DB if none yet exists
     db.transaction((tx) => {
       let fieldString = '';
-      for (const i in log) { // eslint-disable-line guard-for-in, no-restricted-syntax
+      const keys = Object.keys(log);
+      keys.forEach((i) => {
         let suffix = '';
-        if (typeof i === 'number') {
+        if (typeof log[i] === 'number') {
           suffix = ' INT, ';
+        } else if (typeof log[i] === 'boolean') {
+          suffix = ' BOOLEAN, ';
         } else {
           suffix = ' VARCHAR(150), ';
         }
         fieldString = fieldString + i + suffix;
-      }
+      });
       // I need to trim the last two characters to avoid a trailing comma
       fieldString = fieldString.substring(0, fieldString.length - 2);
 
@@ -153,12 +156,13 @@ function saveRecord(tx, table, log) {
 
     let fieldString = '';
     let queryString = '';
-    const values = [];
-    for (var i in log) {
+    const keys = Object.keys(log);
+    const values = Object.values(log);
+    keys.forEach((i) => {
       fieldString = `${fieldString + i}, `;
       queryString = `${queryString}?, `;
-      values.push(log[i]);
-    }
+    });
+
     // I need to trim the last two characters of each string to avoid trailing commas
     fieldString = fieldString.substring(0, fieldString.length - 2);
     queryString = queryString.substring(0, queryString.length - 2);
@@ -203,7 +207,7 @@ function getRecords(db, table) {
       // resolve([...results.rows]);
     }
     // This is called if the db.transaction fails to obtain data
-    function errorHandler(tx, error) {
+    function errorHandler() {
       console.log('No old logs found in cache.');
       resolve([]);
     }
