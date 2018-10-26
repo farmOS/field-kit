@@ -176,6 +176,13 @@ export default {
     right: 1.25rem;
   }
 
+  @media (min-width: 576px) {
+    .card-deck .card {
+      flex: 0 0 576px;
+      margin-bottom: 15px;
+    }
+  }
+
   .spin {
       -webkit-animation-name: spin;
       -webkit-animation-duration: 4000ms;
