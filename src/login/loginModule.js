@@ -135,22 +135,36 @@ function checkUser(url) {
       'Content-Type': 'application/x-www-form-urlencoded',
       Accept: 'json',
     };
-    $.ajax({ // eslint-disable-line no-undef
-      type: 'GET',
-      url: userUrl,
+    fetch(userUrl, {
+      method: 'GET',
       headers: requestHeaders,
-      success: (response) => {
-        console.log('USER REQUEST SUCCESS!!');
-        console.log(`STATUS: ${response.status}`);
-        console.log(`STATUS TEXT: ${response.statusText}`);
-        resolve(response);
-      },
-      error: (error) => {
-        console.log('USER REQUEST ERROR...');
-        console.log(`USER RESPONSE: ${JSON.stringify(error)}`);
-        reject(error);
-      },
+      credentials: 'include',
+    }).then((response) => {
+      console.log('USER REQUEST SUCCESS!!');
+      console.log(`STATUS: ${response.status}`);
+      console.log(`STATUS TEXT: ${response.statusText}`);
+      resolve(response);
+    }).catch((error) => {
+      console.log('USER REQUEST ERROR...');
+      console.log(`USER RESPONSE: ${JSON.stringify(error)}`);
+      reject(error);
     });
+    // $.ajax({ // eslint-disable-line no-undef
+    //   type: 'GET',
+    //   url: userUrl,
+    //   headers: requestHeaders,
+    //   success: (response) => {
+    //     console.log('USER REQUEST SUCCESS!!');
+    //     console.log(`STATUS: ${response.status}`);
+    //     console.log(`STATUS TEXT: ${response.statusText}`);
+    //     resolve(response);
+    //   },
+    //   error: (error) => {
+    //     console.log('USER REQUEST ERROR...');
+    //     console.log(`USER RESPONSE: ${JSON.stringify(error)}`);
+    //     reject(error);
+    //   },
+    // });
   });
   return submissionPromise;
 }
@@ -173,25 +187,42 @@ function submitCredentials(url, username, password) {
       'Content-Type': 'application/x-www-form-urlencoded',
       Accept: 'json',
     };
-    $.ajax({ // eslint-disable-line no-undef
-      type: 'POST',
-      url: loginUrl,
+    fetch(loginUrl, {
+      method: 'POST',
       headers: requestHeaders,
-      data: requestData,
-      success: (response) => {
-        console.log('REQUEST SUCCESS!!');
-        console.log(`STATUS: ${response.status}`);
-        console.log(`STATUS TEXT: ${response.statusText}`);
-        resolve(response);
-      },
-      error: (error) => {
-        console.log('REQUEST FAILURE...');
-        console.log(`STATUS: ${error.status}`);
-        console.log(`STATUS TEXT: ${error.statusText}`);
-        console.log(`RESPONSE: ${JSON.stringify(error)}`);
-        reject(error);
-      },
+      credentials: 'include',
+      body: requestData,
+    }).then((response) => {
+      console.log('REQUEST SUCCESS!!');
+      console.log(`STATUS: ${response.status}`);
+      console.log(`STATUS TEXT: ${response.statusText}`);
+      resolve(response);
+    }).catch((error) => {
+      console.log('REQUEST FAILURE...');
+      console.log(`STATUS: ${error.status}`);
+      console.log(`STATUS TEXT: ${error.statusText}`);
+      console.log(`RESPONSE: ${JSON.stringify(error)}`);
+      reject(error);
     });
+    // $.ajax({ // eslint-disable-line no-undef
+    //   type: 'POST',
+    //   url: loginUrl,
+    //   headers: requestHeaders,
+    //   data: requestData,
+    //   success: (response) => {
+    //     console.log('REQUEST SUCCESS!!');
+    //     console.log(`STATUS: ${response.status}`);
+    //     console.log(`STATUS TEXT: ${response.statusText}`);
+    //     resolve(response);
+    //   },
+    //   error: (error) => {
+    //     console.log('REQUEST FAILURE...');
+    //     console.log(`STATUS: ${error.status}`);
+    //     console.log(`STATUS TEXT: ${error.statusText}`);
+    //     console.log(`RESPONSE: ${JSON.stringify(error)}`);
+    //     reject(error);
+    //   },
+    // });
   });
   return submissionPromise;
 }
@@ -206,22 +237,34 @@ function requestToken(url) {
       'Content-Type': 'application/x-www-form-urlencoded',
       Accept: 'json',
     };
-
-    $.ajax({ // eslint-disable-line no-undef
-      type: 'GET',
-      url: tokenUrl,
+    fetch(tokenUrl, {
+      method: 'GET',
       headers: requestHeaders,
-      success: (response) => {
-        console.log(`TOKEN OBTAINED: ${response}`);
-        // const storage = window.localStorage;
-        resolve(response);
-      },
-      error: (error) => {
-        console.log('TOKEN ERROR: NO TOKEN OBTAINED');
-        console.log(`RESPONSE: ${JSON.stringify(error)}`);
-        reject(error);
-      },
+      credentials: 'include',
+    }).then((response) => {
+      console.log(`TOKEN OBTAINED: ${response}`);
+      // const storage = window.localStorage;
+      resolve(response);
+    }).catch((error) => {
+      console.log('TOKEN ERROR: NO TOKEN OBTAINED');
+      console.log(`RESPONSE: ${JSON.stringify(error)}`);
+      reject(error);
     });
+    // $.ajax({ // eslint-disable-line no-undef
+    //   type: 'GET',
+    //   url: tokenUrl,
+    //   headers: requestHeaders,
+    //   success: (response) => {
+    //     console.log(`TOKEN OBTAINED: ${response}`);
+    //     // const storage = window.localStorage;
+    //     resolve(response);
+    //   },
+    //   error: (error) => {
+    //     console.log('TOKEN ERROR: NO TOKEN OBTAINED');
+    //     console.log(`RESPONSE: ${JSON.stringify(error)}`);
+    //     reject(error);
+    //   },
+    // });
   });
   return submissionPromise;
 }
