@@ -10,7 +10,7 @@ export default function ({
   type = '',
   timestamp = '',
   images = [],
-  done = false,
+  done = true,
   isCachedLocally = false,
   wasPushedToServer = false,
   isReadyToSync = false,
