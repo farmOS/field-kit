@@ -185,8 +185,7 @@ function submitCredentials(url, username, password) {
     }).then((response) => {
       console.log('fetch response: ', response);
       if (!response.ok) {
-        console.log("Not OK: ", response);
-        reject(response)
+        throw response;
       }
       return response.json();
     }).then((response) => {
