@@ -3,6 +3,7 @@
   "version": "0.2.4",
   "description": "Native app for farmOS!",
   "author": "farmOS team",
+  "license": "GPLv3",
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
