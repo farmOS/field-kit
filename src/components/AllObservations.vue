@@ -37,9 +37,11 @@
             >
               <!-- TODO: add proper spinner once glyphicon font is working -->
               <div
-                class="glyphicon glyphicon-refresh spin"
+                class="spin"
                 aria-hidden="true"
-              />
+              >
+                <icon-sync/>
+              </div>
             </span>
             <span v-else class="sync-status">
               unsynced
@@ -108,9 +110,13 @@
 
 <script>
 import moment from 'moment';
+import IconSync from '../icons/icon-sync.vue';
 
 export default {
   props: ['logs'],
+  components: {
+    IconSync,
+  },
   data() {
     return {
       showDeleteDialog: false,
@@ -201,33 +207,25 @@ export default {
       animation-duration: 4000ms;
       animation-iteration-count: infinite;
       animation-timing-function: linear;
-
-      /* These styles are just filler (literally) */
-      /* until the glyphicon font set is available */
-      width: 15px;
-      height: 15px;
-      transform: translateY(-%50);
-      overflow: visible;
-      background-color: tomato;
   }
   @-ms-keyframes spin {
       from { -ms-transform: rotate(0deg); }
-      to { -ms-transform: rotate(360deg); }
+      to { -ms-transform: rotate(-360deg); }
   }
   @-moz-keyframes spin {
       from { -moz-transform: rotate(0deg); }
-      to { -moz-transform: rotate(360deg); }
+      to { -moz-transform: rotate(-360deg); }
   }
   @-webkit-keyframes spin {
       from { -webkit-transform: rotate(0deg); }
-      to { -webkit-transform: rotate(360deg); }
+      to { -webkit-transform: rotate(-360deg); }
   }
   @keyframes spin {
       from {
           transform: rotate(0deg);
       }
       to {
-          transform: rotate(360deg);
+          transform: rotate(-360deg);
       }
   }
 
