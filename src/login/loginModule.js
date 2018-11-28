@@ -1,3 +1,5 @@
+import jQuery from './jquery'; // eslint-disable-line no-unused-vars
+
 export default {
   state: {
     isLoggedIn: false,
@@ -133,27 +135,45 @@ function checkUser(url) {
     console.log(`USER REQUEST URL: ${userUrl}`);
     const requestHeaders = {
       'Content-Type': 'application/x-www-form-urlencoded',
-      Accept: 'application/json',
+      Accept: 'json',
     };
-    fetch(userUrl, {
-      method: 'GET',
+
+    // fetch(userUrl, {
+    //   method: 'GET',
+    //   headers: requestHeaders,
+    //   credentials: 'include',
+    // }).then((response) => {
+    //   console.log('fetch response: ', response);
+    //   if (!response.ok) {
+    //     throw response;
+    //   }
+    //   return response.json();
+    // }).then((response) => {
+    //   console.log('USER REQUEST SUCCESS!!');
+    //   console.log(`STATUS: ${response.status}`);
+    //   console.log(`STATUS TEXT: ${response.statusText}`);
+    //   resolve(response);
+    // }).catch((error) => {
+    //   console.log('USER REQUEST ERROR...');
+    //   console.log(`USER RESPONSE: ${JSON.stringify(error)}`);
+    //   reject(error);
+    // });
+
+    $.ajax({ // eslint-disable-line no-undef
+      type: 'GET',
+      url: userUrl,
       headers: requestHeaders,
-      credentials: 'include',
-    }).then((response) => {
-      console.log('fetch response: ', response);
-      if (!response.ok) {
-        throw response;
-      }
-      return response.json();
-    }).then((response) => {
-      console.log('USER REQUEST SUCCESS!!');
-      console.log(`STATUS: ${response.status}`);
-      console.log(`STATUS TEXT: ${response.statusText}`);
-      resolve(response);
-    }).catch((error) => {
-      console.log('USER REQUEST ERROR...');
-      console.log(`USER RESPONSE: ${JSON.stringify(error)}`);
-      reject(error);
+      success: (response) => {
+        console.log('USER REQUEST SUCCESS!!');
+        console.log(`STATUS: ${response.status}`);
+        console.log(`STATUS TEXT: ${response.statusText}`);
+        resolve(response);
+      },
+      error: (error) => {
+        console.log('USER REQUEST ERROR...');
+        console.log(`USER RESPONSE: ${JSON.stringify(error)}`);
+        reject(error);
+      },
     });
   });
   return submissionPromise;
@@ -175,30 +195,51 @@ function submitCredentials(url, username, password) {
     // Following header guidance from https://www.quora.com/How-do-I-send-custom-headers-using-jquery-Ajax-and-consume-the-same-header-in-WCF-using-C
     const requestHeaders = {
       'Content-Type': 'application/x-www-form-urlencoded',
-      Accept: 'application/json',
+      Accept: 'json',
     };
-    fetch(loginUrl, {
-      method: 'POST',
+
+    // fetch(loginUrl, {
+    //   method: 'POST',
+    //   headers: requestHeaders,
+    //   credentials: 'include',
+    //   body: new URLSearchParams(requestData),
+    // }).then((response) => {
+    //   console.log('fetch response: ', response);
+    //   if (!response.ok) {
+    //     throw response;
+    //   }
+    //   return response.json();
+    // }).then((response) => {
+    //   console.log('REQUEST SUCCESS!!');
+    //   console.log(`STATUS: ${response.status}`);
+    //   console.log(`STATUS TEXT: ${response.statusText}`);
+    //   resolve(response);
+    // }).catch((error) => {
+    //   console.log('REQUEST FAILURE...');
+    //   console.log(`STATUS: ${error.status}`);
+    //   console.log(`STATUS TEXT: ${error.statusText}`);
+    //   console.log(`RESPONSE: ${JSON.stringify(error)}`);
+    //   reject(error);
+    // });
+
+    $.ajax({ // eslint-disable-line no-undef
+      type: 'POST',
+      url: loginUrl,
       headers: requestHeaders,
-      credentials: 'include',
-      body: requestData,
-    }).then((response) => {
-      console.log('fetch response: ', response);
-      if (!response.ok) {
-        throw response;
-      }
-      return response.json();
-    }).then((response) => {
-      console.log('REQUEST SUCCESS!!');
-      console.log(`STATUS: ${response.status}`);
-      console.log(`STATUS TEXT: ${response.statusText}`);
-      resolve(response);
-    }).catch((error) => {
-      console.log('REQUEST FAILURE...');
-      console.log(`STATUS: ${error.status}`);
-      console.log(`STATUS TEXT: ${error.statusText}`);
-      console.log(`RESPONSE: ${JSON.stringify(error)}`);
-      reject(error);
+      data: requestData,
+      success: (response) => {
+        console.log('REQUEST SUCCESS!!');
+        console.log(`STATUS: ${response.status}`);
+        console.log(`STATUS TEXT: ${response.statusText}`);
+        resolve(response);
+      },
+      error: (error) => {
+        console.log('REQUEST FAILURE...');
+        console.log(`STATUS: ${error.status}`);
+        console.log(`STATUS TEXT: ${error.statusText}`);
+        console.log(`RESPONSE: ${JSON.stringify(error)}`);
+        reject(error);
+      },
     });
   });
   return submissionPromise;
@@ -212,26 +253,43 @@ function requestToken(url) {
     // Following header guidance from https://www.quora.com/How-do-I-send-custom-headers-using-jquery-Ajax-and-consume-the-same-header-in-WCF-using-C
     const requestHeaders = {
       'Content-Type': 'application/x-www-form-urlencoded',
-      Accept: 'application/json',
+      Accept: 'json',
     };
-    fetch(tokenUrl, {
-      method: 'GET',
+
+    // fetch(tokenUrl, {
+    //   method: 'GET',
+    //   headers: requestHeaders,
+    //   credentials: 'include',
+    // }).then((response) => {
+    //   console.log('fetch response: ', response);
+    //   if (!response.ok) {
+    //     throw response;
+    //   }
+    //   return response.text();
+    // }).then((response) => {
+    //   console.log(`TOKEN OBTAINED: ${response}`);
+    //   // const storage = window.localStorage;
+    //   resolve(response);
+    // }).catch((error) => {
+    //   console.log('TOKEN ERROR: NO TOKEN OBTAINED');
+    //   console.log(`RESPONSE: ${JSON.stringify(error)}`);
+    //   reject(error);
+    // });
+
+    $.ajax({ // eslint-disable-line no-undef
+      type: 'GET',
+      url: tokenUrl,
       headers: requestHeaders,
-      credentials: 'include',
-    }).then((response) => {
-      console.log('fetch response: ', response);
-      if (!response.ok) {
-        throw response;
-      }
-      return response.text();
-    }).then((response) => {
-      console.log(`TOKEN OBTAINED: ${response}`);
-      // const storage = window.localStorage;
-      resolve(response);
-    }).catch((error) => {
-      console.log('TOKEN ERROR: NO TOKEN OBTAINED');
-      console.log(`RESPONSE: ${JSON.stringify(error)}`);
-      reject(error);
+      success: (response) => {
+        console.log(`TOKEN OBTAINED: ${response}`);
+        // const storage = window.localStorage;
+        resolve(response);
+      },
+      error: (error) => {
+        console.log('TOKEN ERROR: NO TOKEN OBTAINED');
+        console.log(`RESPONSE: ${JSON.stringify(error)}`);
+        reject(error);
+      },
     });
   });
   return submissionPromise;
