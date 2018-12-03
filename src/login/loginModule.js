@@ -86,6 +86,9 @@ export default {
     AND login status.  First calls networkInfo to get network status from the cordova
     network information plugin.  If online, it calls the checkUser function to see if the
     stored username, cookie and token are valid
+    TODO: Consider removing this action, its callers and its helper functions
+    in favor of a more robust error handling on network calls. For more details:
+    https://github.com/farmOS/farmOS-native/issues/42
     */
     checkLoginStatus({ commit }, url) {
       console.log(`RUNNING checkLoginStatus URL: ${url}`);
@@ -181,6 +184,10 @@ function submitCredentials(url, username, password) {
       Accept: 'json',
     };
 
+    /*
+      TODO: This is the last $.ajax() call left to be replaced by fetch().
+      For details, see: https://github.com/farmOS/farmOS-native/issues/55.
+    */
     // fetch(loginUrl, {
     //   method: 'POST',
     //   headers: requestHeaders,
