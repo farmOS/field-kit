@@ -73,8 +73,7 @@ export default {
               commit('setStatusText', `Token error: ${JSON.stringify(tokenError)}`);
               commit('setIsWorking', false);
             });
-        },
-        (error) => {
+        }).catch((error) => {
           commit('responseWasReceived', 'error');
           commit('setStatusText', `Server response: ${JSON.stringify(error)}`);
           commit('setIsWorking', false);
