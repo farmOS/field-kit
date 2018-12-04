@@ -1,6 +1,5 @@
 import Login from './Login.vue'; // eslint-disable-line import/extensions
 import loginModule from './loginModule';
-import mixinLogic from './mixin';
 
 export default {
   install(Vue, { router, store }) {
@@ -11,6 +10,11 @@ export default {
       component: LoginComponent,
     }]);
     store.registerModule('user', loginModule);
-    Vue.mixin(mixinLogic);
+    router.beforeEach((to, from, next) => {
+      if (!store.state.user.isLoggedIn && to.path !== '/login') {
+        next('/login');
+      }
+      next();
+    });
   },
 };
