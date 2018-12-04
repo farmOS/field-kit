@@ -11,7 +11,9 @@ export default {
     }]);
     store.registerModule('user', loginModule);
     router.beforeEach((to, from, next) => {
-      if (!store.state.user.isLoggedIn && to.path !== '/login') {
+      const isLoggedIn = store.state.user.isLoggedIn
+        || window.localStorage.getItem('token');
+      if (!isLoggedIn && to.path !== '/login') {
         next('/login');
       }
       next();
