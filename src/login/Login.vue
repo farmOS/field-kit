@@ -1,6 +1,9 @@
 <template>
   <div>
     <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text">https://</span>
+      </div>
       <input
         v-model="farmosUrl"
         placeholder="Enter your farmOS URL"

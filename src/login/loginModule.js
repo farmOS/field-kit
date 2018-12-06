@@ -39,7 +39,9 @@ export default {
 
     didSubmitCredentials({ commit }, payload) {
       console.log('RUNNING didSubmitCredentials');
-      const url = payload.farmosUrl;
+      const url = (process.env.NODE_ENV === 'development')
+        ? ''
+        : `http://${payload.farmosUrl}`;
       const { username, password } = payload;
 
       commit('setStatusText', 'Credentials submitted; waiting for response from server');
