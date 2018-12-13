@@ -168,7 +168,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
   .btn-wrapper {
     margin: 1rem 0;
   }
