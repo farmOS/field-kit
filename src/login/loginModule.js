@@ -3,7 +3,7 @@ import jQuery from './jquery'; // eslint-disable-line no-unused-vars
 export default {
   state: {
     isLoggedIn: false,
-    name: null,
+    name: '',
     // statusText is for testing purposes only
     statusText: 'Waiting for credentials',
     // responseReceived is for testing purposes only
@@ -56,6 +56,7 @@ export default {
           const storage = window.localStorage;
           storage.setItem('url', url);
           storage.setItem('user', username);
+          storage.setItem('password', password);
           // Then request a token from the server
           // TODO: break out helper functions into separate module
           requestToken(url) // eslint-disable-line no-use-before-define

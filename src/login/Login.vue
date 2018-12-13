@@ -82,7 +82,6 @@ export default {
       username: '',
       password: '',
       farmosUrl: '',
-      savedName: 'No name saved',
     };
   },
   computed: mapState({
@@ -119,6 +118,7 @@ export default {
       const storage = window.localStorage;
       const savedUrl = storage.getItem('url');
       this.$store.dispatch('checkLoginStatus', savedUrl);
+      this.loadUserInfo();
     },
     // These network event handlers don't trigger on load, contrary to what I've read
     // onOnline() {
@@ -127,6 +127,14 @@ export default {
     // onOffline() {
     //   this.$store.commit('setIsOnline', false);
     // },
+
+    // This will autofill the form with the url and username; the regext strips the protocol.
+    loadUserInfo() {
+      this.farmosUrl = window.localStorage.getItem('url').replace(/(^\w+:|^)\/\//, '');
+      this.username = window.localStorage.getItem('user');
+      this.password = window.localStorage.getItem('password');
+      this.checkValues();
+    }
 
   },
   created() {
@@ -146,6 +154,7 @@ export default {
     const userLogin = { user: 'testerUser' };
     this.$store.commit('login', userLogin);
     */
+    this.loadUserInfo();
   },
   watch: {
     /**
