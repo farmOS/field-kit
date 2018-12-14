@@ -11,13 +11,5 @@ export default {
     }]);
     store.registerModule('user', loginModule);
     // Add a navigation guard to check if user is logged in.
-    router.beforeEach((to, from, next) => {
-      const isLoggedIn = store.state.user.isLoggedIn
-        || window.localStorage.getItem('token');
-      if (!isLoggedIn && to.path !== '/login') {
-        next('/login');
-      }
-      next();
-    });
   },
 };

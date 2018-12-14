@@ -104,14 +104,15 @@ export default {
     },
     submitCredentials() {
       // this.$emit('didSubmitCredentials', [this.username, this.password]);
-      const creds = {
+      const payload = {
         farmosUrl: this.farmosUrl,
         username: this.username,
         password: this.password,
+        router: this.$router,
       };
 
       // Call didSubmitCredentials action, which will initiate the login process
-      this.$store.dispatch('didSubmitCredentials', creds);
+      this.$store.dispatch('didSubmitCredentials', payload);
     },
     onDeviceReady() {
       console.log('RECEIVED DEVICEREADY');

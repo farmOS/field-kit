@@ -59,7 +59,7 @@ export default {
       }
 
       // Send records to the server, unless the user isn't logged in
-      if (rootState.user.isLoggedIn === true) {
+      if (storedToken) {
         payload.indices.map(index => (
           pushRecord(storedUrl, storedToken, rootState.farm.logs[index]) // eslint-disable-line no-use-before-define, max-len
             .then(res => handleSyncResponse(res, index))

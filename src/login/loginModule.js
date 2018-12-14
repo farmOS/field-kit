@@ -45,7 +45,7 @@ export default {
       const url = (process.env.NODE_ENV === 'development')
         ? ''
         : `http://${payload.farmosUrl}`;
-      const { username, password } = payload;
+      const { username, password, router } = payload;
 
       commit('setStatusText', 'Credentials submitted; waiting for response from server');
       commit('setIsWorking', true);
@@ -74,6 +74,7 @@ export default {
               const userLogin = { username };
               commit('setIsWorking', false);
               commit('login', userLogin);
+              router.push({ path: '/observations' });
             },
             (tokenError) => {
               commit('setStatusText', `Token error: ${JSON.stringify(tokenError)}`);
