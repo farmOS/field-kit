@@ -74,7 +74,11 @@ export default {
               const userLogin = { username };
               commit('setIsWorking', false);
               commit('login', userLogin);
-              router.push({ path: '/observations' });
+              if (window.history.length > 1) {
+                window.history.back();
+                return;
+              }
+              router.push('/');
             },
             (tokenError) => {
               commit('setStatusText', `Token error: ${JSON.stringify(tokenError)}`);
