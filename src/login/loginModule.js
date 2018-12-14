@@ -17,6 +17,9 @@ export default {
       state.name = creds.username;
       console.log(`LOGGED IN AS: ${creds.username}`);
     },
+    logout(state) {
+      state.isLoggedIn = false;
+    },
     // the setStatusText mutation is for testing purposes only
     setStatusText(state, text) {
       state.statusText = text;

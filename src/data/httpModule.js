@@ -35,6 +35,7 @@ export default {
           commit('logError', errorPayload);
         } else if (error.status === 401 || error.status === 403) {
           // Reroute authentication or authorization errors to login page
+          commit('logout');
           payload.router.push('/login');
         } else {
           // handle some other type of runtime error (if possible)
