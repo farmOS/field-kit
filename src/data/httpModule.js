@@ -16,8 +16,8 @@ export default {
               //Get records when sync is complete
               //Display the response in the console.
               //getRecords requires the params URL, RESOURCE
-              //RESOURCE can be 'log' 'taxonomy_term' or 'taxonomy_vocabulary'
-              getRecords(storedUrl, 'log')
+              //RESOURCE can be 'farm_asset' 'taxonomy_term' 'taxonomy_vocabulary' or 'log'
+              getRecords(storedUrl, 'farm_asset')
                 .then(
         //END BLOCK 1
         commit('updateLogs', {
