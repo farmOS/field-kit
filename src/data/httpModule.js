@@ -4,12 +4,22 @@ export default {
   actions: {
 
     // SEND RECORDS TO SERVER
+    // EXPERIMENTAL: GETS AREAS AND OUTPUTS TO CONSOLE
     pushToServer({ commit, rootState }, payload) {
       const storage = window.localStorage;
       const storedUrl = storage.getItem('url');
       const storedToken = storage.getItem('token');
 
       function handleSyncResponse(response, index) {
+
+        //EXPERIMENTAL BLOCK 1
+              //Get records when sync is complete
+              //Display the response in the console.
+              //getRecords requires the params URL, RESOURCE
+              //RESOURCE can be 'log' 'taxonomy_term' or 'taxonomy_vocabulary'
+              getRecords(storedUrl, 'log')
+                .then(
+        //END BLOCK 1
         commit('updateLogs', {
           indices: [index],
           mapper(log) {
@@ -20,7 +30,10 @@ export default {
               remoteUri: response.uri,
             });
           },
-        });
+        })
+        //EXPERIMENTAL BLOCK 2
+      ).catch(err => console.log('GET ERROR: ', err));
+        //END BLOCK 2
       }
 
       function handleSyncError(error, index) {
@@ -98,5 +111,65 @@ function pushRecord(url, token, log) {
       }
       return response.json();
     }).then(resolve).catch(reject);
+  });
+}
+
+// EXPERIMENTAL
+// Executes AJAX to get records from server
+// For unknown reasons, url is being set to localhost:8080, even though post requests are to localhost:80
+function getRecords(farmosUrl, recordClass) {
+  const logUrl = farmosUrl+'/'+recordClass+'.json';
+  //const logUrl = url + loc;
+  const requestHeaders = {
+    //Added X-CSRF-Token to CORS module accepted header list
+    //'X-CSRF-Token': token,
+
+    //The content type may be preventing CORS acceptance
+    'Content-Type': 'application/json'
+
+    //The accept header seemed to break Fetch in my previous Get attempts
+    //Accept: 'json',
+  };
+  console.log(`GETTING RECORDS FROM URL : ${logUrl}`);
+  return new Promise((resolve, reject) => {
+    fetch(logUrl, {
+      method: 'GET',
+      mode: 'cors',
+      headers: requestHeaders,
+      credentials: 'include',
+    }).then((response) => {
+      console.log('RESPONSE TO GET REQUEST RECEIVED!');
+      if (!response.ok) {
+        throw response;
+      }
+      return response.json();
+    //}).then(resolve).catch(reject);
+  }).then(
+    //Log response to the terminal
+    response => {
+      // When making a call to taxonomy_vocabulary I want to return only the VID for the farm_areas category
+      if (recordClass == 'taxonomy_vocabulary') {
+        console.log('DISPLAYING THE VID FOR AREA TERMS');
+
+        // Returns an array consisting of null or vid...
+        function getArea(term) {
+          if (term.machine_name == 'farm_areas'){
+            return term.vid;
+          }
+        }
+        // Extracts single numerical value from the returned array
+        const areaVid = response.list.map(getArea).filter(
+          function (element) {return element != null;
+        })[0];
+        console.log(areaVid);
+
+      } else {
+      // When making a call to log or taxonomy_term I will display all values received
+        console.log('DISPLAYING REQUESTED VALUES');
+        console.log(response);
+      }
+    }
+
+  ).catch(reject);
   });
 }

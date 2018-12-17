@@ -17,6 +17,9 @@ module.exports = {
         '/login/',
         '/restws/',
         '/log',
+        '/log.json',
+        '/taxonomy_term.json',
+        '/taxonomy_vocabulary.json'
       ],
       target: 'http://localhost:80',
       changeOrigin: true,
