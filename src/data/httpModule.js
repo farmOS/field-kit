@@ -65,9 +65,6 @@ export default {
             .catch(err => handleSyncError(err, index))
         ));
       } else {
-        commit('setStatusText', 'Not logged in. Redirecting to login page...');
-        // FIXME: This should probably done from within the client's AllObservations.vue,
-        // but only after the login module's store has been reintegrated with client.
         payload.router.push('/login');
       }
     },
