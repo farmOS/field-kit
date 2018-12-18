@@ -37,9 +37,9 @@
       >
     </div>
     <br>
-    <div class="input-group">
+    <div class="input-group login-submit">
       <div v-if="authPending">
-        Authorizing...
+        <icon-spinner/>
       </div>
       <button
         v-else
@@ -60,9 +60,11 @@
 
 <script>
 import { mapState } from 'vuex';
+import iconSpinner from '../icons/icon-spinner.vue';
 
 export default {
   components: {
+    iconSpinner,
   },
   name: 'Login',
   data() {
@@ -128,5 +130,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+ .login-submit {
+   justify-content: center;
+ }
 
 </style>
