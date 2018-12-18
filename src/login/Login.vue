@@ -38,7 +38,11 @@
     </div>
     <br>
     <div class="input-group">
+      <div v-if="authPending">
+        Authorizing...
+      </div>
       <button
+        v-else
         :disabled="!this.valuesEntered"
         title="Submit credentials"
         @click="submitCredentials"
@@ -64,6 +68,7 @@ export default {
   data() {
     return {
       valuesEntered: false,
+      authPending: false,
       username: '',
       password: '',
       farmosUrl: '',
@@ -87,8 +92,14 @@ export default {
         router: this.$router,
       };
 
+      this.authPending = true;
+
       // Call didSubmitCredentials action, which will initiate the login process
-      this.$store.dispatch('didSubmitCredentials', payload);
+      // and return a promise; when it resolves, reset authPending.
+      this.$store.dispatch('didSubmitCredentials', payload)
+        .then(() => {
+          this.authPending = false;
+        });
     },
     onDeviceReady() {
       console.log('RECEIVED DEVICEREADY');

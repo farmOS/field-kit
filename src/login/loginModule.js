@@ -10,30 +10,36 @@ export default {
         : `http://${payload.farmosUrl}`;
       const { username, password, router } = payload;
 
-      // TODO: break out helper functions into separate module
-      submitCredentials(url, username, password) // eslint-disable-line no-use-before-define
-        .then(() => {
-          // Save our username and password to the persistant store
-          const storage = window.localStorage;
-          storage.setItem('url', url);
-          storage.setItem('user', username);
-          storage.setItem('password', password);
-          // Then request a token from the server
-          // TODO: break out helper functions into separate module
-          requestToken(url) // eslint-disable-line no-use-before-define
-            .then((tokenResponse) => {
-            // Store token as setting
-              storage.setItem('token', tokenResponse);
-              // Go back 1 page, or reroute to home page
-              if (window.history.length > 1) {
-                window.history.back();
-                return;
-              }
-              router.push('/');
-            });
-        }).catch((error) => {
-          console.log(`Server response: ${JSON.stringify(error)}`);
-        });
+      // Return a promise so the component knows when the action completes.
+      return new Promise((resolve) => {
+        // TODO: break out helper functions into separate module
+        submitCredentials(url, username, password) // eslint-disable-line no-use-before-define
+          .then(() => {
+            // Save our username and password to the persistant store
+            const storage = window.localStorage;
+            storage.setItem('url', url);
+            storage.setItem('user', username);
+            storage.setItem('password', password);
+            // Then request a token from the server
+            // TODO: break out helper functions into separate module
+            requestToken(url) // eslint-disable-line no-use-before-define
+              .then((tokenResponse) => {
+              // Store token as setting
+                storage.setItem('token', tokenResponse);
+                // Go back 1 page, or reroute to home page
+                if (window.history.length > 1) {
+                  window.history.back();
+                  resolve();
+                  return;
+                }
+                router.push('/');
+                resolve();
+              });
+          }).catch((error) => {
+            console.log(`Server response: ${JSON.stringify(error)}`);
+            resolve();
+          });
+      });
     },
 
   },
