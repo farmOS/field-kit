@@ -37,7 +37,7 @@
           class="form-control">
       </div>
       <!-- not able to send quantities right now -->
-      <div class="form-item form-item-name form-group">
+      <!-- <div class="form-item form-item-name form-group">
         <label for="quantity" class="control-label ">Quantity</label>
         <div class="row reset-margin">
           <select
@@ -60,7 +60,7 @@
             <option value='F'>F</option>
           </select>
         </div>
-      </div>
+      </div> -->
 
       <br>
       <div class="input-group ">
