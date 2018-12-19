@@ -3,12 +3,34 @@ import jQuery from './jquery'; // eslint-disable-line no-unused-vars
 export default {
   actions: {
 
-    didSubmitCredentials(context, payload) {
+    didSubmitCredentials({ commit }, payload) {
       console.log('RUNNING didSubmitCredentials');
       const url = (process.env.NODE_ENV === 'development')
         ? ''
         : `http://${payload.farmosUrl}`;
       const { username, password, router } = payload;
+
+      function handleLoginError(error) {
+        if (error.status === 403) {
+          const resetUrl = `${url}/user/password`
+          const errorPayload = {
+            message: `The username or password you entered was incorrect. Please try again, or <a href="${resetUrl}">reset your password</a>.`,
+            errorCode: error.statusText,
+            level: 'warning',
+            show: true,
+          };
+          commit('logError', errorPayload);
+        } else {
+          const errorPayload = {
+            message: `Unable to reach the server. Please check that you have the correct URL and that your device has a network connection. Status: ${error.status}`,
+            errorCode: error.statusText,
+            level: 'warning',
+            show: true,
+          };
+          console.log(`Server response: ${error.status}`);
+          commit('logError', errorPayload);
+        }
+      }
 
       // Return a promise so the component knows when the action completes.
       return new Promise((resolve) => {
@@ -34,9 +56,13 @@ export default {
                 }
                 router.push('/');
                 resolve();
+              }).catch((error) => {
+                handleLoginError(error)
+                resolve();
               });
-          }).catch((error) => {
-            console.log(`Server response: ${JSON.stringify(error)}`);
+          })
+          .catch((error) => {
+            handleLoginError(error);
             resolve();
           });
       });
@@ -142,7 +168,7 @@ function requestToken(url) {
       resolve(response);
     }).catch((error) => {
       console.log('TOKEN ERROR: NO TOKEN OBTAINED');
-      console.log(`RESPONSE: ${JSON.stringify(error)}`);
+      console.log(`RESPONSE: ${error.statusText}`);
       reject(error);
     });
   });
