@@ -53,8 +53,7 @@
       </button>
     </div>
     <br>
-    <div class="well">
-    </div>
+    <p>Need a server? Check out <a href="https://farmos.org/hosting/">hosting options</a>.</p>
   </div>
 </template>
 
