@@ -102,12 +102,6 @@
       </div>
       <br>
       <div class="well">
-        <!-- <p>{{statusText}}</p> -->
-        <!-- <spinner :size="30" v-if="isWorking"></spinner> -->
-        <!--
-        <br>
-        <p v-if="isWorking">SPINNER SPIN!</p>
-      -->
       </div>
     </div>
   </div>
@@ -115,11 +109,8 @@
 
 <script>
 import moment from 'moment';
-// removed spinner b/c it caused compilation errors
-// import Spinner from 'vue-spinner-component/src/Spinner.vue';
 export default {
   components: {
-    // Spinner
   },
   data() {
     return {

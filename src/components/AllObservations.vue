@@ -35,7 +35,6 @@
               v-else-if="log.isReadyToSync"
               class="sync-status"
             >
-              <!-- TODO: add proper spinner once glyphicon font is working -->
               <div
                 class="spin"
                 aria-hidden="true"
@@ -161,8 +160,6 @@ export default {
       }
       this.$store.commit('updateAllLogs', logSyncer);
 
-      // FIXME: Why is this being called here? Why not in getPhoto or getPhotoLoc?
-      // this.updateCurrentLog('photo_loc', this.photoLoc);
     },
   },
 };
