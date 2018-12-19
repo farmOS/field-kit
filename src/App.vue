@@ -14,7 +14,7 @@
             <div
               v-if="err.show"
               class="alert alert-warning alert-dismissable" >
-              {{err.message}}
+              <span v-html="err.message"></span>
               <button
                 type="button"
                 @click="closeError(index)"
