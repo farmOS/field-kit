@@ -5,7 +5,7 @@ export default {
   actions: {
 
     createRecord({ commit }, newLog) {
-      const tableName = newLog.type;
+      const tableName = 'log';
       const newRecord = logFactory(newLog, SQL);
       openDatabase() // eslint-disable-line no-use-before-define
         .then(db => makeTable(db, tableName, newRecord)) // eslint-disable-line no-use-before-define
@@ -39,7 +39,7 @@ export default {
         ...rootState.farm.logs[rootState.farm.currentLogIndex],
         ...newProps,
       }, SQL);
-      const table = newLog.type;
+      const table = 'log';
       openDatabase() // eslint-disable-line no-use-before-define
         .then(db => getTX(db, table)) // eslint-disable-line no-use-before-define
         .then(tx => saveRecord(tx, table, newLog)) // eslint-disable-line no-use-before-define
@@ -55,7 +55,7 @@ export default {
       );
       openDatabase() // eslint-disable-line no-use-before-define
         .then(db => getTX(db, type)) // eslint-disable-line no-use-before-define
-        .then(tx => deleteRecord(tx, type, local_id)) // eslint-disable-line no-use-before-define
+        .then(tx => deleteRecord(tx, 'log', local_id)) // eslint-disable-line no-use-before-define
         .then(console.log)
         .catch(console.error);
     },
