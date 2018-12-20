@@ -50,10 +50,6 @@ export default {
       this.showAllObs = !this.showAllObs;
     },
   },
-  created() {
-    this.$store.commit('clearLogs');
-    this.$store.dispatch('loadCachedLogs', 'log');
-  },
   beforeDestroy() {
     this.$store.commit('clearLogs');
   },
