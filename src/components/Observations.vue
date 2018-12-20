@@ -1,21 +1,19 @@
 <template lang="html">
   <div>
-    <div v-if='showEditObs'>
+    <div v-if='showEditLog'>
       <EditObservation
         :logs='logs'
         :currentLogIndex='currentLogIndex'
         :isWorking='isWorking'
         :statusText='statusText'
         :photoLoc='photoLoc'
-        :isOnline='isOnline'
-
-        v-on:view-all='toggleObs'
+        v-on:view-all='toggleLogs'
       />
     </div>
-    <div v-if='showAllObs'>
+    <div v-if='showAllLogs'>
       <AllObservations
         :logs='logs'
-        v-on:create-observation='toggleObs'
+        v-on:create-log='toggleLogs'
       />
     </div>
   </div>
@@ -29,8 +27,8 @@ import EditObservation from './EditObservation';
 export default {
   data() {
     return {
-      showEditObs: false,
-      showAllObs: true,
+      showEditLog: false,
+      showAllLogs: true,
     };
   },
   computed: mapState({
@@ -45,9 +43,9 @@ export default {
     EditObservation,
   },
   methods: {
-    toggleObs() {
-      this.showEditObs = !this.showEditObs;
-      this.showAllObs = !this.showAllObs;
+    toggleLogs() {
+      this.showEditLog = !this.showEditLog;
+      this.showAllLogs = !this.showAllLogs;
     },
   },
   beforeDestroy() {

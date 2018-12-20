@@ -3,7 +3,7 @@
     <h1>Logs</h1>
     <div class="btn-wrapper">
       <button
-        @click="$emit('create-observation')"
+        @click="$emit('create-log')"
         type="button"
         class="btn btn-success btn-navbar">
         Create log
