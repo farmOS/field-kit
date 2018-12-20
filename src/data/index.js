@@ -19,7 +19,7 @@ export default {
     store.registerModule('http', httpModule);
     store.registerModule('camera', camModule);
     router.beforeEach((to, from, next) => {
-      if (to.path === '/observations') {
+      if (to.path === '/logs') {
         store.commit('clearLogs');
         store.dispatch('loadCachedLogs');
         next();
