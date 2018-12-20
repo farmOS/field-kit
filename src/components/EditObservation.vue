@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h4>{{vueHeader}}</h4>
+    <h1>Edit Log</h1>
     <div class="well" >
       <!--
         TODO: make these input fields into child components and load them with
@@ -25,6 +25,19 @@
           @input="updateCurrentLog('timestamp', convertIntoUnix($event.target.value))"
           type="date"
           class="form-control">
+      </div>
+
+      <div class="form-item form-item-name form-group">
+        <label for="type" class="control-label ">Log Type</label>
+          <select
+            :value="logs[currentLogIndex].type"
+            @input="updateCurrentLog('type', $event.target.value)"
+            class="custom-select col-sm-3 ">
+            <option value='farm_observation'>Observation</option>
+            <option value='farm_activity'>Activity</option>
+            <option value='farm_input'>Input</option>
+            <option value='farm_harvest'>Harvest</option>
+          </select>
       </div>
 
       <div class="form-item form-item-name form-group">
@@ -114,7 +127,6 @@ export default {
   },
   data() {
     return {
-      vueHeader: 'Enter your new observation:',
       imageUrls: [],
     };
   },
@@ -124,12 +136,9 @@ export default {
     'isWorking',
     'statusText',
     'photoLoc',
-    'isOnline',
   ],
   created() {
-    this.$store.commit('setStatusText', `NETWORK STATUS: ${this.isOnline}`);
-    // TODO: It probably makes more sense to remember the last log the user was working on,
-    //    and only initialize a new log when they deliberately choose to.
+    // Inititialize the log, default to "Observation"
     this.$store.dispatch('initializeLog', 'farm_observation');
   },
   methods: {

@@ -1,12 +1,12 @@
 <template lang="html">
   <div>
-    <h1>Observations</h1>
+    <h1>Logs</h1>
     <div class="btn-wrapper">
       <button
         @click="$emit('create-observation')"
         type="button"
         class="btn btn-success btn-navbar">
-        Create observation
+        Create log
       </button>
       <button
         @click="syncAll"
@@ -77,7 +77,7 @@
             </button>
           </div>
           <div class="modal-body">
-            Are sure you'd like to delete the observation "{{logs[logIndexToDelete].name}}"?&nbsp;
+            Are sure you'd like to delete the log "{{logs[logIndexToDelete].name}}"?&nbsp;
             <span
               v-if='logs[logIndexToDelete].wasPushedToServer'>
               Deleting it on this device will not remove the log from the server.

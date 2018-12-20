@@ -39,7 +39,6 @@ export default {
     isWorking: state => state.farm.isWorking,
     statusText: state => state.farm.statusText,
     photoLoc: state => state.farm.photoLoc,
-    isOnline: state => state.user.isOnline,
   }),
   components: {
     AllObservations,
@@ -53,7 +52,7 @@ export default {
   },
   created() {
     this.$store.commit('clearLogs');
-    this.$store.dispatch('loadCachedLogs', 'farm_observation');
+    this.$store.dispatch('loadCachedLogs', 'log');
   },
   beforeDestroy() {
     this.$store.commit('clearLogs');

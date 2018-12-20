@@ -88,16 +88,14 @@ const farmModule = {
     //    Or perhaps just the logFactory, and pass in the date and logType as
     //    a `newProps` object from a component method.
     initializeLog({ commit, rootState }, logType) {
-      // TODO: The User ID will also be needed to sync with server
       const curDate = new Date(Date.now());
       const timestamp = Math.floor(curDate / 1000).toString();
       const curTimeString = curDate.toLocaleTimeString('en-US');
       const curDateString = curDate.toLocaleDateString('en-US');
       const newLog = logFactory({
         type: logType,
-        name: `Observation: ${curDateString} - ${curTimeString}`,
+        name: `${curDateString} - ${curTimeString}`,
         // TODO: Try to decouple this further from the login plugin
-        log_owner: (rootState.user) ? rootState.user.name : '',
         timestamp,
       });
       commit('addLogAndMakeCurrent', newLog);
