@@ -1,7 +1,7 @@
 <template lang="html">
   <div>
     <div v-if='showEditLog'>
-      <EditObservation
+      <EditLog
         :logs='logs'
         :currentLogIndex='currentLogIndex'
         :isWorking='isWorking'
@@ -11,7 +11,7 @@
       />
     </div>
     <div v-if='showAllLogs'>
-      <AllObservations
+      <AllLogs
         :logs='logs'
         v-on:create-log='toggleLogs'
       />
@@ -21,8 +21,8 @@
 
 <script>
 import { mapState } from 'vuex';
-import AllObservations from './AllObservations';
-import EditObservation from './EditObservation';
+import AllLogs from './AllLogs';
+import EditLog from './EditLog';
 
 export default {
   data() {
@@ -39,8 +39,8 @@ export default {
     photoLoc: state => state.farm.photoLoc,
   }),
   components: {
-    AllObservations,
-    EditObservation,
+    AllLogs,
+    EditLog,
   },
   methods: {
     toggleLogs() {
