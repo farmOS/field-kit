@@ -18,6 +18,13 @@ export default {
     store.registerModule('data', dbModule);
     store.registerModule('http', httpModule);
     store.registerModule('camera', camModule);
+    router.beforeEach((to, from, next) => {
+      if (to.path === '/observations') {
+        store.commit('clearLogs');
+        store.dispatch('loadCachedLogs', 'log');
+        next();
+      }
+    });
     store.subscribe((mutation) => {
       if (mutation.type === 'addLogAndMakeCurrent') {
         store.dispatch('createLog', mutation.payload);
