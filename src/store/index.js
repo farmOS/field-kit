@@ -87,7 +87,7 @@ const farmModule = {
     // TODO: Should this logic be moved to the 'addLogAndMakeCurrent' mutation?
     //    Or perhaps just the logFactory, and pass in the date and logType as
     //    a `newProps` object from a component method.
-    initializeLog({ commit, rootState }, logType) {
+    initializeLog({ commit }, logType) {
       const curDate = new Date(Date.now());
       const timestamp = Math.floor(curDate / 1000).toString();
       const curTimeString = curDate.toLocaleTimeString('en-US');
