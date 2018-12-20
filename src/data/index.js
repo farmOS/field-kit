@@ -20,10 +20,10 @@ export default {
     store.registerModule('camera', camModule);
     store.subscribe((mutation) => {
       if (mutation.type === 'addLogAndMakeCurrent') {
-        store.dispatch('createRecord', mutation.payload);
+        store.dispatch('createLog', mutation.payload);
       }
       if (mutation.type === 'updateCurrentLog' && !mutation.payload.isCachedLocally) {
-        store.dispatch('updateRecord', mutation.payload);
+        store.dispatch('updateLog', mutation.payload);
       }
       if (mutation.type === 'updateAllLogs') {
         const indices = store.state.farm.logs.reduce(syncReducer, []);
@@ -31,11 +31,11 @@ export default {
       }
       if (mutation.type === 'updateLogs') {
         mutation.payload.indices.forEach((i) => {
-          store.dispatch('updateRecord', store.state.farm.logs[i]);
+          store.dispatch('updateLog', store.state.farm.logs[i]);
         });
       }
       if (mutation.type === 'deleteLog') {
-        store.dispatch('deleteRecord', mutation.payload);
+        store.dispatch('deleteLog', mutation.payload);
       }
     });
   },

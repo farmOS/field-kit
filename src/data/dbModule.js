@@ -4,7 +4,7 @@ export default {
 
   actions: {
 
-    createRecord({ commit }, newLog) {
+    createLog({ commit }, newLog) {
       const tableName = 'log';
       const newRecord = logFactory(newLog, SQL);
       openDatabase() // eslint-disable-line no-use-before-define
@@ -34,7 +34,7 @@ export default {
         .catch(console.error);
     },
 
-    updateRecord({ commit, rootState }, newProps) {
+    updateLog({ commit, rootState }, newProps) {
       const newLog = logFactory({
         ...rootState.farm.logs[rootState.farm.currentLogIndex],
         ...newProps,
@@ -47,7 +47,7 @@ export default {
         .then(() => commit('updateCurrentLog', { isCachedLocally: true }));
     },
 
-    deleteRecord(_, { local_id, type, name }) { // eslint-disable-line camelcase
+    deleteLog(_, { local_id, type, name }) { // eslint-disable-line camelcase
       // delete record from WebSQL
       console.log(
         'deleteRecord() action dispatched on ',
