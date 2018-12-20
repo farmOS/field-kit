@@ -19,9 +19,9 @@ export default {
           })));
     },
 
-    loadCachedLogs({ commit }, logType) {
+    loadCachedLogs({ commit }) {
       openDatabase() // eslint-disable-line no-use-before-define
-        .then(db => getRecords(db, logType)) // eslint-disable-line no-use-before-define
+        .then(db => getRecords(db, 'log')) // eslint-disable-line no-use-before-define
         .then((results) => {
           const cachedLogs = results.map(log => (
             logFactory({

@@ -21,7 +21,7 @@ export default {
     router.beforeEach((to, from, next) => {
       if (to.path === '/observations') {
         store.commit('clearLogs');
-        store.dispatch('loadCachedLogs', 'log');
+        store.dispatch('loadCachedLogs');
         next();
       }
     });
