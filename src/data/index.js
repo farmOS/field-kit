@@ -24,6 +24,7 @@ export default {
         store.dispatch('loadCachedLogs');
         next();
       }
+      next();
     });
     store.subscribe((mutation) => {
       if (mutation.type === 'addLogAndMakeCurrent') {
