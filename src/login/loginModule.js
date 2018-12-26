@@ -7,12 +7,13 @@ export default {
       console.log('RUNNING didSubmitCredentials');
       const url = (process.env.NODE_ENV === 'development')
         ? ''
-        : `http://${payload.farmosUrl}`;
+        : `https://${payload.farmosUrl}`;
       const { username, password, router } = payload;
+      const storage = window.localStorage;
 
       function handleLoginError(error) {
         if (error.status === 403) {
-          const resetUrl = `${url}/user/password`
+          const resetUrl = `${url}/user/password`;
           const errorPayload = {
             message: `The username or password you entered was incorrect. Please try again, or <a href="${resetUrl}">reset your password</a>.`,
             errorCode: error.statusText,
@@ -38,7 +39,6 @@ export default {
         submitCredentials(url, username, password) // eslint-disable-line no-use-before-define
           .then(() => {
             // Save our username and password to the persistant store
-            const storage = window.localStorage;
             storage.setItem('url', url);
             storage.setItem('user', username);
             storage.setItem('password', password);
@@ -57,13 +57,42 @@ export default {
                 router.push('/');
                 resolve();
               }).catch((error) => {
-                handleLoginError(error)
+                handleLoginError(error);
                 resolve();
               });
           })
-          .catch((error) => {
-            handleLoginError(error);
-            resolve();
+          .catch(() => {
+            // Check if the login attempt failed b/c it's http://, not https://
+            const noSslUrl = `http://${payload.farmosUrl}`;
+            submitCredentials(noSslUrl, username, password) // eslint-disable-line
+              .then(() => {
+                // Save our username and password to the persistant store
+                storage.setItem('url', noSslUrl);
+                storage.setItem('user', username);
+                storage.setItem('password', password);
+                // Then request a token from the server
+                // TODO: break out helper functions into separate module
+                requestToken(noSslUrl) // eslint-disable-line no-use-before-define
+                  .then((tokenResponse) => {
+                  // Store token as setting
+                    storage.setItem('token', tokenResponse);
+                    // Go back 1 page, or reroute to home page
+                    if (window.history.length > 1) {
+                      window.history.back();
+                      resolve();
+                      return;
+                    }
+                    router.push('/');
+                    resolve();
+                  }).catch((error) => {
+                    handleLoginError(error);
+                    resolve();
+                  });
+              })
+              .catch((error) => {
+                handleLoginError(error);
+                resolve();
+              });
           });
       });
     },
