@@ -13,7 +13,8 @@ export default {
           // Extracts single numerical value from the returned array
           const areaVid = response.list.find(e => e.machine_name === 'farm_areas').vid;
           console.log('THE VID FOR AREA TERMS: ', areaVid);
-        }).catch(console.error);
+          return getRecords(storedUrl, `taxonomy_term.json?vocabulary=${areaVid}`); // eslint-disable-line no-use-before-define
+        }).then(console.log).catch(console.error);
     },
 
     // EXPERIMENTAL: GETS ASSETS AND OUTPUTS TO CONSOLE
