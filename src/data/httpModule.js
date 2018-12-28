@@ -141,34 +141,17 @@ function getRecords(farmosUrl, recordClass) {
         throw response;
       }
       return response.json();
-    }).then(
-      // Log response to the terminal
-      (response) => {
-        // When making a call to taxonomy_vocabulary I want to return only
-        // the VID for the farm_areas category
-        // getArea Returns an array consisting of '' or the vid\
-        function getArea(term) {
-          let VID = '';
-          if (term.machine_name === 'farm_areas') {
-            VID = term.vid;
-          }
-          return VID;
-        }
-
-        if (recordClass === 'taxonomy_vocabulary') {
-          console.log('DISPLAYING THE VID FOR AREA TERMS');
-          // Extracts single numerical value from the returned array
-          const areaVid = response.list.map(getArea).filter(
-            element => element !== '',
-          )[0];
-          console.log(areaVid);
-        } else {
-          // When making a call to log or taxonomy_term I will display all values received
-          console.log('DISPLAYING REQUESTED VALUES');
-          console.log(response);
-        }
-      },
-
-    ).catch(reject);
+    }).then((response) => {
+      if (recordClass === 'taxonomy_vocabulary') {
+        console.log('DISPLAYING THE VID FOR AREA TERMS');
+        // Extracts single numerical value from the returned array
+        const areaVid = response.list.find(e => e.machine_name === 'farm_areas').vid;
+        console.log(areaVid);
+      } else {
+        // When making a call to log or taxonomy_term I will display all values received
+        console.log('DISPLAYING REQUESTED VALUES');
+        console.log(response);
+      }
+    }).catch(reject);
   });
 }
