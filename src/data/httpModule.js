@@ -4,23 +4,23 @@ export default {
   actions: {
     // EXPERIMENTAL: GETS AREAS AND OUTPUTS TO CONSOLE
     getAreas() {
-      const storage = window.localStorage;
-      const storedUrl = storage.getItem('url');
-      const storedToken = storage.getItem('token');
+      const storedUrl = localStorage.getItem('url');
 
       // getRecords requires the params URL, RESOURCE
       // RESOURCE can be 'farm_asset' 'taxonomy_term' 'taxonomy_vocabulary' or 'log'
       getRecords(storedUrl, 'taxonomy_vocabulary') // eslint-disable-line no-use-before-define
-        .then().catch(err => console.log('GET ERROR: ', err));
+        .then((response) => {
+          // Extracts single numerical value from the returned array
+          const areaVid = response.list.find(e => e.machine_name === 'farm_areas').vid;
+          console.log('THE VID FOR AREA TERMS: ', areaVid);
+        }).catch(console.error);
     },
 
     // EXPERIMENTAL: GETS ASSETS AND OUTPUTS TO CONSOLE
     getAssets() {
-      const storage = window.localStorage;
-      const storedUrl = storage.getItem('url');
-      const storedToken = storage.getItem('token');
+      const storedUrl = localStorage.getItem('url');
       getRecords(storedUrl, 'farm_asset') // eslint-disable-line no-use-before-define
-        .then().catch(err => console.log('GET ERROR: ', err));
+        .then(console.log).catch(console.error);
     },
 
     // SEND RECORDS TO SERVER
@@ -141,17 +141,6 @@ function getRecords(farmosUrl, recordClass) {
         throw response;
       }
       return response.json();
-    }).then((response) => {
-      if (recordClass === 'taxonomy_vocabulary') {
-        console.log('DISPLAYING THE VID FOR AREA TERMS');
-        // Extracts single numerical value from the returned array
-        const areaVid = response.list.find(e => e.machine_name === 'farm_areas').vid;
-        console.log(areaVid);
-      } else {
-        // When making a call to log or taxonomy_term I will display all values received
-        console.log('DISPLAYING REQUESTED VALUES');
-        console.log(response);
-      }
-    }).catch(reject);
+    }).then(resolve).catch(reject);
   });
 }
