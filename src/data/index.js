@@ -1,6 +1,7 @@
 import dbModule from './dbModule';
 import httpModule from './httpModule';
 import camModule from './camModule';
+import Test from './Test.vue'; // eslint-disable-line import/extensions
 
 /*
   A reducer function that filters for logs ready to sync,
@@ -46,5 +47,11 @@ export default {
         store.dispatch('deleteLog', mutation.payload);
       }
     });
+    const TestComponent = Vue.component(Test.name, Test);
+    router.addRoutes([{
+      path: '/test',
+      name: 'Test',
+      component: TestComponent,
+    }]);
   },
 };
