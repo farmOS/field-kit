@@ -76,11 +76,12 @@ export default {
 
       // Send records to the server, unless the user isn't logged in
       if (storedToken) {
-        payload.indices.map(index => (
-          pushRecord(storedUrl, storedToken, rootState.farm.logs[index]) // eslint-disable-line no-use-before-define, max-len
+        payload.indices.map((index) => {
+          const newLog = logFactory(rootState.farm.logs[index], SERVER)
+          return farm.log.send(newLog, undefined, storedToken) // eslint-disable-line no-use-before-define, max-len
             .then(res => handleSyncResponse(res, index))
             .catch(err => handleSyncError(err, index))
-        ));
+        });
       } else {
         payload.router.push('/login');
       }
