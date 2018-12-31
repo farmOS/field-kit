@@ -87,8 +87,8 @@ export default function (host, user, password) {
       get(id) {
         return request(`/log${params(id)}`);
       },
-      send(payload, id, token) {
-        return request(`/log${params(id)}`, 'POST', payload, token);
+      send(payload, token) {
+        return request('/log', 'POST', payload, token);
       },
     },
   };

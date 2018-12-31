@@ -20,12 +20,8 @@ export default {
       farm.log.get().then(console.log).catch(console.error);
     },
 
-    // SEND RECORDS TO SERVER
-    pushToServer({ commit, rootState }, payload) {
-      const storage = window.localStorage;
-      const storedUrl = storage.getItem('url');
-      const storedToken = storage.getItem('token');
-
+    // SEND LOGS TO SERVER
+    sendLogs({ commit, rootState }, payload) {
       function handleSyncResponse(response, index) {
         commit('updateLogs', {
           indices: [index],
@@ -75,12 +71,12 @@ export default {
       }
 
       // Send records to the server, unless the user isn't logged in
-      if (storedToken) {
+      if (token) {
         payload.indices.map((index) => {
-          const newLog = logFactory(rootState.farm.logs[index], SERVER)
-          return farm.log.send(newLog, undefined, storedToken) // eslint-disable-line no-use-before-define, max-len
+          const newLog = logFactory(rootState.farm.logs[index], SERVER);
+          return farm.log.send(newLog, token) // eslint-disable-line no-use-before-define, max-len
             .then(res => handleSyncResponse(res, index))
-            .catch(err => handleSyncError(err, index))
+            .catch(err => handleSyncError(err, index));
         });
       } else {
         payload.router.push('/login');
@@ -89,56 +85,3 @@ export default {
 
   },
 };
-
-
-// Executes AJAX to send records to server
-function pushRecord(url, token, log) {
-  const loc = '/log';
-  const logUrl = url + loc;
-  const formattedLog = logFactory(log, SERVER);
-  const requestHeaders = {
-    'X-CSRF-Token': token,
-    'Content-Type': 'application/json',
-    Accept: 'json',
-  };
-  console.log(`PUSHING REQUEST URL : ${logUrl}`);
-  console.log('RECORDS SENDING: ', JSON.stringify(formattedLog));
-  return new Promise((resolve, reject) => {
-    fetch(logUrl, {
-      method: 'POST',
-      headers: requestHeaders,
-      credentials: 'include',
-      body: JSON.stringify(formattedLog),
-    }).then((response) => {
-      console.log('fetch response: ', response);
-      if (!response.ok) {
-        throw response;
-      }
-      return response.json();
-    }).then(resolve).catch(reject);
-  });
-}
-
-// EXPERIMENTAL
-// Executes AJAX to get records from server
-function getRecords(farmosUrl, recordClass) {
-  const logUrl = `${farmosUrl}/${recordClass}.json`;
-  const requestHeaders = {
-    'Content-Type': 'application/json',
-  };
-  console.log(`GETTING RECORDS FROM URL : ${logUrl}`);
-  return new Promise((resolve, reject) => {
-    fetch(logUrl, {
-      method: 'GET',
-      mode: 'cors',
-      headers: requestHeaders,
-      credentials: 'include',
-    }).then((response) => {
-      console.log('RESPONSE TO GET REQUEST RECEIVED!');
-      if (!response.ok) {
-        throw response;
-      }
-      return response.json();
-    }).then(resolve).catch(reject);
-  });
-}
