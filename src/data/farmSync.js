@@ -1,17 +1,28 @@
 export default function (host, user, password) {
   function request(endpoint, method = 'GET', payload = '', token = '') {
     const url = host + endpoint;
-    const requestHeaders = {
-      'X-CSRF-Token': token,
-      'Content-Type': 'application/json',
-      Accept: 'json',
-    };
-    const opts = {
-      method,
-      headers: requestHeaders,
-      credentials: 'include',
-      body: JSON.stringify(payload),
-    };
+    let opts;
+    if (method === 'GET') {
+      opts = {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'json',
+        },
+        credentials: 'include',
+      };
+    } else {
+      opts = {
+        method,
+        headers: {
+          'X-CSRF-Token': token,
+          'Content-Type': 'application/json',
+          Accept: 'json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(payload),
+      };
+    }
     return new Promise((resolve, reject) => {
       fetch(url, opts).then((response) => {
         console.log('fetch response: ', response);
@@ -23,8 +34,13 @@ export default function (host, user, password) {
     });
   }
 
-  // Utility function for parsing if there's an ID provided and formatting the params
+  // Utility for parsing if there's an ID provided, then formatting the params
   const params = id => (id ? `/${id}.json` : '.json');
+
+  // Utility for finding the vid of the farm_assets vocabulary
+  const areaVid = vocab => vocab.list
+    .find(voc => voc.machine_name === 'farm_areas')
+    .vid;
 
   return {
     authenticate() {
@@ -38,22 +54,19 @@ export default function (host, user, password) {
     },
     area: {
       delete(id, token) {
-        request('taxonomy_vocabulary').then((res) => {
-          const areaVid = res.list.find(voc => voc.machine_name === 'farm_areas').vid;
-          return request(`taxonomy_term.json?vocabulary=${areaVid}${params(id)}`, 'DELETE', '', token);
-        });
+        return request('taxonomy_vocabulary.json').then(res => (
+          request(`taxonomy_term.json?vocabulary=${areaVid(res)}${params(id)}`, 'DELETE', '', token)
+        ));
       },
       get(id) {
-        request('taxonomy_vocabulary').then((res) => {
-          const areaVid = res.list.find(voc => voc.machine_name === 'farm_areas').vid;
-          return request(`taxonomy_term.json?vocabulary=${areaVid}${params(id)}`);
-        });
+        return request('taxonomy_vocabulary.json').then(res => (
+          request(`taxonomy_term.json?vocabulary=${areaVid(res)}${params(id)}`)
+        ));
       },
       send(payload, id, token) {
-        request('taxonomy_vocabulary').then((res) => {
-          const areaVid = res.list.find(voc => voc.machine_name === 'farm_areas').vid;
-          return request(`taxonomy_term.json?vocabulary=${areaVid}${params(id)}`, 'POST', payload, token);
-        });
+        return request('taxonomy_vocabulary.json').then(res => (
+          request(`taxonomy_term.json?vocabulary=${areaVid(res)}${params(id)}`, 'POST', payload, token)
+        ));
       },
     },
     asset: {
