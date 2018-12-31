@@ -27,9 +27,11 @@ export default {
 
     // EXPERIMENTAL: GETS ASSETS AND OUTPUTS TO CONSOLE
     getAssets() {
-      const storedUrl = localStorage.getItem('url');
-      getRecords(storedUrl, 'farm_asset') // eslint-disable-line no-use-before-define
-        .then(console.log).catch(console.error);
+      // const storedUrl = localStorage.getItem('url');
+      // getRecords(storedUrl, 'farm_asset') // eslint-disable-line no-use-before-define
+      //   .then(console.log).catch(console.error);
+
+      farm.asset.get().then(console.log).catch(console.error);
     },
 
     // SEND RECORDS TO SERVER
