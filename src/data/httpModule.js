@@ -5,35 +5,17 @@ const host = localStorage.getItem('url');
 const user = localStorage.getItem('user');
 const password = localStorage.getItem('password');
 const token = localStorage.getItem('token');
+
 const farm = farmSync(host, user, password);
 
 export default {
   actions: {
-    // EXPERIMENTAL: GETS AREAS AND OUTPUTS TO CONSOLE
     getAreas() {
-      // const storedUrl = localStorage.getItem('url');
-
-      // getRecords requires the params URL, RESOURCE
-      // RESOURCE can be 'farm_asset' 'taxonomy_term' 'taxonomy_vocabulary' or 'log'
-      // getRecords(storedUrl, 'taxonomy_vocabulary') // eslint-disable-line no-use-before-define
-      //   .then((response) => {
-      //     // Extracts single numerical value from the returned array
-      //     const areaVid = response.list.find(e => e.machine_name === 'farm_areas').vid;
-      //     console.log('THE VID FOR AREA TERMS: ', areaVid);
-      //     return getRecords(storedUrl, `taxonomy_term.json?vocabulary=${areaVid}`); // eslint-disable-line no-use-before-define
-      //   }).then(console.log).catch(console.error);
       farm.area.get().then(console.log).catch(console.error);
     },
-
-    // EXPERIMENTAL: GETS ASSETS AND OUTPUTS TO CONSOLE
     getAssets() {
-      // const storedUrl = localStorage.getItem('url');
-      // getRecords(storedUrl, 'farm_asset') // eslint-disable-line no-use-before-define
-      //   .then(console.log).catch(console.error);
-
       farm.asset.get().then(console.log).catch(console.error);
     },
-
     getLogs() {
       farm.log.get().then(console.log).catch(console.error);
     },
