@@ -34,6 +34,10 @@ export default {
       farm.asset.get().then(console.log).catch(console.error);
     },
 
+    getLogs() {
+      farm.log.get().then(console.log).catch(console.error);
+    },
+
     // SEND RECORDS TO SERVER
     pushToServer({ commit, rootState }, payload) {
       const storage = window.localStorage;

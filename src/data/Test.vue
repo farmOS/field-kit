@@ -4,6 +4,14 @@
     <button
       class="btn btn-info"
       type="button"
+      name="logs"
+      @click="getLogs"
+    >
+      Logs
+    </button>
+    <button
+      class="btn btn-info"
+      type="button"
       name="assets"
       @click="getAssets"
     >
@@ -24,6 +32,10 @@
 export default {
   name: 'Test',
   methods: {
+    getLogs() {
+      console.log("CLICKED LOGS!!!")
+      this.$store.dispatch('getLogs')
+    },
     getAssets() {
       console.log("CLICKED ASSETS!!!")
       this.$store.dispatch('getAssets')
