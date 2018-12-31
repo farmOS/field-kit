@@ -20,10 +20,18 @@
     <button
       class="btn btn-info"
       type="button"
-      name="taxonomy"
+      name="areas"
       @click="getAreas"
     >
       Areas
+    </button>
+    <button
+      class="btn btn-info"
+      type="button"
+      name="authenticate"
+      @click="authenticate"
+    >
+      Authenticate
     </button>
   </div>
 </template>
@@ -43,6 +51,15 @@ export default {
     getAreas() {
       console.log("CLICKED AREAS!!!")
       this.$store.dispatch('getAreas')
+    },
+    authenticate() {
+      console.log("CLICKED AUTHENTICATE!!!")
+      // const payload = {
+      //   host:
+      //   user:
+      //   password:
+      // }
+      this.$store.dispatch('authenticate')
     },
   }
 }

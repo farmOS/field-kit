@@ -1,9 +1,12 @@
 import logFactory, { SERVER } from './logFactory';
 import farmSync from './farmSync';
 
-const host = localStorage.getItem('url');
-const user = localStorage.getItem('user');
-const password = localStorage.getItem('password');
+// const host = localStorage.getItem('url');
+// const user = localStorage.getItem('user');
+// const password = localStorage.getItem('password');
+const host = '';
+const user = 'farmos';
+const password = 'farmos';
 const token = localStorage.getItem('token');
 
 const farm = farmSync(host, user, password);
@@ -18,6 +21,10 @@ export default {
     },
     getLogs() {
       farm.log.get().then(console.log).catch(console.error);
+    },
+    authenticate() {
+      farm.authenticate()
+        .then(console.log).catch(console.error);
     },
 
     // SEND LOGS TO SERVER

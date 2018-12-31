@@ -34,6 +34,41 @@ export default function (host, user, password) {
     });
   }
 
+  function authRequest(endpoint, method = 'GET', { form_id, name, pass } = {}) {
+    const url = host + endpoint;
+    const payload = 'name=' + name + '&pass=' + pass + '&form_id=' + form_id
+    let opts;
+    if (method === 'GET') {
+      opts = {
+        method,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Accept: 'json',
+        },
+        credentials: 'include',
+      };
+    } else {
+      opts = {
+        method,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Accept: 'json',
+        },
+        credentials: 'include',
+        body: payload,
+      };
+    }
+    return new Promise((resolve, reject) => {
+      fetch(url, opts).then((response) => {
+        console.log('fetch response: ', response);
+        if (!response.ok) {
+          throw response;
+        }
+        return response.text();
+      }).then(resolve).catch(reject);
+    });
+  }
+
   // Utility for parsing if there's an ID provided, then formatting the params
   const params = id => (id ? `/${id}.json` : '.json');
 
@@ -49,8 +84,8 @@ export default function (host, user, password) {
         name: user,
         pass: password,
       };
-      return request('/user/login', 'POST', payload)
-        .then(() => request('/restws/session/token'));
+      return authRequest('/user/login', 'POST', payload)
+        .then(() => authRequest('/restws/session/token'));
     },
     area: {
       delete(id, token) {
