@@ -34,9 +34,9 @@ export default function (host, user, password) {
     });
   }
 
-  function authRequest(endpoint, method = 'GET', { form_id, name, pass } = {}) {
+  function authRequest(endpoint, method = 'GET', { form_id, name, pass } = {}) { // eslint-disable-line camelcase
     const url = host + endpoint;
-    const payload = 'name=' + name + '&pass=' + pass + '&form_id=' + form_id
+    const payload = `name=${name}&pass=${pass}&form_id=${form_id}`; // eslint-disable-line camelcase
     let opts;
     if (method === 'GET') {
       opts = {
@@ -85,7 +85,10 @@ export default function (host, user, password) {
         pass: password,
       };
       return authRequest('/user/login', 'POST', payload)
-        .then(() => authRequest('/restws/session/token'));
+        .then(() => authRequest('/restws/session/token')
+          .then(token => token)
+          .catch((error) => { throw error; }))
+        .catch((error) => { throw error; });
     },
     area: {
       delete(id, token) {

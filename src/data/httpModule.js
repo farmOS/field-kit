@@ -7,7 +7,6 @@ import farmSync from './farmSync';
 const host = '';
 const user = 'farmos';
 const password = 'farmos';
-const token = localStorage.getItem('token');
 
 const farm = farmSync(host, user, password);
 
@@ -78,10 +77,10 @@ export default {
       }
 
       // Send records to the server, unless the user isn't logged in
-      if (token) {
+      if (localStorage.getItem('token')) {
         payload.indices.map((index) => {
           const newLog = logFactory(rootState.farm.logs[index], SERVER);
-          return farm.log.send(newLog, token) // eslint-disable-line no-use-before-define, max-len
+          return farm.log.send(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
             .then(res => handleSyncResponse(res, index))
             .catch(err => handleSyncError(err, index));
         });
