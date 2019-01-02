@@ -1,70 +1,45 @@
 export default function (host, user, password) {
-  function request(endpoint, method = 'GET', payload = '', token = '') {
+  function request(endpoint, {
+    method = 'GET',
+    payload = '',
+    token = '',
+    auth = false,
+  } = {}) {
     const url = host + endpoint;
-    let opts;
-    if (method === 'GET') {
-      opts = {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'json',
-        },
-        credentials: 'include',
-      };
-    } else {
-      opts = {
-        method,
-        headers: {
-          'X-CSRF-Token': token,
-          'Content-Type': 'application/json',
-          Accept: 'json',
-        },
-        credentials: 'include',
-        body: JSON.stringify(payload),
-      };
+    // Set basic fetch options, for a non-auth GET requests
+    const opts = {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'json',
+      },
+      credentials: 'include',
+    };
+    // Fetch options for non-auth POST requests
+    if (method === 'POST' && !auth) {
+      console.log('POST NON-AUTH');
+      opts.headers['X-CSRF-Token'] = token;
+      opts.body = JSON.stringify(payload);
+    }
+    // Fetch options for authentication GET requests
+    if (auth) {
+      opts.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+    }
+    // Fetch options for authentication POST requests
+    // TODO: Generalize this to work with any form request
+    if (method === 'POST' && auth) {
+      opts.body = `name=${payload.name}&pass=${payload.pass}&form_id=${payload.form_id}`; // eslint-disable-line camelcase
     }
     return new Promise((resolve, reject) => {
       fetch(url, opts).then((response) => {
         console.log('fetch response: ', response);
         if (!response.ok) {
           throw response;
+        }
+        if (auth) {
+          return response.text();
         }
         return response.json();
-      }).then(resolve).catch(reject);
-    });
-  }
-
-  function authRequest(endpoint, method = 'GET', { form_id, name, pass } = {}) { // eslint-disable-line camelcase
-    const url = host + endpoint;
-    const payload = `name=${name}&pass=${pass}&form_id=${form_id}`; // eslint-disable-line camelcase
-    let opts;
-    if (method === 'GET') {
-      opts = {
-        method,
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          Accept: 'json',
-        },
-        credentials: 'include',
-      };
-    } else {
-      opts = {
-        method,
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          Accept: 'json',
-        },
-        credentials: 'include',
-        body: payload,
-      };
-    }
-    return new Promise((resolve, reject) => {
-      fetch(url, opts).then((response) => {
-        console.log('fetch response: ', response);
-        if (!response.ok) {
-          throw response;
-        }
-        return response.text();
       }).then(resolve).catch(reject);
     });
   }
@@ -84,8 +59,8 @@ export default function (host, user, password) {
         name: user,
         pass: password,
       };
-      return authRequest('/user/login', 'POST', payload)
-        .then(() => authRequest('/restws/session/token')
+      return request('/user/login', { method: 'POST', payload, auth: true })
+        .then(() => request('/restws/session/token', { auth: true })
           .then(token => token)
           .catch((error) => { throw error; }))
         .catch((error) => { throw error; });
@@ -93,7 +68,7 @@ export default function (host, user, password) {
     area: {
       delete(id, token) {
         return request('taxonomy_vocabulary.json').then(res => (
-          request(`taxonomy_term.json?vocabulary=${areaVid(res)}${params(id)}`, 'DELETE', '', token)
+          request(`taxonomy_term.json?vocabulary=${areaVid(res)}${params(id)}`, { method: 'DELETE', token })
         ));
       },
       get(id) {
@@ -103,30 +78,30 @@ export default function (host, user, password) {
       },
       send(payload, id, token) {
         return request('taxonomy_vocabulary.json').then(res => (
-          request(`taxonomy_term.json?vocabulary=${areaVid(res)}${params(id)}`, 'POST', payload, token)
+          request(`taxonomy_term.json?vocabulary=${areaVid(res)}${params(id)}`, { method: 'POST', payload, token })
         ));
       },
     },
     asset: {
       delete(id, token) {
-        return request(`/farm_asset/${id}.json`, 'DELETE', '', token);
+        return request(`/farm_asset/${id}.json`, { method: 'DELETE', token });
       },
       get(id) {
         return request(`/farm_asset${params(id)}`);
       },
       send(payload, id, token) {
-        return request(`/farm_asset${params(id)}`, 'POST', payload, token);
+        return request(`/farm_asset${params(id)}`, { method: 'POST', payload, token });
       },
     },
     log: {
       delete(id, token) {
-        return request(`/log/${id}.json`, 'DELETE', '', token);
+        return request(`/log/${id}.json`, { method: 'DELETE', token });
       },
       get(id) {
         return request(`/log${params(id)}`);
       },
       send(payload, token) {
-        return request('/log', 'POST', payload, token);
+        return request('/log', { method: 'POST', payload, token });
       },
     },
   };
