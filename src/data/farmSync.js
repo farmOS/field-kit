@@ -17,7 +17,6 @@ export default function (host, user, password) {
     };
     // Fetch options for non-auth POST requests
     if (method === 'POST' && !auth) {
-      console.log('POST NON-AUTH');
       opts.headers['X-CSRF-Token'] = token;
       opts.body = JSON.stringify(payload);
     }
@@ -32,10 +31,10 @@ export default function (host, user, password) {
     }
     return new Promise((resolve, reject) => {
       fetch(url, opts).then((response) => {
-        console.log('fetch response: ', response);
         if (!response.ok) {
           throw response;
         }
+        // If auth req, get token as a text response
         if (auth) {
           return response.text();
         }
