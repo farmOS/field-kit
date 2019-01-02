@@ -34,7 +34,7 @@ export default {
       }
 
       // Return a promise so the component knows when the action completes.
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         const farm = farmSync(url, username, password);
         farm.authenticate()
           .then((tokenResponse) => {
@@ -56,7 +56,8 @@ export default {
           .catch(() => {
             // Check if the login attempt failed b/c it's http://, not https://
             const noSslUrl = `http://${payload.farmosUrl}`;
-            farm.authenticate(noSslUrl, username, password) // eslint-disable-line
+            const noSslfarm = farmSync(noSslUrl, username, password);
+            noSslfarm.authenticate() // eslint-disable-line
               .then((tokenResponse) => {
                 // Save our username, password & token to the persistant store
                 storage.setItem('url', noSslUrl);
@@ -74,7 +75,7 @@ export default {
                 resolve();
               }).catch((error) => {
                 handleLoginError(error);
-                reject();
+                resolve();
               });
           });
       });
