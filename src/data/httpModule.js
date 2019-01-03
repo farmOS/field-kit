@@ -10,6 +10,11 @@ const farm = farmSync(host, user, password);
 
 export default {
   actions: {
+    // This is just a testing implementation, the real deal's in loginModule
+    authenticate() {
+      farm.authenticate()
+        .then(console.log).catch(console.error);
+    },
     getAreas() {
       farm.area.get().then(console.log).catch(console.error);
     },
@@ -19,9 +24,17 @@ export default {
     getLogs() {
       farm.log.get().then(console.log).catch(console.error);
     },
-    authenticate() {
-      farm.authenticate()
-        .then(console.log).catch(console.error);
+    updateAreas({ commit }) {
+      farm.area.get().then((res) => {
+        const areas = res.list.map(({ tid, name }) => ({ id: tid, name }));
+        commit('addAreas', areas);
+      }).catch(console.error);
+    },
+    updateAssets({ commit }) {
+      farm.asset.get().then((res) => {
+        const assets = res.list.map(({ id, name }) => ({ id, name }));
+        commit('addAssets', assets);
+      }).catch(console.error);
     },
 
     // SEND LOGS TO SERVER

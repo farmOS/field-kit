@@ -114,7 +114,7 @@ export default {
         },
       ]
       console.log("CLICKED ASSETS!!!")
-      this.$store.commit('addAssets', newAssets)
+      this.$store.dispatch('updateAssets')
     },
     addAreas() {
       const newAreas = [
@@ -140,7 +140,7 @@ export default {
         },
       ]
       console.log("CLICKED AREAS!!!")
-      this.$store.commit('addAreas', newAreas)
+      this.$store.dispatch('updateAreas')
     },
     updateAsset() {
       const newAsset = { id: 2, name: "pig #42"}
