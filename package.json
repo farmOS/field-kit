@@ -1,6 +1,6 @@
 {
   "name": "farmos-client",
-  "version": "0.2.8",
+  "version": "0.2.10",
   "description": "A pluggable client for farmOS",
   "author": "farmos team",
   "private": true,

@@ -37,6 +37,12 @@ const farmModule = {
       // TODO: Should logs pass through logFactory() to make sure props are valid?
       state.logs = state.logs.concat(logs);
     },
+    addAssets(state, assets) {
+      state.assets = state.assets.concat(assets);
+    },
+    addAreas(state, areas) {
+      state.areas = state.areas.concat(areas);
+    },
     /*
       This pushes the new log onto the `logs` array, and b/c `.push()` returns
       the length of the new array, it resets the index to the new item too
@@ -66,6 +72,15 @@ const farmModule = {
         1,
         payload.mapper(state.logs[i]),
       ));
+    },
+    // updateAsset and updateArea replace the entire record if a change occurs
+    updateAsset(state, newAsset) {
+      const index = state.assets.findIndex(a => a.id === newAsset.id);
+      state.assets.splice(index, 1, newAsset);
+    },
+    updateArea(state, newArea) {
+      const index = state.areas.findIndex(a => a.id === newArea.id);
+      state.areas.splice(index, 1, newArea);
     },
     deleteLog(state, { index }) {
       state.logs.splice(index, 1);
