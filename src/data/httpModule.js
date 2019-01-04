@@ -24,16 +24,32 @@ export default {
     getLogs() {
       farm.log.get().then(console.log).catch(console.error);
     },
-    updateAreas({ commit }) {
+    updateAreas({ commit, rootState }) {
       farm.area.get().then((res) => {
-        const areas = res.list.map(({ tid, name }) => ({ id: tid, name }));
+        const areas = res.list.reduce((acc, { tid, name }) => {
+          const storeIndex = rootState.farm.areas.findIndex(a => a.id === tid);
+          if (storeIndex === -1) {
+            return acc.concat({ id: tid, name });
+          }
+          commit('updateArea', { id: tid, name });
+          return acc;
+        }, []);
         commit('addAreas', areas);
+        console.log('Finished updating areas!');
       }).catch(console.error);
     },
-    updateAssets({ commit }) {
+    updateAssets({ commit, rootState }) {
       farm.asset.get().then((res) => {
-        const assets = res.list.map(({ id, name }) => ({ id, name }));
+        const assets = res.list.reduce((acc, { id, name }) => {
+          const storeIndex = rootState.farm.assets.findIndex(a => a.id === id);
+          if (storeIndex === -1) {
+            return acc.concat({ id, name });
+          }
+          commit('updateAsset', { id, name });
+          return acc;
+        }, []);
         commit('addAssets', assets);
+        console.log('Finished updating assets!');
       }).catch(console.error);
     },
 
