@@ -43,6 +43,22 @@ export default function (host, user, password) {
     });
   }
 
+  // Recursive request for looping through multiple pages
+  function requestAll(url, page = 0, list = []) {
+    return new Promise((resolve, reject) => request(`${url}&page=${page}`)
+      .then((response) => {
+        const lastPage = +(new URL(response.last)).searchParams.get('page');
+        if (page === lastPage) {
+          console.log(`Requesting last page, ${page}`);
+          resolve(list.concat(response.list));
+          return;
+        }
+        console.log(`Requesting page ${page}, ${lastPage - page} more to go.`);
+        const newList = list.concat(response.list);
+        requestAll(url, page + 1, newList).then(resolve).catch(reject);
+      }).catch(reject));
+  }
+
   // Utility for parsing if there's an ID provided, then formatting the params
   const params = id => (id ? `/${id}.json` : '.json');
 
@@ -96,8 +112,25 @@ export default function (host, user, password) {
       delete(id, token) {
         return request(`/log/${id}.json`, { method: 'DELETE', token });
       },
-      get(id) {
-        return request(`/log${params(id)}`);
+      get(opts = {}) {
+        // If an ID # is passed instead of an options object
+        if (typeof opts === 'number') {
+          return request(`/log/${opts}.json`);
+        }
+        const { page = null, type = '' } = opts;
+        const typeParams = (type !== '') ? `type=${type}` : '';
+        const pageParams = (page !== null) ? `page=${page}` : '';
+
+        // If no page # is passed, get all of them
+        if (page === null) {
+          return requestAll(`/log.json?${typeParams}`);
+        }
+
+        // If no ID is passed but page is passed
+        return request(`/log.json?${typeParams}&${pageParams}`).then((res) => {
+          console.log('This is the only page.');
+          return res;
+        });
       },
       send(payload, token) {
         return request('/log', { method: 'POST', payload, token });
