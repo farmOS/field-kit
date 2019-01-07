@@ -1,7 +1,7 @@
 <template lang="html">
   <div>
     <div class="form-item form-item-name form-group">
-      <label for="search" class="control-label">{{ label }} search</label>
+      <label for="search" class="control-label">Find {{ label }}</label>
       <input
         @input="doSearch($event.target.value)"
         placeholder="Enter search string"
@@ -14,6 +14,11 @@
         <select
           @input="selectSearchResult($event.target.value)"
           class="custom-select col-sm-3 ">
+            <!--
+              I need to start with a blank value so that the user must always
+              select something new and trigger the @input event
+            -->
+            <option value="">Select an option</option>
             <option v-for="result in searchResults" :value="result.id">{{ result.name }}</option>
         </select>
     </div>
@@ -45,7 +50,10 @@ export default {
       this.searchResults = foundObjects;
     },
     selectSearchResult(id) {
-      console.log(`SEARCH RESULT SELECTED: id is ${id}`)
+      const selectedObject = this.searchResults.filter(result => result.id == id);
+      this.$store.commit('add'+this.label, selectedObject);
+      console.log("SEARCH RESULT SELECTED:");
+      console.log(selectedObject);
     },
   },
 }
