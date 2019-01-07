@@ -53,7 +53,11 @@
       <!--
         This is testing whether the autocomplete component is inserted correctly
       -->
-      <Autocomplete :objects="assets" label="Assets"/>
+      <Autocomplete
+        :objects="assets"
+        :label="assetLabel"
+        v-on:results="updateCurrentLog('field_farm_asset', $event)">
+      </Autocomplete>
 
 
       <!-- not able to send quantities right now -->
@@ -139,6 +143,7 @@ export default {
       imageUrls: [],
       assets: [{ id: 1, name: 'Cow203' }, { id: 2, name: 'Cow301' },
        { id: 3, name: 'Cow666' }, { id: 4, name: 'Cow145' }, { id: 5, name: 'Cow541' }],
+      assetLabel: "Assets",
     };
   },
   props: [
@@ -168,6 +173,8 @@ export default {
         isCachedLocally: false,
       };
       this.$store.commit('updateCurrentLog', newProps);
+      console.log("UPDATED CURRENT LOG WITH");
+      console.log(newProps);
     },
 
     updateQuantityField(key, val) { // eslint-disable-line no-unused-vars

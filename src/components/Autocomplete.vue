@@ -22,7 +22,7 @@
             <option v-for="result in searchResults" :value="result.id">{{ result.name }}</option>
         </select>
     </div>
-    <p>{{ searchResults }}</p>
+    <p>{{ logs[currentLogIndex].field_farm_asset }}</p>
   </div>
 </template>
 
@@ -35,25 +35,30 @@ export default {
       searchResults: [],
     }
   },
-  //computed: mapState({
-  //  searchResults: state => state.farm.searchResults,
-  //}),
+  computed: mapState({
+    logs: state => state.farm.logs,
+    currentLogIndex: state => state.farm.currentLogIndex,
+  }),
   methods: {
     doSearch(val) {
+      if(val !== undefined) {
+        const lowerVal = val.toLowerCase();
         const foundObjects = [];
         for (let i = 0; i < this.objects.length; i++) { // eslint-disable-line no-plusplus
           const object = this.objects[i];
-          if (object.name.includes(val)) {
+          const lowerName = object.name.toLowerCase();
+          if (lowerName.includes(lowerVal)) {
             foundObjects.push({ name: object.name, id: object.id });
           }
         }
-      this.searchResults = foundObjects;
+        this.searchResults = foundObjects;
+      }
     },
     selectSearchResult(id) {
-      const selectedObject = this.searchResults.filter(result => result.id == id);
-      this.$store.commit('add'+this.label, selectedObject);
-      console.log("SEARCH RESULT SELECTED:");
-      console.log(selectedObject);
+      if(id !== "") {
+        const selectedResult = this.searchResults.filter(result => result.id == id);
+        this.$emit('results', selectedResult);
+      }
     },
   },
 }

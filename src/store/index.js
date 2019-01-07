@@ -38,7 +38,6 @@ const farmModule = {
       state.logs = state.logs.concat(logs);
     },
     addAssets(state, assets) {
-      console.log(`ASSETS ADDED: ${assets[0].name}`);
       state.assets = state.assets.concat(assets);
     },
     addAreas(state, areas) {
