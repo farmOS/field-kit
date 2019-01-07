@@ -53,7 +53,7 @@
       <!--
         This is testing whether the autocomplete component is inserted correctly
       -->
-      <Autocomplete type='assets'/>
+      <Autocomplete :objects="assets" />
 
 
       <!-- not able to send quantities right now -->
@@ -137,6 +137,8 @@ export default {
   data() {
     return {
       imageUrls: [],
+      assets: [{ id: 1, name: 'Cow203' }, { id: 2, name: 'Cow301' },
+       { id: 3, name: 'Cow666' }, { id: 4, name: 'Cow145' }, { id: 5, name: 'Cow541' }],
     };
   },
   props: [

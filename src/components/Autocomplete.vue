@@ -1,7 +1,7 @@
 <template lang="html">
   <div>
     <div class="form-item form-item-name form-group">
-      <label for="search" class="control-label">Find {{ type }}</label>
+      <label for="search" class="control-label">Search</label>
       <input
         @input="enterSearchString($event.target.value)"
         placeholder="Enter search string"
@@ -16,7 +16,7 @@
 <script>
 import { mapState } from 'vuex';
 export default {
-  props: ['type'],
+  props: ['objects'],
   data() {
     return {
       displayText: "The component is in.",
@@ -27,7 +27,7 @@ export default {
   }),
   methods: {
     enterSearchString(val) {
-      this.$store.dispatch('searchAssets', {type:this.type, searchString:val});
+      this.$store.dispatch('searchObjects', { objects: this.objects, searchString: val });
     },
   },
 }

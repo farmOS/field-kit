@@ -128,10 +128,21 @@ const farmModule = {
       commit('addLogAndMakeCurrent', newLog);
     },
     // Retrieve assets containing a string and pass to autocomplete.vue
-    searchAssets({ commit }, params) {
-      // Params consist of params.type and params.searchString
-      const searchResults = [params.type, params.searchString];
-      commit('setSearchResults', searchResults);
+    searchObjects({ commit }, params) {
+      // Params consist of params.objects and params.searchString
+
+      // Right now I am not using type.  I need to see if I can use type as 'state.type'
+      function findObjects(string) {
+        const foundObjects = [];
+        for (let i = 0; i < params.objects.length; i++) { // eslint-disable-line no-plusplus
+          const object = params.objects[i];
+          if (object.name.includes(string)) {
+            foundObjects.push({ name: object.name, id: object.id });
+          }
+        }
+        return foundObjects;
+      }
+      commit('setSearchResults', findObjects(params.searchString));
     },
   },
 };
