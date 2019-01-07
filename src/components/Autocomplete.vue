@@ -1,13 +1,21 @@
 <template lang="html">
   <div>
     <div class="form-item form-item-name form-group">
-      <label for="search" class="control-label">Search</label>
+      <label for="search" class="control-label">{{ label }} search</label>
       <input
-        @input="enterSearchString($event.target.value)"
+        @input="doSearch($event.target.value)"
         placeholder="Enter search string"
         type="text"
         class="form-control"
         autofocus>
+    </div>
+    <div class="form-item form-item-name form-group">
+      <label for="type" class="control-label ">Add {{ label }} to log</label>
+        <select
+          @input="selectSearchResult($event.target.value)"
+          class="custom-select col-sm-3 ">
+            <option v-for="result in searchResults" :value="result.id">{{ result.name }}</option>
+        </select>
     </div>
     <p>{{ searchResults }}</p>
   </div>
@@ -16,18 +24,28 @@
 <script>
 import { mapState } from 'vuex';
 export default {
-  props: ['objects'],
+  props: ['objects', 'label'],
   data() {
     return {
-      displayText: "The component is in.",
+      searchResults: [],
     }
   },
-  computed: mapState({
-    searchResults: state => state.farm.searchResults,
-  }),
+  //computed: mapState({
+  //  searchResults: state => state.farm.searchResults,
+  //}),
   methods: {
-    enterSearchString(val) {
-      this.$store.dispatch('searchObjects', { objects: this.objects, searchString: val });
+    doSearch(val) {
+        const foundObjects = [];
+        for (let i = 0; i < this.objects.length; i++) { // eslint-disable-line no-plusplus
+          const object = this.objects[i];
+          if (object.name.includes(val)) {
+            foundObjects.push({ name: object.name, id: object.id });
+          }
+        }
+      this.searchResults = foundObjects;
+    },
+    selectSearchResult(id) {
+      console.log(`SEARCH RESULT SELECTED: id is ${id}`)
     },
   },
 }

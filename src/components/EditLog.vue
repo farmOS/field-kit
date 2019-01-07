@@ -53,7 +53,7 @@
       <!--
         This is testing whether the autocomplete component is inserted correctly
       -->
-      <Autocomplete :objects="assets" />
+      <Autocomplete :objects="assets" label="Assets"/>
 
 
       <!-- not able to send quantities right now -->
