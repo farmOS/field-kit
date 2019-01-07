@@ -16,7 +16,7 @@ export default function ({
   isReadyToSync = false,
   remoteUri = '',
   // Adding field_farm_asset to ensure that assets are being assigned correctly
-  field_farm_asset= [],
+  field_farm_asset = [], // eslint-disable-line camelcase
 } = {}) {
   return {
     log_owner,

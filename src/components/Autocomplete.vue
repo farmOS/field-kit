@@ -15,6 +15,7 @@
           @input="selectSearchResult($event.target.value)"
           class="custom-select col-sm-3 ">
             <!--
+              Creates a drop-down menu with all objects that match the search string
               I need to start with a blank value so that the user must always
               select something new and trigger the @input event
             -->
@@ -22,7 +23,20 @@
             <option v-for="result in searchResults" :value="result.id">{{ result.name }}</option>
         </select>
     </div>
-    <p>{{ logs[currentLogIndex].field_farm_asset }}</p>
+    <div v-for="object in selectedObjects" class="form-item form-item-name form-group">
+      <!--
+        Displays all objects that have been selected, and provides for deletion
+      -->
+      <label for="type" class="control-label ">{{ object.name }}</label>
+      <button
+        :disabled='false'
+        title="Remove"
+        @click="removeObject(object)"
+        type="button"
+        class="btn btn-success btn-navbar">
+        Remove
+      </button>
+    </div>
   </div>
 </template>
 
@@ -33,17 +47,15 @@ export default {
   data() {
     return {
       searchResults: [],
+      selectedObjects: [],
     }
   },
-  computed: mapState({
-    logs: state => state.farm.logs,
-    currentLogIndex: state => state.farm.currentLogIndex,
-  }),
   methods: {
+    //The search method matches partial strings, and is case insensitive
     doSearch(val) {
-      if(val !== undefined) {
+      let foundObjects = [];
+      if(val !== "") {
         const lowerVal = val.toLowerCase();
-        const foundObjects = [];
         for (let i = 0; i < this.objects.length; i++) { // eslint-disable-line no-plusplus
           const object = this.objects[i];
           const lowerName = object.name.toLowerCase();
@@ -51,15 +63,27 @@ export default {
             foundObjects.push({ name: object.name, id: object.id });
           }
         }
-        this.searchResults = foundObjects;
+      } else {
+        foundObjects = this.objects;
       }
+      this.searchResults = foundObjects;
     },
+    // When results are selected, add them to selectedObjects
     selectSearchResult(id) {
       if(id !== "") {
         const selectedResult = this.searchResults.filter(result => result.id == id);
-        this.$emit('results', selectedResult);
+        this.selectedObjects = this.selectedObjects.concat(selectedResult);
+        this.$emit('results', this.selectedObjects);
       }
     },
+    // Remove an object when the remove button is pressed
+    removeObject(object) {
+      this.selectedObjects = this.selectedObjects.filter(results => results !== object);
+      this.$emit('results', [this.selectedObjects]);
+    }
+  },
+  beforeMount() {
+    this.doSearch("");
   },
 }
 
