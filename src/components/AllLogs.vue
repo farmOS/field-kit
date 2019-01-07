@@ -15,12 +15,6 @@
         Sync all to farmOS
       </button>
     </div>
-
-    <!--
-      This is testing whether the autocomplete component is inserted correctly
-    -->
-    <Autocomplete />
-
     <div class="card-deck">
       <div
         class="card"
@@ -116,13 +110,11 @@
 <script>
 import moment from 'moment';
 import IconSync from '../icons/icon-sync.vue';
-import Autocomplete from './Autocomplete';
 
 export default {
   props: ['logs'],
   components: {
     IconSync,
-    Autocomplete,
   },
   data() {
     return {
@@ -168,10 +160,6 @@ export default {
       }
       this.$store.commit('updateAllLogs', logSyncer);
     },
-  },
-  created(){
-    // The searchAssets action in vuex will send logs to autocomplete
-    this.$store.dispatch('searchAssets');
   },
 };
 </script>

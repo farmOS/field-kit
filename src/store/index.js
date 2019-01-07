@@ -107,7 +107,7 @@ const farmModule = {
     },
     // Sets results returned by searchAssets.
     setSearchResults(state, results) {
-      state.searchResults = state.searchResults.concat(results);
+      state.searchResults = results;
     },
   },
   actions: {
@@ -128,9 +128,10 @@ const farmModule = {
       commit('addLogAndMakeCurrent', newLog);
     },
     // Retrieve assets containing a string and pass to autocomplete.vue
-    searchAssets({ commit }) {
-      const testResults = ['RESULT 1', 'RESULT 2'];
-      commit('setSearchResults', testResults);
+    searchAssets({ commit }, params) {
+      // Params consist of params.type and params.searchString
+      const searchResults = [params.type, params.searchString];
+      commit('setSearchResults', searchResults);
     },
   },
 };

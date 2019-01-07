@@ -49,6 +49,13 @@
           type="text"
           class="form-control">
       </div>
+
+      <!--
+        This is testing whether the autocomplete component is inserted correctly
+      -->
+      <Autocomplete type='assets'/>
+
+
       <!-- not able to send quantities right now -->
       <!-- <div class="form-item form-item-name form-group">
         <label for="quantity" class="control-label ">Quantity</label>
@@ -122,8 +129,10 @@
 
 <script>
 import moment from 'moment';
+import Autocomplete from './Autocomplete';
 export default {
   components: {
+    Autocomplete,
   },
   data() {
     return {
