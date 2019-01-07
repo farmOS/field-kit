@@ -31,6 +31,8 @@ const farmModule = {
     isWorking: false,
     statusText: '',
     photoLoc: '',
+    // Returned by searchAssets
+    searchResults: [],
   },
   mutations: {
     addLogs(state, logs) {
@@ -103,6 +105,10 @@ const farmModule = {
     setPhotoLoc(state, loc) {
       state.photoLoc = loc;
     },
+    // Sets results returned by searchAssets.
+    setSearchResults(state, results) {
+      state.searchResults = state.searchResults.concat(results);
+    },
   },
   actions: {
     // TODO: Should this logic be moved to the 'addLogAndMakeCurrent' mutation?
@@ -120,6 +126,11 @@ const farmModule = {
         timestamp,
       });
       commit('addLogAndMakeCurrent', newLog);
+    },
+    // Retrieve assets containing a string and pass to autocomplete.vue
+    searchAssets({ commit }) {
+      const testResults = ['RESULT 1', 'RESULT 2'];
+      commit('setSearchResults', testResults);
     },
   },
 };
