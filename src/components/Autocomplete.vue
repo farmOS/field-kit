@@ -9,23 +9,22 @@
         class="form-control"
         autofocus>
     </div>
+    <!--
+      Displays up to 10 search results
+    -->
     <div class="form-item form-item-name form-group">
       <label for="type" class="control-label ">Add {{ label }} to log</label>
-        <select
-          @input="selectSearchResult($event.target.value)"
-          class="custom-select col-sm-3 ">
-            <!--
-              Creates a drop-down menu with all objects that match the search string
-              I need to start with a blank value so that the user must always
-              select something new and trigger the @input event
-            -->
-            <option value="">Select an option</option>
-            <option v-for="result in searchResults" :value="result.id">{{ result.name }}</option>
-            <!--
-              v-for generates a linting error that is apparently the result of a bug
-              https://github.com/vuejs/vetur/issues/261
-            -->
-        </select>
+        <div v-for="result in searchResults">
+          <!--
+            v-for generates a linting error that is apparently the result of a bug
+            https://github.com/vuejs/vetur/issues/261
+          -->
+          <button type="button"
+            class="btn btn-outline-success btn-block font-weight-bold"
+            @click="selectSearchResult(result.id)">
+            {{ result.name }}
+          </button>
+        </div>
     </div>
     <!--
       Displays all objects that have been selected, and provides for deletion
@@ -40,8 +39,7 @@
         :disabled='false'
         title="Remove"
         @click="removeObject(object)"
-        type="button"
-        class="btn btn-success btn-navbar">
+        class="btn btn-danger">
         Remove
       </button>
     </div>
@@ -59,19 +57,18 @@ export default {
   },
   methods: {
     // The search method matches partial strings, and is case insensitive
+    // Results are limited to a maximum of 10
     doSearch(val) {
-      let foundObjects = [];
+      const foundObjects = [];
       if (val !== '') {
         const lowerVal = val.toLowerCase();
         for (let i = 0; i < this.objects.length; i++) { // eslint-disable-line no-plusplus
           const object = this.objects[i];
           const lowerName = object.name.toLowerCase();
-          if (lowerName.includes(lowerVal)) {
+          if (lowerName.includes(lowerVal) && foundObjects.length < 10) {
             foundObjects.push({ name: object.name, id: object.id });
           }
         }
-      } else {
-        foundObjects = this.objects;
       }
       this.searchResults = foundObjects;
     },
@@ -89,9 +86,6 @@ export default {
       this.selectedObjects = this.selectedObjects.filter(results => results !== object);
       this.$emit('results', [this.selectedObjects]);
     },
-  },
-  beforeMount() {
-    this.doSearch('');
   },
 };
 
