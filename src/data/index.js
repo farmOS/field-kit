@@ -22,7 +22,10 @@ export default {
     router.beforeEach((to, from, next) => {
       if (to.path === '/logs') {
         store.commit('clearLogs');
+        store.commit('clearAssets');
         store.dispatch('loadCachedLogs');
+        store.dispatch('loadCachedAssets');
+        store.dispatch('updateAssets');
         next();
       }
       next();
@@ -45,6 +48,14 @@ export default {
       }
       if (mutation.type === 'deleteLog') {
         store.dispatch('deleteLog', mutation.payload);
+      }
+      if (mutation.type === 'addAssets') {
+        mutation.payload.forEach((asset) => {
+          store.dispatch('createCachedAsset', asset);
+        });
+      }
+      if (mutation.type === 'updateAsset') {
+        store.dispatch('updateCachedAsset', mutation.payload);
       }
     });
     const TestComponent = Vue.component(Test.name, Test);

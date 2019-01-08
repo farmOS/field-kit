@@ -60,6 +60,32 @@ export default {
         .catch(console.error);
     },
 
+    createCachedAsset(_, newAsset) {
+      const tableName = 'asset';
+      const key = 'id';
+      openDatabase() // eslint-disable-line no-use-before-define
+        .then(db => makeTable(db, tableName, newAsset, key)) // eslint-disable-line no-use-before-define, max-len
+        .then(tx => saveRecord(tx, tableName, newAsset)); // eslint-disable-line no-use-before-define, max-len
+    },
+
+    updateCachedAsset(context, asset) {
+      const table = 'asset';
+      const key = 'id';
+      openDatabase() // eslint-disable-line no-use-before-define
+        .then(db => getTX(db, table, key)) // eslint-disable-line no-use-before-define
+        .then(tx => saveRecord(tx, table, asset)); // eslint-disable-line no-use-before-define, max-len
+    },
+
+    loadCachedAssets({ commit }) {
+      openDatabase() // eslint-disable-line no-use-before-define
+        .then(db => getRecords(db, 'asset')) // eslint-disable-line no-use-before-define
+        .then((results) => {
+          console.log('Cached Assets: ', results);
+          commit('addAssets', results);
+        })
+        .catch(console.error);
+    },
+
   },
 };
 
@@ -80,7 +106,7 @@ function openDatabase() {
 }
 
 // This function obtains the transaction object; it assumes the table is already created.
-function getTX(db, table) {
+function getTX(db, table, key) {
   return new Promise((resolve, reject) => {
     function handleResponse(_tx, result) {
       console.log('Get TX success. Result: ', result);
@@ -91,26 +117,31 @@ function getTX(db, table) {
       // Reject will return the tx object in case you want to try again.
       reject(_tx);
     }
+    let sql;
+    if (key === undefined) {
+      sql = `CREATE TABLE IF NOT EXISTS ${table} (id INTEGER PRIMARY KEY AUTOINCREMENT, blankColumn TEXT)`;
+    } else {
+      sql = `CREATE TABLE IF NOT EXISTS ${table} (${key} INTEGER PRIMARY KEY, blankColumn TEXT)`;
+    }
     db.transaction((tx) => {
-      const sql = `CREATE TABLE IF NOT EXISTS ${table} (id INTEGER PRIMARY KEY AUTOINCREMENT, blankColumn TEXT)`;
       tx.executeSql(sql, null, handleResponse, handleError);
     });
   });
 }
 
 
-function makeTable(db, table, log) {
+function makeTable(db, table, record, key) {
   return new Promise((resolve, reject) => {
-    console.log(`making table with name ${table} and the following data template: ${JSON.stringify(log)}`);
+    console.log(`making table with name ${table} and the following data template: ${JSON.stringify(record)}`);
     // Creates a table called 'tableName' in the DB if none yet exists
     db.transaction((tx) => {
       let fieldString = '';
-      const keys = Object.keys(log);
+      const keys = Object.keys(record);
       keys.forEach((i) => {
         let suffix = '';
-        if (typeof log[i] === 'number') {
+        if (typeof record[i] === 'number') {
           suffix = ' INT, ';
-        } else if (typeof log[i] === 'boolean') {
+        } else if (typeof record[i] === 'boolean') {
           suffix = ' BOOLEAN, ';
         } else {
           suffix = ' VARCHAR(150), ';
@@ -120,12 +151,22 @@ function makeTable(db, table, log) {
       // I need to trim the last two characters to avoid a trailing comma
       fieldString = fieldString.substring(0, fieldString.length - 2);
 
-      // the id field will autoincrement beginning with 1
-      const sql = `CREATE TABLE IF NOT EXISTS ${
-        table
-      } ( local_id INTEGER PRIMARY KEY AUTOINCREMENT, ${
-        fieldString
-      })`;
+      let sql;
+      // if no key is given, the id field will autoincrement beginning with 1
+      if (key === undefined) {
+        sql = `CREATE TABLE IF NOT EXISTS ${
+          table
+        } ( local_id INTEGER PRIMARY KEY AUTOINCREMENT, ${
+          fieldString
+        })`;
+        // Otherwise use the primary key that's supplied
+      } else {
+        sql = `CREATE TABLE IF NOT EXISTS ${
+          table
+        } ( ${
+          fieldString
+        }, PRIMARY KEY (${key}))`;
+      }
 
       tx.executeSql(sql, null, (_tx, result) => {
         console.log('Make table success. Result: ', result);
