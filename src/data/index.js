@@ -23,9 +23,14 @@ export default {
       if (to.path === '/logs') {
         store.commit('clearLogs');
         store.commit('clearAssets');
+        store.commit('clearAreas');
         store.dispatch('loadCachedLogs');
-        store.dispatch('loadCachedAssets');
-        store.dispatch('updateAssets');
+        store.dispatch('updateAssets')
+          .then(() => console.log('Successfully updaated Assets'))
+          .catch(() => store.dispatch('loadCachedAssets'));
+        store.dispatch('updateAreas')
+          .then(() => console.log('Successfully updated Areas'))
+          .catch(() => store.dispatch('loadCachedAreas'));
         next();
       }
       next();
@@ -56,6 +61,14 @@ export default {
       }
       if (mutation.type === 'updateAsset') {
         store.dispatch('updateCachedAsset', mutation.payload);
+      }
+      if (mutation.type === 'addAreas') {
+        mutation.payload.forEach((area) => {
+          store.dispatch('createCachedArea', area);
+        });
+      }
+      if (mutation.type === 'updateArea') {
+        store.dispatch('updateCachedArea', mutation.payload);
       }
     });
     const TestComponent = Vue.component(Test.name, Test);

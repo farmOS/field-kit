@@ -25,32 +25,40 @@ export default {
       farm.log.get().then(console.log).catch(console.error);
     },
     updateAreas({ commit, rootState }) {
-      farm.area.get().then((res) => {
-        const areas = res.reduce((acc, { tid, name }) => {
-          const storeIndex = rootState.farm.areas.findIndex(a => a.id === tid);
-          if (storeIndex === -1) {
-            return acc.concat({ id: tid, name });
-          }
-          commit('updateArea', { id: tid, name });
-          return acc;
-        }, []);
-        commit('addAreas', areas);
-        console.log('Finished updating areas!');
-      }).catch(console.error);
+      // Return a promise, so if it fails, the DB can be checked
+      return new Promise((resolve, reject) => {
+        farm.area.get().then((res) => {
+          const areas = res.reduce((acc, { tid, name }) => {
+            const storeIndex = rootState.farm.areas.findIndex(a => a.id === tid);
+            if (storeIndex === -1) {
+              return acc.concat({ tid, name });
+            }
+            commit('updateArea', { tid, name });
+            return acc;
+          }, []);
+          commit('addAreas', areas);
+          console.log('Finished updating areas!');
+          resolve();
+        }).catch(reject);
+      });
     },
     updateAssets({ commit, rootState }) {
-      farm.asset.get().then((res) => {
-        const assets = res.reduce((acc, { id, name }) => {
-          const storeIndex = rootState.farm.assets.findIndex(a => a.id === id);
-          if (storeIndex === -1) {
-            return acc.concat({ id, name });
-          }
-          commit('updateAsset', { id, name });
-          return acc;
-        }, []);
-        commit('addAssets', assets);
-        console.log('Finished updating assets!');
-      }).catch(console.error);
+      // Return a promise, so if it fails, the DB can be checked
+      return new Promise((resolve, reject) => {
+        farm.asset.get().then((res) => {
+          const assets = res.reduce((acc, { id, name }) => {
+            const storeIndex = rootState.farm.assets.findIndex(a => a.id === id);
+            if (storeIndex === -1) {
+              return acc.concat({ id, name });
+            }
+            commit('updateAsset', { id, name });
+            return acc;
+          }, []);
+          commit('addAssets', assets);
+          console.log('Finished updating assets!');
+          resolve();
+        }).catch(reject);
+      });
     },
 
     // SEND LOGS TO SERVER

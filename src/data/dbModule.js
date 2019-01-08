@@ -86,6 +86,32 @@ export default {
         .catch(console.error);
     },
 
+    createCachedArea(_, newArea) {
+      const tableName = 'area';
+      const key = 'tid';
+      openDatabase() // eslint-disable-line no-use-before-define
+        .then(db => makeTable(db, tableName, newArea, key)) // eslint-disable-line no-use-before-define, max-len
+        .then(tx => saveRecord(tx, tableName, newArea)); // eslint-disable-line no-use-before-define, max-len
+    },
+
+    updateCachedArea(context, area) {
+      const table = 'area';
+      const key = 'tid';
+      openDatabase() // eslint-disable-line no-use-before-define
+        .then(db => getTX(db, table, key)) // eslint-disable-line no-use-before-define
+        .then(tx => saveRecord(tx, table, area)); // eslint-disable-line no-use-before-define, max-len
+    },
+
+    loadCachedAreas({ commit }) {
+      openDatabase() // eslint-disable-line no-use-before-define
+        .then(db => getRecords(db, 'area')) // eslint-disable-line no-use-before-define
+        .then((results) => {
+          console.log('Cached Areas: ', results);
+          commit('addAreas', results);
+        })
+        .catch(console.error);
+    },
+
   },
 };
 
