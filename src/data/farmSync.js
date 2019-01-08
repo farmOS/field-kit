@@ -92,6 +92,8 @@ export default function (host, user, password) {
           if (typeof opts === 'number') {
             return request(`/taxonomy_term.json?vocabulary=${areaVid(res)}&tid=${opts}`);
           }
+
+          // If an option object is passed, set defaults and parse the string params
           const { page = null, type = '' } = opts;
           const typeParams = (type !== '') ? `field_farm_area_type=${type}` : '';
           const pageParams = (page !== null) ? `page=${page}` : '';
@@ -102,10 +104,7 @@ export default function (host, user, password) {
           }
 
           // If no ID is passed but page is passed
-          return request(`/taxonomy_term.json?vocabulary=${areaVid(res)}&${typeParams}&${pageParams}`).then((res2) => {
-            console.log('This is the only page.');
-            return res2;
-          });
+          return request(`/taxonomy_term.json?vocabulary=${areaVid(res)}&${typeParams}&${pageParams}`);
         });
       },
       send(payload, id, token) {
@@ -123,6 +122,8 @@ export default function (host, user, password) {
         if (typeof opts === 'number') {
           return request(`/farm_asset/${opts}.json`);
         }
+
+        // If an option object is passed, set defaults and parse the string params
         const { page = null, type = '' } = opts;
         const typeParams = (type !== '') ? `type=${type}` : '';
         const pageParams = (page !== null) ? `page=${page}` : '';
@@ -133,10 +134,7 @@ export default function (host, user, password) {
         }
 
         // If no ID is passed but page is passed
-        return request(`/farm_asset.json?${typeParams}&${pageParams}`).then((res) => {
-          console.log('This is the only page.');
-          return res;
-        });
+        return request(`/farm_asset.json?${typeParams}&${pageParams}`);
       },
       send(payload, id, token) {
         return request(`/farm_asset${params(id)}`, { method: 'POST', payload, token });
@@ -151,6 +149,8 @@ export default function (host, user, password) {
         if (typeof opts === 'number') {
           return request(`/log/${opts}.json`);
         }
+
+        // If an option object is passed, set defaults and parse the string params
         const { page = null, type = '' } = opts;
         const typeParams = (type !== '') ? `type=${type}` : '';
         const pageParams = (page !== null) ? `page=${page}` : '';
@@ -161,10 +161,7 @@ export default function (host, user, password) {
         }
 
         // If no ID is passed but page is passed
-        return request(`/log.json?${typeParams}&${pageParams}`).then((res) => {
-          console.log('This is the only page.');
-          return res;
-        });
+        return request(`/log.json?${typeParams}&${pageParams}`);
       },
       send(payload, token) {
         return request('/log', { method: 'POST', payload, token });
