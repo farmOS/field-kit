@@ -86,10 +86,27 @@ export default function (host, user, password) {
           request(`taxonomy_term.json?vocabulary=${areaVid(res)}${params(id)}`, { method: 'DELETE', token })
         ));
       },
-      get(id) {
-        return request('taxonomy_vocabulary.json').then(res => (
-          request(`taxonomy_term.json?vocabulary=${areaVid(res)}${params(id)}`)
-        ));
+      get(opts = {}) {
+        return request('taxonomy_vocabulary.json').then((res) => {
+          // If an ID # is passed instead of an options object
+          if (typeof opts === 'number') {
+            return request(`/taxonomy_term.json?vocabulary=${areaVid(res)}&tid=${opts}`);
+          }
+          const { page = null, type = '' } = opts;
+          const typeParams = (type !== '') ? `field_farm_area_type=${type}` : '';
+          const pageParams = (page !== null) ? `page=${page}` : '';
+
+          // If no page # is passed, get all of them
+          if (page === null) {
+            return requestAll(`/taxonomy_term.json?vocabulary=${areaVid(res)}&${typeParams}`);
+          }
+
+          // If no ID is passed but page is passed
+          return request(`/taxonomy_term.json?vocabulary=${areaVid(res)}&${typeParams}&${pageParams}`).then((res2) => {
+            console.log('This is the only page.');
+            return res2;
+          });
+        });
       },
       send(payload, id, token) {
         return request('taxonomy_vocabulary.json').then(res => (

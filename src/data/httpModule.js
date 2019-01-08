@@ -26,7 +26,7 @@ export default {
     },
     updateAreas({ commit, rootState }) {
       farm.area.get().then((res) => {
-        const areas = res.list.reduce((acc, { tid, name }) => {
+        const areas = res.reduce((acc, { tid, name }) => {
           const storeIndex = rootState.farm.areas.findIndex(a => a.id === tid);
           if (storeIndex === -1) {
             return acc.concat({ id: tid, name });
