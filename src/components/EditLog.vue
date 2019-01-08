@@ -134,6 +134,7 @@
 <script>
 import moment from 'moment';
 import Autocomplete from './Autocomplete';
+
 export default {
   components: {
     Autocomplete,
@@ -142,8 +143,8 @@ export default {
     return {
       imageUrls: [],
       assets: [{ id: 1, name: 'Cow203' }, { id: 2, name: 'Cow301' },
-       { id: 3, name: 'Cow666' }, { id: 4, name: 'Cow145' }, { id: 5, name: 'Cow541' }],
-      assetLabel: "Assets",
+        { id: 3, name: 'Cow666' }, { id: 4, name: 'Cow145' }, { id: 5, name: 'Cow541' }],
+      assetLabel: 'Assets',
     };
   },
   props: [
@@ -173,7 +174,7 @@ export default {
         isCachedLocally: false,
       };
       this.$store.commit('updateCurrentLog', newProps);
-      console.log("UPDATED CURRENT LOG WITH");
+      console.log('WROTE THE FOLLOWING TO CURRENT LOG WITH updateCurrentLog');
       console.log(newProps);
     },
 

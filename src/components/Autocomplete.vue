@@ -21,11 +21,19 @@
             -->
             <option value="">Select an option</option>
             <option v-for="result in searchResults" :value="result.id">{{ result.name }}</option>
+            <!--
+              v-for generates a linting error that is apparently the result of a bug
+              https://github.com/vuejs/vetur/issues/261
+            -->
         </select>
     </div>
+    <!--
+      Displays all objects that have been selected, and provides for deletion
+    -->
     <div v-for="object in selectedObjects" class="form-item form-item-name form-group">
       <!--
-        Displays all objects that have been selected, and provides for deletion
+        v-for generates a linting error that is apparently the result of a bug
+        https://github.com/vuejs/vetur/issues/261
       -->
       <label for="type" class="control-label ">{{ object.name }}</label>
       <button
@@ -41,20 +49,19 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
 export default {
   props: ['objects', 'label'],
   data() {
     return {
       searchResults: [],
       selectedObjects: [],
-    }
+    };
   },
   methods: {
-    //The search method matches partial strings, and is case insensitive
+    // The search method matches partial strings, and is case insensitive
     doSearch(val) {
       let foundObjects = [];
-      if(val !== "") {
+      if (val !== '') {
         const lowerVal = val.toLowerCase();
         for (let i = 0; i < this.objects.length; i++) { // eslint-disable-line no-plusplus
           const object = this.objects[i];
@@ -70,8 +77,9 @@ export default {
     },
     // When results are selected, add them to selectedObjects
     selectSearchResult(id) {
-      if(id !== "") {
-        const selectedResult = this.searchResults.filter(result => result.id == id);
+      if (id !== '') {
+        const selectedResult = this.searchResults.filter(result => result.id == id); // eslint-disable-line eqeqeq
+        // eslint prefers strict equivalence, but I need non-strict equivalence here
         this.selectedObjects = this.selectedObjects.concat(selectedResult);
         this.$emit('results', this.selectedObjects);
       }
@@ -80,12 +88,12 @@ export default {
     removeObject(object) {
       this.selectedObjects = this.selectedObjects.filter(results => results !== object);
       this.$emit('results', [this.selectedObjects]);
-    }
+    },
   },
   beforeMount() {
-    this.doSearch("");
+    this.doSearch('');
   },
-}
+};
 
 </script>
 
