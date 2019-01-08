@@ -88,6 +88,12 @@ const farmModule = {
     clearLogs(state) {
       state.logs.splice(0, state.logs.length);
     },
+    clearAssets(state) {
+      state.assets.splice(0, state.assets.length);
+    },
+    clearAreas(state) {
+      state.areas.splice(0, state.areas.length);
+    },
     setIsWorking(state, booleanValue) {
       state.isWorking = booleanValue;
     },
