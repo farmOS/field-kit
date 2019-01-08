@@ -20,6 +20,7 @@ module.exports = {
         '/log.json',
         '/taxonomy_term.json',
         '/taxonomy_vocabulary.json',
+        '/farm_asset',
         '/farm_asset.json'
       ],
       target: 'http://localhost:80',

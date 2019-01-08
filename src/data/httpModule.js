@@ -40,7 +40,7 @@ export default {
     },
     updateAssets({ commit, rootState }) {
       farm.asset.get().then((res) => {
-        const assets = res.list.reduce((acc, { id, name }) => {
+        const assets = res.reduce((acc, { id, name }) => {
           const storeIndex = rootState.farm.assets.findIndex(a => a.id === id);
           if (storeIndex === -1) {
             return acc.concat({ id, name });

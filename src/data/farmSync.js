@@ -101,8 +101,25 @@ export default function (host, user, password) {
       delete(id, token) {
         return request(`/farm_asset/${id}.json`, { method: 'DELETE', token });
       },
-      get(id) {
-        return request(`/farm_asset${params(id)}`);
+      get(opts = {}) {
+        // If an ID # is passed instead of an options object
+        if (typeof opts === 'number') {
+          return request(`/farm_asset/${opts}.json`);
+        }
+        const { page = null, type = '' } = opts;
+        const typeParams = (type !== '') ? `type=${type}` : '';
+        const pageParams = (page !== null) ? `page=${page}` : '';
+
+        // If no page # is passed, get all of them
+        if (page === null) {
+          return requestAll(`/farm_asset.json?${typeParams}`);
+        }
+
+        // If no ID is passed but page is passed
+        return request(`/farm_asset.json?${typeParams}&${pageParams}`).then((res) => {
+          console.log('This is the only page.');
+          return res;
+        });
       },
       send(payload, id, token) {
         return request(`/farm_asset${params(id)}`, { method: 'POST', payload, token });
