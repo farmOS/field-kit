@@ -1,10 +1,10 @@
 <template lang="html">
   <div>
     <div class="form-item form-item-name form-group">
-      <label for="search" class="control-label">Find {{ label }}</label>
+      <label for="search" class="control-label">Add {{ label }} to log</label>
       <input
         @input="doSearch($event.target.value)"
-        placeholder="Enter search string"
+        placeholder="Enter text to search"
         type="text"
         class="form-control"
         autofocus>
@@ -13,14 +13,14 @@
       Displays up to 10 search results
     -->
     <div class="form-item form-item-name form-group">
-      <label for="type" class="control-label ">Add {{ label }} to log</label>
-        <div v-for="result in searchResults">
+        <div class="btn-group-vertical">
           <!--
             v-for generates a linting error that is apparently the result of a bug
             https://github.com/vuejs/vetur/issues/261
           -->
           <button type="button"
-            class="btn btn-outline-success btn-block font-weight-bold"
+            v-for="result in searchResults"
+            class="btn btn-outline-info btn-block font-weight-bold"
             @click="selectSearchResult(result.id)">
             {{ result.name }}
           </button>
