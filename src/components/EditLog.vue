@@ -50,13 +50,15 @@
           class="form-control">
       </div>
 
-      <!--
-        This is testing whether the autocomplete component is inserted correctly
-      -->
       <Autocomplete
         :objects="assets"
-        :label="assetLabel"
+        label="Assets"
         v-on:results="updateCurrentLog('field_farm_asset', $event)">
+      </Autocomplete>
+      <Autocomplete
+        :objects="areas"
+        label="Areas"
+        v-on:results="updateCurrentLog('field_farm_area', $event)">
       </Autocomplete>
 
 
@@ -142,16 +144,12 @@ export default {
   data() {
     return {
       imageUrls: [],
-      assets: [{ id: 1, name: 'Cow203' }, { id: 2, name: 'Cow301' },
-        { id: 3, name: 'Cow666' }, { id: 4, name: 'Cow145' }, { id: 5, name: 'Cow541' },
-        { id: 6, name: 'Goat 17' }, { id: 7, name: 'Goat 93' }, { id: 8, name: 'GOAT 82' },
-        { id: 9, name: 'goat 57' }, { id: 10, name: 'gOAT 01' }, { id: 11, name: 'Alice horse' },
-        { id: 12, name: 'Jeremiah horse' }, { id: 13, name: 'Gorse' }],
-      assetLabel: 'Assets',
     };
   },
   props: [
     'logs',
+    'areas',
+    'assets',
     'currentLogIndex',
     'isWorking',
     'statusText',

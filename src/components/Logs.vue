@@ -3,6 +3,8 @@
     <div v-if='showEditLog'>
       <EditLog
         :logs='logs'
+        :areas='areas'
+        :assets='assets'
         :currentLogIndex='currentLogIndex'
         :isWorking='isWorking'
         :statusText='statusText'
@@ -33,6 +35,8 @@ export default {
   },
   computed: mapState({
     logs: state => state.farm.logs,
+    areas: state => state.farm.areas,
+    assets: state => state.farm.assets,
     currentLogIndex: state => state.farm.currentLogIndex,
     isWorking: state => state.farm.isWorking,
     statusText: state => state.farm.statusText,
