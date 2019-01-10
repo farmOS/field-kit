@@ -52,12 +52,16 @@
 
       <Autocomplete
         :objects="assets"
-        label="Assets"
+        searchKey="name"
+        searchId="id"
+        label="Add assets to the log"
         v-on:results="updateCurrentLog('field_farm_asset', $event)">
       </Autocomplete>
       <Autocomplete
         :objects="areas"
-        label="Areas"
+        searchKey="name"
+        searchId="tid"
+        label="Add areas to the log"
         v-on:results="updateCurrentLog('field_farm_area', $event)">
       </Autocomplete>
 

@@ -1,7 +1,7 @@
 <template lang="html">
   <div>
     <div class="form-item form-item-name form-group">
-      <label for="search" class="control-label">Add {{ label }} to log</label>
+      <label for="search" class="control-label">{{ label }}</label>
       <input
         v-model="search"
         placeholder="Enter text to search"
@@ -20,8 +20,8 @@
           v-for="(result, i) in searchResults"
           class="list-group-item"
           :class="{ 'is-active': i === counter }"
-          @click="selectSearchResult(searchResults[i].id)">
-          {{result.name}}
+          @click="selectSearchResult(searchResults[i][searchId])">
+          {{result[searchKey]}}
         </li>
       </ul>
     </div>
@@ -33,7 +33,7 @@
         v-for generates a linting error that is apparently the result of a bug
         https://github.com/vuejs/vetur/issues/261
       -->
-      <label for="type" class="control-label ">{{ object.name }}</label>
+      <label for="type" class="control-label ">{{ object[searchKey] }}</label>
       <button
         :disabled='false'
         title="Remove"
@@ -47,7 +47,18 @@
 
 <script>
 export default {
-  props: ['objects', 'label'],
+  /*
+    PROPS: The objects are an array of JS objects we are searching through. The
+    searchKey must be provided so we know specifically which property on each
+    object we are searching against. The searchId is a unique identifier
+    for each object. The label is just a name for the search field
+  */
+  props: [
+    'objects',
+    'searchKey',
+    'searchId',
+    'label',
+  ],
   data() {
     return {
       search: '',
@@ -71,7 +82,11 @@ export default {
           const object = this.objects[i];
           const lowerName = object.name.toLowerCase();
           if (lowerName.includes(lowerVal) && foundObjects.length < 10) {
-            foundObjects.push({ name: object.name, id: object.id });
+            // TODO: Generalize this block to get all key-values from each object
+            foundObjects.push({
+              [this.searchKey]: object[this.searchKey],
+              [this.searchId]: object[this.searchId],
+            });
           }
         }
       }
@@ -80,7 +95,7 @@ export default {
     // When results are selected, add them to selectedObjects
     selectSearchResult(id) {
       if (id !== '') {
-        const selectedResult = this.searchResults.filter(result => result.id == id); // eslint-disable-line eqeqeq
+        const selectedResult = this.searchResults.filter(result => result[this.searchId] == id); // eslint-disable-line eqeqeq
         // eslint prefers strict equivalence, but I need non-strict equivalence here
         this.selectedObjects = this.selectedObjects.concat(selectedResult);
         this.$emit('results', this.selectedObjects);
@@ -106,7 +121,7 @@ export default {
       }
     },
     onEnter() {
-      const id = this.searchResults[this.counter].id;
+      const id = this.searchResults[this.counter][this.searchId];
       this.selectSearchResult(id);
     },
     handleClickOutside(evt) {
