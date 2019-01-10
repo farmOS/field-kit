@@ -7,24 +7,20 @@
         placeholder="Enter text to search"
         type="text"
         class="form-control"
+        @keydown.down="onArrowDown"
+        @keydown.up="onArrowUp"
+        @keydown.enter="onEnter"
         autofocus>
-    </div>
-    <!--
-      Displays up to 10 search results
-    -->
-    <div class="form-item form-item-name form-group">
-        <div class="btn-group-vertical">
-          <!--
-            v-for generates a linting error that is apparently the result of a bug
-            https://github.com/vuejs/vetur/issues/261
-          -->
-          <button type="button"
-            v-for="result in searchResults"
-            class="btn btn-outline-info btn-block font-weight-bold"
-            @click="selectSearchResult(result.id)">
-            {{ result.name }}
-          </button>
-        </div>
+      <ul
+        v-show="searchResults.length > 0"
+        class="search-results">
+        <li
+          v-for="(result, i) in searchResults"
+          :class="{ 'is-active': i === counter }"
+          @click="selectSearchResult(searchResults[i].id)">
+          {{result.name}}
+        </li>
+      </ul>
     </div>
     <!--
       Displays all objects that have been selected, and provides for deletion
@@ -53,6 +49,7 @@ export default {
     return {
       searchResults: [],
       selectedObjects: [],
+      counter: 0,
     };
   },
   methods: {
@@ -86,11 +83,36 @@ export default {
       this.selectedObjects = this.selectedObjects.filter(results => results !== object);
       this.$emit('results', [this.selectedObjects]);
     },
+
+    onArrowDown() {
+      if (this.counter < (this.searchResults.length - 1)) {
+        this.counter = this.counter + 1;
+      }
+    },
+
+    onArrowUp() {
+      if (this.counter > 0) {
+        this.counter = this.counter - 1;
+      }
+    },
+
+    onEnter() {
+      const id = this.searchResults[this.counter].id;
+      this.selectSearchResult(id);
+    },
+
   },
 };
 
 </script>
 
 <style scoped>
-
+  .search-results li {
+    list-style: none;
+  }
+  .search-results li.is-active,
+  .search-results li:hover {
+    background-color: var(--cyan);
+    color: white;
+  }
 </style>
