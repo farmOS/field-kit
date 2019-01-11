@@ -82,11 +82,7 @@ export default {
           const object = this.objects[i];
           const lowerName = object.name.toLowerCase();
           if (lowerName.includes(lowerVal) && foundObjects.length < 10) {
-            // TODO: Generalize this block to get all key-values from each object
-            foundObjects.push({
-              [this.searchKey]: object[this.searchKey],
-              [this.searchId]: object[this.searchId],
-            });
+            foundObjects.push(object);
           }
         }
       }
