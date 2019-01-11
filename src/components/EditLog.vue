@@ -51,14 +51,14 @@
       </div>
 
       <Autocomplete
-        :objects="assets"
+        :objects="filteredAssets"
         searchKey="name"
         searchId="id"
         label="Add assets to the log"
         v-on:results="updateCurrentLog('field_farm_asset', $event)">
       </Autocomplete>
       <Autocomplete
-        :objects="areas"
+        :objects="filteredAreas"
         searchKey="name"
         searchId="tid"
         label="Add areas to the log"
@@ -203,6 +203,26 @@ export default {
       }
     },
 
+  },
+
+  computed: {
+    /*
+      In order to avoid duplicates, filteredAssets & filteredAreas remove
+      assets/areas from the array of searchable objects if they've already been
+      added to the current log.
+    */
+    filteredAssets() {
+      const selectedAssets = this.logs[this.currentLogIndex].field_farm_asset
+      return this.assets.filter(asset => {
+        return !selectedAssets.some(selAsset => asset.id === selAsset.id);
+      })
+    },
+    filteredAreas() {
+      const selectedAreas = this.logs[this.currentLogIndex].field_farm_area
+      return this.areas.filter(area => {
+        return !selectedAreas.some(selArea => area.tid === selArea.tid);
+      })
+    },
   },
 
   watch: {
