@@ -156,7 +156,7 @@ function getTX(db, table, key) {
 }
 
 
-function makeTable(db, table, record, key) {
+function makeTable(db, table, record, primaryKey) {
   return new Promise((resolve, reject) => {
     console.log(`making table with name ${table} and the following data template: ${JSON.stringify(record)}`);
     // Creates a table called 'tableName' in the DB if none yet exists
@@ -164,22 +164,25 @@ function makeTable(db, table, record, key) {
       let fieldString = '';
       const keys = Object.keys(record);
       keys.forEach((i) => {
-        let suffix = '';
-        if (typeof record[i] === 'number') {
-          suffix = ' INT, ';
-        } else if (typeof record[i] === 'boolean') {
-          suffix = ' BOOLEAN, ';
-        } else {
-          suffix = ' VARCHAR(150), ';
+        // Iterate over all but the primaryKey, which will be added separately
+        if (i !== primaryKey) {
+          let suffix = '';
+          if (typeof record[i] === 'number') {
+            suffix = ' INT, ';
+          } else if (typeof record[i] === 'boolean') {
+            suffix = ' BOOLEAN, ';
+          } else {
+            suffix = ' VARCHAR(150), ';
+          }
+          fieldString = fieldString + i + suffix;
         }
-        fieldString = fieldString + i + suffix;
       });
       // I need to trim the last two characters to avoid a trailing comma
       fieldString = fieldString.substring(0, fieldString.length - 2);
 
       let sql;
       // if no key is given, the id field will autoincrement beginning with 1
-      if (key === undefined) {
+      if (primaryKey === undefined) {
         sql = `CREATE TABLE IF NOT EXISTS ${
           table
         } ( local_id INTEGER PRIMARY KEY AUTOINCREMENT, ${
@@ -187,11 +190,10 @@ function makeTable(db, table, record, key) {
         })`;
         // Otherwise use the primary key that's supplied
       } else {
-        sql = `CREATE TABLE IF NOT EXISTS ${
-          table
-        } ( ${
-          fieldString
-        }, PRIMARY KEY (${key}))`;
+        sql = `CREATE TABLE IF NOT EXISTS ${table} (
+          ${primaryKey} INTEGER PRIMARY KEY,
+           ${fieldString}
+         )`;
       }
 
       tx.executeSql(sql, null, (_tx, result) => {
