@@ -82,12 +82,12 @@ export default function (host, user, password) {
     },
     area: {
       delete(id, token) {
-        return request('taxonomy_vocabulary.json').then(res => (
-          request(`taxonomy_term.json?vocabulary=${areaVid(res)}${params(id)}`, { method: 'DELETE', token })
+        return request('/taxonomy_vocabulary.json').then(res => (
+          request(`/taxonomy_term.json?vocabulary=${areaVid(res)}${params(id)}`, { method: 'DELETE', token })
         ));
       },
       get(opts = {}) {
-        return request('taxonomy_vocabulary.json').then((res) => {
+        return request('/taxonomy_vocabulary.json').then((res) => {
           // If an ID # is passed instead of an options object
           if (typeof opts === 'number') {
             return request(`/taxonomy_term.json?vocabulary=${areaVid(res)}&tid=${opts}`);
@@ -108,8 +108,8 @@ export default function (host, user, password) {
         });
       },
       send(payload, id, token) {
-        return request('taxonomy_vocabulary.json').then(res => (
-          request(`taxonomy_term.json?vocabulary=${areaVid(res)}${params(id)}`, { method: 'POST', payload, token })
+        return request('/taxonomy_vocabulary.json').then(res => (
+          request(`/taxonomy_term.json?vocabulary=${areaVid(res)}${params(id)}`, { method: 'POST', payload, token })
         ));
       },
     },
