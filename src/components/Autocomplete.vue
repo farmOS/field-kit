@@ -102,7 +102,7 @@ export default {
     // Remove an object when the remove button is pressed
     removeObject(object) {
       this.selectedObjects = this.selectedObjects.filter(results => results !== object);
-      this.$emit('results', [this.selectedObjects]);
+      this.$emit('results', this.selectedObjects);
     },
     onArrowDown() {
       if (this.counter < (this.searchResults.length - 1)) {
