@@ -81,6 +81,7 @@ export default function (
       },
       // quantity,
       name,
+      done,
       type,
       timestamp,
       field_farm_images: images,
