@@ -3,16 +3,15 @@
     <div class="form-item form-item-name form-group">
       <label for="search" class="control-label">{{ label }}</label>
       <input
-        v-model="search"
+        :value="search"
         placeholder="Enter text to search"
         type="text"
         class="form-control"
         @focus="openResults"
-        @input="doSearch(search)"
+        @input="doSearch($event.target.value)"
         @keydown.down="onArrowDown"
         @keydown.up="onArrowUp"
-        @keydown.enter="onEnter"
-        autofocus>
+        @keydown.enter="onEnter">
       <ul
         v-show="isOpen && searchResults.length > 0"
         class="list-group search-results">
@@ -87,6 +86,7 @@ export default {
         }
       }
       this.searchResults = foundObjects;
+      this.search = val;
     },
     // When results are selected, add them to selectedObjects
     selectSearchResult(id) {
