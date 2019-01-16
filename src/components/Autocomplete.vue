@@ -17,6 +17,7 @@
         class="list-group search-results">
         <li
           v-for="(result, i) in searchResults"
+          v-bind:key="`result-${i}-${Math.floor(Math.random() * 1000000)}`"
           class="list-group-item"
           :class="{ 'is-active': i === counter }"
           @click="selectSearchResult(searchResults[i][searchId])">
@@ -27,11 +28,10 @@
     <!--
       Displays all objects that have been selected, and provides for deletion
     -->
-    <div v-for="object in selectedObjects" class="form-item form-item-name form-group">
-      <!--
-        v-for generates a linting error that is apparently the result of a bug
-        https://github.com/vuejs/vetur/issues/261
-      -->
+    <div
+    v-for="(object, i) in selectedObjects"
+    v-bind:key="`object-${i}-${Math.floor(Math.random() * 1000000)}`"
+    class="form-item form-item-name form-group">
       <label for="type" class="control-label ">{{ object[searchKey] }}</label>
       <button
         :disabled='false'
@@ -68,7 +68,7 @@ export default {
     };
   },
   methods: {
-    openResults(e) {
+    openResults() {
       this.isOpen = true;
     },
     // The search method matches partial strings, and is case insensitive
@@ -77,7 +77,7 @@ export default {
       const foundObjects = [];
       if (val !== '') {
         const lowerVal = val.toLowerCase();
-        for (let i = 0; i < this.objects.length; i++) { // eslint-disable-line no-plusplus
+        for (let i = 0; i < this.objects.length; i += 1) {
           const object = this.objects[i];
           const lowerName = object.name.toLowerCase();
           if (lowerName.includes(lowerVal) && foundObjects.length < 10) {
@@ -91,8 +91,7 @@ export default {
     // When results are selected, add them to selectedObjects
     selectSearchResult(id) {
       if (id !== '') {
-        const selectedResult = this.searchResults.filter(result => result[this.searchId] == id); // eslint-disable-line eqeqeq
-        // eslint prefers strict equivalence, but I need non-strict equivalence here
+        const selectedResult = this.searchResults.filter(result => result[this.searchId] === id);
         this.selectedObjects = this.selectedObjects.concat(selectedResult);
         this.$emit('results', this.selectedObjects);
         this.search = '';
@@ -128,10 +127,10 @@ export default {
     },
   },
   mounted() {
-    document.addEventListener('click', this.handleClickOutside)
+    document.addEventListener('click', this.handleClickOutside);
   },
   destroyed() {
-    document.removeEventListener('click', this.handleClickOutside)
+    document.removeEventListener('click', this.handleClickOutside);
   },
 };
 
