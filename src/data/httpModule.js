@@ -1,12 +1,12 @@
 import logFactory, { SERVER } from './logFactory';
 import farmSync from './farmSync';
 
-// Just for testing
-const host = localStorage.getItem('url');
-const user = localStorage.getItem('user');
-const password = localStorage.getItem('password');
-
-const farm = farmSync(host, user, password);
+const farm = () => {
+  const host = localStorage.getItem('url');
+  const user = localStorage.getItem('user');
+  const password = localStorage.getItem('password');
+  return farmSync(host, user, password);
+};
 
 export default {
   actions: {
@@ -27,7 +27,7 @@ export default {
     updateAreas({ commit, rootState }) {
       // Return a promise, so if it fails, the DB can be checked
       return new Promise((resolve, reject) => {
-        farm.area.get().then((res) => {
+        farm().area.get().then((res) => {
           const areas = res.reduce((acc, { tid, name }) => {
             const storeIndex = rootState.farm.areas.findIndex(a => a.id === tid);
             if (storeIndex === -1) {
@@ -45,7 +45,7 @@ export default {
     updateAssets({ commit, rootState }) {
       // Return a promise, so if it fails, the DB can be checked
       return new Promise((resolve, reject) => {
-        farm.asset.get().then((res) => {
+        farm().asset.get().then((res) => {
           const assets = res.reduce((acc, { id, name }) => {
             const storeIndex = rootState.farm.assets.findIndex(a => a.id === id);
             if (storeIndex === -1) {
@@ -115,7 +115,7 @@ export default {
       if (localStorage.getItem('token')) {
         payload.indices.map((index) => {
           const newLog = logFactory(rootState.farm.logs[index], SERVER);
-          return farm.log.send(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
+          return farm().log.send(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
             .then(res => handleSyncResponse(res, index))
             .catch(err => handleSyncError(err, index));
         });
