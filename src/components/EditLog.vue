@@ -171,11 +171,13 @@ export default {
   components: {
     Autocomplete,
   },
+  
   data() {
     return {
       imageUrls: [],
     };
   },
+
   props: [
     'logs',
     'areas',
@@ -186,10 +188,14 @@ export default {
     'photoLoc',
     'geolocation',
   ],
+
   created() {
     // Inititialize the log, default to "Observation"
     this.$store.dispatch('initializeLog', 'farm_observation');
+
+    console.log(`GEOLOCATION IN APP STORE IS LAT: ${this.geolocation.Latitude}, LONG: ${this.geolocation.Longitude}`);
   },
+
   methods: {
 
     convertOutOfUnix(unixTimestamp) {
@@ -235,12 +241,7 @@ export default {
     },
 
   },
-  created() {
-    //Get geolocation from store and output to
-    ////
-    //console.log(`GEOLOCATION IN APP STORE IS LAT: ${this.geolocation.Latitude}, LONG: ${this.geolocation.Longitude}`);
-    ////
-  },
+
   computed: {
     /*
       In order to avoid duplicates, filteredAssets & filteredAreas remove

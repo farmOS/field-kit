@@ -51,14 +51,14 @@ export default {
     closeError(index) {
       this.$store.commit('dismissError', index)
     },
-  //  onDeviceReady() {
-  //    console.log('RECEIVED DEVICEREADY CALL IN APP.VUE');
-  //    this.$store.dispatch('getGeolocation');
-  //  },
+    onDeviceReady() {
+      console.log('RECEIVED DEVICEREADY CALL IN APP.VUE');
+      this.$store.dispatch('getGeolocation');
+    },
   },
-  //created() {
-  //  document.addEventListener('deviceready', this.onDeviceReady(), false);
-  //},
+  created() {
+    document.addEventListener('deviceready', this.onDeviceReady(), false);
+  },
 };
 </script>
 

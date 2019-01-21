@@ -12,6 +12,7 @@
         :geolocation='geolocation'
         v-on:view-all='toggleLogs'
       />
+      <!-- :geolocation='geolocation' -->
     </div>
     <div v-if='showAllLogs'>
       <AllLogs
