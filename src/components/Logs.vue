@@ -9,6 +9,7 @@
         :isWorking='isWorking'
         :statusText='statusText'
         :photoLoc='photoLoc'
+        :geolocation='geolocation'
         v-on:view-all='toggleLogs'
       />
     </div>
@@ -41,6 +42,7 @@ export default {
     isWorking: state => state.farm.isWorking,
     statusText: state => state.farm.statusText,
     photoLoc: state => state.farm.photoLoc,
+    geolocation: state => state.farm.geolocation,
   }),
   components: {
     AllLogs,

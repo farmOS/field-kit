@@ -184,6 +184,7 @@ export default {
     'isWorking',
     'statusText',
     'photoLoc',
+    'geolocation',
   ],
   created() {
     // Inititialize the log, default to "Observation"
@@ -234,7 +235,12 @@ export default {
     },
 
   },
-
+  created() {
+    //Get geolocation from store and output to
+    ////
+    //console.log(`GEOLOCATION IN APP STORE IS LAT: ${this.geolocation.Latitude}, LONG: ${this.geolocation.Longitude}`);
+    ////
+  },
   computed: {
     /*
       In order to avoid duplicates, filteredAssets & filteredAreas remove
@@ -253,6 +259,7 @@ export default {
         return !selectedAreas.some(selArea => area.tid === selArea.tid);
       })
     },
+
   },
 
   watch: {
