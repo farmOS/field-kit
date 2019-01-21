@@ -18,7 +18,7 @@ export default {
     store.registerModule('data', dbModule);
     store.registerModule('http', httpModule);
     store.registerModule('camera', camModule);
-    //store.registerModule('geoloc', geoModule);
+    store.registerModule('geoloc', geoModule);
     router.beforeEach((to, from, next) => {
       if (to.path === '/logs') {
         store.commit('clearLogs');

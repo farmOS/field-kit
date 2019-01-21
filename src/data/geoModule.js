@@ -15,9 +15,7 @@ export default {
         console.log("SETTING GEOLOCATION AS:");
         console.log(currentLoc);
         // Set 'geolocation' variable in the app store
-        ////
-        //commit('setGeoloc', currentLoc);
-        ////
+        commit('setGeoloc', currentLoc);
       }
       function onError(error) {
         console.log(`Code: ${error.code} Message: ${error.message}`);
