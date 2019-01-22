@@ -1,4 +1,4 @@
-// A utlity for obtaining geolocation via Cordova
+// A utlity for obtaining geolocation via Cordova and checking it against areas with turf.js
 
 // Importing turf geolibrary
 import * as turf from '@turf/turf'
@@ -27,28 +27,42 @@ export default {
       // Use the Cordova geolocation plugin to get current location from the device OR browser
       navigator.geolocation.getCurrentPosition(onSuccess, onError);
     },
+
     checkInside({ rootState }, params) {
-      console.log("DOING CHECKINSIDE WITH");
-      console.log(params.point);
-      const polyJSON = geoJSONify(params.polygon);
-      console.log(polyJSON);
-
-      // Now I'll check whether the point is inside the polygon with turf
-      const point = turf.point(params.point);
-      const polygon = turf.polygon(polyJSON);
-      const isInside = turf.inside(point, polygon);
-      console.log(`TURF.INSIDE RESULTS: ${isInside}`);
-
-      // For geoJSON format, I need lon,lat pairs in double-nested numeric arrays, as in [[[o,a],[o,a]]]
-      function geoJSONify(polyFarm) {
-        const coordPairs = polyFarm.slice(10, -2).split(", ");
+      // For each polygon I need lon,lat pairs in a nested numeric array, as in [[o,a],[o,a]]
+      function parsePoly(poly) {
+        const coordPairs = poly.split(", ");
         const points = [];
         for (var i = 0; i < coordPairs.length; i++) {
           const pair = coordPairs[i].split(" ");
           points.push([Number(pair[0]), Number(pair[1])]);
         }
-        return ([points]);
+        return (points);
       }
+      // If the geometry contains multiple polygons, I need to separate them before parsing
+      function geoJSONify(geometry) {
+        const geoJSON = [];
+        if (geometry.includes("GEOMETRY")) {
+          const polys = geometry.slice(30, -3).split(")), POLYGON ((");
+          for (var i = 0; i < polys.length; i++) {
+            geoJSON.push(parsePoly(polys[i]));
+          }
+        } else {
+          geoJSON.push(parsePoly(geometry.slice(10, -2)));
+        }
+        return geoJSON;
+      }
+
+      console.log("DOING CHECKINSIDE WITH");
+      console.log(params.point);
+      const geomJSON = geoJSONify(params.polygon);
+      console.log(geomJSON);
+
+      // Now I'll check whether the point is inside the polygon with turf
+      const point = turf.point(params.point);
+      const polygon = turf.polygon(geomJSON);
+      const isInside = turf.inside(point, polygon);
+      console.log(`TURF.INSIDE RESULTS: ${isInside}`);
     },
   },
 };
