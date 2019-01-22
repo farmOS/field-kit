@@ -171,7 +171,7 @@ export default {
   components: {
     Autocomplete,
   },
-  
+
   data() {
     return {
       imageUrls: [],
@@ -193,7 +193,15 @@ export default {
     // Inititialize the log, default to "Observation"
     this.$store.dispatch('initializeLog', 'farm_observation');
 
-    console.log(`GEOLOCATION IN APP STORE IS LAT: ${this.geolocation.Latitude}, LONG: ${this.geolocation.Longitude}`);
+    // Use checkInside in geoModule with each area to see if the current location is inside an area
+    for (var i = 0; i < this.areas.length; i++) {
+      const geofield = this.areas[i].field_farm_geofield[0];
+      if(geofield !== undefined && this.geolocation.Longitude !== undefined) {
+        const lonlat = [this.geolocation.Longitude, this.geolocation.Latitude];
+        const areaProps = {point: lonlat, polygon: geofield.geom};
+        this.$store.dispatch('checkInside', areaProps);
+      }
+    }
   },
 
   methods: {
