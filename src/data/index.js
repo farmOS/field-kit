@@ -25,12 +25,10 @@ export default {
         store.commit('clearAssets');
         store.commit('clearAreas');
         store.dispatch('loadCachedLogs');
-        store.dispatch('updateAssets')
-          .then(() => console.log('Successfully updaated Assets'))
-          .catch(() => store.dispatch('loadCachedAssets'));
-        store.dispatch('updateAreas')
-          .then(() => console.log('Successfully updated Areas'))
-          .catch(() => store.dispatch('loadCachedAreas'));
+        store.dispatch('loadCachedAssets')
+          .then(() => store.dispatch('updateAssets'));
+        store.dispatch('loadCachedAreas')
+          .then(() => store.dispatch('updateAreas'));
         next();
       }
       next();
@@ -61,6 +59,12 @@ export default {
       }
       if (mutation.type === 'updateAsset') {
         store.dispatch('updateCachedAsset', mutation.payload);
+      }
+      if (mutation.type === 'deleteAllAssets') {
+        store.dispatch('deleteAllCachedAssets');
+      }
+      if (mutation.type === 'deleteAllAreas') {
+        store.dispatch('deleteAllCachedAreas');
       }
       if (mutation.type === 'addAreas') {
         mutation.payload.forEach((area) => {

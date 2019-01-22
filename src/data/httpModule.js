@@ -24,41 +24,23 @@ export default {
     getLogs() {
       farm.log.get().then(console.log).catch(console.error);
     },
-    updateAreas({ commit, rootState }) {
-      // Return a promise, so if it fails, the DB can be checked
-      return new Promise((resolve, reject) => {
-        farm().area.get().then((res) => {
-          const areas = res.reduce((acc, { tid, name }) => {
-            const storeIndex = rootState.farm.areas.findIndex(a => a.id === tid);
-            if (storeIndex === -1) {
-              return acc.concat({ tid, name });
-            }
-            commit('updateArea', { tid, name });
-            return acc;
-          }, []);
-          commit('addAreas', areas);
-          console.log('Finished updating areas!');
-          resolve();
-        }).catch(reject);
-      });
+    updateAreas({ commit }) {
+      farm().area.get().then((res) => {
+        // If a successful response is received, delete and replace all areas
+        commit('deleteAllAreas');
+        const areas = res.map(({ tid, name }) => ({ tid, name }));
+        commit('addAreas', areas);
+        console.log('Finished updating areas!');
+      }).catch(console.error);
     },
-    updateAssets({ commit, rootState }) {
-      // Return a promise, so if it fails, the DB can be checked
-      return new Promise((resolve, reject) => {
-        farm().asset.get().then((res) => {
-          const assets = res.reduce((acc, { id, name }) => {
-            const storeIndex = rootState.farm.assets.findIndex(a => a.id === id);
-            if (storeIndex === -1) {
-              return acc.concat({ id, name });
-            }
-            commit('updateAsset', { id, name });
-            return acc;
-          }, []);
-          commit('addAssets', assets);
-          console.log('Finished updating assets!');
-          resolve();
-        }).catch(reject);
-      });
+    updateAssets({ commit }) {
+      farm().asset.get().then((res) => {
+        // If a successful response is received, delete and replace all assets
+        commit('deleteAllAssets');
+        const assets = res.map(({ id, name }) => ({ id, name }));
+        commit('addAssets', assets);
+        console.log('Finished updating assets!');
+      }).catch(console.error);
     },
 
     // SEND LOGS TO SERVER

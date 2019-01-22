@@ -76,14 +76,26 @@ export default {
         .then(tx => saveRecord(tx, table, asset)); // eslint-disable-line no-use-before-define, max-len
     },
 
-    loadCachedAssets({ commit }) {
+    deleteAllCachedAssets() {
+      console.log('Deleting all assets');
       openDatabase() // eslint-disable-line no-use-before-define
-        .then(db => getRecords(db, 'asset')) // eslint-disable-line no-use-before-define
-        .then((results) => {
-          console.log('Cached Assets: ', results);
-          commit('addAssets', results);
-        })
+        .then(db => getTX(db, 'asset')) // eslint-disable-line no-use-before-define
+        .then(tx => dropTable(tx, 'asset')) // eslint-disable-line no-use-before-define
+        .then(console.log)
         .catch(console.error);
+    },
+
+    loadCachedAssets({ commit }) {
+      return new Promise((resolve, reject) => {
+        openDatabase() // eslint-disable-line no-use-before-define
+          .then(db => getRecords(db, 'asset')) // eslint-disable-line no-use-before-define
+          .then((results) => {
+            console.log('Cached Assets: ', results);
+            commit('addAssets', results);
+            resolve();
+          })
+          .catch(reject);
+      });
     },
 
     createCachedArea(_, newArea) {
@@ -102,14 +114,26 @@ export default {
         .then(tx => saveRecord(tx, table, area)); // eslint-disable-line no-use-before-define, max-len
     },
 
-    loadCachedAreas({ commit }) {
+    deleteAllCachedAreas() {
+      console.log('Deleting all areas');
       openDatabase() // eslint-disable-line no-use-before-define
-        .then(db => getRecords(db, 'area')) // eslint-disable-line no-use-before-define
-        .then((results) => {
-          console.log('Cached Areas: ', results);
-          commit('addAreas', results);
-        })
+        .then(db => getTX(db, 'area')) // eslint-disable-line no-use-before-define
+        .then(tx => dropTable(tx, 'area')) // eslint-disable-line no-use-before-define
+        .then(console.log)
         .catch(console.error);
+    },
+
+    loadCachedAreas({ commit }) {
+      return new Promise((resolve, reject) => {
+        openDatabase() // eslint-disable-line no-use-before-define
+          .then(db => getRecords(db, 'area')) // eslint-disable-line no-use-before-define
+          .then((results) => {
+            console.log('Cached Areas: ', results);
+            commit('addAreas', results);
+            resolve();
+          })
+          .catch(reject);
+      });
     },
 
   },
@@ -300,5 +324,12 @@ function deleteRecord(tx, table, id, key) {
       sql = `DELETE FROM ${table} WHERE ${key} = ${id}`;
     }
     tx.executeSql(sql, [], (_tx, res) => resolve(res), (_, err) => reject(err));
+  });
+}
+
+function dropTable(tx, table) {
+  return new Promise((resolve, reject) => {
+    const sql = `DROP TABLE ${table}`;
+    tx.executeSql(sql, [], (_, res) => resolve(res), (_, err) => reject(err));
   });
 }
