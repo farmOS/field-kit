@@ -85,6 +85,12 @@ const farmModule = {
     deleteLog(state, { index }) {
       state.logs.splice(index, 1);
     },
+    deleteAllAssets(state) {
+      state.assets = [];
+    },
+    deleteAllAreas(state) {
+      state.areas = [];
+    },
     clearLogs(state) {
       state.logs.splice(0, state.logs.length);
     },
