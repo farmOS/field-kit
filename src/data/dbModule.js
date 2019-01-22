@@ -47,14 +47,14 @@ export default {
         .then(() => commit('updateCurrentLog', { isCachedLocally: true }));
     },
 
-    deleteLog(_, { local_id, type, name }) { // eslint-disable-line camelcase
+    deleteLog(_, { local_id, name }) { // eslint-disable-line camelcase
       // delete record from WebSQL
       console.log(
         'deleteRecord() action dispatched on ',
         name,
       );
       openDatabase() // eslint-disable-line no-use-before-define
-        .then(db => getTX(db, type)) // eslint-disable-line no-use-before-define
+        .then(db => getTX(db, 'log')) // eslint-disable-line no-use-before-define
         .then(tx => deleteRecord(tx, 'log', local_id)) // eslint-disable-line no-use-before-define
         .then(console.log)
         .catch(console.error);
@@ -291,9 +291,14 @@ function getRecords(db, table) {
   }));
 }
 
-function deleteRecord(tx, table, id) {
+function deleteRecord(tx, table, id, key) {
   return new Promise((resolve, reject) => {
-    const sql = `DELETE FROM ${table} WHERE local_id = ${id}`;
-    tx.executeSql(sql, [], (_tx, res) => resolve(res), reject);
+    let sql;
+    if (key === undefined) {
+      sql = `DELETE FROM ${table} WHERE local_id = ${id}`;
+    } else {
+      sql = `DELETE FROM ${table} WHERE ${key} = ${id}`;
+    }
+    tx.executeSql(sql, [], (_tx, res) => resolve(res), (_, err) => reject(err));
   });
 }
