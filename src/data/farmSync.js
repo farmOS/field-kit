@@ -124,17 +124,22 @@ export default function (host, user, password) {
         }
 
         // If an option object is passed, set defaults and parse the string params
-        const { page = null, type = '' } = opts;
+        const {
+          type = '',
+          archived = false,
+          page = null,
+        } = opts;
         const typeParams = (type !== '') ? `type=${type}` : '';
-        const pageParams = (page !== null) ? `page=${page}` : '';
+        const archiveParams = (archived) ? '' : '&archived=0';
+        const pageParams = (page !== null) ? `&page=${page}` : '';
 
         // If no page # is passed, get all of them
         if (page === null) {
-          return requestAll(`/farm_asset.json?${typeParams}`);
+          return requestAll(`/farm_asset.json?${typeParams}${archiveParams}`);
         }
 
         // If no ID is passed but page is passed
-        return request(`/farm_asset.json?${typeParams}&${pageParams}`);
+        return request(`/farm_asset.json?${typeParams}${archiveParams}${pageParams}`);
       },
       send(payload, id, token) {
         return request(`/farm_asset${params(id)}`, { method: 'POST', payload, token });
