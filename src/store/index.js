@@ -127,6 +127,9 @@ const farmModule = {
       });
       commit('addLogAndMakeCurrent', newLog);
     },
+    forceSyncAssetsAndAreas() {
+      // this is just a hook for synchronizing via the httpModule
+    },
   },
 };
 

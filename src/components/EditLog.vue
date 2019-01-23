@@ -63,6 +63,7 @@
             <button
               type="button"
               class="btn btn-light"
+              @click="forceSync"
               name="button">
               Sync Now
             </button>
@@ -82,6 +83,7 @@
             <button
               type="button"
               class="btn btn-light"
+              @click="forceSync"
               name="button">
               Sync Now
             </button>
@@ -195,6 +197,10 @@ export default {
 
     convertIntoUnix(nonUnixTimestamp) {
       return Math.floor(new Date(nonUnixTimestamp).getTime() / 1000).toString();
+    },
+
+    forceSync() {
+      this.$store.dispatch('forceSyncAssetsAndAreas');
     },
 
     updateCurrentLog(key, val) {
