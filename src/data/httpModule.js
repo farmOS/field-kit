@@ -25,22 +25,22 @@ export default {
       farm.log.get().then(console.log).catch(console.error);
     },
     updateAreas({ commit }) {
-      farm().area.get().then((res) => {
+      return farm().area.get().then((res) => {
         // If a successful response is received, delete and replace all areas
         commit('deleteAllAreas');
         const areas = res.map(({ tid, name }) => ({ tid, name }));
         commit('addAreas', areas);
         console.log('Finished updating areas!');
-      }).catch(console.error);
+      }).catch((err) => { throw err; });
     },
     updateAssets({ commit }) {
-      farm().asset.get().then((res) => {
+      return farm().asset.get().then((res) => {
         // If a successful response is received, delete and replace all assets
         commit('deleteAllAssets');
         const assets = res.map(({ id, name }) => ({ id, name }));
         commit('addAssets', assets);
         console.log('Finished updating assets!');
-      }).catch(console.error);
+      }).catch((err) => { throw err; });
     },
 
     // SEND LOGS TO SERVER

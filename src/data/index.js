@@ -75,6 +75,40 @@ export default {
         store.dispatch('updateCachedArea', mutation.payload);
       }
     });
+    store.subscribeAction((action) => {
+      if (action.type === 'forceSyncAssetsAndAreas') {
+        if (localStorage.getItem('url') !== null) {
+          store.dispatch('updateAssets').then().catch((err) => {
+            if (err.status === 403 || err.status === 401) {
+              router.push('/login');
+              return;
+            }
+            const errorPayload = {
+              message: `${err.status} error while syncing assets: ${err.statusText}`,
+              errorCode: err.statusText,
+              level: 'warning',
+              show: true,
+            };
+            store.commit('logError', errorPayload);
+          });
+          store.dispatch('updateAreas').then().catch((err) => {
+            if (err.status === 403 || err.status === 401) {
+              router.push('/login');
+              return;
+            }
+            const errorPayload = {
+              message: `${err.status} error while syncing areas: ${err.statusText}`,
+              errorCode: err.statusText,
+              level: 'warning',
+              show: true,
+            };
+            store.commit('logError', errorPayload);
+          });
+          return;
+        }
+        router.push('/login');
+      }
+    });
     const TestComponent = Vue.component(Test.name, Test);
     router.addRoutes([{
       path: '/test',
