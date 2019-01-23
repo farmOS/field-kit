@@ -13,9 +13,15 @@
         @keydown.up="onArrowUp"
         @keydown.enter="onEnter">
       <ul
-        v-show="isOpen && searchResults.length > 0"
+        v-show="isOpen && search.length > 0"
         class="list-group search-results">
         <li
+          v-if="searchResults.length === 0"
+          class="list-group-item empty">
+          <slot name="empty">No Results</slot>
+        </li>
+        <li
+          v-else
           v-for="(result, i) in searchResults"
           v-bind:key="`result-${i}-${Math.floor(Math.random() * 1000000)}`"
           class="list-group-item"
@@ -146,7 +152,7 @@ export default {
     list-style: none;
   }
   .search-results li.is-active,
-  .search-results li:hover {
+  .search-results li:hover:not(.empty) {
     background-color: var(--cyan);
     color: white;
   }

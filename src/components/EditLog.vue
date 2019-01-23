@@ -56,6 +56,18 @@
         searchId="id"
         label="Add assets to the log"
         v-on:results="updateCurrentLog('field_farm_asset', $event)">
+        <template slot="empty">
+          <div class="empty-slot">
+            <em>No assets found.</em>
+            <br>
+            <button
+              type="button"
+              class="btn btn-light"
+              name="button">
+              Sync Now
+            </button>
+          </div>
+        </template>
       </Autocomplete>
       <Autocomplete
         :objects="filteredAreas"
@@ -63,6 +75,18 @@
         searchId="tid"
         label="Add areas to the log"
         v-on:results="updateCurrentLog('field_farm_area', $event)">
+        <template slot="empty">
+          <div class="empty-slot">
+            <em>No areas found.</em>
+            <br>
+            <button
+              type="button"
+              class="btn btn-light"
+              name="button">
+              Sync Now
+            </button>
+          </div>
+        </template>
       </Autocomplete>
 
 
@@ -243,6 +267,16 @@ export default {
   .preview {
     width: 100%;
     height: 100%;
+  }
+
+  .empty-slot {
+    text-align: center;
+    color: var(--gray);
+  }
+
+  .empty-slot button {
+    margin: 0.5rem;
+    color: var(--gray);
   }
 
 </style>
