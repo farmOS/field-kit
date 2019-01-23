@@ -10,20 +10,6 @@ const farm = () => {
 
 export default {
   actions: {
-    // This is just a testing implementation, the real deal's in loginModule
-    authenticate() {
-      farm.authenticate()
-        .then(console.log).catch(console.error);
-    },
-    getAreas() {
-      farm.area.get().then(console.log).catch(console.error);
-    },
-    getAssets() {
-      farm.asset.get().then(console.log).catch(console.error);
-    },
-    getLogs() {
-      farm.log.get().then(console.log).catch(console.error);
-    },
     updateAreas({ commit }) {
       return farm().area.get().then((res) => {
         // If a successful response is received, delete and replace all areas
