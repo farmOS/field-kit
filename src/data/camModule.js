@@ -7,7 +7,6 @@ export default {
     */
     getPhotoLoc({ commit, rootState }) {
       function handleResponse(photoLoc) {
-        commit('setStatusText', `Took the following photo: ${photoLoc}`);
         // commit('setPhotoLoc', photoLoc);
         const prevLog = rootState.farm.logs[rootState.farm.currentLogIndex];
         const dataURL = `data:image/jpeg;base64,${photoLoc}`;
@@ -18,7 +17,6 @@ export default {
         commit('updateCurrentLog', newProps);
       }
       function handleError(error) {
-        commit('setStatusText', `Error capturing photo: ${error}`);
       }
       getPhotoFromCamera() // eslint-disable-line no-use-before-define
         .then(handleResponse, handleError);
