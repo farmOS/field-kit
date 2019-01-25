@@ -29,8 +29,6 @@ const farmModule = {
     assets: [],
     areas: [],
     currentLogIndex: 0,
-    isWorking: false,
-    statusText: '',
     photoLoc: '',
     geolocation: {},
     localArea: [],
@@ -102,12 +100,6 @@ const farmModule = {
     },
     clearAreas(state) {
       state.areas.splice(0, state.areas.length);
-    },
-    setIsWorking(state, booleanValue) {
-      state.isWorking = booleanValue;
-    },
-    setStatusText(state, text) {
-      state.statusText = text;
     },
     setPhotoLoc(state, loc) {
       state.photoLoc = loc;
