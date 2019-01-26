@@ -40,6 +40,7 @@ export default function (
     remoteUri = '',
     field_farm_asset = [], // eslint-disable-line camelcase
     field_farm_area = [], // eslint-disable-line camelcase
+    field_farm_geofield = [], // eslint-disable-line camelcase
   } = {},
   dest,
 ) {
@@ -67,6 +68,7 @@ export default function (
       remoteUri,
       field_farm_asset: parseObjects(field_farm_asset), // eslint-disable-line no-use-before-define
       field_farm_area: parseObjects(field_farm_area), // eslint-disable-line no-use-before-define
+      field_farm_geofield,
     };
   }
   // The format for sending logs to the farmOS REST Server.
@@ -87,6 +89,7 @@ export default function (
       field_farm_images: images,
       field_farm_asset: assets,
       field_farm_area: areas,
+      field_farm_geofield,
     };
     /*
       Only return id property if one has already been assigned by the server,
@@ -112,6 +115,7 @@ export default function (
       remoteUri,
       field_farm_asset: JSON.stringify(field_farm_asset),
       field_farm_area: JSON.stringify(field_farm_area),
+      field_farm_geofield,
     };
     /*
       Only return local_id property if one has already been assigned by WebSQL,

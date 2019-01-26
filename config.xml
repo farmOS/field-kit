@@ -27,18 +27,18 @@
         <string>farmOS would like access to the photo library</string>
     </config-file>
     <plugin name="cordova-plugin-whitelist" spec="^1.3.3" />
-    <plugin name="cordova-plugin-camera" spec="2.4.1">
+    <plugin name="cordova-plugin-network-information" spec="^2.0.1" />
+    <plugin name="cordova-plugin-camera" spec="^4.0.3">
         <variable name="CAMERA_USAGE_DESCRIPTION" value="farmOS would like access to the camera" />
         <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="farmOS would like access to the camera" />
     </plugin>
-    <plugin name="cordova-plugin-network-information" spec="^2.0.1" />
-    <plugin name="cordova-plugin-file" spec="^6.0.1" />
     <plugin name="cordova-plugin-ios-camera-permissions" spec="^1.2.0">
         <variable name="CAMERA_USAGE_DESCRIPTION" value="This app needs camera access" />
         <variable name="MICROPHONE_USAGE_DESCRIPTION" value="This app needs microphone access" />
         <variable name="PHOTOLIBRARY_ADD_USAGE_DESCRIPTION" value="This app needs write-access to photo library" />
         <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="This app needs read/write-access photo library access" />
     </plugin>
-    <engine name="android" spec="^7.1.1" />
+    <plugin name="cordova-plugin-file" spec="^6.0.1" />
+    <engine name="android" spec="^7.1.4" />
     <engine name="ios" spec="^4.5.5" />
 </widget>

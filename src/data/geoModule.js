@@ -63,6 +63,8 @@ export default {
       const polygon = turf.polygon(geomJSON);
       const isInside = turf.inside(point, polygon);
       console.log(`TURF.INSIDE RESULTS: ${isInside}`);
+      // Output the boolean result
+      return isInside;
     },
   },
 };
