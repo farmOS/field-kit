@@ -28,7 +28,7 @@ export default {
       navigator.geolocation.getCurrentPosition(onSuccess, onError);
     },
 
-    checkInside({ rootState }, params) {
+    checkInside({ commit, rootState }, params) {
       // For each polygon I need lon,lat pairs in a nested numeric array, as in [[o,a],[o,a]]
       function parsePoly(poly) {
         const coordPairs = poly.split(", ");
@@ -55,7 +55,9 @@ export default {
 
       console.log("DOING CHECKINSIDE WITH");
       console.log(params.point);
-      const geomJSON = geoJSONify(params.polygon);
+
+      const geometry = params.area.field_farm_geofield[0].geom;
+      const geomJSON = geoJSONify(geometry);
       console.log(geomJSON);
 
       // Now I'll check whether the point is inside the polygon with turf
@@ -63,8 +65,10 @@ export default {
       const polygon = turf.polygon(geomJSON);
       const isInside = turf.inside(point, polygon);
       console.log(`TURF.INSIDE RESULTS: ${isInside}`);
-      // Output the boolean result
-      return isInside;
+      // Emit a localArea event with a boolean result
+      if (isInside) {
+        commit('setLocalArea', [params.area])
+      }
     },
   },
 };
