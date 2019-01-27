@@ -52,9 +52,7 @@ export default {
       this.$store.commit('dismissError', index)
     },
     onDeviceReady() {
-      // Get device or browser geolocation, and save it to the app store as 'geolocation'
-      console.log('RECEIVED DEVICEREADY CALL IN APP.VUE');
-      this.$store.dispatch('getGeolocation');
+      // Call any Cordova-dependent task that must be executed on app load
     },
   },
   created() {

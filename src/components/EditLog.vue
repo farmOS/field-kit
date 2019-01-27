@@ -7,6 +7,7 @@
         v-for; pass down arguments for updateCurrentLog() as props, from the
         computed values of the current log
       -->
+
       <div class="form-item form-item-name form-group">
         <label for="name" class="control-label">Name</label>
         <input
@@ -70,7 +71,36 @@
           </div>
         </template>
       </Autocomplete>
+
+      <!-- We're using a radio button to choose whether areas are selected
+      automatically based on device location, or using an Autocomplete.
+      This will use the useGeoAreas conditional var -->
+      <div class="form-check">
+        <input
+        v-model="useGeoArea"
+        type="radio"
+        class="form-check-input"
+        id="materialGroupExample1"
+        name="groupOfMaterialRadios"
+        v-bind:value="false"
+        checked>
+        <label class="form-check-label" for="materialGroupExample1">Search areas</label>
+      </div>
+      <div class="form-check">
+        <input
+        v-model="useGeoArea"
+        type="radio"
+        class="form-check-input"
+        id="materialGroupExample2"
+        name="groupOfMaterialRadios"
+        v-bind:value="true"
+        >
+        <label class="form-check-label" for="materialGroupExample2">Use my location</label>
+      </div>
+      <p v-if="useGeoArea"> {{ geoAreaLabel }} </p>
+
       <Autocomplete
+        v-if="!useGeoArea"
         :objects="filteredAreas"
         searchKey="name"
         searchId="tid"
@@ -90,6 +120,19 @@
           </div>
         </template>
       </Autocomplete>
+
+
+      <!-- We're using a button to attach the current location to the log
+      as a field_farm_geofield -->
+      <button
+        :disabled='false'
+        title="Add my GPS location to the log"
+        @click="addLocation"
+        type="button"
+        class="btn btn-success btn-navbar">
+        Add my GPS location to the log
+      </button>
+      <p> {{ attachLocLabel }} </p>
 
 
       <!-- not able to send quantities right now -->
@@ -175,6 +218,10 @@ export default {
   data() {
     return {
       imageUrls: [],
+      attachGeo: false,
+      useGeoArea: false,
+      geoAreaLabel: "",
+      attachLocLabel: "",
     };
   },
 
@@ -187,21 +234,12 @@ export default {
     'statusText',
     'photoLoc',
     'geolocation',
+    'localArea',
   ],
 
   created() {
     // Inititialize the log, default to "Observation"
     this.$store.dispatch('initializeLog', 'farm_observation');
-
-    // Use checkInside in geoModule with each area to see if the current location is inside an area
-    for (var i = 0; i < this.areas.length; i++) {
-      const geofield = this.areas[i].field_farm_geofield[0];
-      if(geofield !== undefined && this.geolocation.Longitude !== undefined) {
-        const lonlat = [this.geolocation.Longitude, this.geolocation.Latitude];
-        const areaProps = {point: lonlat, polygon: geofield.geom};
-        this.$store.dispatch('checkInside', areaProps);
-      }
-    }
   },
 
   methods: {
@@ -248,6 +286,35 @@ export default {
       }
     },
 
+    addLocation() {
+          console.log('CALLED ADDLOCATION');
+          this.$store.dispatch('getGeolocation');
+          this.attachGeo = true;
+          this.attachLocLabel = "Getting current GPS location...";
+    },
+
+    checkAreas() {
+      console.log("CALLED CHECKAREAS; DOING CHECKINSIDE");
+      // Use checkInside in geoModule with each area to see if the current location is inside an area
+      let insideArea = false;
+      for (var i = 0; i < this.areas.length; i++) {
+        const area = this.areas[i];
+        if(area.field_farm_geofield[0] !== undefined && this.geolocation.Longitude !== undefined) {
+          // If the current location is inside an area, add the area to the log
+          const lonlat = [this.geolocation.Longitude, this.geolocation.Latitude];
+          const areaProps = {point: lonlat, area: area};
+          // This is the problem!  Dispatch isn't working...
+          this.$store.dispatch('checkInside', areaProps);
+        }
+      }
+      // Respond if checkInside does not return true
+      if ( !insideArea ) {
+        this.geoAreaLabel = "Not currently located inside any area";
+      }
+
+    }
+
+
   },
 
   computed: {
@@ -276,6 +343,32 @@ export default {
     photoLoc() {
       console.log(`UPDATING CURRENT RECORD PHOTO LOC: ${this.photoLoc}`);
       this.updateCurrentLog('images', this.photoLoc);
+    },
+    geolocation() {
+      // When the geolocation is set, EITHER set field_farm_geofield OR select areas based on location
+      if (this.attachGeo && this.geolocation !== {}) {
+        const location = JSON.parse("[{\"geom\":\"POINT ("+this.geolocation.Longitude+" "+this.geolocation.Latitude+")\"}]");
+        console.log(`ATTACH GEOLOCATION: ${location}`)
+        this.updateCurrentLog('field_farm_geofield', location);
+        this.attachGeo = false;
+        this.attachLocLabel = `Current location is Lon: ${this.geolocation.Longitude}, Lat: ${this.geolocation.Latitude}`;
+      } else {
+        this.checkAreas();
+      }
+    },
+    useGeoArea() {
+      // If useGeoArea is set to true, get geolocation and checkAreas
+      console.log('USEGEOAREA SET TO TRUE');
+      this.$store.dispatch('getGeolocation');
+      this.geoAreaLabel = "Getting areas at current GPS location...";
+    },
+    localArea() {
+      if( this.localArea !== [] ){
+        this.updateCurrentLog('field_farm_area', this.localArea);
+        console.log("LOCAL AREA SET AS")
+        console.log(this.localArea);
+        this.geoAreaLabel = `Area set to ${this.localArea[0].name}`;
+      }
     },
   },
 };

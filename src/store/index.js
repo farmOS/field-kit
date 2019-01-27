@@ -32,6 +32,7 @@ const farmModule = {
     statusText: '',
     photoLoc: '',
     geolocation: {},
+    localArea: [],
   },
   mutations: {
     addLogs(state, logs) {
@@ -113,6 +114,9 @@ const farmModule = {
     setGeoloc(state, geoloc) {
       state.geolocation = geoloc;
     },
+    setLocalArea(state, area) {
+      state.localArea = area;
+    }
   },
   actions: {
     // TODO: Should this logic be moved to the 'addLogAndMakeCurrent' mutation?

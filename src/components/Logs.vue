@@ -10,6 +10,7 @@
         :statusText='statusText'
         :photoLoc='photoLoc'
         :geolocation='geolocation'
+        :localArea='localArea'
         v-on:view-all='toggleLogs'
       />
       <!-- :geolocation='geolocation' -->
@@ -44,6 +45,7 @@ export default {
     statusText: state => state.farm.statusText,
     photoLoc: state => state.farm.photoLoc,
     geolocation: state => state.farm.geolocation,
+    localArea: state => state.farm.localArea,
   }),
   components: {
     AllLogs,
