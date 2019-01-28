@@ -1,6 +1,6 @@
 <template>
   <div id="app" class="html">
-    <div class="modal-filter" v-if="showDrawer" />
+    <div class="modal-filter" v-if="showDrawer" @click="showDrawer = !showDrawer"/>
     <header class="navbar navbar-light fixed-top bg-light">
       <div class="menu" @click="showDrawer = !showDrawer">
         <icon-menu/>
