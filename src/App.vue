@@ -1,8 +1,8 @@
 <template>
   <div id="app" class="html">
-
+    <div class="modal-filter" v-if="showDrawer" />
     <header class="navbar navbar-light fixed-top bg-light">
-      <div @click="showDrawer = !showDrawer">
+      <div class="menu" @click="showDrawer = !showDrawer">
         <icon-menu/>
       </div>
       <img class="logo" src='./farmOS.png' alt="farmOS">
@@ -16,7 +16,7 @@
       </div>
     </transition>
 
-    <div class="main-container container-fluid">
+    <div class="main-container container-fluid" :class="{ 'out-of-focus': showDrawer }">
       <div class="row">
         <section class="col-sm-12">
 
@@ -95,6 +95,16 @@ export default {
     z-index: 2000;
   }
 
+  .modal-filter {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    background-color: #000;
+    opacity: .25;
+    z-index: 1500;
+  }
+
   .drawer-enter, .drawer-leave-to {
     transform: translateX(-80vw);
   }
@@ -103,9 +113,12 @@ export default {
     transition: all .3s ease;
   }
 
+  .arrow-back, .menu {
+    fill: var(--gray-dark);
+  }
+
   .arrow-back {
     margin: 0.5rem 1rem;
-    fill: var(--gray-dark);
   }
 
   .main-container {
