@@ -11,10 +11,26 @@
     </header>
 
     <transition name="drawer">
-      <div class="drawer" v-if="showDrawer">
-        <div class="arrow-back" @click="showDrawer = !showDrawer">
-          <icon-arrow-back/>
-        </div>
+      <div class="drawer container-fluid" v-if="showDrawer">
+        <header class="drawer-header row">
+          <div class="arrow-back" @click="showDrawer = !showDrawer">
+            <icon-arrow-back/>
+          </div>
+        </header>
+        <ul class="row list-group">
+          <li class="list-group-item">All Logs</li>
+          <li class="list-group-item">New Activity</li>
+          <li class="list-group-item">New Harvest</li>
+          <li class="list-group-item">New Input</li>
+          <li class="list-group-item">New Observation</li>
+        </ul>
+        <ul class="row list-group">
+          <li class="list-group-item">
+            Share My Location
+          </li>
+          <li class="list-group-item">Sign out</li>
+        </ul>
+
       </div>
     </transition>
 
@@ -93,7 +109,7 @@ export default {
     top: 0;
     height: 100vh;
     width: 80vw;
-    background-color: #eee;
+    background-color: white;
     z-index: 2000;
   }
 
@@ -118,6 +134,10 @@ export default {
   .drawer-enter-active, .drawer-leave-active,
   .filter-enter-active, .filter-leave-active {
     transition: all .3s ease;
+  }
+
+  .drawer header {
+    height: 9rem;
   }
 
   .arrow-back, .menu {
