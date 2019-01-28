@@ -1,6 +1,7 @@
 import dbModule from './dbModule';
 import httpModule from './httpModule';
 import camModule from './camModule';
+import geoModule from './geoModule';
 
 /*
   A reducer function that filters for logs ready to sync,
