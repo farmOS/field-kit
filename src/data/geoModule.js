@@ -28,7 +28,7 @@ export default {
       navigator.geolocation.getCurrentPosition(onSuccess, onError);
     },
 
-    checkInside({ commit, rootState }, params) {
+    checkInNear({ commit, rootState }, params) {
       // For each polygon I need lon,lat pairs in a nested numeric array, as in [[o,a],[o,a]]
       function parsePoly(poly) {
         const coordPairs = poly.split(", ");
@@ -60,14 +60,15 @@ export default {
       const geomJSON = geoJSONify(geometry);
       console.log(geomJSON);
 
-      // Now I'll check whether the point is inside the polygon with turf
-      const point = turf.point(params.point);
+      // Now I'll check whether the point is inside the polygon (isInside)
+      // OR if the point is within [radius] km of the polygon border (isNear)
+      const circle = turf.circle(params.point, params.radius, { units: 'kilometers' });
       const polygon = turf.polygon(geomJSON);
-      const isInside = turf.inside(point, polygon);
-      console.log(`TURF.INSIDE RESULTS: ${isInside}`);
-      // Emit a localArea event with a boolean result
-      if (isInside) {
-        commit('setLocalArea', [params.area])
+      const isInside = turf.inside(params.point, polygon);
+      const isNear = turf.intersect(circle, polygon) !== null;
+      console.log(`ISINSIDE RESULTS: ${isInside}; ISNEAR RESULTS: ${isNear}`);
+      if (isInside || isNear) {
+        commit('addLocalArea', params.area)
       }
     },
   },
