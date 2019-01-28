@@ -2,15 +2,15 @@
   <div id="app" class="html">
 
     <header class="navbar navbar-light fixed-top bg-light">
-      <div @click="showSidebar = !showSidebar">
+      <div @click="showDrawer = !showDrawer">
         <icon-menu/>
       </div>
       <img class="logo" src='./farmOS.png' alt="farmOS">
     </header>
 
-    <transition name="sidebar">
-      <div class="sidebar" v-if="showSidebar">
-        <div class="arrow-back" @click="showSidebar = !showSidebar">
+    <transition name="drawer">
+      <div class="drawer" v-if="showDrawer">
+        <div class="arrow-back" @click="showDrawer = !showDrawer">
           <icon-arrow-back/>
         </div>
       </div>
@@ -61,7 +61,7 @@ export default {
   components: { IconMenu, IconArrowBack },
   data() {
     return {
-      showSidebar: false,
+      showDrawer: false,
     };
   },
   computed: mapState({
@@ -86,26 +86,26 @@ export default {
     max-height: 1.5rem;
   }
 
-  .sidebar {
+  .drawer {
     position: fixed;
     top: 0;
     height: 100vh;
     width: 80vw;
-    background-color: #336633;
+    background-color: #eee;
     z-index: 2000;
   }
 
-  .sidebar-enter, .sidebar-leave-to {
+  .drawer-enter, .drawer-leave-to {
     transform: translateX(-80vw);
   }
 
-  .sidebar-enter-active, .sidebar-leave-active {
+  .drawer-enter-active, .drawer-leave-active {
     transition: all .3s ease;
   }
 
   .arrow-back {
     margin: 0.5rem 1rem;
-    fill: white;
+    fill: var(--gray-dark);
   }
 
   .main-container {
