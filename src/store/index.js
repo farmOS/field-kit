@@ -114,9 +114,13 @@ const farmModule = {
     setGeoloc(state, geoloc) {
       state.geolocation = geoloc;
     },
-    setLocalArea(state, area) {
-      state.localArea = area;
-    }
+    addLocalArea(state, area) {
+      state.localArea.push(area);
+    },
+    clearLocalArea(state) {
+      console.log("local areas cleared");
+      state.localArea = [];
+    },
   },
   actions: {
     // TODO: Should this logic be moved to the 'addLogAndMakeCurrent' mutation?

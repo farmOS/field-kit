@@ -80,24 +80,46 @@
         v-model="useGeoArea"
         type="radio"
         class="form-check-input"
-        id="materialGroupExample1"
-        name="groupOfMaterialRadios"
+        id="dontUseGeo"
+        name="geoRadioGroup"
         v-bind:value="false"
         checked>
-        <label class="form-check-label" for="materialGroupExample1">Search areas</label>
+        <label class="form-check-label" for="dontUseGeo">Search areas</label>
       </div>
       <div class="form-check">
         <input
         v-model="useGeoArea"
         type="radio"
         class="form-check-input"
-        id="materialGroupExample2"
-        name="groupOfMaterialRadios"
+        id="doUseGeo"
+        name="geoRadioGroup"
         v-bind:value="true"
         >
-        <label class="form-check-label" for="materialGroupExample2">Use my location</label>
+        <label class="form-check-label" for="doUseGeo">Use my location</label>
       </div>
-      <p v-if="useGeoArea"> {{ geoAreaLabel }} </p>
+      <!-- Show localArea OR search autocomplete depending on selection -->
+      <ChooseObjectFromArray
+        v-if="useGeoArea && geolocation !== {}"
+        :objects="localArea"
+        objectName="name"
+        label="Areas near your current location"
+        :isWorking="isWorking"
+        workingLabel="Getting your current location..."
+        v-on:choices="updateCurrentLog('field_farm_area', $event)">
+        <template slot="empty">
+          <div class="empty-slot">
+            <em>No areas found near your location.</em>
+            <br>
+            <button
+              type="button"
+              class="btn btn-light"
+              @click="forceSync"
+              name="button">
+              Sync Now
+            </button>
+          </div>
+        </template>
+      </ChooseObjectFromArray>
 
       <Autocomplete
         v-if="!useGeoArea"
@@ -209,10 +231,12 @@
 <script>
 import moment from 'moment';
 import Autocomplete from './Autocomplete';
+import ChooseObjectFromArray from './ChooseObjectFromArray';
 
 export default {
   components: {
     Autocomplete,
+    ChooseObjectFromArray,
   },
 
   data() {
@@ -220,8 +244,8 @@ export default {
       imageUrls: [],
       attachGeo: false,
       useGeoArea: false,
-      geoAreaLabel: "",
       attachLocLabel: "",
+      addedArea: false,
     };
   },
 
@@ -291,6 +315,7 @@ export default {
           this.$store.dispatch('getGeolocation');
           this.attachGeo = true;
           this.attachLocLabel = "Getting current GPS location...";
+          this.$store.commit('setIsWorking', true);
     },
 
     checkAreas() {
@@ -302,19 +327,13 @@ export default {
         if(area.field_farm_geofield[0] !== undefined && this.geolocation.Longitude !== undefined) {
           // If the current location is inside an area, add the area to the log
           const lonlat = [this.geolocation.Longitude, this.geolocation.Latitude];
-          const areaProps = {point: lonlat, area: area};
+          // checkInNear requires a point, an area, and a radius around the point in kilometers
+          const areaProps = {point: lonlat, area: area, radius: 0.02};
           // This is the problem!  Dispatch isn't working...
-          this.$store.dispatch('checkInside', areaProps);
+          this.$store.dispatch('checkInNear', areaProps);
         }
       }
-      // Respond if checkInside does not return true
-      if ( !insideArea ) {
-        this.geoAreaLabel = "Not currently located inside any area";
-      }
-
-    }
-
-
+    },
   },
 
   computed: {
@@ -352,22 +371,30 @@ export default {
         this.updateCurrentLog('field_farm_geofield', location);
         this.attachGeo = false;
         this.attachLocLabel = `Current location is Lon: ${this.geolocation.Longitude}, Lat: ${this.geolocation.Latitude}`;
+        this.$store.commit('setIsWorking', false);
       } else {
         this.checkAreas();
+        this.$store.commit('setIsWorking', false);
       }
     },
     useGeoArea() {
       // If useGeoArea is set to true, get geolocation and checkAreas
+      if(this.useGeoArea) {
       console.log('USEGEOAREA SET TO TRUE');
+      // Clear local areas before populating
+      this.$store.commit('clearLocalArea');
       this.$store.dispatch('getGeolocation');
-      this.geoAreaLabel = "Getting areas at current GPS location...";
+      // Set 'is working' until results are retrieved
+      this.$store.commit('setIsWorking', true);
+      }
     },
     localArea() {
       if( this.localArea !== [] ){
-        this.updateCurrentLog('field_farm_area', this.localArea);
+        // TODO
+        // Present dropdown areas as in Autocomplete
+        // Do NOT automatically add all local areas to the log
         console.log("LOCAL AREA SET AS")
         console.log(this.localArea);
-        this.geoAreaLabel = `Area set to ${this.localArea[0].name}`;
       }
     },
   },
