@@ -1,6 +1,8 @@
 <template>
   <div id="app" class="html">
-    <div class="modal-filter" v-if="showDrawer" @click="showDrawer = !showDrawer"/>
+    <transition name="filter">
+      <div class="modal-filter" v-if="showDrawer" @click="showDrawer = !showDrawer"/>
+    </transition>
     <header class="navbar navbar-light fixed-top bg-light">
       <div class="menu" @click="showDrawer = !showDrawer">
         <icon-menu/>
@@ -16,7 +18,7 @@
       </div>
     </transition>
 
-    <div class="main-container container-fluid" :class="{ 'out-of-focus': showDrawer }">
+    <div class="main-container container-fluid">
       <div class="row">
         <section class="col-sm-12">
 
@@ -109,7 +111,12 @@ export default {
     transform: translateX(-80vw);
   }
 
-  .drawer-enter-active, .drawer-leave-active {
+  .filter-enter, .filter-leave-to {
+    opacity: 0;
+  }
+
+  .drawer-enter-active, .drawer-leave-active,
+  .filter-enter-active, .filter-leave-active {
     transition: all .3s ease;
   }
 
