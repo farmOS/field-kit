@@ -15,6 +15,9 @@
         <header class="drawer-header row">
           <div class="arrow-back" @click="showDrawer = !showDrawer">
             <icon-arrow-back/>
+            <h2>Paicines Ranch</h2>
+            <p>paicines.farmos.net</p>
+            <p>Jess Maier</p>
           </div>
         </header>
         <ul class="row list-group">
@@ -112,6 +115,7 @@ export default {
     width: 80vw;
     background-color: white;
     z-index: 2000;
+    overflow-y: auto;
   }
 
   .modal-filter {
@@ -138,6 +142,8 @@ export default {
   }
 
   .drawer header {
+    background-color: #336633;
+    color: white;
     height: 9rem;
   }
 
@@ -146,6 +152,7 @@ export default {
   }
 
   .arrow-back {
+    fill: white;
     margin: 0.5rem 1rem;
   }
 
