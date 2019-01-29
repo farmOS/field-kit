@@ -14,7 +14,7 @@ export default {
       return farm().area.get().then((res) => {
         // If a successful response is received, delete and replace all areas
         commit('deleteAllAreas');
-        const areas = res.map(({ tid, name, field_farm_geofield }) => ({ tid, name, field_farm_geofield }));
+        const areas = res.map(({ tid, name, field_farm_geofield }) => ({ tid, name, field_farm_geofield })); // eslint-disable-line camelcase, max-len
         commit('addAreas', areas);
         console.log('Finished updating areas!');
       }).catch((err) => { throw err; });
