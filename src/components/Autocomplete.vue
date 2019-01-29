@@ -81,7 +81,7 @@ export default {
     // Results are limited to a maximum of 10
     doSearch(val) {
       const foundObjects = [];
-      if (val !== '') {
+    if (val !== '') {
         const lowerVal = val.toLowerCase();
         for (let i = 0; i < this.objects.length; i += 1) {
           const object = this.objects[i];

@@ -118,7 +118,6 @@ const farmModule = {
       state.localArea.push(area);
     },
     clearLocalArea(state) {
-      console.log("local areas cleared");
       state.localArea = [];
     },
   },

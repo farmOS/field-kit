@@ -21,10 +21,7 @@
           @click="selectObject(object)">
           {{object[objectName]}}
         </li>
-        <!--
-          v-bind:key="`result-${i}-${Math.floor(Math.random() * 1000000)}`"
-          :class="{ 'is-active': i === counter }"
-        -->
+
       </ul>
 
     </div>
@@ -83,8 +80,6 @@ export default {
   },
 };
 
-// position: absolute;
-// z-index: 100;
 </script>
 
 <style scoped>

@@ -97,6 +97,7 @@
         >
         <label class="form-check-label" for="doUseGeo">Use my location</label>
       </div>
+
       <!-- Show localArea OR search autocomplete depending on selection -->
       <ChooseObjectFromArray
         v-if="useGeoArea && geolocation !== {}"
@@ -142,7 +143,6 @@
           </div>
         </template>
       </Autocomplete>
-
 
       <!-- We're using a button to attach the current location to the log
       as a field_farm_geofield -->
@@ -311,19 +311,17 @@ export default {
     },
 
     addLocation() {
-          console.log('CALLED ADDLOCATION');
-          this.$store.dispatch('getGeolocation');
-          this.attachGeo = true;
-          this.attachLocLabel = "Getting current GPS location...";
-          this.$store.commit('setIsWorking', true);
+      this.$store.dispatch('getGeolocation');
+      this.attachGeo = true;
+      this.attachLocLabel = 'Getting current GPS location...';
+      this.$store.commit('setIsWorking', true);
     },
 
     checkAreas() {
       console.log("CALLED CHECKAREAS; DOING CHECKINSIDE");
       // Use checkInside in geoModule with each area to see if the current location is inside an area
       let insideArea = false;
-      for (var i = 0; i < this.areas.length; i++) {
-        const area = this.areas[i];
+      this.areas.forEach((area) => {
         if(area.field_farm_geofield[0] !== undefined && this.geolocation.Longitude !== undefined) {
           // If the current location is inside an area, add the area to the log
           const lonlat = [this.geolocation.Longitude, this.geolocation.Latitude];
@@ -332,7 +330,7 @@ export default {
           // This is the problem!  Dispatch isn't working...
           this.$store.dispatch('checkInNear', areaProps);
         }
-      }
+      });
     },
   },
 
@@ -380,21 +378,12 @@ export default {
     useGeoArea() {
       // If useGeoArea is set to true, get geolocation and checkAreas
       if(this.useGeoArea) {
-      console.log('USEGEOAREA SET TO TRUE');
-      // Clear local areas before populating
-      this.$store.commit('clearLocalArea');
-      this.$store.dispatch('getGeolocation');
-      // Set 'is working' until results are retrieved
-      this.$store.commit('setIsWorking', true);
-      }
-    },
-    localArea() {
-      if( this.localArea !== [] ){
-        // TODO
-        // Present dropdown areas as in Autocomplete
-        // Do NOT automatically add all local areas to the log
-        console.log("LOCAL AREA SET AS")
-        console.log(this.localArea);
+        console.log('USEGEOAREA SET TO TRUE');
+        // Clear local areas before populating
+        this.$store.commit('clearLocalArea');
+        this.$store.dispatch('getGeolocation');
+        // Set 'is working' until results are retrieved
+        this.$store.commit('setIsWorking', true);
       }
     },
   },
