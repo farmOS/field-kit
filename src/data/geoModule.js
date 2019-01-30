@@ -16,8 +16,7 @@ export default {
         currentLoc.Heading = position.coords.heading;
         currentLoc.Speed = position.coords.speed;
         currentLoc.Timestamp = position.timestamp;
-        console.log('SETTING GEOLOCATION AS:');
-        console.log(currentLoc);
+        console.log('SETTING GEOLOCATION AS:\n', currentLoc);
         // Set 'geolocation' variable in the app store
         commit('setGeoloc', currentLoc);
       }
