@@ -13,11 +13,13 @@
     <transition name="drawer">
       <div class="drawer container-fluid" v-if="showDrawer">
         <header class="drawer-header row">
-          <div class="arrow-back" @click="showDrawer = !showDrawer">
-            <icon-arrow-back/>
-            <h2>Paicines Ranch</h2>
-            <p>paicines.farmos.net</p>
-            <p>Jess Maier</p>
+          <div class="col">
+            <div class="arrow-back" @click="showDrawer = !showDrawer">
+              <icon-arrow-back/>
+            </div>
+            <h2>{{ farmName }}</h2>
+            <p>{{ farmUrl }}</p>
+            <p>{{ username}}</p>
           </div>
         </header>
         <ul class="row list-group">
@@ -88,6 +90,9 @@ export default {
   },
   computed: mapState({
     errors: state => state.shell.errors,
+    username: state => state.shell.user.name,
+    farmName: state => state.farm.name,
+    farmUrl: state => state.farm.url,
   }),
   watch: {
     showDrawer(currentShowDrawer) {
@@ -162,7 +167,7 @@ export default {
 
   .arrow-back {
     fill: white;
-    margin: 0.5rem 1rem;
+    margin-top: 0.5rem;
   }
 
   .main-container {
