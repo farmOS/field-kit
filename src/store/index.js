@@ -8,6 +8,11 @@ Vue.use(Vuex);
 const shellModule = {
   state: {
     errors: [],
+    user: {
+      name: '',
+      email: '',
+      uid: null,
+    },
   },
   mutations: {
     logError(state, error) {
@@ -19,6 +24,15 @@ const shellModule = {
         show: false,
       };
       state.errors.splice(index, 1, updatedError);
+    },
+    changeUsername(state, name) {
+      state.user.name = name;
+    },
+    changeEmail(state, email) {
+      state.user.email = email;
+    },
+    changeUid(state, uid) {
+      state.user.uid = uid;
     },
   },
 };
