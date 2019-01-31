@@ -13,7 +13,7 @@ module.exports = {
     proxy: [{
       logLevel: 'debug',
       context: [
-        '/user/',
+        '/user',
         '/login/',
         '/restws/',
         '/log',
@@ -21,7 +21,7 @@ module.exports = {
         '/taxonomy_term.json',
         '/taxonomy_vocabulary.json',
         '/farm_asset',
-        '/farm_asset.json'
+        '/farm_asset.json',
       ],
       target: 'http://localhost:80',
       changeOrigin: true,
