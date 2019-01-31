@@ -12,6 +12,7 @@ const shellModule = {
       name: '',
       email: '',
       uid: null,
+      isLoggedIn: false,
     },
   },
   mutations: {
@@ -33,6 +34,9 @@ const shellModule = {
     },
     changeUid(state, uid) {
       state.user.uid = uid;
+    },
+    setLoginStatus(state, bool) {
+      state.user.isLoggedIn = bool;
     },
   },
 };

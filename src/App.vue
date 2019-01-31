@@ -17,9 +17,15 @@
             <div class="arrow-back" @click="showDrawer = !showDrawer">
               <icon-arrow-back/>
             </div>
-            <h2>{{ farmName }}</h2>
-            <p>{{ farmUrl }}</p>
-            <p>{{ username}}</p>
+            <div v-if="isLoggedIn" class="user-info">
+              <h2>{{ farmName }}</h2>
+              <p>{{ farmUrl }}</p>
+              <p>{{ username}}</p>
+            </div>
+            <div v-else class="user-info">
+              <h2>Welcome to farmOS</h2>
+              <p>Login for more options.</p>
+            </div>
           </div>
         </header>
         <ul class="row list-group">
@@ -91,6 +97,7 @@ export default {
   computed: mapState({
     errors: state => state.shell.errors,
     username: state => state.shell.user.name,
+    isLoggedIn: state => state.shell.user.isLoggedIn,
     farmName: state => state.farm.name,
     farmUrl: state => state.farm.url,
   }),
