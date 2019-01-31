@@ -9,6 +9,6 @@ export default {
       name: 'Login',
       component: LoginComponent,
     }]);
-    store.registerModule('user', loginModule);
+    store.registerModule('auth', loginModule);
   },
 };
