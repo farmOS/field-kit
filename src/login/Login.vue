@@ -100,6 +100,7 @@ export default {
       this.$store.dispatch('didSubmitCredentials', payload)
         .then(() => {
           this.authPending = false;
+          this.$store.dispatch('updateUserInfo');
         });
     },
     onDeviceReady() {

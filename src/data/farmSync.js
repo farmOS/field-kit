@@ -145,6 +145,9 @@ export default function (host, user, password) {
         return request(`/farm_asset${params(id)}`, { method: 'POST', payload, token });
       },
     },
+    info() {
+      // do something
+    },
     log: {
       delete(id, token) {
         return request(`/log/${id}.json`, { method: 'DELETE', token });
@@ -171,6 +174,32 @@ export default function (host, user, password) {
       send(payload, token) {
         return request('/log', { method: 'POST', payload, token });
       },
+    },
+    user(opts = {}) {
+      if (typeof opts === 'number') {
+        return request(`/user.json?uid=${opts}`);
+      }
+
+      if (typeof opts === 'string') {
+        if (opts.indexOf('@') > -1) {
+          return request(`/user.json?email=${opts}`);
+        }
+        return request(`/user.json?name=${opts}`);
+      }
+
+      const {
+        active = true,
+        email = '',
+        name = '',
+        uid = null,
+      } = opts;
+
+      const activeParams = (active) ? 'status=1' : '';
+      const emailParams = (email !== '') ? `&mail=${email}` : '';
+      const nameParams = (name !== '') ? `&name=${name}` : '';
+      const uidParams = (uid !== null) ? `&uid=${uid}` : '';
+
+      return request(`/user.json?${activeParams}${emailParams}${nameParams}${uidParams}`);
     },
   };
 }

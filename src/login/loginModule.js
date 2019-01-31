@@ -80,5 +80,15 @@ export default {
           });
       });
     },
+
+    updateUserInfo() {
+      const host = localStorage.getItem('url');
+      const username = localStorage.getItem('user');
+      const password = localStorage.getItem('password');
+      const farm = farmSync(host, username, password);
+      farm.user(username).then((res) => {
+        console.log('USER RESPONSE: ', res);
+      });
+    },
   },
 };
