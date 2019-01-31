@@ -81,13 +81,15 @@ export default {
       });
     },
 
-    updateUserInfo() {
+    updateUserInfo({ commit }) {
       const host = localStorage.getItem('url');
       const username = localStorage.getItem('user');
       const password = localStorage.getItem('password');
       const farm = farmSync(host, username, password);
       farm.user(username).then((res) => {
-        console.log('USER RESPONSE: ', res);
+        commit('changeUsername', res.list[0].name);
+        commit('changeEmail', res.list[0].mail);
+        commit('changeUid', res.list[0].uid);
       });
     },
   },
