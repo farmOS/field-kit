@@ -39,6 +39,8 @@ const shellModule = {
 
 const farmModule = {
   state: {
+    name: '',
+    url: '',
     logs: [],
     assets: [],
     areas: [],
@@ -48,6 +50,12 @@ const farmModule = {
     localArea: [],
   },
   mutations: {
+    changeFarmName(state, name) {
+      state.name = name;
+    },
+    changeFarmUrl(state, url) {
+      state.url = url;
+    },
     addLogs(state, logs) {
       // TODO: Should logs pass through logFactory() to make sure props are valid?
       state.logs = state.logs.concat(logs);
