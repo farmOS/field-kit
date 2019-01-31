@@ -1,7 +1,6 @@
 import dbModule from './dbModule';
 import httpModule from './httpModule';
 import camModule from './camModule';
-import geoModule from './geoModule';
 
 /*
   A reducer function that filters for logs ready to sync,
@@ -19,7 +18,6 @@ export default {
     store.registerModule('data', dbModule);
     store.registerModule('http', httpModule);
     store.registerModule('camera', camModule);
-    store.registerModule('geoloc', geoModule);
     router.beforeEach((to, from, next) => {
       if (to.path === '/logs') {
         store.commit('clearLogs');
