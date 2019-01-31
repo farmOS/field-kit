@@ -101,6 +101,7 @@ export default {
         .then(() => {
           this.authPending = false;
           this.$store.dispatch('updateUserInfo');
+          this.$store.dispatch('updateSiteInfo');
         });
     },
     onDeviceReady() {

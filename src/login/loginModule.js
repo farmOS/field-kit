@@ -1,5 +1,12 @@
 import farmSync from '../data/farmSync';
 
+const lazyFarm = () => {
+  const host = localStorage.getItem('url');
+  const user = localStorage.getItem('user');
+  const password = localStorage.getItem('password');
+  return farmSync(host, user, password);
+};
+
 export default {
   actions: {
 
@@ -82,14 +89,19 @@ export default {
     },
 
     updateUserInfo({ commit }) {
-      const host = localStorage.getItem('url');
       const username = localStorage.getItem('user');
-      const password = localStorage.getItem('password');
-      const farm = farmSync(host, username, password);
-      farm.user(username).then((res) => {
+      lazyFarm().user(username).then((res) => {
         commit('changeUsername', res.list[0].name);
         commit('changeEmail', res.list[0].mail);
         commit('changeUid', res.list[0].uid);
+      });
+    },
+
+    updateSiteInfo({ commit }) {
+      const username = localStorage.getItem('user');
+      lazyFarm().info(username).then((res) => {
+        commit('changeFarmName', res.name);
+        commit('changeFarmUrl', res.url.replace(/(^\w+:|^)\/\//, ''));
       });
     },
   },

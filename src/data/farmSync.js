@@ -146,7 +146,7 @@ export default function (host, user, password) {
       },
     },
     info() {
-      // do something
+      return request('/farm.json');
     },
     log: {
       delete(id, token) {
