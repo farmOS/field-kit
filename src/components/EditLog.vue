@@ -74,10 +74,10 @@
 
       <!-- We're using a radio button to choose whether areas are selected
       automatically based on device location, or using an Autocomplete.
-      This will use the useGeoAreas conditional var -->
+      This will use the useLocalAreas conditional var -->
       <div class="form-check">
         <input
-        v-model="useGeoArea"
+        v-model="useLocalAreas"
         type="radio"
         class="form-check-input"
         id="dontUseGeo"
@@ -88,7 +88,7 @@
       </div>
       <div class="form-check">
         <input
-        v-model="useGeoArea"
+        v-model="useLocalAreas"
         type="radio"
         class="form-check-input"
         id="doUseGeo"
@@ -99,8 +99,8 @@
       </div>
 
       <!-- Show localArea OR search autocomplete depending on selection -->
-      <ChooseObjectFromArray
-        v-if="useGeoArea && geolocation !== {}"
+      <ObjectSelector
+        v-if="useLocalAreas && geolocation !== {}"
         :objects="localArea"
         objectName="name"
         label="Areas near your current location"
@@ -120,10 +120,14 @@
             </button>
           </div>
         </template>
-      </ChooseObjectFromArray>
+      </ObjectSelector>
+      <!--  -->
+      <div v-if="useLocalAreas && isWorking">
+        <icon-spinner/>
+      </div>
 
       <Autocomplete
-        v-if="!useGeoArea"
+        v-if="!useLocalAreas"
         :objects="filteredAreas"
         searchKey="name"
         searchId="tid"
@@ -146,6 +150,7 @@
 
       <!-- We're using a button to attach the current location to the log
       as a field_farm_geofield -->
+
       <button
         :disabled='false'
         title="Add my GPS location to the log"
@@ -154,7 +159,11 @@
         class="btn btn-success btn-navbar">
         Add my GPS location to the log
       </button>
-      <p> {{ attachLocLabel }} </p>
+      <!-- Display a spinner while getting geolocation, then display the location -->
+      <div v-if="attachGeo && isWorking">
+        <icon-spinner/>
+      </div>
+      <p v-if="attachGeo && !isWorking"> Location set to Lon: {{geolocation.Longitude}}, Lat: {{geolocation.Latitude}}</p>
 
 
       <!-- not able to send quantities right now -->
@@ -231,21 +240,23 @@
 <script>
 import moment from 'moment';
 import Autocomplete from './Autocomplete';
-import ChooseObjectFromArray from './ChooseObjectFromArray';
+import ObjectSelector from './ObjectSelector';
+import iconSpinner from '../icons/icon-spinner.vue';
 
 export default {
   components: {
     Autocomplete,
-    ChooseObjectFromArray,
+    ObjectSelector,
+    iconSpinner,
   },
 
   data() {
     return {
       imageUrls: [],
       attachGeo: false,
-      useGeoArea: false,
-      attachLocLabel: "",
+      useLocalAreas: false,
       addedArea: false,
+      isWorking: false,
     };
   },
 
@@ -254,7 +265,6 @@ export default {
     'areas',
     'assets',
     'currentLogIndex',
-    'isWorking',
     'statusText',
     'photoLoc',
     'geolocation',
@@ -311,10 +321,18 @@ export default {
     },
 
     addLocation() {
-      this.$store.dispatch('getGeolocation');
-      this.attachGeo = true;
-      this.attachLocLabel = 'Getting current GPS location...';
-      this.$store.commit('setIsWorking', true);
+      //Get geolocation if necessary; otherwise add geolocation
+      if (this.geolocation.Longitude == undefined) {
+        this.$store.dispatch('getGeolocation');
+        this.attachGeo = true;
+        this.isWorking = true;
+      }
+      if (this.geolocation.Longitude !== undefined) {
+        this.attachGeo = true;
+        const location = JSON.parse("[{\"geom\":\"POINT ("+this.geolocation.Longitude+" "+this.geolocation.Latitude+")\"}]");
+        console.log(`ATTACH GEOLOCATION: ${location}`)
+        this.updateCurrentLog('field_farm_geofield', location);
+      }
     },
 
     checkAreas() {
@@ -363,27 +381,35 @@ export default {
     },
     geolocation() {
       // When the geolocation is set, EITHER set field_farm_geofield OR select areas based on location
-      if (this.attachGeo && this.geolocation !== {}) {
+      if (this.attachGeo && this.geolocation.Longitude !== undefined) {
         const location = JSON.parse("[{\"geom\":\"POINT ("+this.geolocation.Longitude+" "+this.geolocation.Latitude+")\"}]");
         console.log(`ATTACH GEOLOCATION: ${location}`)
         this.updateCurrentLog('field_farm_geofield', location);
-        this.attachGeo = false;
-        this.attachLocLabel = `Current location is Lon: ${this.geolocation.Longitude}, Lat: ${this.geolocation.Latitude}`;
-        this.$store.commit('setIsWorking', false);
-      } else {
+        this.isWorking = false;
+        // If we are getting local areas
+      }
+      if(this.useLocalAreas && this.geolocation.Longitude !== undefined) {
         this.checkAreas();
-        this.$store.commit('setIsWorking', false);
+        this.isWorking = false;
       }
     },
-    useGeoArea() {
-      // If useGeoArea is set to true, get geolocation and checkAreas
-      if(this.useGeoArea) {
-        console.log('USEGEOAREA SET TO TRUE');
-        // Clear local areas before populating
-        this.$store.commit('clearLocalArea');
-        this.$store.dispatch('getGeolocation');
-        // Set 'is working' until results are retrieved
-        this.$store.commit('setIsWorking', true);
+    useLocalAreas() {
+      // If useLocalAreas is set to true, get geolocation and checkAreas
+      if(this.useLocalAreas) {
+        console.log('USELOCALAREAS SET TO TRUE');
+        // If necessary get geolocation; otherwise run checkAreas
+        if (this.geolocation.Longitude == undefined) {
+          // Clear local areas before populating
+          this.$store.commit('clearLocalArea');
+          this.$store.dispatch('getGeolocation');
+          // Set 'is working' until results are retrieved
+          this.isWorking = true;
+        }
+        if (this.geolocation.Longitude !== undefined) {
+          this.$store.commit('clearLocalArea');
+          this.checkAreas();
+        }
+
       }
     },
   },

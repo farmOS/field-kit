@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import logFactory from './logFactory';
+import geoModule from './geoModule';
 
 Vue.use(Vuex);
 
@@ -148,5 +149,6 @@ export default new Vuex.Store({
   modules: {
     shell: shellModule,
     farm: farmModule,
+    geo: geoModule,
   },
 });

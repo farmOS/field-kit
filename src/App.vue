@@ -51,9 +51,6 @@ export default {
     closeError(index) {
       this.$store.commit('dismissError', index)
     },
-    onDeviceReady() {
-      // Call any Cordova-dependent task that must be executed on app load
-    },
   },
   created() {
     document.addEventListener('deviceready', this.onDeviceReady(), false);

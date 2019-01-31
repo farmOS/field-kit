@@ -6,7 +6,6 @@
         :areas='areas'
         :assets='assets'
         :currentLogIndex='currentLogIndex'
-        :isWorking='isWorking'
         :statusText='statusText'
         :photoLoc='photoLoc'
         :geolocation='geolocation'
@@ -41,7 +40,6 @@ export default {
     areas: state => state.farm.areas,
     assets: state => state.farm.assets,
     currentLogIndex: state => state.farm.currentLogIndex,
-    isWorking: state => state.farm.isWorking,
     statusText: state => state.farm.statusText,
     photoLoc: state => state.farm.photoLoc,
     geolocation: state => state.farm.geolocation,

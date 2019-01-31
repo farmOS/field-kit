@@ -2,11 +2,6 @@
   <div>
     <div class="form-item form-item-name form-group">
       <label class="control-label">{{ label }}</label>
-      <!-- TODO: add a spinner here to indicate ork in progress -->
-      <div v-if="isWorking">
-        <br>
-        <label class="control-label">{{ workingLabel }}</label>
-      </div>
       <ul
         class="list-group search-results">
         <li
@@ -55,7 +50,6 @@ export default {
     'objects',
     'objectName',
     'label',
-    'workingLabel',
     'isWorking',
   ],
   data() {
