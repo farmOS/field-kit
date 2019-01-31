@@ -22,6 +22,7 @@ module.exports = {
         '/taxonomy_vocabulary.json',
         '/farm_asset',
         '/farm_asset.json',
+        '/farm.json',
       ],
       target: 'http://localhost:80',
       changeOrigin: true,
