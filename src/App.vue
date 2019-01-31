@@ -89,6 +89,15 @@ export default {
   computed: mapState({
     errors: state => state.shell.errors,
   }),
+  watch: {
+    showDrawer(currentShowDrawer) {
+      if (currentShowDrawer) {
+        document.querySelector('body').setAttribute('style', 'overflow-y: hidden')
+      } else {
+        document.querySelector('body').setAttribute('style', 'overflow-y: visible')
+      }
+    }
+  },
   methods: {
     closeError(index) {
       this.$store.commit('dismissError', index)
@@ -119,7 +128,7 @@ export default {
   }
 
   .modal-filter {
-    position: absolute;
+    position: fixed;
     top: 0;
     height: 100%;
     width: 100%;
