@@ -100,6 +100,7 @@ export default {
       this.$store.dispatch('didSubmitCredentials', payload)
         .then(() => {
           this.authPending = false;
+          this.$store.commit('setLoginStatus', true);
           this.$store.dispatch('updateUserInfo');
           this.$store.dispatch('updateSiteInfo');
         });
