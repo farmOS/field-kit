@@ -23,6 +23,7 @@ export default {
         store.commit('clearLogs');
         store.commit('clearAssets');
         store.commit('clearAreas');
+        store.dispatch('loadCachedUserAndSiteInfo');
         store.dispatch('loadCachedLogs');
         store.dispatch('loadCachedAssets')
           .then(() => store.dispatch('updateAssets'));

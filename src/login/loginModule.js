@@ -94,6 +94,11 @@ export default {
         commit('changeUsername', res.list[0].name);
         commit('changeEmail', res.list[0].mail);
         commit('changeUid', res.list[0].uid);
+        commit('setLoginStatus', true);
+        localStorage.setItem('username', res.list[0].name);
+        localStorage.setItem('email', res.list[0].mail);
+        localStorage.setItem('uid', res.list[0].uid);
+        localStorage.setItem('isLoggedIn', true);
       });
     },
 
@@ -102,7 +107,17 @@ export default {
       lazyFarm().info(username).then((res) => {
         commit('changeFarmName', res.name);
         commit('changeFarmUrl', res.url.replace(/(^\w+:|^)\/\//, ''));
+        localStorage.setItem('farmName', res.name);
       });
+    },
+
+    loadCachedUserAndSiteInfo({ commit }) {
+      commit('changeUsername', localStorage.getItem('username'));
+      commit('changeEmail', localStorage.getItem('email'));
+      commit('changeUid', localStorage.getItem('username'));
+      commit('setLoginStatus', localStorage.getItem('isLoggedIn'));
+      commit('changeFarmName', localStorage.getItem('farmName'));
+      commit('changeFarmUrl', localStorage.getItem('host'));
     },
   },
 };
