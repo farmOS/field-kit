@@ -14,12 +14,11 @@ export default new Router({
     },
     {
       path: '/logs',
-      name: 'logs',
       component: Logs,
       children: [
         {
           path: '',
-          name: 'all-logs',
+          name: 'logs',
           component: AllLogs,
         },
         {

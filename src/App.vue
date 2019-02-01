@@ -28,12 +28,22 @@
             </div>
           </div>
         </header>
-        <ul class="row list-group">
-          <li class="list-group-item">All Logs</li>
-          <li class="list-group-item">New Activity</li>
-          <li class="list-group-item">New Harvest</li>
-          <li class="list-group-item">New Input</li>
-          <li class="list-group-item">New Observation</li>
+        <ul class="row list-group" @click="showDrawer = !showDrawer">
+          <router-link :to="{ name: 'logs' }">
+            <li class="list-group-item">All Logs</li>
+          </router-link>
+          <router-link :to="{ name: 'edit-log', params: { type: 'farm_activity' } }">
+            <li class="list-group-item">New Activity</li>
+          </router-link>
+          <router-link :to="{ name: 'edit-log', params: { type: 'farm_harvest' } }">
+            <li class="list-group-item">New Harvest</li>
+          </router-link>
+          <router-link :to="{ name: 'edit-log', params: { type: 'farm_input' } }">
+            <li class="list-group-item">New Input</li>
+          </router-link>
+          <router-link :to="{ name: 'edit-log', params: { type: 'farm_observation' } }">
+            <li class="list-group-item">New Observation</li>
+          </router-link>
         </ul>
         <ul class="row list-group">
           <li class="list-group-item">
@@ -180,6 +190,11 @@ export default {
 
   .main-container {
     margin-top: 3rem;
+  }
+
+  .drawer a {
+    text-decoration: none;
+    color: inherit;
   }
 
   input.toggle-check {
