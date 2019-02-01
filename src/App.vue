@@ -99,7 +99,8 @@ export default {
     username: state => state.shell.user.name,
     isLoggedIn: state => state.shell.user.isLoggedIn,
     farmName: state => state.farm.name,
-    farmUrl: state => state.farm.url,
+    // Provide an example url for the dev server environment
+    farmUrl: state => (state.farm.url === '') ? 'example.farmos.net' : state.farm.url,
   }),
   watch: {
     showDrawer(currentShowDrawer) {
