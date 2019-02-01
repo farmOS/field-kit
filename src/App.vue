@@ -19,7 +19,7 @@
             </div>
             <div v-if="isLoggedIn" class="user-info">
               <h2>{{ farmName }}</h2>
-              <p>{{ farmUrl }}</p>
+              <p>{{ farmUrl.replace(/(^\w+:|^)\/\//, '') }}</p>
               <p>{{ username}}</p>
             </div>
             <div v-else class="user-info">
