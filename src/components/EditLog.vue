@@ -202,14 +202,15 @@
           type="button">
           Take picture with camera
         </button>
-        <button
-          :disabled='false'
-          title="Done Editing"
-          @click="$emit('view-all')"
-          type="button"
-          class="btn btn-success btn-navbar">
-          Done Editing
-        </button>
+        <router-link :to="'/logs'">
+          <button
+            :disabled='false'
+            title="Done Editing"
+            type="button"
+            class="btn btn-success btn-navbar">
+            Done Editing
+          </button>
+        </router-link>
       </div>
       <div class="input-group">
         <label

@@ -2,12 +2,13 @@
   <div>
     <h1>Logs</h1>
     <div class="btn-wrapper">
-      <button
-        @click="$emit('create-log')"
-        type="button"
-        class="btn btn-success btn-navbar">
-        Create log
-      </button>
+      <router-link :to="'logs/edit'">
+        <button
+          type="button"
+          class="btn btn-success btn-navbar">
+          Create log
+        </button>
+      </router-link>
       <button
         @click="syncAll"
         type="button"
