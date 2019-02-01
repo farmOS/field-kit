@@ -19,7 +19,7 @@
     <div class="card-deck">
       <div
         class="card"
-        v-for="log in logs"
+        v-for="(log, i) in logs"
         :key="`card-${logs.indexOf(log)}`"
       >
         <div class="card-body">
@@ -48,6 +48,14 @@
             </span>
           </p>
           <h5>{{log.name}}</h5>
+          <router-link :to="{ name: 'edit-log', params: { index: i } }">
+            <button
+              type="button"
+              :name='`edit-${logs.indexOf(log)}`'
+              class="btn btn-success">
+              Edit
+            </button>
+          </router-link>
           <button
             type="button"
             :name='`delete-${logs.indexOf(log)}`'

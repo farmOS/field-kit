@@ -77,6 +77,9 @@ const farmModule = {
     addLogAndMakeCurrent(state, newLog) {
       state.currentLogIndex = state.logs.push(newLog) - 1;
     },
+    setCurrentLogIndex(state, index) {
+      state.currentLogIndex = index;
+    },
     updateCurrentLog(state, newProps) {
       const updatedLog = logFactory({
         ...state.logs[state.currentLogIndex],

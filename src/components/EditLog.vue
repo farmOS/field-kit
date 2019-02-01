@@ -273,9 +273,14 @@ export default {
   ],
 
   created() {
-    // Inititialize the log, check query params, default to "Observation"
-    const type = (this.$route.query.type) ? this.$route.query.type : 'farm_observation'
-    this.$store.dispatch('initializeLog', type);
+    if (typeof this.$route.params.index === 'number') {
+      // If a log index is provided in query params, set it as current log
+      this.$store.commit('setCurrentLogIndex', this.$route.params.index)
+    } else {
+      // Otherwise inititialize a new log (check for a type param & default to "Observation")
+      const logType = (this.$route.params.type) ? this.$route.params.type : 'farm_observation'
+      this.$store.dispatch('initializeLog', logType);
+    }
   },
 
   methods: {
