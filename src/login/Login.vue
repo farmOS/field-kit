@@ -112,8 +112,8 @@ export default {
 
     // This will autofill the form with the url and username; the regext strips the protocol.
     loadUserInfo() {
-      this.farmosUrl = window.localStorage.getItem('url').replace(/(^\w+:|^)\/\//, '');
-      this.username = window.localStorage.getItem('user');
+      this.farmosUrl = window.localStorage.getItem('host').replace(/(^\w+:|^)\/\//, '');
+      this.username = window.localStorage.getItem('username');
       this.password = window.localStorage.getItem('password');
       this.checkValues();
     }

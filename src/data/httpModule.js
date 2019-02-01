@@ -2,8 +2,8 @@ import logFactory, { SERVER } from './logFactory';
 import farmSync from './farmSync';
 
 const farm = () => {
-  const host = localStorage.getItem('url');
-  const user = localStorage.getItem('user');
+  const host = localStorage.getItem('host');
+  const user = localStorage.getItem('username');
   const password = localStorage.getItem('password');
   return farmSync(host, user, password);
 };

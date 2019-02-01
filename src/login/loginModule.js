@@ -1,8 +1,8 @@
 import farmSync from '../data/farmSync';
 
 const lazyFarm = () => {
-  const host = localStorage.getItem('url');
-  const user = localStorage.getItem('user');
+  const host = localStorage.getItem('host');
+  const user = localStorage.getItem('username');
   const password = localStorage.getItem('password');
   return farmSync(host, user, password);
 };
@@ -46,8 +46,8 @@ export default {
         farm.authenticate()
           .then((tokenResponse) => {
             // Save our username, password & token to the persistant store
-            storage.setItem('url', url);
-            storage.setItem('user', username);
+            storage.setItem('host', url);
+            storage.setItem('username', username);
             storage.setItem('password', password);
             storage.setItem('token', tokenResponse);
 
@@ -67,8 +67,8 @@ export default {
             noSslfarm.authenticate() // eslint-disable-line
               .then((tokenResponse) => {
                 // Save our username, password & token to the persistant store
-                storage.setItem('url', noSslUrl);
-                storage.setItem('user', username);
+                storage.setItem('host', noSslUrl);
+                storage.setItem('username', username);
                 storage.setItem('password', password);
                 storage.setItem('token', tokenResponse);
 
@@ -89,7 +89,7 @@ export default {
     },
 
     updateUserInfo({ commit }) {
-      const username = localStorage.getItem('user');
+      const username = localStorage.getItem('username');
       lazyFarm().user(username).then((res) => {
         commit('changeUsername', res.list[0].name);
         commit('changeEmail', res.list[0].mail);
@@ -98,7 +98,7 @@ export default {
     },
 
     updateSiteInfo({ commit }) {
-      const username = localStorage.getItem('user');
+      const username = localStorage.getItem('username');
       lazyFarm().info(username).then((res) => {
         commit('changeFarmName', res.name);
         commit('changeFarmUrl', res.url.replace(/(^\w+:|^)\/\//, ''));

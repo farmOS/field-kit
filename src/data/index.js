@@ -76,7 +76,7 @@ export default {
     });
     store.subscribeAction((action) => {
       if (action.type === 'forceSyncAssetsAndAreas') {
-        if (localStorage.getItem('url') !== null) {
+        if (localStorage.getItem('host') !== null) {
           store.dispatch('updateAssets').then().catch((err) => {
             if (err.status === 403 || err.status === 401) {
               router.push('/login');
