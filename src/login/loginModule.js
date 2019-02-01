@@ -106,7 +106,7 @@ export default {
       const username = localStorage.getItem('username');
       lazyFarm().info(username).then((res) => {
         commit('changeFarmName', res.name);
-        commit('changeFarmUrl', res.url.replace(/(^\w+:|^)\/\//, ''));
+        commit('changeFarmUrl', res.url);
         localStorage.setItem('farmName', res.name);
       });
     },
