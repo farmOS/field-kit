@@ -273,8 +273,9 @@ export default {
   ],
 
   created() {
-    // Inititialize the log, default to "Observation"
-    this.$store.dispatch('initializeLog', 'farm_observation');
+    // Inititialize the log, check query params, default to "Observation"
+    const type = (this.$route.query.type) ? this.$route.query.type : 'farm_observation'
+    this.$store.dispatch('initializeLog', type);
   },
 
   methods: {
