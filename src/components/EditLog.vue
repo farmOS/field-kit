@@ -72,13 +72,10 @@
         v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
         class="form-item form-item-name form-group">
         <label for="type" class="control-label ">{{ asset.name }}</label>
-        <button
-          :disabled='false'
-          title="Remove"
-          @click="removeAsset(asset)"
-          class="btn btn-danger">
-          Remove
-        </button>
+        &nbsp;
+        <span @click="removeAsset(asset)">
+          &#x1F5D9;
+        </span>
       </div>
 
       <!-- We're using a radio button to choose whether areas are selected
@@ -154,13 +151,10 @@
         v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
         class="form-item form-item-name form-group">
         <label for="type" class="control-label ">{{ area.name }}</label>
-        <button
-          :disabled='false'
-          title="Remove"
-          @click="removeArea(area)"
-          class="btn btn-danger">
-          Remove
-        </button>
+        &nbsp;
+        <span @click="removeArea(area)">
+          &#x1F5D9;
+        </span>
       </div>
 
 
@@ -232,12 +226,12 @@
 <script>
 import moment from 'moment';
 import Autocomplete from './Autocomplete';
-import iconSpinner from '../icons/icon-spinner.vue';
+import IconSpinner from '../icons/icon-spinner.vue';
 
 export default {
   components: {
     Autocomplete,
-    iconSpinner,
+    IconSpinner,
   },
 
   data() {
