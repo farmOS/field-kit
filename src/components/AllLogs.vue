@@ -2,7 +2,7 @@
   <div>
     <h1>Logs</h1>
     <div class="btn-wrapper">
-      <router-link :to="'logs/edit'">
+      <router-link :to="'/logs/edit'">
         <button
           type="button"
           class="btn btn-success btn-navbar">
@@ -55,7 +55,7 @@
             <icon-edit />
           </router-link>
           <div class="del-btn" @click="openDeleteDialog(i)">
-            <icon-delete @click="openDeleteDialog(i)"/>
+            <icon-delete/>
           </div>
         </div>
       </div>
