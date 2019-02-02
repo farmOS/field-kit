@@ -48,7 +48,10 @@
             </span>
           </p>
           <h5>{{log.name}}</h5>
-          <router-link :to="{ name: 'edit-log', params: { index: i } }" class="edit-btn">
+          <router-link
+            v-if="!log.wasPushedToServer"
+            :to="{ name: 'edit-log', params: { index: i } }"
+            class="edit-btn">
             <icon-edit />
           </router-link>
           <div class="del-btn" @click="openDeleteDialog(i)">
