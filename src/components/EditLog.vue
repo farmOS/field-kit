@@ -107,34 +107,25 @@
         <label class="form-check-label" for="doUseGeo">Use my location</label>
       </div>
 
-      <!-- Show localArea OR search autocomplete depending on selection -->
-      <ObjectSelector
-        v-if="useLocalAreas && geolocation !== {}"
-        :objects="localArea"
-        objectName="name"
-        label="Areas near your current location"
-        :isWorking="isWorking"
-        workingLabel="Getting your current location..."
-        v-on:choices="updateCurrentLog('field_farm_area', $event)">
-        <template slot="empty">
-          <div class="empty-slot">
-            <em>No areas found near your location.</em>
-            <br>
-            <button
-              type="button"
-              class="btn btn-light"
-              @click="forceSync"
-              name="button">
-              Sync Now
-            </button>
-          </div>
-        </template>
-      </ObjectSelector>
-      <!--  -->
-      <div v-if="useLocalAreas && isWorking">
-        <icon-spinner/>
+      <!-- If using the user's, show a select menu of nearby locations -->
+      <div v-if="useLocalAreas" class="form-group">
+        <label for="areaSelector">Farm areas near your current location</label>
+        <select
+          @input="addArea($event.target.value)"
+          class="form-control"
+          name="areas">
+          <option v-if="localArea.length < 1" value="">No other areas nearby</option>
+          <option v-if="localArea.length > 0" value="" selected>-- Select an Area --</option>
+          <option
+            v-if="localArea.length > 0"
+            v-for="area in localArea"
+            :value="area.tid">
+            {{area.name}}
+          </option>
+        </select>
       </div>
 
+      <!-- If not using the user's location, show a search bar -->
       <Autocomplete
         v-if="!useLocalAreas"
         :objects="filteredAreas"
@@ -157,6 +148,7 @@
         </template>
       </Autocomplete>
 
+      <!-- Display the areas attached to each log -->
       <div
         v-for="(area, i) in logs[currentLogIndex].field_farm_area"
         v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
@@ -238,13 +230,11 @@
 <script>
 import moment from 'moment';
 import Autocomplete from './Autocomplete';
-import ObjectSelector from './ObjectSelector';
 import iconSpinner from '../icons/icon-spinner.vue';
 
 export default {
   components: {
     Autocomplete,
-    ObjectSelector,
     iconSpinner,
   },
 
@@ -311,9 +301,13 @@ export default {
     },
 
     addArea(tid) {
-      const selectedArea = this.areas.find(area => area.tid === tid);
-      const newAreas = this.logs[this.currentLogIndex].field_farm_area.concat(selectedArea);
-      this.updateCurrentLog('field_farm_area', newAreas);
+      if (tid !== "") {
+        const selectedArea = this.areas.find(area => area.tid === tid);
+        const newAreas = this.logs[this.currentLogIndex].field_farm_area.concat(selectedArea);
+        this.updateCurrentLog('field_farm_area', newAreas);
+        this.checkAreas();
+      }
+      this.checkAreas();
     },
 
     removeAsset(asset) {
@@ -359,7 +353,7 @@ export default {
       console.log("CALLED CHECKAREAS; DOING CHECKINSIDE");
       // Use checkInside in geoModule with each area to see if the current location is inside an area
       let insideArea = false;
-      this.areas.forEach((area) => {
+      this.filteredAreas.forEach((area) => {
         if(area.field_farm_geofield[0] !== undefined && this.geolocation.Longitude !== undefined) {
           // If the current location is inside an area, add the area to the log
           const lonlat = [this.geolocation.Longitude, this.geolocation.Latitude];
@@ -415,7 +409,7 @@ export default {
     },
     useLocalAreas() {
       // If useLocalAreas is set to true, get geolocation and checkAreas
-      if(this.useLocalAreas) {
+      if (this.useLocalAreas) {
         console.log('USELOCALAREAS SET TO TRUE');
         // If necessary get geolocation; otherwise run checkAreas
         if (this.geolocation.Longitude == undefined) {
