@@ -81,27 +81,29 @@
       <!-- We're using a radio button to choose whether areas are selected
       automatically based on device location, or using an Autocomplete.
       This will use the useLocalAreas conditional var -->
-      <div class="form-check">
-        <input
-        v-model="useLocalAreas"
-        type="radio"
-        class="form-check-input"
-        id="dontUseGeo"
-        name="geoRadioGroup"
-        v-bind:value="false"
-        checked>
-        <label class="form-check-label" for="dontUseGeo">Search areas</label>
-      </div>
-      <div class="form-check">
-        <input
-        v-model="useLocalAreas"
-        type="radio"
-        class="form-check-input"
-        id="doUseGeo"
-        name="geoRadioGroup"
-        v-bind:value="true"
-        >
-        <label class="form-check-label" for="doUseGeo">Use my location</label>
+      <div  class="form-item form-item-name form-group">
+        <div class="form-check">
+          <input
+          v-model="useLocalAreas"
+          type="radio"
+          class="form-check-input"
+          id="dontUseGeo"
+          name="geoRadioGroup"
+          v-bind:value="false"
+          checked>
+          <label class="form-check-label" for="dontUseGeo">Search areas</label>
+        </div>
+        <div class="form-check">
+          <input
+          v-model="useLocalAreas"
+          type="radio"
+          class="form-check-input"
+          id="doUseGeo"
+          name="geoRadioGroup"
+          v-bind:value="true"
+          >
+          <label class="form-check-label" for="doUseGeo">Use my location</label>
+        </div>
       </div>
 
       <!-- If using the user's, show a select menu of nearby locations -->

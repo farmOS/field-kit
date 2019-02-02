@@ -1,36 +1,34 @@
 <template lang="html">
-  <div>
-    <div class="form-item form-item-name form-group">
-      <label for="search" class="control-label">{{ label }}</label>
-      <input
-        :value="search"
-        placeholder="Enter text to search"
-        type="text"
-        class="form-control"
-        @focus="openResults"
-        @input="doSearch($event.target.value)"
-        @keydown.down="onArrowDown"
-        @keydown.up="onArrowUp"
-        @keydown.enter="onEnter">
-      <ul
-        v-show="isOpen && search.length > 0"
-        class="list-group search-results">
-        <li
-          v-if="searchResults.length === 0"
-          class="list-group-item empty">
-          <slot name="empty">No Results</slot>
-        </li>
-        <li
-          v-else
-          v-for="(result, i) in searchResults"
-          v-bind:key="`result-${i}-${Math.floor(Math.random() * 1000000)}`"
-          class="list-group-item"
-          :class="{ 'is-active': i === counter }"
-          @click="selectSearchResult(result[searchId])">
-          {{result[searchKey]}}
-        </li>
-      </ul>
-    </div>
+  <div class="form-item form-item-name form-group">
+    <label for="search" class="control-label">{{ label }}</label>
+    <input
+      :value="search"
+      placeholder="Enter text to search"
+      type="text"
+      class="form-control"
+      @focus="openResults"
+      @input="doSearch($event.target.value)"
+      @keydown.down="onArrowDown"
+      @keydown.up="onArrowUp"
+      @keydown.enter="onEnter">
+    <ul
+      v-show="isOpen && search.length > 0"
+      class="list-group search-results">
+      <li
+        v-if="searchResults.length === 0"
+        class="list-group-item empty">
+        <slot name="empty">No Results</slot>
+      </li>
+      <li
+        v-else
+        v-for="(result, i) in searchResults"
+        v-bind:key="`result-${i}-${Math.floor(Math.random() * 1000000)}`"
+        class="list-group-item"
+        :class="{ 'is-active': i === counter }"
+        @click="selectSearchResult(result[searchId])">
+        {{result[searchKey]}}
+      </li>
+    </ul>
   </div>
 </template>
 
