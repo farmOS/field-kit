@@ -179,7 +179,9 @@
       <div v-if="attachGeo && isWorking">
         <icon-spinner/>
       </div>
-      <p v-if="attachGeo && !isWorking"> Location set to Lon: {{geolocation.Longitude}}, Lat: {{geolocation.Latitude}}</p>
+      <p v-if="logs[currentLogIndex].field_farm_geofield.length > 0">
+        Location set to {{ logs[currentLogIndex].field_farm_geofield[0].geom }}
+      </p>
 
       <br>
       <div class="input-group ">
