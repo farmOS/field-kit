@@ -48,21 +48,12 @@
             </span>
           </p>
           <h5>{{log.name}}</h5>
-          <router-link :to="{ name: 'edit-log', params: { index: i } }">
-            <button
-              type="button"
-              :name='`edit-${logs.indexOf(log)}`'
-              class="btn btn-success">
-              Edit
-            </button>
+          <router-link :to="{ name: 'edit-log', params: { index: i } }" class="edit-btn">
+            <icon-edit />
           </router-link>
-          <button
-            type="button"
-            :name='`delete-${logs.indexOf(log)}`'
-            class="btn btn-danger"
-            @click='openDeleteDialog(logs.indexOf(log))'>
-            Delete
-          </button>
+          <div class="del-btn" @click="openDeleteDialog(i)">
+            <icon-delete @click="openDeleteDialog(i)"/>
+          </div>
         </div>
       </div>
     </div>
@@ -119,11 +110,15 @@
 <script>
 import moment from 'moment';
 import IconSync from '../icons/icon-sync.vue';
+import IconEdit from '../icons/icon-edit.vue';
+import IconDelete from '../icons/icon-delete.vue';
 
 export default {
   props: ['logs'],
   components: {
     IconSync,
+    IconEdit,
+    IconDelete,
   },
   data() {
     return {
@@ -185,6 +180,15 @@ export default {
   .sync-status {
     position: absolute;
     right: 1.25rem;
+  }
+
+  .edit-btn, .del-btn {
+    display: inline-block;
+    fill: var(--gray-dark)
+  }
+
+  .del-btn {
+    float: right;
   }
 
   @media (min-width: 576px) {
