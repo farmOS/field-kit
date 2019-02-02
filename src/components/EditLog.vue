@@ -51,7 +51,7 @@
         searchKey="name"
         searchId="id"
         label="Add assets to the log"
-        v-on:results="updateCurrentLog('field_farm_asset', $event)">
+        v-on:results="addAsset($event)">
         <template slot="empty">
           <div class="empty-slot">
             <em>No assets found.</em>
@@ -66,6 +66,20 @@
           </div>
         </template>
       </Autocomplete>
+
+      <div
+        v-for="(asset, i) in logs[currentLogIndex].field_farm_asset"
+        v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
+        class="form-item form-item-name form-group">
+        <label for="type" class="control-label ">{{ asset.name }}</label>
+        <button
+          :disabled='false'
+          title="Remove"
+          @click="removeAsset(asset)"
+          class="btn btn-danger">
+          Remove
+        </button>
+      </div>
 
       <!-- We're using a radio button to choose whether areas are selected
       automatically based on device location, or using an Autocomplete.
@@ -127,7 +141,7 @@
         searchKey="name"
         searchId="tid"
         label="Add areas to the log"
-        v-on:results="updateCurrentLog('field_farm_area', $event)">
+        v-on:results="addArea($event)">
         <template slot="empty">
           <div class="empty-slot">
             <em>No areas found.</em>
@@ -142,6 +156,21 @@
           </div>
         </template>
       </Autocomplete>
+
+      <div
+        v-for="(area, i) in logs[currentLogIndex].field_farm_area"
+        v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
+        class="form-item form-item-name form-group">
+        <label for="type" class="control-label ">{{ area.name }}</label>
+        <button
+          :disabled='false'
+          title="Remove"
+          @click="removeArea(area)"
+          class="btn btn-danger">
+          Remove
+        </button>
+      </div>
+
 
       <!-- We're using a button to attach the current location to the log
       as a field_farm_geofield -->
@@ -275,6 +304,28 @@ export default {
       console.log(newProps);
     },
 
+    addAsset(id) {
+      const selectedAsset = this.assets.find(asset => asset.id === id);
+      const newAssets = this.logs[this.currentLogIndex].field_farm_asset.concat(selectedAsset);
+      this.updateCurrentLog('field_farm_asset', newAssets);
+    },
+
+    addArea(tid) {
+      const selectedArea = this.areas.find(area => area.tid === tid);
+      const newAreas = this.logs[this.currentLogIndex].field_farm_area.concat(selectedArea);
+      this.updateCurrentLog('field_farm_area', newAreas);
+    },
+
+    removeAsset(asset) {
+      const newAssets = this.logs[this.currentLogIndex].field_farm_asset
+        .filter(_asset => _asset.id !== asset.id);
+      this.updateCurrentLog('field_farm_asset', newAssets);
+    },
+
+    removeArea(area) {
+      const newAreas = this.logs[this.currentLogIndex].field_farm_area
+        .filter(_area => _area.tid !== area.tid);
+      this.updateCurrentLog('field_farm_area', newAreas);
     },
 
     getPhoto() {

@@ -26,26 +26,10 @@
           v-bind:key="`result-${i}-${Math.floor(Math.random() * 1000000)}`"
           class="list-group-item"
           :class="{ 'is-active': i === counter }"
-          @click="selectSearchResult(searchResults[i][searchId])">
+          @click="selectSearchResult(result[searchId])">
           {{result[searchKey]}}
         </li>
       </ul>
-    </div>
-    <!--
-      Displays all objects that have been selected, and provides for deletion
-    -->
-    <div
-    v-for="(object, i) in selectedObjects"
-    v-bind:key="`object-${i}-${Math.floor(Math.random() * 1000000)}`"
-    class="form-item form-item-name form-group">
-      <label for="type" class="control-label ">{{ object[searchKey] }}</label>
-      <button
-        :disabled='false'
-        title="Remove"
-        @click="removeObject(object)"
-        class="btn btn-danger">
-        Remove
-      </button>
     </div>
   </div>
 </template>
@@ -68,7 +52,6 @@ export default {
     return {
       search: '',
       searchResults: [],
-      selectedObjects: [],
       counter: 0,
       isOpen: false,
     };
@@ -81,7 +64,7 @@ export default {
     // Results are limited to a maximum of 10
     doSearch(val) {
       const foundObjects = [];
-    if (val !== '') {
+      if (val !== '') {
         const lowerVal = val.toLowerCase();
         for (let i = 0; i < this.objects.length; i += 1) {
           const object = this.objects[i];
@@ -97,17 +80,10 @@ export default {
     // When results are selected, add them to selectedObjects
     selectSearchResult(id) {
       if (id !== '') {
-        const selectedResult = this.searchResults.filter(result => result[this.searchId] === id);
-        this.selectedObjects = this.selectedObjects.concat(selectedResult);
-        this.$emit('results', this.selectedObjects);
+        this.$emit('results', id);
         this.search = '';
         this.doSearch(this.search);
       }
-    },
-    // Remove an object when the remove button is pressed
-    removeObject(object) {
-      this.selectedObjects = this.selectedObjects.filter(results => results !== object);
-      this.$emit('results', this.selectedObjects);
     },
     onArrowDown() {
       if (this.counter < (this.searchResults.length - 1)) {
