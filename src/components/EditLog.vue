@@ -2,11 +2,6 @@
   <div>
     <h1>Edit Log</h1>
     <div class="well" >
-      <!--
-        TODO: make these input fields into child components and load them with
-        v-for; pass down arguments for updateCurrentLog() as props, from the
-        computed values of the current log
-      -->
 
       <div class="form-item form-item-name form-group">
         <label for="name" class="control-label">Name</label>
@@ -17,7 +12,7 @@
           type="text"
           class="form-control"
           autofocus>
-          <!-- TODO: is the autofocus attr good accessibility? -->
+
       </div>
       <div class="form-item form-item-name form-group">
         <label for="Date" class="control-label">Date</label>
@@ -165,33 +160,6 @@
       </div>
       <p v-if="attachGeo && !isWorking"> Location set to Lon: {{geolocation.Longitude}}, Lat: {{geolocation.Latitude}}</p>
 
-
-      <!-- not able to send quantities right now -->
-      <!-- <div class="form-item form-item-name form-group">
-        <label for="quantity" class="control-label ">Quantity</label>
-        <div class="row reset-margin">
-          <select
-            @input="updateQuantityField('measure', $event.target.value)"
-            class="custom-select col-sm-3 ">
-            <option value='' selected>Select a measurement</option>
-            <option value='temperature'>Temperature</option>
-          </select>
-          <input
-            :value="logs[currentLogIndex].quantity"
-            @input="updateCurrentLog('quantity', $event.target.value)"
-            placeholder="Enter quantity"
-            type="number"
-            min="0"
-            class="form-control col-sm-3">
-          <select
-            @input="updateQuantityField('unit', $event.target.value)"
-            class="custom-select col-sm-3 form-control">
-            <option value='' selected>Select a unit of measure</option>
-            <option value='F'>F</option>
-          </select>
-        </div>
-      </div> -->
-
       <br>
       <div class="input-group ">
         <button
@@ -307,12 +275,6 @@ export default {
       console.log(newProps);
     },
 
-    updateQuantityField(key, val) { // eslint-disable-line no-unused-vars
-      // TODO: figure out how this gets stored in SQL before uncommenting
-      // this.updateCurrentLog('quantity', {
-      //   ...this.logs[this.currentLogIndex].quantity,
-      //   [key]: val,
-      // })
     },
 
     getPhoto() {
