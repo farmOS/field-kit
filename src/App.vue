@@ -50,7 +50,9 @@
             Share My Location
             <input class="toggle-check" type="checkbox"/>
           </li>
-          <li class="list-group-item">Sign out</li>
+          <router-link to="/login">
+            <li class="list-group-item" @click="showDrawer = !showDrawer">Login Screen</li>
+          </router-link>
         </ul>
 
       </div>
