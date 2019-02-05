@@ -50,8 +50,11 @@
             <label for="location-switch">Share My Location&nbsp;</label>
             <input id="location-switch" class="toggle-check" type="checkbox"/>
           </li>
-          <router-link to="/login">
-            <li class="list-group-item" @click="showDrawer = !showDrawer">Login Screen</li>
+          <router-link to="/login" v-if="!isLoggedIn">
+            <li class="list-group-item" @click="showDrawer = !showDrawer">Login</li>
+          </router-link>
+          <router-link to="/logout" v-if="isLoggedIn">
+            <li class="list-group-item" @click="showDrawer = !showDrawer">Logout</li>
           </router-link>
         </ul>
 
