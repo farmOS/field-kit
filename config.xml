@@ -27,7 +27,7 @@
         <string>farmOS would like access to the photo library</string>
     </config-file>
     <plugin name="cordova-plugin-whitelist" spec="^1.3.3" />
-    <plugin name="cordova-plugin-camera" spec="<=2.4.1">
+    <plugin name="cordova-plugin-camera" spec="&lt;=2.4.1">
         <variable name="CAMERA_USAGE_DESCRIPTION" value="farmOS would like access to the camera" />
         <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="farmOS would like access to the camera" />
     </plugin>
@@ -41,4 +41,5 @@
     </plugin>
     <engine name="android" spec="^7.1.1" />
     <engine name="ios" spec="^4.5.5" />
+    <plugin name="cordova-plugin-geolocation" spec="&lt;=2.4.3" />
 </widget>
