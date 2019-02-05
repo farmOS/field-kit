@@ -47,8 +47,8 @@
         </ul>
         <ul class="row list-group">
           <li class="list-group-item">
-            Share My Location
-            <input class="toggle-check" type="checkbox"/>
+            <label for="location-switch">Share My Location&nbsp;</label>
+            <input id="location-switch" class="toggle-check" type="checkbox"/>
           </li>
           <router-link to="/login">
             <li class="list-group-item" @click="showDrawer = !showDrawer">Login Screen</li>
