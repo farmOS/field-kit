@@ -46,6 +46,7 @@
           class="form-control">
       </div>
 
+      <h4>Assets</h4>
       <Autocomplete
         :objects="filteredAssets"
         searchKey="name"
@@ -67,17 +68,21 @@
         </template>
       </Autocomplete>
 
-      <div
-        v-for="(asset, i) in logs[currentLogIndex].field_farm_asset"
-        v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
-        class="form-item form-item-name form-group">
-        <label for="type" class="control-label ">{{ asset.name }}</label>
-        &nbsp;
-        <span @click="removeAsset(asset)">
-          &#x1F5D9;
-        </span>
+      <div class="form-item form-item-name form-group">
+        <ul class="list-group">
+          <li
+            v-for="(asset, i) in logs[currentLogIndex].field_farm_asset"
+            v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
+            class="list-group-item">
+            {{ asset.name }}
+            <span class="remove-list-item" @click="removeAsset(asset)">
+              &#x2715;
+            </span>
+          </li>
+        </ul>
       </div>
 
+      <h4>Areas &amp; Location</h4>
       <!-- We're using a radio button to choose whether areas are selected
       automatically based on device location, or using an Autocomplete.
       This will use the useLocalAreas conditional var -->
@@ -148,36 +153,48 @@
       </Autocomplete>
 
       <!-- Display the areas attached to each log -->
-      <div
-        v-for="(area, i) in logs[currentLogIndex].field_farm_area"
-        v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
-        class="form-item form-item-name form-group">
-        <label for="type" class="control-label ">{{ area.name }}</label>
-        &nbsp;
-        <span @click="removeArea(area)">
-          &#x1F5D9;
-        </span>
+      <div class="form-item form-item-name form-group">
+        <ul class="list-group">
+          <li
+            v-for="(area, i) in logs[currentLogIndex].field_farm_area"
+            v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
+            class="list-group-item">
+            {{ area.name }}
+            <span class="remove-list-item" @click="removeArea(area)">
+              &#x2715;
+            </span>
+          </li>
+        </ul>
       </div>
 
 
       <!-- We're using a button to attach the current location to the log
       as a field_farm_geofield -->
 
-      <button
-        :disabled='false'
-        title="Add my GPS location to the log"
-        @click="addLocation"
-        type="button"
-        class="btn btn-success btn-navbar">
-        Add my GPS location to the log
-      </button>
-      <!-- Display a spinner while getting geolocation, then display the location -->
-      <div v-if="attachGeo && isWorking">
-        <icon-spinner/>
+      <div class="form-item form-item-name form-group">
+        <button
+          :disabled='false'
+          title="Add my GPS location to the log"
+          @click="addLocation"
+          type="button"
+          class="btn btn-success btn-navbar">
+          Add my GPS location to the log
+        </button>
       </div>
-      <p v-if="logs[currentLogIndex].field_farm_geofield.length > 0">
-        Location set to {{ logs[currentLogIndex].field_farm_geofield[0].geom }}
-      </p>
+
+      <!-- Display a spinner while getting geolocation, then display the location -->
+      <div class="form-item form-item-name form-group">
+        <ul class="list-group">
+          <li
+            class="list-group-item"
+            v-if="logs[currentLogIndex].field_farm_geofield.length > 0">
+            {{ logs[currentLogIndex].field_farm_geofield[0].geom }}
+          </li>
+          <li class="list-item-group" v-if="attachGeo && isWorking">
+            <icon-spinner/>
+          </li>
+        </ul>
+      </div>
 
       <br>
       <div class="input-group ">
@@ -446,6 +463,10 @@ export default {
   .empty-slot button {
     margin: 0.5rem;
     color: var(--gray);
+  }
+
+  .remove-list-item {
+    float: right;
   }
 
 </style>
