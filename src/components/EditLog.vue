@@ -196,8 +196,9 @@
         </ul>
       </div>
 
-      <br>
-      <div class="input-group ">
+      <h4>Images</h4>
+
+      <div class="form-item form-item-name form-group">
         <button
           :disabled='false'
           title="Take picture with camera"
@@ -206,34 +207,40 @@
           type="button">
           Take picture with camera
         </button>
-        <router-link :to="'/logs'">
-          <button
-            :disabled='false'
-            title="Done Editing"
-            type="button"
-            class="btn btn-success btn-navbar">
-            Done Editing
-          </button>
-        </router-link>
       </div>
-      <div class="input-group">
-        <label
-          class="custom-file-label"
-          for="customFile">
-          Select photo from file
-        </label>
-        <input
-          type="file"
-          class="custom-file-input"
-          ref="photo"
-          @change="loadPhoto($event.target.files)">
+
+      <div class="form-item form-item-name form-group">
+        <div class="input-group ">
+          <label
+            class="custom-file-label"
+            for="customFile">
+            Select photo from file
+          </label>
+          <input
+            type="file"
+            class="custom-file-input"
+            ref="photo"
+            @change="loadPhoto($event.target.files)">
+        </div>
       </div>
-      <div class="col">
+      <div class="form-item form-item-name form-group">
         <img
           v-for="url in imageUrls"
           :src="url"
           :key="`preview-${imageUrls.indexOf(url)}`"
           class="preview" />
+      </div>
+
+      <div class="input-group">
+        <router-link :to="'/logs'">
+          <button
+            :disabled='false'
+            title="Done Editing"
+            type="button"
+            class="btn btn-success btn-lg">
+            Done Editing
+          </button>
+        </router-link>
       </div>
       <br>
       <div class="well">
