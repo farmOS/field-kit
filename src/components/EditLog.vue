@@ -24,16 +24,16 @@
       </div>
 
       <div class="form-item form-item-name form-group">
+        <div class = "typeSelector">
         <label for="type" class="control-label ">Log Type</label>
           <select
             :value="logs[currentLogIndex].type"
             @input="updateCurrentLog('type', $event.target.value)"
             class="custom-select col-sm-3 ">
-            <option value='farm_observation'>Observation</option>
-            <option value='farm_activity'>Activity</option>
-            <option value='farm_input'>Input</option>
-            <option value='farm_harvest'>Harvest</option>
+              <!-- options are defined in the local logTypes variable -->
+              <option v-for="(typeName, typeKey) in logTypes" :value="typeKey">{{ typeName }}</option>
           </select>
+        </div>
       </div>
 
       <div class="form-item form-item-name form-group">
@@ -268,6 +268,13 @@ export default {
       useLocalAreas: false,
       addedArea: false,
       isWorking: false,
+      //All types available to the log, with system_name:display name as key:value
+      logTypes: {
+        farm_observation: 'Observation',
+        farm_activity: 'Activity',
+        farm_input: 'Input',
+        farm_harvest: 'Harvest'
+      },
     };
   },
 
@@ -280,6 +287,8 @@ export default {
     'photoLoc',
     'geolocation',
     'localArea',
+    //Set by router via edit/:type props=true
+    'type',
   ],
 
   created() {
@@ -287,9 +296,9 @@ export default {
       // If a log index is provided in query params, set it as current log
       this.$store.commit('setCurrentLogIndex', this.$route.params.index)
     } else {
-      // Otherwise inititialize a new log (check for a type param & default to "Observation")
-      const logType = (this.$route.params.type) ? this.$route.params.type : 'farm_observation'
-      this.$store.dispatch('initializeLog', logType);
+      // Create a new log.  The 'type' prop is set based on the 'type' param in the local route
+      this.$store.dispatch('initializeLog', this.type);
+      console.log(`LOG IS RECEIVING TYPE AS ${this.type}`);
     }
   },
 
@@ -448,6 +457,10 @@ export default {
         }
 
       }
+    },
+    type() {
+      console.log(`TYPE HAS CHANGED TO ${this.type}`)
+      this.updateCurrentLog('type', this.type);
     },
   },
 };

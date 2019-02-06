@@ -2,7 +2,8 @@
   <div>
     <h1>Logs</h1>
     <div class="btn-wrapper">
-      <router-link :to="'/logs/edit'">
+        <!-- Initialize the new log as an observation -->
+        <router-link :to="{ name: 'edit-log', params: { type: 'farm_observation' } }">
         <button
           type="button"
           class="btn btn-success btn-navbar">
@@ -63,7 +64,7 @@
           <h5>{{log.name}}</h5>
           <router-link
             v-if="!log.wasPushedToServer"
-            :to="{ name: 'edit-log', params: { index: i } }"
+            :to="{ name: 'edit-log', params: { index: i, type: log.type } }"
             class="edit-btn">
             <icon-edit />
           </router-link>

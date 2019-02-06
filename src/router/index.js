@@ -22,9 +22,11 @@ export default new Router({
           component: AllLogs,
         },
         {
-          path: 'edit',
+          // Bringing params into the path (:type) allows them to be set as props
+          path: 'edit/:type',
           name: 'edit-log',
           component: EditLog,
+          props: true,
         },
       ],
     },
