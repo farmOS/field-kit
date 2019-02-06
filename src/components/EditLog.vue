@@ -38,12 +38,13 @@
 
       <div class="form-item form-item-name form-group">
         <label for="notes" class="control-label ">Notes</label>
-        <input
+        <textarea
           :value="logs[currentLogIndex].notes"
           @input="updateCurrentLog('notes', $event.target.value)"
           placeholder="Enter notes"
           type="text"
           class="form-control">
+        </textarea>
       </div>
 
       <h4>Assets</h4>
