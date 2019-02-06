@@ -28,7 +28,13 @@
         </button>
       </div>
       <div class="col col-sm-auto">
-        <button class="btn btn-lg btn-primary" type="button" name="button">Logout</button>
+        <button
+          @click="logout"
+          class="btn btn-lg btn-primary"
+          type="button"
+          name="button">
+          Logout
+        </button>
       </div>
     </div>
 
@@ -42,8 +48,30 @@
     methods: {
       goBack() {
         this.$router.back()
-      }
-    }
+      },
+      logout() {
+        // Remove logs, assets, areas, user info & site info from store
+        this.$store.commit('clearLogs')
+        this.$store.commit('clearAssets')
+        this.$store.commit('clearAreas')
+        this.$store.commit('changeUsername', '');
+        this.$store.commit('changeEmail', '');
+        this.$store.commit('changeUid', '');
+        this.$store.commit('changeFarmName', '');
+        this.$store.commit('changeFarmUrl', '');
+
+        // Remove logs, assets, areas, user info & site info from local persistance
+        // TODO: Create these actions
+        // this.$store.dispatch('deleteCachedLogs')
+        // this.$store.dispatch('deleteCachedAssets')
+        // this.$store.dispatch('deleteCachedAreas')
+        // this.$store.dispatch('deleteCachedUserAndSiteInfo')
+
+        // Set login status to false and return to login screen
+        this.$store.commit('setLoginStatus', false)
+        this.$router.push({ path: '/login' })
+      },
+    },
   }
 </script>
 
