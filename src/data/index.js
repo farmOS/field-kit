@@ -26,8 +26,8 @@ export default {
         store.dispatch('loadCachedLogs');
         next();
       }
-      // loads assets, areas and user data when /logs/edit route is called
-      if (to.path === '/logs/edit') {
+      // loads assets, areas and user data when ANY /logs/edit route is called
+      if (to.path.includes('/logs/edit')) {
         store.dispatch('loadCachedUserAndSiteInfo');
         store.commit('clearAssets');
         store.commit('clearAreas');
