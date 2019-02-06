@@ -60,6 +60,15 @@ export default {
         .catch(console.error);
     },
 
+    deleteAllCachedLogs() {
+      console.log('Deleting all logs');
+      openDatabase() // eslint-disable-line no-use-before-define
+        .then(db => getTX(db, 'log')) // eslint-disable-line no-use-before-define
+        .then(tx => dropTable(tx, 'log')) // eslint-disable-line no-use-before-define
+        .then(console.log)
+        .catch(console.error);
+    },
+
     createCachedAsset(_, newAsset) {
       const tableName = 'asset';
       const key = 'id';

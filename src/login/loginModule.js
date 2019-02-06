@@ -119,5 +119,14 @@ export default {
       commit('changeFarmName', localStorage.getItem('farmName'));
       commit('changeFarmUrl', localStorage.getItem('host'));
     },
+
+    deleteCachedUserAndSiteInfo() {
+      localStorage.removeItem('username');
+      localStorage.removeItem('email');
+      localStorage.removeItem('username');
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('farmName');
+      localStorage.removeItem('host');
+    },
   },
 };
