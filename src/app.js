@@ -5,6 +5,7 @@ import router from './router';
 import store from './store';
 import App from './App.vue'; // eslint-disable-line import/extensions
 import './bootstrap-simplex.min.css';
+import './vars.css';
 
 Vue.config.productionTip = false;
 
