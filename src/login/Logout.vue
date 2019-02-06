@@ -19,7 +19,13 @@
 
     <div class="row justify-content-sm-center">
       <div id="go-back" class="col col-sm-auto">
-        <button class="btn btn-lg btn-success" type="button" name="button">Go Back</button>
+        <button
+          @click="goBack"
+          class="btn btn-lg btn-success"
+          type="button"
+          name="button">
+          Go Back
+        </button>
       </div>
       <div class="col col-sm-auto">
         <button class="btn btn-lg btn-primary" type="button" name="button">Logout</button>
@@ -33,6 +39,11 @@
 <script>
   export default {
     name: 'Logout',
+    methods: {
+      goBack() {
+        this.$router.back()
+      }
+    }
   }
 </script>
 
