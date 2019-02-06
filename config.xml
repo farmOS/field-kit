@@ -39,8 +39,6 @@
         <variable name="PHOTOLIBRARY_ADD_USAGE_DESCRIPTION" value="This app needs write-access to photo library" />
         <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="This app needs read/write-access photo library access" />
     </plugin>
-    <engine name="android" spec="^7.1.1" />
-    <engine name="ios" spec="^4.5.5" />
     <plugin name="cordova-plugin-geolocation" spec="&lt;=2.4.3" />
     <plugin name="cordova-plugin-splashscreen" spec="^5.0.2" />
     <platform name="android">

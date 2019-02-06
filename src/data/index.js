@@ -19,12 +19,18 @@ export default {
     store.registerModule('http', httpModule);
     store.registerModule('camera', camModule);
     router.beforeEach((to, from, next) => {
+      // Loads logs and user data when /logs route is called
       if (to.path === '/logs') {
         store.commit('clearLogs');
-        store.commit('clearAssets');
-        store.commit('clearAreas');
         store.dispatch('loadCachedUserAndSiteInfo');
         store.dispatch('loadCachedLogs');
+        next();
+      }
+      // loads assets, areas and user data when /logs/edit route is called
+      if (to.path === '/logs/edit') {
+        store.dispatch('loadCachedUserAndSiteInfo');
+        store.commit('clearAssets');
+        store.commit('clearAreas');
         store.dispatch('loadCachedAssets')
           .then(() => store.dispatch('updateAssets'));
         store.dispatch('loadCachedAreas')
