@@ -19,6 +19,19 @@
     <div class="card-deck">
       <div
         class="card"
+        v-if="logs.length < 1">
+        <!-- <div class="card-header">Logs will go here</div> -->
+        <div class="card-body">
+          <h4 class="card-title">Let's Get Started!</h4>
+          <p class="card-text">
+            You don't have any logs to display yet, but you add them here by clicking
+            "Create Log" above.
+          </p>
+        </div>
+      </div>
+      <div
+        class="card"
+        v-if="logs.length > 0"
         v-for="(log, i) in logs"
         :key="`card-${logs.indexOf(log)}`"
       >
