@@ -458,10 +458,19 @@ export default {
 
       }
     },
-    type() {
-      console.log(`TYPE HAS CHANGED TO ${this.type}`)
-      this.updateCurrentLog('type', this.type);
-    },
+
+    // This catches route changes from `/log/edit` to `/log/edit` and creates
+    // a new log by the same procedure as in the `created()` hook.
+    '$route'(to, from) {
+      if (typeof to.params.index === 'number') {
+        // If a log index is provided in query params, set it as current log
+        this.$store.commit('setCurrentLogIndex', this.$route.params.index)
+      } else {
+        // Create a new log.  The 'type' prop is set based on the 'type' param in the local route
+        this.$store.dispatch('initializeLog', this.type);
+        console.log(`LOG IS RECEIVING TYPE AS ${this.type}`);
+      }
+    }
   },
 };
 
