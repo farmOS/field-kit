@@ -190,6 +190,9 @@
             class="list-group-item"
             v-if="logs[currentLogIndex].field_farm_geofield.length > 0">
             {{ logs[currentLogIndex].field_farm_geofield[0].geom }}
+            <span class="remove-list-item" @click="updateCurrentLog('field_farm_geofield', [])">
+              &#x2715;
+            </span>
           </li>
           <li class="list-item-group" v-if="attachGeo && isWorking">
             <icon-spinner/>
