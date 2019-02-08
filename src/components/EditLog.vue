@@ -305,11 +305,18 @@ export default {
   methods: {
 
     convertOutOfUnix(unixTimestamp) {
-      return moment.unix(unixTimestamp).format('YYYY-MM-DD');
+      const date = new Date(unixTimestamp * 1000);
+      const dateFix = d => (d < 10) ? `0${d}` : d;
+      const mm = dateFix(date.getMonth() + 1);
+      const dd = dateFix(date.getDate());
+      return `${date.getFullYear()}-${mm}-${dd}`;
     },
 
     convertIntoUnix(nonUnixTimestamp) {
-      return Math.floor(new Date(nonUnixTimestamp).getTime() / 1000).toString();
+      const year = +nonUnixTimestamp.split('-')[0]
+      const monthIndex = +nonUnixTimestamp.split('-')[1] - 1
+      const date = +nonUnixTimestamp.split('-')[2]
+      return Math.floor(new Date(year, monthIndex, date).getTime() / 1000).toString();
     },
 
     forceSync() {

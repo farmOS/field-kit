@@ -148,7 +148,7 @@ const farmModule = {
     //    Or perhaps just the logFactory, and pass in the date and logType as
     //    a `newProps` object from a component method.
     initializeLog({ commit }, logType) {
-      const curDate = new Date(Date.now());
+      const curDate = new Date();
       const timestamp = Math.floor(curDate / 1000).toString();
       const curTimeString = curDate.toLocaleTimeString('en-US');
       const curDateString = curDate.toLocaleDateString('en-US');
