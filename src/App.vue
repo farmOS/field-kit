@@ -118,7 +118,7 @@ export default {
     errors: state => state.shell.errors,
     username: state => state.shell.user.name,
     isLoggedIn: state => state.shell.user.isLoggedIn,
-    useGeolocation: state => state.shell.user.useGeolocation,
+    useGeolocation: state => state.shell.settings.useGeolocation,
     farmName: state => state.farm.name,
     // Provide an example url for the dev server environment
     farmUrl: state => (state.farm.url === '') ? 'example.farmos.net' : state.farm.url,

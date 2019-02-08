@@ -13,8 +13,10 @@ const shellModule = {
       email: '',
       uid: null,
       isLoggedIn: false,
-      useGeolocation: true,
     },
+    settings: {
+      useGeolocation: true,
+    }
   },
   mutations: {
     logError(state, error) {
@@ -40,8 +42,8 @@ const shellModule = {
       state.user.isLoggedIn = bool;
     },
     setUseGeolocation(state, bool) {
-      state.user.useGeolocation = bool;
-    }
+      state.settings.useGeolocation = bool;
+    },
   },
 };
 
