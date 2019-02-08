@@ -87,7 +87,7 @@
       <!-- We're using a radio button to choose whether areas are selected
       automatically based on device location, or using an Autocomplete.
       This will use the useLocalAreas conditional var -->
-      <div  class="form-item form-item-name form-group">
+      <div  v-if="useGeolocation" class="form-item form-item-name form-group">
         <div class="form-check">
           <input
           v-model="useLocalAreas"
@@ -172,7 +172,7 @@
       <!-- We're using a button to attach the current location to the log
       as a field_farm_geofield -->
 
-      <div class="form-item form-item-name form-group">
+      <div v-if="useGeolocation" class="form-item form-item-name form-group">
         <button
           :disabled='false'
           title="Add my GPS location to the log"
