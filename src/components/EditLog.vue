@@ -287,6 +287,7 @@ export default {
     'photoLoc',
     'geolocation',
     'localArea',
+    'useGeolocation',
     //Set by router via edit/:type props=true
     'type',
   ],

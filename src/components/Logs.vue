@@ -8,6 +8,7 @@
       :photoLoc='photoLoc'
       :geolocation='geolocation'
       :localArea='localArea'
+      :useGeolocation='useGeolocation'
     />
   </div>
 </template>
@@ -16,6 +17,7 @@
 import { mapState } from 'vuex';
 
 export default {
+  props: ['useGeolocation'],
   computed: mapState({
     logs: state => state.farm.logs,
     areas: state => state.farm.areas,

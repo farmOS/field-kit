@@ -90,7 +90,9 @@
           <div class="region region-content">
             <div class="block block-system">
 
-              <router-view/>
+              <router-view
+                :useGeolocation="useGeolocation"
+              />
 
             </div>
           </div>
