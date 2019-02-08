@@ -48,7 +48,12 @@
         <ul class="row list-group">
           <li class="list-group-item">
             <label for="location-switch">Share My Location&nbsp;</label>
-            <input id="location-switch" class="toggle-check" type="checkbox"/>
+            <input
+              id="location-switch"
+              class="toggle-check"
+              type="checkbox"
+              :checked="useGeolocation"
+              @input="setUseGeolocation($event.target.checked)"/>
           </li>
           <router-link to="/login" v-if="!isLoggedIn">
             <li class="list-group-item" @click="showDrawer = !showDrawer">Login</li>
@@ -113,6 +118,7 @@ export default {
     errors: state => state.shell.errors,
     username: state => state.shell.user.name,
     isLoggedIn: state => state.shell.user.isLoggedIn,
+    useGeolocation: state => state.shell.user.useGeolocation,
     farmName: state => state.farm.name,
     // Provide an example url for the dev server environment
     farmUrl: state => (state.farm.url === '') ? 'example.farmos.net' : state.farm.url,
@@ -128,7 +134,10 @@ export default {
   },
   methods: {
     closeError(index) {
-      this.$store.commit('dismissError', index)
+      this.$store.commit('dismissError', index);
+    },
+    setUseGeolocation(checked) {
+      this.$store.commit('setUseGeolocation', checked);
     },
   },
 };

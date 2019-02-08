@@ -13,6 +13,7 @@ const shellModule = {
       email: '',
       uid: null,
       isLoggedIn: false,
+      useGeolocation: true,
     },
   },
   mutations: {
@@ -38,6 +39,9 @@ const shellModule = {
     setLoginStatus(state, bool) {
       state.user.isLoggedIn = bool;
     },
+    setUseGeolocation(state, bool) {
+      state.user.useGeolocation = bool;
+    }
   },
 };
 
