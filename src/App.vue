@@ -105,8 +105,8 @@
 
 <script>
 import { mapState } from 'vuex';
-import IconMenu from './icons/icon-menu.vue';
-import IconArrowBack from './icons/icon-arrow-back.vue';
+import IconMenu from './icons/icon-menu.vue'; // eslint-disable-line import/extensions
+import IconArrowBack from './icons/icon-arrow-back.vue'; // eslint-disable-line import/extensions
 
 export default {
   name: 'App',
@@ -123,16 +123,16 @@ export default {
     useGeolocation: state => state.shell.settings.useGeolocation,
     farmName: state => state.farm.name,
     // Provide an example url for the dev server environment
-    farmUrl: state => (state.farm.url === '') ? 'example.farmos.net' : state.farm.url,
+    farmUrl: state => ((state.farm.url === '') ? 'example.farmos.net' : state.farm.url),
   }),
   watch: {
     showDrawer(currentShowDrawer) {
       if (currentShowDrawer) {
-        document.querySelector('body').setAttribute('style', 'overflow-y: hidden')
+        document.querySelector('body').setAttribute('style', 'overflow-y: hidden');
       } else {
-        document.querySelector('body').setAttribute('style', 'overflow-y: visible')
+        document.querySelector('body').setAttribute('style', 'overflow-y: visible');
       }
-    }
+    },
   },
   methods: {
     closeError(index) {

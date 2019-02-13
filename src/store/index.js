@@ -16,7 +16,7 @@ const shellModule = {
     },
     settings: {
       useGeolocation: true,
-    }
+    },
   },
   mutations: {
     logError(state, error) {

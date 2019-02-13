@@ -24,14 +24,19 @@
       </div>
 
       <div class="form-item form-item-name form-group">
-        <div class = "typeSelector">
         <label for="type" class="control-label ">Log Type</label>
+        <div class="input-group">
           <select
             :value="logs[currentLogIndex].type"
             @input="updateCurrentLog('type', $event.target.value)"
             class="custom-select col-sm-3 ">
               <!-- options are defined in the local logTypes variable -->
-              <option v-for="(typeName, typeKey) in logTypes" :value="typeKey">{{ typeName }}</option>
+              <option
+                v-for="(typeName, typeKey) in logTypes"
+                :value="typeKey"
+                v-bind:key="`${typeName}-${typeKey}`">
+                {{ typeName }}
+              </option>
           </select>
         </div>
       </div>
@@ -124,7 +129,8 @@
           <option
             v-if="localArea.length > 0"
             v-for="area in localArea"
-            :value="area.tid">
+            :value="area.tid"
+            v-bind:key="`area-${area.tid}`">
             {{area.name}}
           </option>
         </select>
@@ -254,9 +260,8 @@
 </template>
 
 <script>
-import moment from 'moment';
 import Autocomplete from './Autocomplete';
-import IconSpinner from '../icons/icon-spinner.vue';
+import IconSpinner from '../icons/icon-spinner.vue'; // eslint-disable-line import/extensions
 
 export default {
   components: {
@@ -271,12 +276,12 @@ export default {
       useLocalAreas: false,
       addedArea: false,
       isWorking: false,
-      //All types available to the log, with system_name:display name as key:value
+      // All types available to the log, with system_name:display name as key:value
       logTypes: {
         farm_observation: 'Observation',
         farm_activity: 'Activity',
         farm_input: 'Input',
-        farm_harvest: 'Harvest'
+        farm_harvest: 'Harvest',
       },
     };
   },
@@ -291,14 +296,14 @@ export default {
     'geolocation',
     'localArea',
     'useGeolocation',
-    //Set by router via edit/:type props=true
+    // Set by router via edit/:type props=true
     'type',
   ],
 
   created() {
     if (typeof this.$route.params.index === 'number') {
       // If a log index is provided in query params, set it as current log
-      this.$store.commit('setCurrentLogIndex', this.$route.params.index)
+      this.$store.commit('setCurrentLogIndex', this.$route.params.index);
     } else {
       // Create a new log.  The 'type' prop is set based on the 'type' param in the local route
       this.$store.dispatch('initializeLog', this.type);
@@ -310,16 +315,16 @@ export default {
 
     convertOutOfUnix(unixTimestamp) {
       const date = new Date(unixTimestamp * 1000);
-      const dateFix = d => (d < 10) ? `0${d}` : d;
+      const dateFix = d => ((d < 10) ? `0${d}` : d);
       const mm = dateFix(date.getMonth() + 1);
       const dd = dateFix(date.getDate());
       return `${date.getFullYear()}-${mm}-${dd}`;
     },
 
     convertIntoUnix(nonUnixTimestamp) {
-      const year = +nonUnixTimestamp.split('-')[0]
-      const monthIndex = +nonUnixTimestamp.split('-')[1] - 1
-      const date = +nonUnixTimestamp.split('-')[2]
+      const year = +nonUnixTimestamp.split('-')[0];
+      const monthIndex = +nonUnixTimestamp.split('-')[1] - 1;
+      const date = +nonUnixTimestamp.split('-')[2];
       return Math.floor(new Date(year, monthIndex, date).getTime() / 1000).toString();
     },
 
@@ -344,7 +349,7 @@ export default {
     },
 
     addArea(tid) {
-      if (tid !== "") {
+      if (tid !== '') {
         const selectedArea = this.areas.find(area => area.tid === tid);
         const newAreas = this.logs[this.currentLogIndex].field_farm_area.concat(selectedArea);
         this.updateCurrentLog('field_farm_area', newAreas);
@@ -378,30 +383,29 @@ export default {
     },
 
     addLocation() {
-      //Get geolocation if necessary; otherwise add geolocation
-      if (this.geolocation.Longitude == undefined) {
+      // Get geolocation if necessary; otherwise add geolocation
+      if (this.geolocation.Longitude === undefined) {
         this.$store.dispatch('getGeolocation');
         this.attachGeo = true;
         this.isWorking = true;
       }
       if (this.geolocation.Longitude !== undefined) {
         this.attachGeo = true;
-        const location = JSON.parse("[{\"geom\":\"POINT ("+this.geolocation.Longitude+" "+this.geolocation.Latitude+")\"}]");
-        console.log(`ATTACH GEOLOCATION: ${location}`)
+        const location = JSON.parse(`[{"geom":"POINT (${this.geolocation.Longitude} ${this.geolocation.Latitude})"}]`);
+        console.log(`ATTACH GEOLOCATION: ${location}`);
         this.updateCurrentLog('field_farm_geofield', location);
       }
     },
 
     checkAreas() {
-      console.log("CALLED CHECKAREAS; DOING CHECKINSIDE");
-      // Use checkInside in geoModule with each area to see if the current location is inside an area
-      let insideArea = false;
+      console.log('CALLED CHECKAREAS; DOING CHECKINSIDE');
+      // Use checkInside with each area to see if the current location is inside an area
       this.filteredAreas.forEach((area) => {
-        if(area.field_farm_geofield[0] !== undefined && this.geolocation.Longitude !== undefined) {
+        if (area.field_farm_geofield[0] !== undefined && this.geolocation.Longitude !== undefined) {
           // If the current location is inside an area, add the area to the log
           const lonlat = [this.geolocation.Longitude, this.geolocation.Latitude];
           // checkInNear requires a point, an area, and a radius around the point in kilometers
-          const areaProps = {point: lonlat, area: area, radius: 0.02};
+          const areaProps = { point: lonlat, area, radius: 0.02 };
           // This is the problem!  Dispatch isn't working...
           this.$store.dispatch('checkInNear', areaProps);
         }
@@ -416,16 +420,16 @@ export default {
       added to the current log.
     */
     filteredAssets() {
-      const selectedAssets = this.logs[this.currentLogIndex].field_farm_asset
-      return this.assets.filter(asset => {
-        return !selectedAssets.some(selAsset => asset.id === selAsset.id);
-      })
+      const selectedAssets = this.logs[this.currentLogIndex].field_farm_asset;
+      return this.assets.filter(asset =>
+        !selectedAssets.some(selAsset => asset.id === selAsset.id),
+      );
     },
     filteredAreas() {
-      const selectedAreas = this.logs[this.currentLogIndex].field_farm_area
-      return this.areas.filter(area => {
-        return !selectedAreas.some(selArea => area.tid === selArea.tid);
-      })
+      const selectedAreas = this.logs[this.currentLogIndex].field_farm_area;
+      return this.areas.filter(area =>
+        !selectedAreas.some(selArea => area.tid === selArea.tid),
+      );
     },
 
   },
@@ -437,15 +441,15 @@ export default {
       this.updateCurrentLog('images', this.photoLoc);
     },
     geolocation() {
-      // When the geolocation is set, EITHER set field_farm_geofield OR select areas based on location
+      // When geolocation is set, EITHER set field_farm_geofield OR select areas based on location
       if (this.attachGeo && this.geolocation.Longitude !== undefined) {
-        const location = JSON.parse("[{\"geom\":\"POINT ("+this.geolocation.Longitude+" "+this.geolocation.Latitude+")\"}]");
-        console.log(`ATTACH GEOLOCATION: ${location}`)
+        const location = JSON.parse(`[{"geom":"POINT (${this.geolocation.Longitude} ${this.geolocation.Latitude})"}]`);
+        console.log(`ATTACH GEOLOCATION: ${location}`);
         this.updateCurrentLog('field_farm_geofield', location);
         this.isWorking = false;
         // If we are getting local areas
       }
-      if(this.useLocalAreas && this.geolocation.Longitude !== undefined) {
+      if (this.useLocalAreas && this.geolocation.Longitude !== undefined) {
         this.checkAreas();
         this.isWorking = false;
       }
@@ -455,7 +459,7 @@ export default {
       if (this.useLocalAreas) {
         console.log('USELOCALAREAS SET TO TRUE');
         // If necessary get geolocation; otherwise run checkAreas
-        if (this.geolocation.Longitude == undefined) {
+        if (this.geolocation.Longitude === undefined) {
           // Clear local areas before populating
           this.$store.commit('clearLocalArea');
           this.$store.dispatch('getGeolocation');
@@ -466,22 +470,21 @@ export default {
           this.$store.commit('clearLocalArea');
           this.checkAreas();
         }
-
       }
     },
 
     // This catches route changes from `/log/edit` to `/log/edit` and creates
     // a new log by the same procedure as in the `created()` hook.
-    '$route'(to, from) {
+    $route(to) {
       if (typeof to.params.index === 'number') {
         // If a log index is provided in query params, set it as current log
-        this.$store.commit('setCurrentLogIndex', this.$route.params.index)
+        this.$store.commit('setCurrentLogIndex', this.$route.params.index);
       } else {
         // Create a new log.  The 'type' prop is set based on the 'type' param in the local route
         this.$store.dispatch('initializeLog', this.type);
         console.log(`LOG IS RECEIVING TYPE AS ${this.type}`);
       }
-    }
+    },
   },
 };
 
