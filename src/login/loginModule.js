@@ -118,6 +118,15 @@ export default {
       commit('setLoginStatus', localStorage.getItem('isLoggedIn'));
       commit('changeFarmName', localStorage.getItem('farmName'));
       commit('changeFarmUrl', localStorage.getItem('host'));
+      if (localStorage.getItem('useGeolocation')) {
+        // LocalStorage saves only strings, not booleans.
+        // We need to save to the app store as a boolean
+        if (localStorage.getItem('useGeolocation') === 'true') {
+          commit('setUseGeolocation', true);
+        } else {
+          commit('setUseGeolocation', false);
+        }
+      }
     },
 
     deleteCachedUserAndSiteInfo() {
@@ -127,6 +136,7 @@ export default {
       localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('farmName');
       localStorage.removeItem('host');
+      localStorage.removeItem('useGeolocation');
     },
   },
 };

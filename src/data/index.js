@@ -19,8 +19,10 @@ export default {
     store.registerModule('http', httpModule);
     store.registerModule('camera', camModule);
     router.beforeEach((to, from, next) => {
-      // Loads logs and user data when /logs route is called
-      if (to.path === '/logs') {
+      // Loads logs and user data when /logs or /logs/ routes are called
+      // The former is called at app load; the latter when the user navigates
+      // back to AllLogs using the menu (child view w/ url '')
+      if (to.path === '/logs/' || to.path === '/logs') {
         store.commit('clearLogs');
         store.dispatch('loadCachedUserAndSiteInfo');
         store.dispatch('loadCachedLogs');
@@ -79,6 +81,9 @@ export default {
       }
       if (mutation.type === 'updateArea') {
         store.dispatch('updateCachedArea', mutation.payload);
+      }
+      if (mutation.type === 'setUseGeolocation') {
+        localStorage.setItem('useGeolocation', mutation.payload);
       }
     });
     store.subscribeAction((action) => {
