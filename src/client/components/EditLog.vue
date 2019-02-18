@@ -261,7 +261,7 @@
 
 <script>
 import Autocomplete from './Autocomplete';
-import IconSpinner from '../icons/icon-spinner.vue'; // eslint-disable-line import/extensions
+import IconSpinner from '../../icons/icon-spinner.vue'; // eslint-disable-line import/extensions
 
 export default {
   components: {

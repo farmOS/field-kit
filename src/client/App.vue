@@ -105,8 +105,8 @@
 
 <script>
 import { mapState } from 'vuex';
-import IconMenu from './icons/icon-menu.vue'; // eslint-disable-line import/extensions
-import IconArrowBack from './icons/icon-arrow-back.vue'; // eslint-disable-line import/extensions
+import IconMenu from '../icons/icon-menu.vue'; // eslint-disable-line import/extensions
+import IconArrowBack from '../icons/icon-arrow-back.vue'; // eslint-disable-line import/extensions
 
 export default {
   name: 'App',

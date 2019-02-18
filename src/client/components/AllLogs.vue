@@ -126,9 +126,9 @@
 
 <script>
 import moment from 'moment';
-import IconSync from '../icons/icon-sync.vue'; // eslint-disable-line import/extensions
-import IconEdit from '../icons/icon-edit.vue'; // eslint-disable-line import/extensions
-import IconDelete from '../icons/icon-delete.vue'; // eslint-disable-line import/extensions
+import IconSync from '../../icons/icon-sync.vue'; // eslint-disable-line import/extensions
+import IconEdit from '../../icons/icon-edit.vue'; // eslint-disable-line import/extensions
+import IconDelete from '../../icons/icon-delete.vue'; // eslint-disable-line import/extensions
 
 export default {
   props: ['logs'],
