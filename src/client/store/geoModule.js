@@ -1,6 +1,6 @@
 // A utlity for obtaining geolocation via Cordova and checking it against areas with turf.js
 
-import * as turf from 'turf';
+import * as turf from '@turf/turf';
 
 export default {
   actions: {
