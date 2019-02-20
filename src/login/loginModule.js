@@ -88,27 +88,24 @@ export default {
       });
     },
 
-    updateUserInfo({ commit }) {
+    updateUserAndSiteInfo({ commit }) {
       const username = localStorage.getItem('username');
-      lazyFarm().user(username).then((res) => {
-        commit('changeUsername', res.list[0].name);
-        commit('changeEmail', res.list[0].mail);
-        commit('changeUid', res.list[0].uid);
-        commit('setLoginStatus', true);
-        localStorage.setItem('username', res.list[0].name);
-        localStorage.setItem('email', res.list[0].mail);
-        localStorage.setItem('uid', res.list[0].uid);
-        localStorage.setItem('isLoggedIn', true);
-      });
-    },
-
-    updateSiteInfo({ commit }) {
-      const username = localStorage.getItem('username');
-      lazyFarm().info(username).then((res) => {
-        commit('changeFarmName', res.name);
-        commit('changeFarmUrl', res.url);
-        localStorage.setItem('farmName', res.name);
-      });
+      if (username) {
+        // Request user and site info if the user is logged in
+        lazyFarm().info().then((res) => {
+          commit('changeFarmName', res.name);
+          commit('changeFarmUrl', res.url);
+          commit('changeUsername', res.user.name);
+          commit('changeEmail', res.user.mail);
+          commit('changeUid', res.user.uid);
+          commit('setLoginStatus', true);
+          localStorage.setItem('farmName', res.name);
+          localStorage.setItem('username', res.user.name);
+          localStorage.setItem('email', res.user.mail);
+          localStorage.setItem('uid', res.user.uid);
+          localStorage.setItem('isLoggedIn', true);
+        });
+      }
     },
 
     loadCachedUserAndSiteInfo({ commit }) {

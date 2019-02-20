@@ -146,6 +146,7 @@ export default function (host, user, password) {
       },
     },
     info() {
+      // Returns a json with {name: , url: , user: {uid: , name: , mail: }}
       return request('/farm.json');
     },
     log: {
@@ -174,32 +175,6 @@ export default function (host, user, password) {
       send(payload, token) {
         return request('/log', { method: 'POST', payload, token });
       },
-    },
-    user(opts = {}) {
-      if (typeof opts === 'number') {
-        return request(`/user.json?uid=${opts}`);
-      }
-
-      if (typeof opts === 'string') {
-        if (opts.indexOf('@') > -1) {
-          return request(`/user.json?email=${opts}`);
-        }
-        return request(`/user.json?name=${opts}`);
-      }
-
-      const {
-        active = true,
-        email = '',
-        name = '',
-        uid = null,
-      } = opts;
-
-      const activeParams = (active) ? 'status=1' : '';
-      const emailParams = (email !== '') ? `&mail=${email}` : '';
-      const nameParams = (name !== '') ? `&name=${name}` : '';
-      const uidParams = (uid !== null) ? `&uid=${uid}` : '';
-
-      return request(`/user.json?${activeParams}${emailParams}${nameParams}${uidParams}`);
     },
   };
 }

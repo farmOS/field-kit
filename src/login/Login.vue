@@ -101,8 +101,7 @@ export default {
         .then(() => {
           this.authPending = false;
           this.$store.commit('setLoginStatus', true);
-          this.$store.dispatch('updateUserInfo');
-          this.$store.dispatch('updateSiteInfo');
+          this.$store.dispatch('updateUserAndSiteInfo');
         });
     },
     onDeviceReady() {
