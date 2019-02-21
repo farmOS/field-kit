@@ -119,6 +119,11 @@ export default {
         }
         router.push('/login');
       }
+      if (action.type === 'getLogs') {
+        // Called when blank getLogs action is called in client/store/index
+        store.dispatch('getServerLogs', action.payload);
+        // Results are handled and errors caught in httpModule
+      }
     });
   },
 };

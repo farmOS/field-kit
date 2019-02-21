@@ -92,5 +92,13 @@ export default {
       }
     },
 
+    // SEND LOGS TO SERVER
+    getServerLogs({ commit, rootState }, payload) {
+      console.log(`GET SERVER LOGS CALLED IN HTTPMODULE WITH ${payload}`);
+      return farm().log.get('', localStorage.getItem('token'))
+        .then(res => console.log(res))
+        .catch(err => handleSyncError(err, index));
+    },
+
   },
 };

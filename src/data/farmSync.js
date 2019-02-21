@@ -154,6 +154,7 @@ export default function (host, user, password) {
         return request(`/log/${id}.json`, { method: 'DELETE', token });
       },
       get(opts = {}) {
+        // Get log syntax already exists.  Lets test it!
         // If an ID # is passed instead of an options object
         if (typeof opts === 'number') {
           return request(`/log/${opts}.json`);

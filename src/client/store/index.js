@@ -169,6 +169,9 @@ const farmModule = {
     forceSyncAssetsAndAreas() {
       // this is just a hook for synchronizing via the httpModule
     },
+    getLogs({ commit }, params) {
+      // Ribght now, this is just a hook to call a functon in the httpModule
+    }
   },
 };
 

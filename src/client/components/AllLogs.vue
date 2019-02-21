@@ -17,6 +17,16 @@
         Sync all to farmOS
       </button>
     </div>
+
+    <div>
+      <button
+        type="button"
+        class="btn btn-danger"
+        @click='getLogs()'>
+        Get all logs
+      </button>
+    </div>
+    
     <div class="card-deck">
       <div
         class="card"
@@ -180,6 +190,9 @@ export default {
         };
       }
       this.$store.commit('updateAllLogs', logSyncer);
+    },
+    getLogs() {
+      this.$store.dispatch('getLogs', '');
     },
   },
 };
