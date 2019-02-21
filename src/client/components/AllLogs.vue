@@ -25,8 +25,8 @@
         <div class="card-body">
           <h4 class="card-title">Let's Get Started!</h4>
           <p class="card-text">
-            You don't have any logs to display yet, but you add them here by clicking
-            "Create Log" above.
+            You don't have any logs to display yet. Logs are records of events
+            in farmOS. You can add some by clicking "Create Log" above.
           </p>
         </div>
       </div>
