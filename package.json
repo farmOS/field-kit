@@ -1,7 +1,7 @@
 {
-  "name": "farmos-native",
+  "name": "farmos-client",
   "version": "0.3.0",
-  "description": "Native app for farmOS!",
+  "description": "Client app for farmOS!",
   "author": "farmOS team",
   "license": "GPLv3",
   "private": true,
