@@ -1,7 +1,7 @@
 # farmOS Client
 
-[![Licence](https://img.shields.io/badge/Licence-GPL%203.0-blue.svg)](https://opensource.org/licenses/GPL-2.0/)
-[![Last commit](https://img.shields.io/github/last-commit/farmOS/farmOS-client.svg?style=flat)](https://github.com/mstenta/farmOS/commits)
+[![Licence](https://img.shields.io/badge/Licence-GPL%203.0-blue.svg)](https://opensource.org/licenses/GPL-3.0/)
+[![Last commit](https://img.shields.io/github/last-commit/farmOS/farmOS-client.svg?style=flat)](https://github.com/farmOS/farmOS-client/commits)
 [![Twitter](https://img.shields.io/twitter/follow/farmOSorg.svg?label=%40farmOSorg&style=flat)](https://twitter.com/farmOSorg)
 [![Chat](https://img.shields.io/matrix/farmOS:matrix.org.svg)](https://riot.im/app/#/room/#farmOS:matrix.org)
 
