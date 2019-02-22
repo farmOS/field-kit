@@ -160,6 +160,21 @@ export default function (host, user, password) {
           return request(`/log/${opts}.json`);
         }
 
+        console.log("GETTING LOGS WITH THE FOLLOWING ", opts);
+
+// More params to draw on:
+// const {
+//  active = true,
+//  email = '',
+//  name = '',
+//  uid = null,
+// } = opts;
+
+// const activeParams = (active) ? 'status=1' : '';
+// const emailParams = (email !== '') ? `&mail=${email}` : '';
+// const nameParams = (name !== '') ? `&name=${name}` : '';
+// const uidParams = (uid !== null) ? `&uid=${uid}` : '';
+
         // If an option object is passed, set defaults and parse the string params
         const { page = null, type = '' } = opts;
         const typeParams = (type !== '') ? `type=${type}` : '';

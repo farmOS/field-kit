@@ -18,15 +18,22 @@
       </button>
     </div>
 
-    <div>
+    <div class="btn-wrapper">
+      <input
+        @input="logSearchTerms = $event.target.value"
+        placeholder="Search logs by..."
+        type="text"
+        class="form-control"
+        autofocus>
       <button
         type="button"
         class="btn btn-danger"
         @click='getLogs()'>
         Get all logs
       </button>
+
     </div>
-    
+
     <div class="card-deck">
       <div
         class="card"
@@ -151,6 +158,9 @@ export default {
     return {
       showDeleteDialog: false,
       logIndexToDelete: null,
+
+      // Testing purposes only
+      logSearchTerms: "",
     };
   },
   methods: {
@@ -192,7 +202,18 @@ export default {
       this.$store.commit('updateAllLogs', logSyncer);
     },
     getLogs() {
-      this.$store.dispatch('getLogs', '');
+      // Query logs with search terms from text box
+      if (this.logSearchTerms === ''){
+        this.$store.dispatch('getLogs', '');
+      } else if (isNaN(this.logSearchTerms)) {
+        this.$store.dispatch('getLogs', JSON.parse('{'+this.logSearchTerms+'}'));
+      } else {
+        this.$store.dispatch('getLogs', Number(this.logSearchTerms));
+      }
+      // Search terms currently working:
+      // type
+      // page
+      // 
     },
   },
 };
