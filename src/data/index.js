@@ -45,6 +45,9 @@ export default {
       if (mutation.type === 'addLogAndMakeCurrent') {
         store.dispatch('createLog', mutation.payload);
       }
+      if (mutation.type === 'addLog') {
+        store.dispatch('createLog', mutation.payload);
+      }
       if (mutation.type === 'updateCurrentLog' && !mutation.payload.isCachedLocally) {
         store.dispatch('updateLog', mutation.payload);
       }
@@ -120,9 +123,21 @@ export default {
         router.push('/login');
       }
       if (action.type === 'getLogs') {
-        // Called when blank getLogs action is called in client/store/index
-        store.dispatch('getServerLogs', action.payload);
-        // Results are handled and errors caught in httpModule
+        // Triggered when getLogs action is called in client/store/index
+        // Successful requests are handled in httpModule; errors are handled here
+        store.dispatch('getServerLogs', action.payload).then().catch((err) => {
+          if (err.status === 403 || err.status === 401) {
+            router.push('/login');
+            return;
+          }
+          const errorPayload = {
+            message: `${err.status} error while syncing areas: ${err.statusText}`,
+            errorCode: err.statusText,
+            level: 'warning',
+            show: true,
+          };
+          store.commit('logError', errorPayload);
+        });
       }
     });
   },

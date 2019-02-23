@@ -83,6 +83,10 @@ const farmModule = {
     addLogAndMakeCurrent(state, newLog) {
       state.currentLogIndex = state.logs.push(newLog) - 1;
     },
+    // This is called when new logs from the server are added
+    addLog(state, newLog) {
+      state.logs.push(newLog);
+    },
     setCurrentLogIndex(state, index) {
       state.currentLogIndex = index;
     },

@@ -96,8 +96,32 @@ export default {
     getServerLogs({ commit, rootState }, payload) {
       console.log(`GET SERVER LOGS CALLED IN HTTPMODULE WITH ${payload}`);
       return farm().log.get(payload, localStorage.getItem('token'))
-        .then(res => console.log(res))
-        .catch(err => handleSyncError(err, index));
+        .then((res) => {
+          console.log('LOGS RECEIVED AS ', res);
+
+         // If receiving a single log, run it through the logFactory and call addLog
+         // If receiving multiple, run each through logFactory and call addLogs
+          if (res.list) {
+            // Currently, addLogs does not save logs to the DB.
+            // const gotLogs = [];
+            res.list.forEach((log) => {
+              // gotLogs.push(logFactory(log))
+              commit('addLog', logFactory({
+                ...log,
+                wasPushedToServer: true,
+              }));
+            });
+            // commit('addLogs', gotLogs);
+          } else {
+            // commit('addLog', logFactory(res));
+            commit('addLog', logFactory({
+              ...res,
+              wasPushedToServer: true,
+            }));
+          }
+        })
+        .catch((err) => { throw err; });
+      // Errors are handled in index.js
     },
 
   },
