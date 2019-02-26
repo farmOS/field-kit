@@ -79,8 +79,8 @@
             </span>
           </p>
           <h5>{{log.name}}</h5>
+          <!-- v-if="!log.wasPushedToServer" -->
           <router-link
-            v-if="!log.wasPushedToServer"
             :to="{ name: 'edit-log', params: { index: i, type: log.type } }"
             class="edit-btn">
             <icon-edit />
@@ -213,7 +213,7 @@ export default {
       // Search terms currently working:
       // type
       // page
-      // 
+      //
     },
   },
 };

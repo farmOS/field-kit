@@ -30,7 +30,10 @@ export default {
     },
 
     // SEND LOGS TO SERVER
+    // May expand this function to accomodate replacement, or write a new one.
+    // For the moment, I am trying a new one
     sendLogs({ commit, rootState }, payload) {
+      // Update logs in the database and local store after send completes
       function handleSyncResponse(response, index) {
         commit('updateLogs', {
           indices: [index],
@@ -82,7 +85,15 @@ export default {
       // Send records to the server, unless the user isn't logged in
       if (localStorage.getItem('token')) {
         payload.indices.map((index) => {
+          // Either send or post logs, depending on whether they originated on the server
+          // Logs originating on the server possess an ID field; others do not.
           const newLog = logFactory(rootState.farm.logs[index], SERVER);
+          console.log('SENDING LOGS WITH PAYLOAD', newLog);
+          if (newLog.id) {
+            return farm().log.update(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
+              .then(res => handleSyncResponse(res, index))
+              .catch(err => handleSyncError(err, index));
+          }
           return farm().log.send(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
             .then(res => handleSyncResponse(res, index))
             .catch(err => handleSyncError(err, index));
@@ -98,7 +109,6 @@ export default {
       return farm().log.get(payload, localStorage.getItem('token'))
         .then((res) => {
           console.log('LOGS RECEIVED AS ', res);
-
          // If receiving a single log, run it through the logFactory and call addLog
          // If receiving multiple, run each through logFactory and call addLogs
           if (res.list) {

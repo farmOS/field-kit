@@ -7,7 +7,9 @@ import camModule from './camModule';
   and returns an array of only those logs' indices.
 */
 function syncReducer(indices, curLog, curIndex) {
-  if (curLog.isReadyToSync && !curLog.wasPushedToServer) {
+  // Sync all logs to the server; those originally from server will have id fields
+  // if (curLog.isReadyToSync && !curLog.wasPushedToServer) {
+  if (curLog) {
     return indices.concat(curIndex);
   }
   return indices;

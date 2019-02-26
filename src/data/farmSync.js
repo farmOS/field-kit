@@ -15,8 +15,8 @@ export default function (host, user, password) {
       },
       credentials: 'include',
     };
-    // Fetch options for non-auth POST requests
-    if (method === 'POST' && !auth) {
+    // Fetch options for non-auth POST and PUT requests
+    if ((method === 'POST' || method === 'PUT') && !auth) {
       opts.headers['X-CSRF-Token'] = token;
       opts.body = JSON.stringify(payload);
     }
@@ -183,7 +183,12 @@ export default function (host, user, password) {
         return request(queryString);
       },
       send(payload, token) {
+        // ##### I WILL NEED TO FORMAT UPDATES AS PUT REQUESTS TO THE LOG ENDPOINT
         return request('/log', { method: 'POST', payload, token });
+      },
+      update(payload, token) {
+        console.log(`SENDING TO NODE ID ${payload.id}`)
+        return request('/log/'+payload.id, { method: 'PUT', payload, token });
       },
     },
   };
