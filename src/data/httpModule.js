@@ -94,15 +94,20 @@ export default {
           // Either send or post logs, depending on whether they originated on the server
           // Logs originating on the server possess an ID field; others do not.
           const newLog = logFactory(rootState.farm.logs[index], SERVER);
-          console.log('SENDING LOGS WITH PAYLOAD', newLog);
-          if (newLog.id) {
-            return farm().log.update(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
-              .then(res => handleSyncResponse(res, { logIndex: index, logId: newLog.id }))
+          // I also need to retrieve wasPushedToServer, which is not in logFactory Server
+          const synced = rootState.farm.logs[index].wasPushedToServer;
+          console.log(`SYNCED STATUS IS `, synced)
+          if (!synced) {
+            console.log('SENDING UNSYNCED LOG WITH PAYLOAD: ', newLog);
+            if (newLog.id) {
+              return farm().log.update(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
+                .then(res => handleSyncResponse(res, { logIndex: index, logId: newLog.id }))
+                .catch(err => handleSyncError(err, index));
+            }
+            return farm().log.send(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
+              .then(res => handleSyncResponse(res, { logIndex: index }))
               .catch(err => handleSyncError(err, index));
           }
-          return farm().log.send(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
-            .then(res => handleSyncResponse(res, { logIndex: index }))
-            .catch(err => handleSyncError(err, index));
         });
       } else {
         payload.router.push('/login');
