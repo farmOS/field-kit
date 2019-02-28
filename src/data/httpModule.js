@@ -1,4 +1,4 @@
-import logFactory, { SERVER } from './logFactory';
+import logFactory, { SERVER, STOREFROMSERVER } from './logFactory';
 import farmSync from './farmSync';
 
 const farm = () => {
@@ -34,13 +34,19 @@ export default {
     // For the moment, I am trying a new one
     sendLogs({ commit, rootState }, payload) {
       // Update logs in the database and local store after send completes
-      function handleSyncResponse(response, index) {
+      function handleSyncResponse(response, params) {
+        let serverId = null;
+        if (params.logId) {
+          serverId = params.logId;
+        } else {
+          serverId = response.id;
+        }
         commit('updateLogs', {
-          indices: [index],
+          indices: [params.logIndex],
           mapper(log) {
             return logFactory({
               ...log,
-              id: response.id,
+              id: serverId,
               wasPushedToServer: true,
               remoteUri: response.uri,
             });
@@ -91,11 +97,11 @@ export default {
           console.log('SENDING LOGS WITH PAYLOAD', newLog);
           if (newLog.id) {
             return farm().log.update(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
-              .then(res => handleSyncResponse(res, index))
+              .then(res => handleSyncResponse(res, { logIndex: index, logId: newLog.id }))
               .catch(err => handleSyncError(err, index));
           }
           return farm().log.send(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
-            .then(res => handleSyncResponse(res, index))
+            .then(res => handleSyncResponse(res, { logIndex: index }))
             .catch(err => handleSyncError(err, index));
         });
       } else {
@@ -109,25 +115,64 @@ export default {
       return farm().log.get(payload, localStorage.getItem('token'))
         .then((res) => {
           console.log('LOGS RECEIVED AS ', res);
-         // If receiving a single log, run it through the logFactory and call addLog
-         // If receiving multiple, run each through logFactory and call addLogs
-          if (res.list) {
-            // Currently, addLogs does not save logs to the DB.
-            // const gotLogs = [];
-            res.list.forEach((log) => {
-              // gotLogs.push(logFactory(log))
+          // See whether logs are new, or currently in the store
+          // If res is a single log, check vs current, run through the logFactory and call addLog
+          // If res is multiple, check each vs current, run through logFactory and call addLogs
+          function checkLog(serverLog) {
+            const allLogs = rootState.farm.logs;
+            console.log('ALL LOGS FROM ROOTSTATE: ', allLogs.length);
+            const logStatus = { newLog: true, localChange: true }
+            allLogs.forEach((localLog) => {
+              if (localLog.id) {
+                if (localLog.id === serverLog.id) {
+                  logStatus.newLog = false;
+                  console.log(`EXISTING LOG ${localLog.name} STATUS: `, localLog.wasPushedToServer)
+                  if (localLog.wasPushedToServer) {
+                    logStatus.localChange = false;
+                  }
+                }
+              }
+            });
+            return logStatus;
+          }
+          // Return all assets/ areas associated with logs
+          function getAttached(log, attribute, resources, resId) {
+            console.log('LOG ATTRIBUTE:', log[attribute]);
+            const logAttached = [];
+            resources.forEach((resrc) => {
+              log[attribute].forEach((attrib) => {
+                if (resrc[resId] === attrib.id) {
+                  logAttached.push(resrc);
+                }
+              })
+            })
+            console.log('ATTACHED RESOURCES:', logAttached);
+            return logAttached;
+          }
+
+          // Process each log on its way from the server to the logFactory
+          function processLog(log) {
+            const allAreas = rootState.farm.areas;
+            const allAssets = rootState.farm.assets;
+            const checkStatus = checkLog(log);
+            const attachedAssets = getAttached(log, 'field_farm_asset', allAssets, 'id');
+            const attachedAreas = getAttached(log, 'field_farm_area', allAreas, 'tid');
+            if (checkStatus.newLog) {
               commit('addLog', logFactory({
                 ...log,
                 wasPushedToServer: true,
-              }));
-            });
-            // commit('addLogs', gotLogs);
+                field_farm_area: attachedAreas,
+                field_farm_asset: attachedAssets
+              }, STOREFROMSERVER));
+            } else if (checkStatus.localChange) {
+              console.log(`LOG ${log.name} HAS BEEN CHANGED LOCALLY`);
+            }
+          }
+          // Process one or more logs
+          if (res.list) {
+            res.list.forEach(log => processLog(log));
           } else {
-            // commit('addLog', logFactory(res));
-            commit('addLog', logFactory({
-              ...res,
-              wasPushedToServer: true,
-            }));
+            processLog(res);
           }
         })
         .catch((err) => { throw err; });

@@ -336,6 +336,7 @@ export default {
       const newProps = {
         [key]: val,
         isCachedLocally: false,
+        wasPushedToServer: false,
       };
       this.$store.commit('updateCurrentLog', newProps);
       console.log('WROTE THE FOLLOWING TO CURRENT LOG WITH updateCurrentLog');
