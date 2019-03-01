@@ -183,13 +183,6 @@ function parseObjects(x) {
   throw new Error(`${x} cannot be parsed as an image array`);
 }
 
-function parseAssets(asset) {
-  // Search asset list by asset ID; add asset as {id: , name: }
-}
-
-function parseAreas(area) {
-  // Search area list by area ID; add area as (tid: , name: , field_farm_geofield: )
-}
 // Pull value from note and remove html tags
 function parseNotes(note) {
   if (note.value === '') {

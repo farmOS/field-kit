@@ -88,6 +88,7 @@ const farmModule = {
       state.logs.push(newLog);
     },
     setCurrentLogIndex(state, index) {
+      console.log(`CURRENT LOG INDEX SET TO ${index}`)
       state.currentLogIndex = index;
     },
     updateCurrentLog(state, newProps) {
@@ -96,6 +97,9 @@ const farmModule = {
         ...newProps,
       });
       state.logs.splice(state.currentLogIndex, 1, updatedLog);
+    },
+    updateLogFromServer(state, params) {
+      state.logs.splice(params.index, 1, params.log);
     },
     // Takes a function as payload and applies it to each log object
     updateAllLogs(state, fn) {

@@ -47,6 +47,19 @@ export default {
         .then(() => commit('updateCurrentLog', { isCachedLocally: true }));
     },
 
+    updateLogAtIndex({ commit, rootState }, props) {
+      const newLog = logFactory({
+        ...rootState.farm.logs[props.index],
+        ...props.log,
+      }, SQL);
+      const table = 'log';
+      openDatabase() // eslint-disable-line no-use-before-define
+        .then(db => getTX(db, table)) // eslint-disable-line no-use-before-define
+        .then(tx => saveRecord(tx, table, newLog)) // eslint-disable-line no-use-before-define
+        // Can we be sure this will always be the CURRENT log?
+        .then(() => commit('updateCurrentLog', { isCachedLocally: true }));
+    },
+
     deleteLog(_, { local_id, name }) { // eslint-disable-line camelcase
       // delete record from WebSQL
       console.log(

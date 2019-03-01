@@ -123,15 +123,18 @@ export default {
           // See whether logs are new, or currently in the store
           // If res is a single log, check vs current, run through the logFactory and call addLog
           // If res is multiple, check each vs current, run through logFactory and call addLogs
+
+          // Returns the log index number as logIndex if the log is present; null if not
+
           function checkLog(serverLog) {
             const allLogs = rootState.farm.logs;
             console.log('ALL LOGS FROM ROOTSTATE: ', allLogs.length);
-            const logStatus = { newLog: true, localChange: true }
-            allLogs.forEach((localLog) => {
+            const logStatus = { logIndex: null, localChange: true }
+            allLogs.forEach((localLog, index) => {
               if (localLog.id) {
                 if (localLog.id === serverLog.id) {
-                  logStatus.newLog = false;
-                  console.log(`EXISTING LOG ${localLog.name} STATUS: `, localLog.wasPushedToServer)
+                  console.log(`EXISTING LOG ${localLog.name} INDEX: `, index)
+                  logStatus.logIndex = index;
                   if (localLog.wasPushedToServer) {
                     logStatus.localChange = false;
                   }
@@ -154,7 +157,6 @@ export default {
             console.log('ATTACHED RESOURCES:', logAttached);
             return logAttached;
           }
-
           // Process each log on its way from the server to the logFactory
           function processLog(log) {
             const allAreas = rootState.farm.areas;
@@ -162,15 +164,53 @@ export default {
             const checkStatus = checkLog(log);
             const attachedAssets = getAttached(log, 'field_farm_asset', allAssets, 'id');
             const attachedAreas = getAttached(log, 'field_farm_area', allAreas, 'tid');
-            if (checkStatus.newLog) {
+            // If the log is not present locally, add it.
+            // If the log is present locally, but has not been changed since the last sync,
+            // update it with the new version from the server
+            // If the log is present locally and has been changed, do not update it.
+            console.log(`CHECKSTATUS FOR ${log.name} IS: `, checkStatus);
+            if (checkStatus.logIndex === null) {
               commit('addLog', logFactory({
                 ...log,
                 wasPushedToServer: true,
                 field_farm_area: attachedAreas,
                 field_farm_asset: attachedAssets
               }, STOREFROMSERVER));
-            } else if (checkStatus.localChange) {
-              console.log(`LOG ${log.name} HAS BEEN CHANGED LOCALLY`);
+            } else if (!checkStatus.localChange) {
+              // Update the log with all data from the server
+              console.log (`UPDATING UNCHANGED LOG ${log.name}`);
+              const updateParams = {
+                index: checkStatus.logIndex,
+                log: logFactory({
+                  ...log,
+                  wasPushedToServer: true,
+                  local_id: checkStatus.logIndex,
+                  field_farm_area: attachedAreas,
+                  field_farm_asset: attachedAssets
+                }, STOREFROMSERVER)
+              }
+              commit('updateLogFromServer', updateParams)
+
+              /*
+                 ???
+              const updatedLog = logFactory({
+                ...state.logs[state.currentLogIndex],
+                ...newProps,
+              });
+                 ???
+
+              commit('setCurrentLogIndex', checkStatus.logIndex);
+              const newProps = {
+                ...log,
+                field_farm_area: attachedAreas,
+                notes: parseNotes(log.field_farm_notes),
+                field_farm_asset: attachedAssets,
+                isCachedLocally: false,
+              };
+              commit('updateCurrentLog', newProps)
+              */
+            } else {
+              console.log(`LOG ${log.name} HAS BEEN CHANGED LOCALLY; WILL NOT BE UPDATED FROM THE SERVER`);
             }
           }
           // Process one or more logs
