@@ -28,7 +28,7 @@ module.exports = {
   output: {
     path: process.env.PLATFORM === 'native'
       ? config.native.assetsRoot
-      : config.build.assetsRoot,
+      : config.web.assetsRoot,
     filename: '[name].js',
     publicPath: '/'
   },

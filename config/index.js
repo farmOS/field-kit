@@ -68,7 +68,7 @@ module.exports = {
     cssSourceMap: true
   },
 
-  build: {
+  web: {
     mode: 'production',
 
     // Template for index.html

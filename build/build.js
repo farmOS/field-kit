@@ -26,9 +26,9 @@ if (commander.native) {
   spinner = ora('building for native production...')
 } else {
   process.env.PLATFORM = 'web'
-  webpackConfig = require('./webpack.prod.conf')
-  assetsRoot = config.build.assetsRoot
-  assetsSubDirectory = config.build.assetsSubDirectory
+  webpackConfig = require('./webpack.web.conf')
+  assetsRoot = config.web.assetsRoot
+  assetsSubDirectory = config.web.assetsSubDirectory
   spinner = ora('building for web production...')
 }
 spinner.start()

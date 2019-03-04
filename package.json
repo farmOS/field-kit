@@ -10,7 +10,7 @@
     "start": "npm run dev",
     "lint": "eslint --color --ext .js,.vue src test/unit | less -R",
     "lint-files": "node --eval 'process.argv.reduce((acc, cur) => `${acc} ${cur}`, ``)' | eslint --color",
-    "build": "node build/build.js",
+    "build:web": "node build/build.js",
     "build:native": "node build/build.js --native"
   },
   "dependencies": {
