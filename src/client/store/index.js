@@ -86,7 +86,7 @@ const farmModule = {
     // This is called when new logs from the server are added
     addLogFromServer(state, newLog) {
       const newIndex = state.logs.push(newLog) - 1;
-      this.dispatch('serverLogToDb', { index: newIndex })
+      this.dispatch('serverLogToDb', { index: newIndex, log: newLog })
     },
     setCurrentLogIndex(state, index) {
       console.log(`CURRENT LOG INDEX SET TO ${index}`)

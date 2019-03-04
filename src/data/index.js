@@ -56,7 +56,7 @@ export default {
       if (mutation.type === 'updateCurrentLog' && !mutation.payload.isCachedLocally) {
         store.dispatch('updateLog', mutation.payload);
       }
-      if (mutation.type === 'updateLogFromServer' && !mutation.payload.isCachedLocally) {
+      if (mutation.type === 'updateLogFromServer' && !mutation.payload.log.isCachedLocally) {
         store.dispatch('updateLogAtIndex', mutation.payload);
       }
       if (mutation.type === 'updateAllLogs') {

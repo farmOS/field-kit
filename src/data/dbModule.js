@@ -24,22 +24,30 @@ export default {
       const tableName = 'log';
       const newRecord = logFactory(props.log, SQL);
       console.log('CREATING THE FOLLOWING LOG IN DBMODULE:', newRecord);
-      /*
+
       openDatabase() // eslint-disable-line no-use-before-define
         .then(db => makeTable(db, tableName, newRecord)) // eslint-disable-line no-use-before-define
         .then(tx => saveRecord(tx, tableName, newRecord)) // eslint-disable-line no-use-before-define, max-len
-        .then(results => (
+        .then(
+          // I know values are being passed on
+          (results) => {
           // Can we be sure this will always be the CURRENT log?
           // Not if we use this action to add new records received from the server
-          commit('updateLogFromServer', {
-            index: props.index,
-            log: logFactory({
-              local_id: results.insertId,
-              isCachedLocally: true,
-            }),
-          })
-        ));
-        */
+            console.log('READY TO COMMIT WITH: ', props.log, props.index);
+
+            commit('updateLogFromServer', {
+              index: props.index,
+              log: logFactory({
+                ...props.log,
+                local_id: results.insertId,
+                isCachedLocally: true,
+              }, STORE),
+
+            })
+
+          }
+        );
+
     },
 
     loadCachedLogs({ commit }) {
