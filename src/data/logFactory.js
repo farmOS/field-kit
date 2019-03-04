@@ -184,9 +184,15 @@ function parseObjects(x) {
 }
 
 // Pull value from note and remove html tags
-function parseNotes(note) {
-  if (note.value === '') {
-    return '';
+// Now the entire dang thing is broken!  The error happens every old place!!
+function parseNotes(notes) {
+console.log(`NOTES:`, notes)
+  // if (notes !== [] && notes !== '[]' && notes !== null && notes !== undefined) {
+  if (notes.value !== undefined) {
+    if (notes.value !== '' && notes.value !== null) {
+      console.log(`NOTE VALUE: ${notes.value}`);
+      return notes.value.slice(3, -5);
+    }
   }
-  return note.value.slice(3, -5);
+  return '';
 }

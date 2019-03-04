@@ -32,7 +32,7 @@ export default {
     // SEND LOGS TO SERVER
     // May expand this function to accomodate replacement, or write a new one.
     // For the moment, I am trying a new one
-    sendLogs({ commit, rootState }, payload) {
+    sendLogs({ commit, dispatch, rootState }, payload) {
       // Update logs in the database and local store after send completes
       function handleSyncResponse(response, params) {
         let serverId = null;
@@ -116,7 +116,7 @@ export default {
 
     // GET LOGS FROM SERVER
     getServerLogs({ commit, rootState }, payload) {
-      console.log(`GET SERVER LOGS CALLED IN HTTPMODULE WITH ${payload}`);
+      console.log(`GET SERVER LOGS CALLED IN HTTPMODULE WITH`, payload);
       return farm().log.get(payload, localStorage.getItem('token'))
         .then((res) => {
           console.log('LOGS RECEIVED AS ', res);
@@ -129,12 +129,13 @@ export default {
           function checkLog(serverLog) {
             const allLogs = rootState.farm.logs;
             console.log('ALL LOGS FROM ROOTSTATE: ', allLogs.length);
-            const logStatus = { logIndex: null, localChange: true }
+            const logStatus = { localId: null, storeIndex: null, localChange: true }
             allLogs.forEach((localLog, index) => {
               if (localLog.id) {
                 if (localLog.id === serverLog.id) {
-                  console.log(`EXISTING LOG ${localLog.name} INDEX: `, index)
-                  logStatus.logIndex = index;
+                  console.log(`EXISTING LOG ${localLog.name} LOCALID: ${localLog.local_id} INDEX: `, index);
+                  logStatus.localId = localLog.local_id;
+                  logStatus.storeIndex = index;
                   if (localLog.wasPushedToServer) {
                     logStatus.localChange = false;
                   }
@@ -169,7 +170,7 @@ export default {
             // update it with the new version from the server
             // If the log is present locally and has been changed, do not update it.
             console.log(`CHECKSTATUS FOR ${log.name} IS: `, checkStatus);
-            if (checkStatus.logIndex === null) {
+            if (checkStatus.localId === null) {
               commit('addLog', logFactory({
                 ...log,
                 wasPushedToServer: true,
@@ -180,35 +181,16 @@ export default {
               // Update the log with all data from the server
               console.log (`UPDATING UNCHANGED LOG ${log.name}`);
               const updateParams = {
-                index: checkStatus.logIndex,
+                index: checkStatus.storeIndex,
                 log: logFactory({
                   ...log,
                   wasPushedToServer: true,
-                  local_id: checkStatus.logIndex,
+                  local_id: checkStatus.localId,
                   field_farm_area: attachedAreas,
                   field_farm_asset: attachedAssets
                 }, STOREFROMSERVER)
               }
               commit('updateLogFromServer', updateParams)
-
-              /*
-                 ???
-              const updatedLog = logFactory({
-                ...state.logs[state.currentLogIndex],
-                ...newProps,
-              });
-                 ???
-
-              commit('setCurrentLogIndex', checkStatus.logIndex);
-              const newProps = {
-                ...log,
-                field_farm_area: attachedAreas,
-                notes: parseNotes(log.field_farm_notes),
-                field_farm_asset: attachedAssets,
-                isCachedLocally: false,
-              };
-              commit('updateCurrentLog', newProps)
-              */
             } else {
               console.log(`LOG ${log.name} HAS BEEN CHANGED LOCALLY; WILL NOT BE UPDATED FROM THE SERVER`);
             }

@@ -9,6 +9,7 @@
       :geolocation='geolocation'
       :localArea='localArea'
       :useGeolocation='useGeolocation'
+      :userId='userId'
     />
   </div>
 </template>
@@ -27,6 +28,7 @@ export default {
     photoLoc: state => state.farm.photoLoc,
     geolocation: state => state.farm.geolocation,
     localArea: state => state.farm.localArea,
+    userId: state => state.shell.user.uid,
   }),
   beforeDestroy() {
     this.$store.commit('clearLogs');

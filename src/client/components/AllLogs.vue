@@ -17,7 +17,8 @@
         Sync all to farmOS
       </button>
     </div>
-
+<!--
+Log search bar for testing purposes
     <div class="btn-wrapper">
       <input
         @input="logSearchTerms = $event.target.value"
@@ -31,9 +32,8 @@
         @click='getLogs()'>
         Get all logs
       </button>
-
     </div>
-
+-->
     <div class="card-deck">
       <div
         class="card"
@@ -148,7 +148,10 @@ import IconEdit from '../../icons/icon-edit.vue'; // eslint-disable-line import/
 import IconDelete from '../../icons/icon-delete.vue'; // eslint-disable-line import/extensions
 
 export default {
-  props: ['logs'],
+  props: [
+    'logs',
+    'userId',
+    ],
   components: {
     IconSync,
     IconEdit,
@@ -158,9 +161,9 @@ export default {
     return {
       showDeleteDialog: false,
       logIndexToDelete: null,
-
-      // Testing purposes only
-      logSearchTerms: "",
+      readyToGetLogs: false,
+      // Used in search box for testing
+      logSearchTerms: '',
     };
   },
   methods: {
@@ -193,6 +196,7 @@ export default {
       console.log(`Deleting log "${payload.name}"...`);
     },
     syncAll() {
+      // updateAllLogs sends un-synced logs to the server.
       function logSyncer(log) {
         return {
           ...log,
@@ -200,9 +204,11 @@ export default {
         };
       }
       this.$store.commit('updateAllLogs', logSyncer);
+      this.readyToGetLogs = true;
+      // I will get when this.logs updates, meaning the send is complete
     },
+    // This function is only used for testing with the log search box
     getLogs() {
-      // Query logs with search terms from text box
       if (this.logSearchTerms === ''){
         this.$store.dispatch('getLogs', '');
       } else if (isNaN(this.logSearchTerms)) {
@@ -210,11 +216,20 @@ export default {
       } else {
         this.$store.dispatch('getLogs', Number(this.logSearchTerms));
       }
-      // Search terms currently working:
-      // type
-      // page
-      //
     },
+  },
+  watch: {
+      logs: {
+        handler: function() {
+          if (this.readyToGetLogs) {
+            console.log(`SENDING COMPLETE; TIME TO GET!`)
+            // Get logs from the server after sending
+            this.$store.dispatch('getLogs', {assigned: this.userId, completed: '0'});
+          }
+          this.readyToGetLogs = false;
+        },
+        deep: true
+      }
   },
 };
 </script>
