@@ -72,6 +72,10 @@ const webpackConfig = merge(baseWebpackConfig, {
         from: path.resolve(__dirname, '../static'),
         to: config.native.assetsSubDirectory,
         ignore: ['.*']
+      },
+      {
+        from: 'config.ios.xml',
+        to: `${config.native.assetsRoot}/config.xml`
       }
     ])
   ],
