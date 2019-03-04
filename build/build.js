@@ -7,14 +7,31 @@ const ora = require('ora')
 const rm = require('rimraf')
 const path = require('path')
 const chalk = require('chalk')
+const commander = require('commander')
 const webpack = require('webpack')
 const config = require('../config')
-const webpackConfig = require('./webpack.prod.conf')
 
-const spinner = ora('building for production...')
+/** Accept a flag argument for the 'build:watch' npm script and
+  * set the appropriate environment configurations for the build.
+**/
+commander
+  .option('-n, --native', 'Build the native www folder')
+  .parse(process.argv)
+let webpackConfig, assetsRoot, assetsSubDirectory, spinner
+if (commander.native) {
+  webpackConfig = require('./webpack.prod-mobile.conf')
+  assetsRoot = config.mobile.assetsRoot
+  assetsSubDirectory = config.mobile.assetsSubDirectory
+  spinner = ora('building for native production...')
+} else {
+  webpackConfig = require('./webpack.prod.conf')
+  assetsRoot = config.build.assetsRoot
+  assetsSubDirectory = config.build.assetsSubDirectory
+  spinner = ora('building for web production...')
+}
 spinner.start()
 
-rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
+rm(path.join(assetsRoot, assetsSubDirectory), err => {
   if (err) throw err
   webpack(webpackConfig, (err, stats) => {
     spinner.stop()

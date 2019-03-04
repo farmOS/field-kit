@@ -11,7 +11,7 @@
     "lint": "eslint --color --ext .js,.vue src test/unit | less -R",
     "lint-files": "node --eval 'process.argv.reduce((acc, cur) => `${acc} ${cur}`, ``)' | eslint --color",
     "build": "node build/build.js",
-    "build-mobile": "node build/build-mobile.js"
+    "build:native": "node build/build.js --native"
   },
   "dependencies": {
     "@turf/turf": "^5.1.6",
@@ -41,6 +41,7 @@
     "babel-preset-env": "^1.7.0",
     "babel-preset-stage-2": "^6.22.0",
     "chalk": "^2.4.1",
+    "commander": "^2.19.0",
     "copy-webpack-plugin": "^4.5.1",
     "css-loader": "^0.28.11",
     "eslint": "^4.19.1",
