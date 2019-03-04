@@ -103,7 +103,7 @@ module.exports = {
 
   native: {
     mode: 'production',
-    env: require('./mobile.env'),
+    env: require('./native.env'),
     index: path.resolve(__dirname, '../www/index.html'),
     assetsRoot: path.resolve(__dirname, '../www'),
     assetsSubDirectory: 'static',

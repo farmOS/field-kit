@@ -10,7 +10,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 
-const env = require('../config/prod.env')
+const env = require('../config/native.env')
 
 const webpackConfig = merge(baseWebpackConfig, {
   mode: config.native.mode,
