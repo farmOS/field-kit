@@ -19,11 +19,13 @@ commander
   .parse(process.argv)
 let webpackConfig, assetsRoot, assetsSubDirectory, spinner
 if (commander.native) {
+  process.env.PLATFORM = 'native'
   webpackConfig = require('./webpack.prod-mobile.conf')
   assetsRoot = config.mobile.assetsRoot
   assetsSubDirectory = config.mobile.assetsSubDirectory
   spinner = ora('building for native production...')
 } else {
+  process.env.PLATFORM = 'web'
   webpackConfig = require('./webpack.prod.conf')
   assetsRoot = config.build.assetsRoot
   assetsSubDirectory = config.build.assetsSubDirectory
