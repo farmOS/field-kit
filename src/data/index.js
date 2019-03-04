@@ -53,13 +53,10 @@ export default {
       if (mutation.type === 'addLogAndMakeCurrent') {
         store.dispatch('createLog', mutation.payload);
       }
-      if (mutation.type === 'addLog') {
-        store.dispatch('createLog', mutation.payload);
-      }
       if (mutation.type === 'updateCurrentLog' && !mutation.payload.isCachedLocally) {
         store.dispatch('updateLog', mutation.payload);
       }
-      if (mutation.type === 'updateLogFromServer') {
+      if (mutation.type === 'updateLogFromServer' && !mutation.payload.isCachedLocally) {
         store.dispatch('updateLogAtIndex', mutation.payload);
       }
       if (mutation.type === 'updateAllLogs') {
@@ -149,6 +146,9 @@ export default {
           };
           store.commit('logError', errorPayload);
         });
+      }
+      if (action.type === 'serverLogToDb') {
+        store.dispatch('createLogFromServer', action.payload);
       }
     });
   },

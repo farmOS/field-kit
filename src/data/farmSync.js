@@ -170,7 +170,9 @@ export default function (host, user, password) {
 
         // Build a querystring based on which params have been passed in the opts object
         let queryString = '/log.json?';
-        queryString = (type !== '') ? `${queryString}type=${type}` : queryString;
+        // Temporarily hacking to allow an array of terms
+        queryString = (type !== '') ? `${queryString}type${type}` : queryString;
+        // queryString = (type !== '') ? `${queryString}type=${type}` : queryString;
         queryString = (queryString.slice(-1) !== '?' && assigned !== '') ? `${queryString}&` : queryString;
         queryString = (assigned !== '') ? `${queryString}field_farm_log_owner=${assigned}` : queryString;
         queryString = (queryString.slice(-1) !== '?' && page !== null) ? `${queryString}&` : queryString;

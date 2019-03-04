@@ -276,6 +276,7 @@ export default {
       useLocalAreas: false,
       addedArea: false,
       isWorking: false,
+      existingLog: false,
       // All types available to the log, with system_name:display name as key:value
       logTypes: {
         farm_observation: 'Observation',
@@ -304,6 +305,8 @@ export default {
     if (typeof this.$route.params.index === 'number') {
       // If a log index is provided in query params, set it as current log
       this.$store.commit('setCurrentLogIndex', this.$route.params.index);
+      console.log(`SETTING CURRENT LOG INDEX AS ${this.$route.params.index}`);
+      this.existingLog = true;
     } else {
       // Create a new log.  The 'type' prop is set based on the 'type' param in the local route
       this.$store.dispatch('initializeLog', this.type);
@@ -333,6 +336,7 @@ export default {
     },
 
     updateCurrentLog(key, val) {
+      console.log('CURRENT LOG IS ',this.logs[this.currentLogIndex]);
       const newProps = {
         [key]: val,
         isCachedLocally: false,

@@ -16,7 +16,30 @@ export default {
           commit('updateCurrentLog', {
             local_id: results.insertId,
             isCachedLocally: true,
-          })));
+          })
+        ));
+    },
+
+    createLogFromServer({ commit }, props) {
+      const tableName = 'log';
+      const newRecord = logFactory(props.log, SQL);
+      console.log('CREATING THE FOLLOWING LOG IN DBMODULE:', newRecord);
+      /*
+      openDatabase() // eslint-disable-line no-use-before-define
+        .then(db => makeTable(db, tableName, newRecord)) // eslint-disable-line no-use-before-define
+        .then(tx => saveRecord(tx, tableName, newRecord)) // eslint-disable-line no-use-before-define, max-len
+        .then(results => (
+          // Can we be sure this will always be the CURRENT log?
+          // Not if we use this action to add new records received from the server
+          commit('updateLogFromServer', {
+            index: props.index,
+            log: logFactory({
+              local_id: results.insertId,
+              isCachedLocally: true,
+            }),
+          })
+        ));
+        */
     },
 
     loadCachedLogs({ commit }) {
@@ -48,6 +71,7 @@ export default {
     },
 
     updateLogAtIndex({ commit, rootState }, props) {
+      console.log('UPDATELOGATINDEX WITH log: ', props.log)
       const newLog = logFactory({
         ...rootState.farm.logs[props.index],
         ...props.log,
@@ -57,7 +81,12 @@ export default {
         .then(db => getTX(db, table)) // eslint-disable-line no-use-before-define
         .then(tx => saveRecord(tx, table, newLog)) // eslint-disable-line no-use-before-define
         // Can we be sure this will always be the CURRENT log?
-        .then(() => commit('updateCurrentLog', { isCachedLocally: true }));
+        .then(() => commit('updateLogFromServer', {
+          index: props.index,
+          log: logFactory({
+            isCachedLocally: true,
+          }),
+        }));
     },
 
     deleteLog(_, { local_id, name }) { // eslint-disable-line camelcase

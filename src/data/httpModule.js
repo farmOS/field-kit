@@ -170,13 +170,16 @@ export default {
             // update it with the new version from the server
             // If the log is present locally and has been changed, do not update it.
             console.log(`CHECKSTATUS FOR ${log.name} IS: `, checkStatus);
+            // Sending the index of the new log, so it can be assigned a local_id when added to the DB
             if (checkStatus.localId === null) {
-              commit('addLog', logFactory({
-                ...log,
-                wasPushedToServer: true,
-                field_farm_area: attachedAreas,
-                field_farm_asset: attachedAssets
-              }, STOREFROMSERVER));
+              console.log('ADDING LOG WITH PARAMS: ', log);
+              commit('addLogFromServer',
+                logFactory({
+                  ...log,
+                  wasPushedToServer: true,
+                  field_farm_area: attachedAreas,
+                  field_farm_asset: attachedAssets,
+                }, STOREFROMSERVER));
             } else if (!checkStatus.localChange) {
               // Update the log with all data from the server
               console.log (`UPDATING UNCHANGED LOG ${log.name}`);
