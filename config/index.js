@@ -101,7 +101,7 @@ module.exports = {
     bundleAnalyzerReport: process.env.npm_config_report
   },
 
-  mobile: {
+  native: {
     mode: 'production',
     env: require('./mobile.env'),
     index: path.resolve(__dirname, '../www/index.html'),

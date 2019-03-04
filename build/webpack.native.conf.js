@@ -13,17 +13,17 @@ const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 const env = require('../config/prod.env')
 
 const webpackConfig = merge(baseWebpackConfig, {
-  mode: config.mobile.mode,
+  mode: config.native.mode,
   module: {
     rules: utils.styleLoaders({
-      sourceMap: config.mobile.productionSourceMap,
+      sourceMap: config.native.productionSourceMap,
       extract: true,
       usePostCSS: true
     })
   },
-  devtool: config.mobile.productionSourceMap ? config.mobile.devtool : false,
+  devtool: config.native.productionSourceMap ? config.native.devtool : false,
   output: {
-    path: config.mobile.assetsRoot,
+    path: config.native.assetsRoot,
     filename: utils.assetsPath('js/[name].[chunkhash].js'),
     chunkFilename: utils.assetsPath('js/[id].[chunkhash].js')
   },
@@ -40,7 +40,7 @@ const webpackConfig = merge(baseWebpackConfig, {
     // Compress extracted CSS. We are using this plugin so that possible
     // duplicated CSS from different components can be deduped.
     new OptimizeCSSPlugin({
-      cssProcessorOptions: config.mobile.productionSourceMap
+      cssProcessorOptions: config.native.productionSourceMap
         ? { safe: true, map: { inline: false } }
         : { safe: true }
     }),
@@ -48,7 +48,7 @@ const webpackConfig = merge(baseWebpackConfig, {
     // you can customize output by editing /index.html
     // see https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
-      filename: config.mobile.index,
+      filename: config.native.index,
       template: 'index.html',
       inject: true,
       minify: {
@@ -70,7 +70,7 @@ const webpackConfig = merge(baseWebpackConfig, {
     new CopyWebpackPlugin([
       {
         from: path.resolve(__dirname, '../static'),
-        to: config.mobile.assetsSubDirectory,
+        to: config.native.assetsSubDirectory,
         ignore: ['.*']
       }
     ])
@@ -88,7 +88,7 @@ const webpackConfig = merge(baseWebpackConfig, {
   },
 })
 
-if (config.mobile.productionGzip) {
+if (config.native.productionGzip) {
   const CompressionWebpackPlugin = require('compression-webpack-plugin')
 
   webpackConfig.plugins.push(
@@ -97,7 +97,7 @@ if (config.mobile.productionGzip) {
       algorithm: 'gzip',
       test: new RegExp(
         '\\.(' +
-        config.mobile.productionGzipExtensions.join('|') +
+        config.native.productionGzipExtensions.join('|') +
         ')$'
       ),
       threshold: 10240,
@@ -106,7 +106,7 @@ if (config.mobile.productionGzip) {
   )
 }
 
-if (config.mobile.bundleAnalyzerReport) {
+if (config.native.bundleAnalyzerReport) {
   const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
   webpackConfig.plugins.push(new BundleAnalyzerPlugin())
 }
