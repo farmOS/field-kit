@@ -186,7 +186,6 @@ function parseObjects(x) {
 // Pull value from note and remove html tags
 // Now the entire dang thing is broken!  The error happens every old place!!
 function parseNotes(notes) {
-console.log(`NOTES:`, notes)
   // if (notes !== [] && notes !== '[]' && notes !== null && notes !== undefined) {
   if (notes.value !== undefined) {
     if (notes.value !== '' && notes.value !== null) {

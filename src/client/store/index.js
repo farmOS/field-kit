@@ -89,7 +89,6 @@ const farmModule = {
       this.dispatch('serverLogToDb', { index: newIndex, log: newLog })
     },
     setCurrentLogIndex(state, index) {
-      console.log(`CURRENT LOG INDEX SET TO ${index}`)
       state.currentLogIndex = index;
     },
     updateCurrentLog(state, newProps) {
@@ -179,10 +178,10 @@ const farmModule = {
       // this is just a hook for synchronizing via the httpModule
     },
     getLogs({ commit }, params) {
-      // Right now, this is just a hook to call a functon in the httpModule
+      // Right now, this is just a hook to call getServerLogs in the httpModule
     },
     serverLogToDb({ commit }, params) {
-      // Right now, this is just a hook to call a functon in the dbModule
+      // Right now, this is just a hook to call createLogFromServer in the dbModule
     },
   },
 };

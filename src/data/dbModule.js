@@ -19,7 +19,7 @@ export default {
           })
         ));
     },
-
+    // This works like createLog, but accepts params {log: , index: }
     createLogFromServer({ commit }, props) {
       const tableName = 'log';
       const newRecord = logFactory(props.log, SQL);
@@ -29,12 +29,7 @@ export default {
         .then(db => makeTable(db, tableName, newRecord)) // eslint-disable-line no-use-before-define
         .then(tx => saveRecord(tx, tableName, newRecord)) // eslint-disable-line no-use-before-define, max-len
         .then(
-          // I know values are being passed on
           (results) => {
-          // Can we be sure this will always be the CURRENT log?
-          // Not if we use this action to add new records received from the server
-            console.log('READY TO COMMIT WITH: ', props.log, props.index);
-
             commit('updateLogFromServer', {
               index: props.index,
               log: logFactory({
@@ -42,12 +37,9 @@ export default {
                 local_id: results.insertId,
                 isCachedLocally: true,
               }, STORE),
-
-            })
-
-          }
+            });
+          },
         );
-
     },
 
     loadCachedLogs({ commit }) {
@@ -77,7 +69,7 @@ export default {
         // Can we be sure this will always be the CURRENT log?
         .then(() => commit('updateCurrentLog', { isCachedLocally: true }));
     },
-
+    // This works like updateLog, but accepts params {log: , index: }
     updateLogAtIndex({ commit, rootState }, props) {
       console.log('UPDATELOGATINDEX WITH log: ', props.log)
       const newLog = logFactory({
@@ -88,12 +80,12 @@ export default {
       openDatabase() // eslint-disable-line no-use-before-define
         .then(db => getTX(db, table)) // eslint-disable-line no-use-before-define
         .then(tx => saveRecord(tx, table, newLog)) // eslint-disable-line no-use-before-define
-        // Can we be sure this will always be the CURRENT log?
         .then(() => commit('updateLogFromServer', {
           index: props.index,
           log: logFactory({
+            ...props.log,
             isCachedLocally: true,
-          }),
+          }, STORE),
         }));
     },
 

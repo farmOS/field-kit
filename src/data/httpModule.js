@@ -96,7 +96,6 @@ export default {
           const newLog = logFactory(rootState.farm.logs[index], SERVER);
           // I also need to retrieve wasPushedToServer, which is not in logFactory Server
           const synced = rootState.farm.logs[index].wasPushedToServer;
-          console.log(`SYNCED STATUS IS `, synced)
           if (!synced) {
             console.log('SENDING UNSYNCED LOG WITH PAYLOAD: ', newLog);
             if (newLog.id) {
@@ -123,17 +122,13 @@ export default {
           // See whether logs are new, or currently in the store
           // If res is a single log, check vs current, run through the logFactory and call addLog
           // If res is multiple, check each vs current, run through logFactory and call addLogs
-
           // Returns the log index number as logIndex if the log is present; null if not
-
           function checkLog(serverLog) {
             const allLogs = rootState.farm.logs;
-            console.log('ALL LOGS FROM ROOTSTATE: ', allLogs.length);
             const logStatus = { localId: null, storeIndex: null, localChange: true }
             allLogs.forEach((localLog, index) => {
               if (localLog.id) {
                 if (localLog.id === serverLog.id) {
-                  console.log(`EXISTING LOG ${localLog.name} LOCALID: ${localLog.local_id} INDEX: `, index);
                   logStatus.localId = localLog.local_id;
                   logStatus.storeIndex = index;
                   if (localLog.wasPushedToServer) {
@@ -155,7 +150,6 @@ export default {
                 }
               })
             })
-            console.log('ATTACHED RESOURCES:', logAttached);
             return logAttached;
           }
           // Process each log on its way from the server to the logFactory
@@ -169,8 +163,6 @@ export default {
             // If the log is present locally, but has not been changed since the last sync,
             // update it with the new version from the server
             // If the log is present locally and has been changed, do not update it.
-            console.log(`CHECKSTATUS FOR ${log.name} IS: `, checkStatus);
-            // Sending the index of the new log, so it can be assigned a local_id when added to the DB
             if (checkStatus.localId === null) {
               console.log('ADDING LOG WITH PARAMS: ', log);
               commit('addLogFromServer',

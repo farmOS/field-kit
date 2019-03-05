@@ -205,7 +205,7 @@ export default {
       }
       this.$store.commit('updateAllLogs', logSyncer);
       this.readyToGetLogs = true;
-      // I will get when this.logs updates, meaning the send is complete
+      // ReadyToGetLogs will be set back to false when this.logs updates, meaning the send is complete
     },
     // This function is only used for testing with the log search box
     getLogs() {
@@ -225,12 +225,13 @@ export default {
             console.log(`SENDING COMPLETE; TIME TO GET!`)
             // Get logs from the server after sending
             this.$store.dispatch('getLogs', {assigned: this.userId, completed: '0',
-            type: '[0]=farm_activity&type[1]=farm_observation&type[2]=farm_harvest&type[3]=farm_input'});
-          }
+            type: ['farm_activity', 'farm_observation', 'farm_harvest', 'farm_input',],
+          })
           this.readyToGetLogs = false;
-        },
+        }
         deep: true
       }
+    },
   },
 };
 </script>
