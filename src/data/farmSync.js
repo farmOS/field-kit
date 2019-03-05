@@ -166,13 +166,16 @@ export default function (host, user, password) {
         console.log("GETTING LOGS WITH THE FOLLOWING ", opts);
 
         // If an option object is passed, set defaults and parse the string params
-        const { page = null, type = '', assigned = '', completed = ''} = opts;
+        const { page = null, type = [], assigned = '', completed = ''} = opts;
 
         // Build a querystring based on which params have been passed in the opts object
         let queryString = '/log.json?';
-        // Temporarily hacking to allow an array of terms
-        queryString = (type !== '') ? `${queryString}type${type}` : queryString;
-        // queryString = (type !== '') ? `${queryString}type=${type}` : queryString;
+        // First, build all requested types onto the string
+        type.forEach((oneType, index) => {
+          queryString = (queryString.slice(-1) !== '?') ? `${queryString}&` : queryString;
+          queryString = `${queryString}type[${index}]=${oneType}`;
+        });
+        // Then append other search params
         queryString = (queryString.slice(-1) !== '?' && assigned !== '') ? `${queryString}&` : queryString;
         queryString = (assigned !== '') ? `${queryString}field_farm_log_owner=${assigned}` : queryString;
         queryString = (queryString.slice(-1) !== '?' && page !== null) ? `${queryString}&` : queryString;
