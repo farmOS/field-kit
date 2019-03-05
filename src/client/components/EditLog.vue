@@ -52,6 +52,14 @@
         </textarea>
       </div>
 
+      <div class="form-item form-group">
+        <input
+          type="checkbox"
+          :checked="logs[currentLogIndex].done"
+          @input="updateCurrentLog('done', $event.target.checked)">
+        <label for="completed">Completed</label>
+      </div>
+
       <h4>Assets</h4>
       <Autocomplete
         :objects="filteredAssets"
