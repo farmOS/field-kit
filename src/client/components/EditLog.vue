@@ -53,11 +53,11 @@
       </div>
 
       <div class="form-item form-group">
-        <input
-          type="checkbox"
+        <toggle-check
+          label="Done"
+          labelPosition="after"
           :checked="logs[currentLogIndex].done"
-          @input="updateCurrentLog('done', $event.target.checked)">
-        <label for="completed">Completed</label>
+          @input="updateCurrentLog('done', $event)"/>
       </div>
 
       <h4>Assets</h4>
@@ -270,11 +270,13 @@
 <script>
 import Autocomplete from './Autocomplete';
 import IconSpinner from '../../icons/icon-spinner.vue'; // eslint-disable-line import/extensions
+import ToggleCheck from './ToggleCheck.vue';
 
 export default {
   components: {
     Autocomplete,
     IconSpinner,
+    ToggleCheck,
   },
 
   data() {
