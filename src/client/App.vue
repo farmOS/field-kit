@@ -44,6 +44,9 @@
           <router-link :to="{ name: 'edit-log', params: { type: 'farm_observation' } }">
             <li class="list-group-item">New Observation</li>
           </router-link>
+          <router-link :to="{ name: 'edit-log', params: { type: 'farm_seeding' } }">
+            <li class="list-group-item">New Seeding</li>
+          </router-link>
         </ul>
         <ul class="row list-group">
           <li class="list-group-item">

@@ -293,6 +293,7 @@ export default {
         farm_activity: 'Activity',
         farm_input: 'Input',
         farm_harvest: 'Harvest',
+        farm_seeding: 'Seeding',
       },
     };
   },

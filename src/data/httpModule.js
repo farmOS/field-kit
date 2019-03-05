@@ -93,8 +93,13 @@ export default {
         payload.indices.map((index) => {
           // Either send or post logs, depending on whether they originated on the server
           // Logs originating on the server possess an ID field; others do not.
-          const newLog = logFactory(rootState.farm.logs[index], SERVER);
-          // I also need to retrieve wasPushedToServer, which is not in logFactory Server
+          let newLog = logFactory(rootState.farm.logs[index], SERVER);
+          // if the log type is seeding, I need to remove the area field
+          if (newLog.type === 'farm_seeding') {
+            delete newLog.field_farm_area;
+            delete newLog.field_farm_geofield;
+          }
+          // I need to check wasPushedToServer, which is not in logFactory Server
           const synced = rootState.farm.logs[index].wasPushedToServer;
           if (!synced) {
             console.log('SENDING UNSYNCED LOG WITH PAYLOAD: ', newLog);
@@ -141,16 +146,18 @@ export default {
           }
           // Return all assets/ areas associated with logs
           function getAttached(log, attribute, resources, resId) {
-            console.log('LOG ATTRIBUTE:', log[attribute]);
-            const logAttached = [];
-            resources.forEach((resrc) => {
-              log[attribute].forEach((attrib) => {
-                if (resrc[resId] === attrib.id) {
-                  logAttached.push(resrc);
-                }
-              })
-            })
-            return logAttached;
+            // Only get attached if that attrib exists.  Some logs have no areas!
+            if (log[attribute]) {
+              const logAttached = [];
+              resources.forEach((resrc) => {
+                log[attribute].forEach((attrib) => {
+                  if (resrc[resId] === attrib.id) {
+                    logAttached.push(resrc);
+                  }
+                });
+              });
+              return logAttached;
+            }
           }
           // Process each log on its way from the server to the logFactory
           function processLog(log) {

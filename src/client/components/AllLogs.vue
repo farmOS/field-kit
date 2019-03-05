@@ -225,7 +225,7 @@ export default {
             console.log(`SENDING COMPLETE; TIME TO GET!`)
             // Get logs from the server after sending
             this.$store.dispatch('getLogs', {assigned: this.userId, completed: '0',
-            type: ['farm_activity', 'farm_observation', 'farm_harvest', 'farm_input',],
+            type: ['farm_activity', 'farm_observation', 'farm_harvest', 'farm_input', 'farm_seeding',],
           })
           this.readyToGetLogs = false;
         }
