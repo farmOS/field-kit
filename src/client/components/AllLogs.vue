@@ -1,6 +1,6 @@
 <template lang="html">
   <div>
-    <h1>Logs</h1>
+    <h1>My Logs</h1>
     <div class="btn-wrapper">
         <!-- Initialize the new log as an observation -->
         <router-link :to="{ name: 'edit-log', params: { type: 'farm_observation' } }">
@@ -17,9 +17,9 @@
         Sync all to farmOS
       </button>
     </div>
-<!--
-Log search bar for testing purposes
-    <div class="btn-wrapper">
+
+    <!-- Log search bar for testing purposes -->
+    <!-- <div class="btn-wrapper">
       <input
         @input="logSearchTerms = $event.target.value"
         placeholder="Search logs by..."
@@ -32,8 +32,8 @@ Log search bar for testing purposes
         @click='getLogs()'>
         Get all logs
       </button>
-    </div>
--->
+    </div> -->
+
     <div class="card-deck">
       <div
         class="card"
