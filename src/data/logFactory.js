@@ -102,10 +102,11 @@ export default function (
     // Just take the id from the assets/areas before sending
     const assets = field_farm_asset.map(asset => ({ id: asset.id }));
     const areas = field_farm_area.map(area => ({ id: area.tid }));
+    console.log(`SENDING NOTES AS `, notes);
     log = {
       field_farm_notes: {
         format: 'farm_format',
-        value: `<p>${notes}</p>\n`,
+        value: notes,
       },
       // quantity,
       name,
@@ -184,9 +185,7 @@ function parseObjects(x) {
 }
 
 // Pull value from note and remove html tags
-// Now the entire dang thing is broken!  The error happens every old place!!
 function parseNotes(notes) {
-  // if (notes !== [] && notes !== '[]' && notes !== null && notes !== undefined) {
   if (notes.value !== undefined) {
     if (notes.value !== '' && notes.value !== null) {
       console.log(`NOTE VALUE: ${notes.value}`);

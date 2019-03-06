@@ -95,6 +95,7 @@ export default {
           // Logs originating on the server possess an ID field; others do not.
           let newLog = logFactory(rootState.farm.logs[index], SERVER);
           // if the log type is seeding, I need to remove the area field
+          // Is it worth creating a logFactory destination for this?
           if (newLog.type === 'farm_seeding') {
             delete newLog.field_farm_area;
             delete newLog.field_farm_geofield;
