@@ -52,7 +52,7 @@ export default {
         return geoJSON;
       }
 
-      const geometry = params.area.field_farm_geofield[0].geom;
+      const geometry = params.area.geofield[0].geom;
       const geomJSON = geoJSONify(geometry);
 
       // Now I'll check whether the point is inside the polygon (isInside)

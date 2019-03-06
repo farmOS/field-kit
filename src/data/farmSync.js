@@ -95,7 +95,7 @@ export default function (host, user, password) {
 
           // If an option object is passed, set defaults and parse the string params
           const { page = null, type = '' } = opts;
-          const typeParams = (type !== '') ? `field_farm_area_type=${type}` : '';
+          const typeParams = (type !== '') ? `area_type=${type}` : '';
           const pageParams = (page !== null) ? `page=${page}` : '';
 
           // If no page # is passed, get all of them
