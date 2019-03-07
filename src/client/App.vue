@@ -30,7 +30,7 @@
         </header>
         <ul class="row list-group" @click="showDrawer = !showDrawer">
           <router-link :to="{ name: 'logs' }">
-            <li class="list-group-item">All Logs</li>
+            <li class="list-group-item">My Logs</li>
           </router-link>
           <router-link :to="{ name: 'edit-log', params: { type: 'farm_activity' } }">
             <li class="list-group-item">New Activity</li>
