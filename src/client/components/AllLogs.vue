@@ -17,23 +17,6 @@
         Sync all to farmOS
       </button>
     </div>
-
-    <!-- Log search bar for testing purposes -->
-    <!-- <div class="btn-wrapper">
-      <input
-        @input="logSearchTerms = $event.target.value"
-        placeholder="Search logs by..."
-        type="text"
-        class="form-control"
-        autofocus>
-      <button
-        type="button"
-        class="btn btn-danger"
-        @click='getLogs()'>
-        Get all logs
-      </button>
-    </div> -->
-
     <div class="card-deck">
       <div
         class="card"
@@ -79,7 +62,6 @@
             </span>
           </p>
           <h5>{{log.name}}</h5>
-          <!-- v-if="!log.wasPushedToServer" -->
           <router-link
             :to="{ name: 'edit-log', params: { index: i, type: log.type } }"
             class="edit-btn">
@@ -162,8 +144,6 @@ export default {
       showDeleteDialog: false,
       logIndexToDelete: null,
       readyToGetLogs: false,
-      // Used in search box for testing
-      logSearchTerms: '',
     };
   },
   methods: {
@@ -206,16 +186,6 @@ export default {
       this.$store.commit('updateAllLogs', logSyncer);
       this.readyToGetLogs = true;
       // ReadyToGetLogs will be set back to false when this.logs updates, meaning the send is complete
-    },
-    // This function is only used for testing with the log search box
-    getLogs() {
-      if (this.logSearchTerms === ''){
-        this.$store.dispatch('getLogs', '');
-      } else if (isNaN(this.logSearchTerms)) {
-        this.$store.dispatch('getLogs', JSON.parse('{'+this.logSearchTerms+'}'));
-      } else {
-        this.$store.dispatch('getLogs', Number(this.logSearchTerms));
-      }
     },
   },
   watch: {
