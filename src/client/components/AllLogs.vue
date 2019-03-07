@@ -154,7 +154,6 @@ export default {
     return {
       showDeleteDialog: false,
       logIndexToDelete: null,
-      readyToGetLogs: false,
     };
   },
   methods: {
@@ -187,7 +186,7 @@ export default {
       console.log(`Deleting log "${payload.name}"...`);
     },
     syncAll() {
-      // updateAllLogs sends un-synced logs to the server.
+      // When isReadyToSync is set true, updateAllLogs triggers sendLogs in httpModule
       function logSyncer(log) {
         return {
           ...log,
@@ -195,10 +194,10 @@ export default {
         };
       }
       this.$store.commit('updateAllLogs', logSyncer);
-      this.readyToGetLogs = true;
-      // ReadyToGetLogs will be set back to false when this.logs updates, meaning the send is complete
+      // getServerLogs in the httpModule will be called when sendlogs completes and returns log.ids
     },
   },
+  /*
   watch: {
       logs: {
         handler: function() {
@@ -214,7 +213,9 @@ export default {
       }
     },
   },
+  */
 };
+
 </script>
 
 <style scoped>

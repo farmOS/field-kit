@@ -61,7 +61,8 @@ export default {
       }
       if (mutation.type === 'updateAllLogs') {
         const indices = store.state.farm.logs.reduce(syncReducer, []);
-        store.dispatch('sendLogs', { indices, router });
+        store.dispatch('sendLogs', { indices, router })
+          .then(() => store.dispatch('getServerLogs'));
       }
       if (mutation.type === 'updateLogs') {
         mutation.payload.indices.forEach((i) => {

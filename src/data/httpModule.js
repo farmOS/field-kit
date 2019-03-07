@@ -120,9 +120,9 @@ export default {
     },
 
     // GET LOGS FROM SERVER
-    getServerLogs({ commit, rootState }, payload) {
-      console.log(`GET SERVER LOGS CALLED IN HTTPMODULE WITH`, payload);
-      return farm().log.get(payload, localStorage.getItem('token'))
+    getServerLogs({ commit, rootState }) {
+      console.log(`GET SERVER LOGS CALLED IN HTTPMODULE WITH`, rootState.shell.settings.getServerLogsParams);
+      return farm().log.get(rootState.shell.settings.getServerLogsParams, localStorage.getItem('token'))
         .then((res) => {
           console.log('LOGS RECEIVED AS ', res);
           // See whether logs are new, or currently in the store
