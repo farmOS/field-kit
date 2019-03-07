@@ -38,6 +38,8 @@
       >
         <div class="card-body">
           <p>
+            <icon-done v-if="log.done"/>
+            <icon-flag v-if="!log.done"/>
             {{showDate(log.timestamp)}}
             <span
               v-if="log.wasPushedToServer"
@@ -125,9 +127,11 @@
 
 <script>
 import moment from 'moment';
-import IconSync from '../../icons/icon-sync.vue'; // eslint-disable-line import/extensions
-import IconEdit from '../../icons/icon-edit.vue'; // eslint-disable-line import/extensions
 import IconDelete from '../../icons/icon-delete.vue'; // eslint-disable-line import/extensions
+import IconDone from '../../icons/icon-done.vue'; // eslint-disable-line import/extensions
+import IconEdit from '../../icons/icon-edit.vue'; // eslint-disable-line import/extensions
+import IconFlag from '../../icons/icon-flag.vue'; // eslint-disable-line import/extensions
+import IconSync from '../../icons/icon-sync.vue'; // eslint-disable-line import/extensions
 
 export default {
   props: [
@@ -135,9 +139,11 @@ export default {
     'userId',
     ],
   components: {
-    IconSync,
-    IconEdit,
     IconDelete,
+    IconDone,
+    IconEdit,
+    IconFlag,
+    IconSync,
   },
   data() {
     return {
