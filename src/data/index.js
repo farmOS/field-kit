@@ -28,10 +28,6 @@ export default {
         store.commit('clearLogs');
         store.dispatch('loadCachedUserAndSiteInfo');
         store.dispatch('loadCachedLogs');
-        store.dispatch('getLogs', {
-          assigned: store.state.shell.user.uid,
-          completed: false,
-        });
         store.commit('clearAssets');
         store.commit('clearAreas');
         store.dispatch('loadCachedAssets')
