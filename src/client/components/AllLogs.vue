@@ -38,8 +38,11 @@
       >
         <div class="card-body">
           <p>
-            <icon-done v-if="log.done"/>
-            <icon-flag v-if="!log.done"/>
+            <icon-assignment-done v-if="log.done"/>
+            <icon-assignment
+              v-if="!log.done && (log.timestamp * 1000 > new Date().valueOf())"/>
+            <icon-assignment-late
+              v-if="!log.done && (log.timestamp * 1000 < new Date().valueOf())"/>
             {{showDate(log.timestamp)}}
             <span
               v-if="log.wasPushedToServer"
@@ -127,10 +130,11 @@
 
 <script>
 import moment from 'moment';
+import IconAssignment from '../../icons/icon-assignment.vue'; // eslint-disable-line import/extensions
+import IconAssignmentDone from '../../icons/icon-assignment-done.vue'; // eslint-disable-line import/extensions
+import IconAssignmentLate from '../../icons/icon-assignment-late.vue'; // eslint-disable-line import/extensions
 import IconDelete from '../../icons/icon-delete.vue'; // eslint-disable-line import/extensions
-import IconDone from '../../icons/icon-done.vue'; // eslint-disable-line import/extensions
 import IconEdit from '../../icons/icon-edit.vue'; // eslint-disable-line import/extensions
-import IconFlag from '../../icons/icon-flag.vue'; // eslint-disable-line import/extensions
 import IconSync from '../../icons/icon-sync.vue'; // eslint-disable-line import/extensions
 
 export default {
@@ -139,10 +143,11 @@ export default {
     'userId',
     ],
   components: {
+    IconAssignment,
+    IconAssignmentDone,
+    IconAssignmentLate,
     IconDelete,
-    IconDone,
     IconEdit,
-    IconFlag,
     IconSync,
   },
   data() {
