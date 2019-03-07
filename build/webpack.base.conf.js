@@ -30,7 +30,9 @@ module.exports = {
       ? config.native.assetsRoot
       : config.web.assetsRoot,
     filename: '[name].js',
-    publicPath: '/'
+    publicPath: process.env.PLATFORM === 'native'
+      ? config.native.assetsPublicPath
+      : config.web.assetsPublicPath
   },
   resolve: {
     extensions: ['.js', '.vue', '.json'],
