@@ -72,6 +72,14 @@ const webpackConfig = merge(baseWebpackConfig, {
         from: path.resolve(__dirname, '../static'),
         to: config.web.assetsSubDirectory,
         ignore: ['.*']
+      },
+      {
+        from: 'favicon.ico',
+        to: config.web.assetsRoot
+      },
+      {
+        from: 'CNAME',
+        to: config.web.assetsRoot
       }
     ])
   ],
