@@ -16,7 +16,30 @@ export default {
           commit('updateCurrentLog', {
             local_id: results.insertId,
             isCachedLocally: true,
-          })));
+          })
+        ));
+    },
+    // This works like createLog, but accepts params {log: , index: }
+    createLogFromServer({ commit }, props) {
+      const tableName = 'log';
+      const newRecord = logFactory(props.log, SQL);
+      console.log('CREATING THE FOLLOWING LOG IN DBMODULE:', newRecord);
+
+      openDatabase() // eslint-disable-line no-use-before-define
+        .then(db => makeTable(db, tableName, newRecord)) // eslint-disable-line no-use-before-define
+        .then(tx => saveRecord(tx, tableName, newRecord)) // eslint-disable-line no-use-before-define, max-len
+        .then(
+          (results) => {
+            commit('updateLogFromServer', {
+              index: props.index,
+              log: logFactory({
+                ...props.log,
+                local_id: results.insertId,
+                isCachedLocally: true,
+              }, STORE),
+            });
+          },
+        );
     },
 
     loadCachedLogs({ commit }) {
@@ -45,6 +68,25 @@ export default {
         .then(tx => saveRecord(tx, table, newLog)) // eslint-disable-line no-use-before-define
         // Can we be sure this will always be the CURRENT log?
         .then(() => commit('updateCurrentLog', { isCachedLocally: true }));
+    },
+    // This works like updateLog, but accepts params {log: , index: }
+    updateLogAtIndex({ commit, rootState }, props) {
+      console.log('UPDATELOGATINDEX WITH log: ', props.log)
+      const newLog = logFactory({
+        ...rootState.farm.logs[props.index],
+        ...props.log,
+      }, SQL);
+      const table = 'log';
+      openDatabase() // eslint-disable-line no-use-before-define
+        .then(db => getTX(db, table)) // eslint-disable-line no-use-before-define
+        .then(tx => saveRecord(tx, table, newLog)) // eslint-disable-line no-use-before-define
+        .then(() => commit('updateLogFromServer', {
+          index: props.index,
+          log: logFactory({
+            ...props.log,
+            isCachedLocally: true,
+          }, STORE),
+        }));
     },
 
     deleteLog(_, { local_id, name }) { // eslint-disable-line camelcase

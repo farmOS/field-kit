@@ -111,7 +111,8 @@ export default {
     loadCachedUserAndSiteInfo({ commit }) {
       commit('changeUsername', localStorage.getItem('username'));
       commit('changeEmail', localStorage.getItem('email'));
-      commit('changeUid', localStorage.getItem('username'));
+      // Fixed this - was previously getting username on changeUid
+      commit('changeUid', localStorage.getItem('uid'));
       commit('setLoginStatus', localStorage.getItem('isLoggedIn'));
       commit('changeFarmName', localStorage.getItem('farmName'));
       commit('changeFarmUrl', localStorage.getItem('host'));

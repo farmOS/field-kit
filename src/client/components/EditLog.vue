@@ -52,6 +52,14 @@
         </textarea>
       </div>
 
+      <div class="form-item form-group">
+        <toggle-check
+          label="Done"
+          labelPosition="after"
+          :checked="logs[currentLogIndex].done"
+          @input="updateCurrentLog('done', $event)"/>
+      </div>
+
       <h4>Assets</h4>
       <Autocomplete
         :objects="filteredAssets"
@@ -262,11 +270,13 @@
 <script>
 import Autocomplete from './Autocomplete';
 import IconSpinner from '../../icons/icon-spinner.vue'; // eslint-disable-line import/extensions
+import ToggleCheck from './ToggleCheck.vue';
 
 export default {
   components: {
     Autocomplete,
     IconSpinner,
+    ToggleCheck,
   },
 
   data() {
@@ -276,12 +286,14 @@ export default {
       useLocalAreas: false,
       addedArea: false,
       isWorking: false,
+      existingLog: false,
       // All types available to the log, with system_name:display name as key:value
       logTypes: {
         farm_observation: 'Observation',
         farm_activity: 'Activity',
         farm_input: 'Input',
         farm_harvest: 'Harvest',
+        farm_seeding: 'Seeding',
       },
     };
   },
@@ -304,6 +316,8 @@ export default {
     if (typeof this.$route.params.index === 'number') {
       // If a log index is provided in query params, set it as current log
       this.$store.commit('setCurrentLogIndex', this.$route.params.index);
+      console.log(`SETTING CURRENT LOG INDEX AS ${this.$route.params.index}`);
+      this.existingLog = true;
     } else {
       // Create a new log.  The 'type' prop is set based on the 'type' param in the local route
       this.$store.dispatch('initializeLog', this.type);
@@ -333,9 +347,11 @@ export default {
     },
 
     updateCurrentLog(key, val) {
+      console.log('CURRENT LOG IS ',this.logs[this.currentLogIndex]);
       const newProps = {
         [key]: val,
         isCachedLocally: false,
+        wasPushedToServer: false,
       };
       this.$store.commit('updateCurrentLog', newProps);
       console.log('WROTE THE FOLLOWING TO CURRENT LOG WITH updateCurrentLog');

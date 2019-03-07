@@ -83,6 +83,11 @@ const farmModule = {
     addLogAndMakeCurrent(state, newLog) {
       state.currentLogIndex = state.logs.push(newLog) - 1;
     },
+    // This is called when new logs from the server are added
+    addLogFromServer(state, newLog) {
+      const newIndex = state.logs.push(newLog) - 1;
+      this.dispatch('serverLogToDb', { index: newIndex, log: newLog })
+    },
     setCurrentLogIndex(state, index) {
       state.currentLogIndex = index;
     },
@@ -92,6 +97,9 @@ const farmModule = {
         ...newProps,
       });
       state.logs.splice(state.currentLogIndex, 1, updatedLog);
+    },
+    updateLogFromServer(state, params) {
+      state.logs.splice(params.index, 1, params.log);
     },
     // Takes a function as payload and applies it to each log object
     updateAllLogs(state, fn) {
@@ -168,6 +176,12 @@ const farmModule = {
     },
     forceSyncAssetsAndAreas() {
       // this is just a hook for synchronizing via the httpModule
+    },
+    getLogs({ commit }, params) {
+      // Right now, this is just a hook to call getServerLogs in the httpModule
+    },
+    serverLogToDb({ commit }, params) {
+      // Right now, this is just a hook to call createLogFromServer in the dbModule
     },
   },
 };

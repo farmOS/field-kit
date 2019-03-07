@@ -1,6 +1,6 @@
 <template lang="html">
   <div>
-    <h1>Logs</h1>
+    <h1>My Logs</h1>
     <div class="btn-wrapper">
         <!-- Initialize the new log as an observation -->
         <router-link :to="{ name: 'edit-log', params: { type: 'farm_observation' } }">
@@ -17,6 +17,23 @@
         Sync all to farmOS
       </button>
     </div>
+
+    <!-- Log search bar for testing purposes -->
+    <!-- <div class="btn-wrapper">
+      <input
+        @input="logSearchTerms = $event.target.value"
+        placeholder="Search logs by..."
+        type="text"
+        class="form-control"
+        autofocus>
+      <button
+        type="button"
+        class="btn btn-danger"
+        @click='getLogs()'>
+        Get all logs
+      </button>
+    </div> -->
+
     <div class="card-deck">
       <div
         class="card"
@@ -62,8 +79,8 @@
             </span>
           </p>
           <h5>{{log.name}}</h5>
+          <!-- v-if="!log.wasPushedToServer" -->
           <router-link
-            v-if="!log.wasPushedToServer"
             :to="{ name: 'edit-log', params: { index: i, type: log.type } }"
             class="edit-btn">
             <icon-edit />
@@ -131,7 +148,10 @@ import IconEdit from '../../icons/icon-edit.vue'; // eslint-disable-line import/
 import IconDelete from '../../icons/icon-delete.vue'; // eslint-disable-line import/extensions
 
 export default {
-  props: ['logs'],
+  props: [
+    'logs',
+    'userId',
+    ],
   components: {
     IconSync,
     IconEdit,
@@ -141,6 +161,9 @@ export default {
     return {
       showDeleteDialog: false,
       logIndexToDelete: null,
+      readyToGetLogs: false,
+      // Used in search box for testing
+      logSearchTerms: '',
     };
   },
   methods: {
@@ -173,6 +196,7 @@ export default {
       console.log(`Deleting log "${payload.name}"...`);
     },
     syncAll() {
+      // updateAllLogs sends un-synced logs to the server.
       function logSyncer(log) {
         return {
           ...log,
@@ -180,6 +204,33 @@ export default {
         };
       }
       this.$store.commit('updateAllLogs', logSyncer);
+      this.readyToGetLogs = true;
+      // ReadyToGetLogs will be set back to false when this.logs updates, meaning the send is complete
+    },
+    // This function is only used for testing with the log search box
+    getLogs() {
+      if (this.logSearchTerms === ''){
+        this.$store.dispatch('getLogs', '');
+      } else if (isNaN(this.logSearchTerms)) {
+        this.$store.dispatch('getLogs', JSON.parse('{'+this.logSearchTerms+'}'));
+      } else {
+        this.$store.dispatch('getLogs', Number(this.logSearchTerms));
+      }
+    },
+  },
+  watch: {
+      logs: {
+        handler: function() {
+          if (this.readyToGetLogs) {
+            console.log(`SENDING COMPLETE; TIME TO GET!`)
+            // Get logs from the server after sending
+            this.$store.dispatch('getLogs', {assigned: this.userId, completed: '0',
+            type: ['farm_activity', 'farm_observation', 'farm_harvest', 'farm_input', 'farm_seeding',],
+          })
+          this.readyToGetLogs = false;
+        }
+        deep: true
+      }
     },
   },
 };

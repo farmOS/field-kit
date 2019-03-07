@@ -7,7 +7,9 @@ import camModule from './camModule';
   and returns an array of only those logs' indices.
 */
 function syncReducer(indices, curLog, curIndex) {
-  if (curLog.isReadyToSync && !curLog.wasPushedToServer) {
+  // Sync all logs to the server; those originally from server will have id fields
+  // if (curLog.isReadyToSync && !curLog.wasPushedToServer) {
+  if (curLog) {
     return indices.concat(curIndex);
   }
   return indices;
@@ -26,6 +28,16 @@ export default {
         store.commit('clearLogs');
         store.dispatch('loadCachedUserAndSiteInfo');
         store.dispatch('loadCachedLogs');
+        store.dispatch('getLogs', {
+          assigned: store.state.shell.user.uid,
+          completed: false,
+        });
+        store.commit('clearAssets');
+        store.commit('clearAreas');
+        store.dispatch('loadCachedAssets')
+          .then(() => store.dispatch('updateAssets'));
+        store.dispatch('loadCachedAreas')
+          .then(() => store.dispatch('updateAreas'));
         next();
       }
       // loads assets, areas and user data when ANY /logs/edit route is called
@@ -47,6 +59,9 @@ export default {
       }
       if (mutation.type === 'updateCurrentLog' && !mutation.payload.isCachedLocally) {
         store.dispatch('updateLog', mutation.payload);
+      }
+      if (mutation.type === 'updateLogFromServer' && !mutation.payload.log.isCachedLocally) {
+        store.dispatch('updateLogAtIndex', mutation.payload);
       }
       if (mutation.type === 'updateAllLogs') {
         const indices = store.state.farm.logs.reduce(syncReducer, []);
@@ -118,6 +133,26 @@ export default {
           return;
         }
         router.push('/login');
+      }
+      if (action.type === 'getLogs') {
+        // Triggered when getLogs action is called in client/store/index
+        // Successful requests are handled in httpModule; errors are handled here
+        store.dispatch('getServerLogs', action.payload).then().catch((err) => {
+          if (err.status === 403 || err.status === 401) {
+            router.push('/login');
+            return;
+          }
+          const errorPayload = {
+            message: `${err.status} error while syncing areas: ${err.statusText}`,
+            errorCode: err.statusText,
+            level: 'warning',
+            show: true,
+          };
+          store.commit('logError', errorPayload);
+        });
+      }
+      if (action.type === 'serverLogToDb') {
+        store.dispatch('createLogFromServer', action.payload);
       }
     });
   },

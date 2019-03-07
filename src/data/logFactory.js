@@ -9,6 +9,7 @@
 export const SQL = 'WEBSQL';
 export const SERVER = 'FARMOS_SERVER';
 export const STORE = 'VUEX_STORE';
+export const STOREFROMSERVER = 'VUEX_STORE_FROM_SERVER';
 
 /*
   LOGFACTORY
@@ -41,6 +42,7 @@ export default function (
     field_farm_asset = [], // eslint-disable-line camelcase
     field_farm_area = [], // eslint-disable-line camelcase
     field_farm_geofield = [], // eslint-disable-line camelcase
+    field_farm_notes = { value: '', format: 'farm_format' }, // eslint-disable-line camelcase
   } = {},
   dest,
 ) {
@@ -71,15 +73,40 @@ export default function (
       field_farm_geofield: parseObjects(field_farm_geofield), // eslint-disable-line no-use-before-define, max-len
     };
   }
+      // This dest is called when bringing logs from the server into the vuex store
+  if (dest === STOREFROMSERVER) {
+    // console.log(`NOTES FIELD FOR ${name}:`, JSON.parse(field_farm_notes))
+    log = {
+      log_owner,
+      notes: parseNotes(field_farm_notes), // eslint-disable-line no-use-before-define
+      quantity,
+      id,
+      local_id,
+      name,
+      type,
+      timestamp,
+      // Use Array.concat() to make sure this is an array
+      images: parseImages(images), // eslint-disable-line no-use-before-define
+      // Use JSON.parse() to convert strings back to booleans
+      done: JSON.parse(done),
+      isCachedLocally: JSON.parse(isCachedLocally),
+      wasPushedToServer: JSON.parse(wasPushedToServer),
+      remoteUri,
+      field_farm_asset: parseObjects(field_farm_asset), // eslint-disable-line no-use-before-define
+      field_farm_area: parseObjects(field_farm_area), // eslint-disable-line no-use-before-define
+      field_farm_geofield: parseObjects(field_farm_geofield), // eslint-disable-line no-use-before-define, max-len
+    };
+  }
   // The format for sending logs to the farmOS REST Server.
   if (dest === SERVER) {
     // Just take the id from the assets/areas before sending
     const assets = field_farm_asset.map(asset => ({ id: asset.id }));
     const areas = field_farm_area.map(area => ({ id: area.tid }));
+    console.log(`SENDING NOTES AS `, notes);
     log = {
       field_farm_notes: {
         format: 'farm_format',
-        value: `<p>${notes}</p>\n`,
+        value: notes,
       },
       // quantity,
       name,
@@ -155,4 +182,15 @@ function parseObjects(x) {
     return JSON.parse(x);
   }
   throw new Error(`${x} cannot be parsed as an image array`);
+}
+
+// Pull value from note and remove html tags
+function parseNotes(notes) {
+  if (notes.value !== undefined) {
+    if (notes.value !== '' && notes.value !== null) {
+      console.log(`NOTE VALUE: ${notes.value}`);
+      return notes.value.slice(3, -5);
+    }
+  }
+  return '';
 }

@@ -1,4 +1,4 @@
-import logFactory, { SERVER } from './logFactory';
+import logFactory, { SERVER, STOREFROMSERVER } from './logFactory';
 import farmSync from './farmSync';
 
 const farm = () => {
@@ -30,14 +30,23 @@ export default {
     },
 
     // SEND LOGS TO SERVER
-    sendLogs({ commit, rootState }, payload) {
-      function handleSyncResponse(response, index) {
+    // May expand this function to accomodate replacement, or write a new one.
+    // For the moment, I am trying a new one
+    sendLogs({ commit, dispatch, rootState }, payload) {
+      // Update logs in the database and local store after send completes
+      function handleSyncResponse(response, params) {
+        let serverId = null;
+        if (params.logId) {
+          serverId = params.logId;
+        } else {
+          serverId = response.id;
+        }
         commit('updateLogs', {
-          indices: [index],
+          indices: [params.logIndex],
           mapper(log) {
             return logFactory({
               ...log,
-              id: response.id,
+              id: serverId,
               wasPushedToServer: true,
               remoteUri: response.uri,
             });
@@ -82,14 +91,122 @@ export default {
       // Send records to the server, unless the user isn't logged in
       if (localStorage.getItem('token')) {
         payload.indices.map((index) => {
-          const newLog = logFactory(rootState.farm.logs[index], SERVER);
-          return farm().log.send(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
-            .then(res => handleSyncResponse(res, index))
-            .catch(err => handleSyncError(err, index));
+          // Either send or post logs, depending on whether they originated on the server
+          // Logs originating on the server possess an ID field; others do not.
+          let newLog = logFactory(rootState.farm.logs[index], SERVER);
+          // if the log type is seeding, I need to remove the area field
+          // Is it worth creating a logFactory destination for this?
+          if (newLog.type === 'farm_seeding') {
+            delete newLog.field_farm_area;
+            delete newLog.field_farm_geofield;
+          }
+          // I need to check wasPushedToServer, which is not in logFactory Server
+          const synced = rootState.farm.logs[index].wasPushedToServer;
+          if (!synced) {
+            console.log('SENDING UNSYNCED LOG WITH PAYLOAD: ', newLog);
+            if (newLog.id) {
+              return farm().log.update(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
+                .then(res => handleSyncResponse(res, { logIndex: index, logId: newLog.id }))
+                .catch(err => handleSyncError(err, index));
+            }
+            return farm().log.send(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
+              .then(res => handleSyncResponse(res, { logIndex: index }))
+              .catch(err => handleSyncError(err, index));
+          }
         });
       } else {
         payload.router.push('/login');
       }
+    },
+
+    // GET LOGS FROM SERVER
+    getServerLogs({ commit, rootState }, payload) {
+      console.log(`GET SERVER LOGS CALLED IN HTTPMODULE WITH`, payload);
+      return farm().log.get(payload, localStorage.getItem('token'))
+        .then((res) => {
+          console.log('LOGS RECEIVED AS ', res);
+          // See whether logs are new, or currently in the store
+          // If res is a single log, check vs current, run through the logFactory and call addLog
+          // If res is multiple, check each vs current, run through logFactory and call addLogs
+          // Returns the log index number as logIndex if the log is present; null if not
+          function checkLog(serverLog) {
+            const allLogs = rootState.farm.logs;
+            const logStatus = { localId: null, storeIndex: null, localChange: true }
+            allLogs.forEach((localLog, index) => {
+              if (localLog.id) {
+                if (localLog.id === serverLog.id) {
+                  logStatus.localId = localLog.local_id;
+                  logStatus.storeIndex = index;
+                  if (localLog.wasPushedToServer) {
+                    logStatus.localChange = false;
+                  }
+                }
+              }
+            });
+            return logStatus;
+          }
+          // Return all assets/ areas associated with logs
+          function getAttached(log, attribute, resources, resId) {
+            // Only get attached if that attrib exists.  Some logs have no areas!
+            if (log[attribute]) {
+              const logAttached = [];
+              resources.forEach((resrc) => {
+                log[attribute].forEach((attrib) => {
+                  if (resrc[resId] === attrib.id) {
+                    logAttached.push(resrc);
+                  }
+                });
+              });
+              return logAttached;
+            }
+          }
+          // Process each log on its way from the server to the logFactory
+          function processLog(log) {
+            const allAreas = rootState.farm.areas;
+            const allAssets = rootState.farm.assets;
+            const checkStatus = checkLog(log);
+            const attachedAssets = getAttached(log, 'field_farm_asset', allAssets, 'id');
+            const attachedAreas = getAttached(log, 'field_farm_area', allAreas, 'tid');
+            // If the log is not present locally, add it.
+            // If the log is present locally, but has not been changed since the last sync,
+            // update it with the new version from the server
+            // If the log is present locally and has been changed, do not update it.
+            if (checkStatus.localId === null) {
+              console.log('ADDING LOG WITH PARAMS: ', log);
+              commit('addLogFromServer',
+                logFactory({
+                  ...log,
+                  wasPushedToServer: true,
+                  field_farm_area: attachedAreas,
+                  field_farm_asset: attachedAssets,
+                }, STOREFROMSERVER));
+            } else if (!checkStatus.localChange) {
+              // Update the log with all data from the server
+              console.log (`UPDATING UNCHANGED LOG ${log.name}`);
+              const updateParams = {
+                index: checkStatus.storeIndex,
+                log: logFactory({
+                  ...log,
+                  wasPushedToServer: true,
+                  local_id: checkStatus.localId,
+                  field_farm_area: attachedAreas,
+                  field_farm_asset: attachedAssets
+                }, STOREFROMSERVER)
+              }
+              commit('updateLogFromServer', updateParams)
+            } else {
+              console.log(`LOG ${log.name} HAS BEEN CHANGED LOCALLY; WILL NOT BE UPDATED FROM THE SERVER`);
+            }
+          }
+          // Process one or more logs
+          if (res.list) {
+            res.list.forEach(log => processLog(log));
+          } else {
+            processLog(res);
+          }
+        })
+        .catch((err) => { throw err; });
+      // Errors are handled in index.js
     },
 
   },
