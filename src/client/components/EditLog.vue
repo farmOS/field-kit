@@ -3,6 +3,15 @@
     <h1>Edit Log</h1>
     <div class="well" >
 
+      <br>
+      <div class="form-item form-group">
+        <toggle-check
+          label="Done"
+          labelPosition="after"
+          :checked="logs[currentLogIndex].done"
+          @input="updateCurrentLog('done', $event)"/>
+      </div>
+
       <div class="form-item form-item-name form-group">
         <label for="name" class="control-label">Name</label>
         <input
@@ -50,14 +59,6 @@
           type="text"
           class="form-control">
         </textarea>
-      </div>
-
-      <div class="form-item form-group">
-        <toggle-check
-          label="Done"
-          labelPosition="after"
-          :checked="logs[currentLogIndex].done"
-          @input="updateCurrentLog('done', $event)"/>
       </div>
 
       <h4>Assets</h4>
