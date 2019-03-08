@@ -111,8 +111,8 @@ export default function (
       type,
       timestamp,
       images,
-      assets,
-      areas,
+      asset: assets,
+      area: areas,
       geofield,
     };
     /*
