@@ -15,9 +15,9 @@ export default function ({
   wasPushedToServer = false,
   isReadyToSync = false,
   remoteUri = '',
-  field_farm_asset = [], // eslint-disable-line camelcase
-  field_farm_area = [], // eslint-disable-line camelcase
-  field_farm_geofield = [], // eslint-disable-line camelcase
+  asset = [], // eslint-disable-line camelcase
+  area = [], // eslint-disable-line camelcase
+  geofield = [], // eslint-disable-line camelcase
 } = {}) {
   return {
     log_owner,
@@ -34,8 +34,8 @@ export default function ({
     wasPushedToServer,
     isReadyToSync,
     remoteUri,
-    field_farm_asset,
-    field_farm_area,
-    field_farm_geofield,
+    asset,
+    area,
+    geofield,
   };
 }

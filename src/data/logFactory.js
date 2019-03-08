@@ -39,10 +39,10 @@ export default function (
     isCachedLocally = false,
     wasPushedToServer = false,
     remoteUri = '',
-    field_farm_asset = [], // eslint-disable-line camelcase
-    field_farm_area = [], // eslint-disable-line camelcase
-    field_farm_geofield = [], // eslint-disable-line camelcase
-    field_farm_notes = { value: '', format: 'farm_format' }, // eslint-disable-line camelcase
+    asset = [], // eslint-disable-line camelcase
+    area = [], // eslint-disable-line camelcase
+    geofield = [], // eslint-disable-line camelcase
+    notes = { value: '', format: 'farm_format' }, // eslint-disable-line camelcase
   } = {},
   dest,
 ) {
@@ -68,9 +68,9 @@ export default function (
       isCachedLocally: JSON.parse(isCachedLocally),
       wasPushedToServer: JSON.parse(wasPushedToServer),
       remoteUri,
-      field_farm_asset: parseObjects(field_farm_asset), // eslint-disable-line no-use-before-define
-      field_farm_area: parseObjects(field_farm_area), // eslint-disable-line no-use-before-define
-      field_farm_geofield: parseObjects(field_farm_geofield), // eslint-disable-line no-use-before-define, max-len
+      asset: parseObjects(asset), // eslint-disable-line no-use-before-define
+      area: parseObjects(area), // eslint-disable-line no-use-before-define
+      geofield: parseObjects(geofield), // eslint-disable-line no-use-before-define, max-len
     };
   }
       // This dest is called when bringing logs from the server into the vuex store
@@ -100,11 +100,10 @@ export default function (
   // The format for sending logs to the farmOS REST Server.
   if (dest === SERVER) {
     // Just take the id from the assets/areas before sending
-    const assets = field_farm_asset.map(asset => ({ id: asset.id }));
-    const areas = field_farm_area.map(area => ({ id: area.tid }));
-    console.log(`SENDING NOTES AS `, notes);
+    const assets = asset.map(asset => ({ id: asset.id }));
+    const areas = area.map(area => ({ id: area.tid }));
     log = {
-      field_farm_notes: {
+      notes: {
         format: 'farm_format',
         value: notes,
       },
@@ -113,10 +112,10 @@ export default function (
       done,
       type,
       timestamp,
-      field_farm_images: images,
-      field_farm_asset: assets,
-      field_farm_area: areas,
-      field_farm_geofield,
+      images: images,
+      asset: assets,
+      area: areas,
+      geofield,
     };
     /*
       Only return id property if one has already been assigned by the server,
@@ -140,9 +139,9 @@ export default function (
       done,
       wasPushedToServer,
       remoteUri,
-      field_farm_asset: JSON.stringify(field_farm_asset),
-      field_farm_area: JSON.stringify(field_farm_area),
-      field_farm_geofield: JSON.stringify(field_farm_geofield),
+      asset: JSON.stringify(asset),
+      area: JSON.stringify(area),
+      geofield: JSON.stringify(geofield),
     };
     /*
       Only return local_id property if one has already been assigned by WebSQL,

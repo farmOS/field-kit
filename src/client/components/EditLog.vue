@@ -86,7 +86,7 @@
       <div class="form-item form-item-name form-group">
         <ul class="list-group">
           <li
-            v-for="(asset, i) in logs[currentLogIndex].field_farm_asset"
+            v-for="(asset, i) in logs[currentLogIndex].asset"
             v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
             class="list-group-item">
             {{ asset.name }}
@@ -172,7 +172,7 @@
       <div class="form-item form-item-name form-group">
         <ul class="list-group">
           <li
-            v-for="(area, i) in logs[currentLogIndex].field_farm_area"
+            v-for="(area, i) in logs[currentLogIndex].area"
             v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
             class="list-group-item">
             {{ area.name }}
@@ -185,7 +185,7 @@
 
 
       <!-- We're using a button to attach the current location to the log
-      as a field_farm_geofield -->
+      as a geofield -->
 
       <div v-if="useGeolocation" class="form-item form-item-name form-group">
         <button
@@ -203,9 +203,9 @@
         <ul class="list-group">
           <li
             class="list-group-item"
-            v-if="logs[currentLogIndex].field_farm_geofield.length > 0">
-            {{ logs[currentLogIndex].field_farm_geofield[0].geom }}
-            <span class="remove-list-item" @click="updateCurrentLog('field_farm_geofield', [])">
+            v-if="logs[currentLogIndex].geofield.length > 0">
+            {{ logs[currentLogIndex].geofield[0].geom }}
+            <span class="remove-list-item" @click="updateCurrentLog('geofield', [])">
               &#x2715;
             </span>
           </li>
@@ -361,30 +361,30 @@ export default {
 
     addAsset(id) {
       const selectedAsset = this.assets.find(asset => asset.id === id);
-      const newAssets = this.logs[this.currentLogIndex].field_farm_asset.concat(selectedAsset);
-      this.updateCurrentLog('field_farm_asset', newAssets);
+      const newAssets = this.logs[this.currentLogIndex].asset.concat(selectedAsset);
+      this.updateCurrentLog('asset', newAssets);
     },
 
     addArea(tid) {
       if (tid !== '') {
         const selectedArea = this.areas.find(area => area.tid === tid);
-        const newAreas = this.logs[this.currentLogIndex].field_farm_area.concat(selectedArea);
-        this.updateCurrentLog('field_farm_area', newAreas);
+        const newAreas = this.logs[this.currentLogIndex].area.concat(selectedArea);
+        this.updateCurrentLog('area', newAreas);
         this.checkAreas();
       }
       this.checkAreas();
     },
 
     removeAsset(asset) {
-      const newAssets = this.logs[this.currentLogIndex].field_farm_asset
+      const newAssets = this.logs[this.currentLogIndex].asset
         .filter(_asset => _asset.id !== asset.id);
-      this.updateCurrentLog('field_farm_asset', newAssets);
+      this.updateCurrentLog('asset', newAssets);
     },
 
     removeArea(area) {
-      const newAreas = this.logs[this.currentLogIndex].field_farm_area
+      const newAreas = this.logs[this.currentLogIndex].area
         .filter(_area => _area.tid !== area.tid);
-      this.updateCurrentLog('field_farm_area', newAreas);
+      this.updateCurrentLog('area', newAreas);
     },
 
     getPhoto() {
@@ -410,7 +410,7 @@ export default {
         this.attachGeo = true;
         const location = JSON.parse(`[{"geom":"POINT (${this.geolocation.Longitude} ${this.geolocation.Latitude})"}]`);
         console.log(`ATTACH GEOLOCATION: ${location}`);
-        this.updateCurrentLog('field_farm_geofield', location);
+        this.updateCurrentLog('geofield', location);
       }
     },
 
@@ -418,7 +418,7 @@ export default {
       console.log('CALLED CHECKAREAS; DOING CHECKINSIDE');
       // Use checkInside with each area to see if the current location is inside an area
       this.filteredAreas.forEach((area) => {
-        if (area.field_farm_geofield[0] !== undefined && this.geolocation.Longitude !== undefined) {
+        if (area.geofield[0] !== undefined && this.geolocation.Longitude !== undefined) {
           // If the current location is inside an area, add the area to the log
           const lonlat = [this.geolocation.Longitude, this.geolocation.Latitude];
           // checkInNear requires a point, an area, and a radius around the point in kilometers
@@ -437,13 +437,13 @@ export default {
       added to the current log.
     */
     filteredAssets() {
-      const selectedAssets = this.logs[this.currentLogIndex].field_farm_asset;
+      const selectedAssets = this.logs[this.currentLogIndex].asset;
       return this.assets.filter(asset =>
         !selectedAssets.some(selAsset => asset.id === selAsset.id),
       );
     },
     filteredAreas() {
-      const selectedAreas = this.logs[this.currentLogIndex].field_farm_area;
+      const selectedAreas = this.logs[this.currentLogIndex].area;
       return this.areas.filter(area =>
         !selectedAreas.some(selArea => area.tid === selArea.tid),
       );
@@ -458,11 +458,11 @@ export default {
       this.updateCurrentLog('images', this.photoLoc);
     },
     geolocation() {
-      // When geolocation is set, EITHER set field_farm_geofield OR select areas based on location
+      // When geolocation is set, EITHER set geofield OR select areas based on location
       if (this.attachGeo && this.geolocation.Longitude !== undefined) {
         const location = JSON.parse(`[{"geom":"POINT (${this.geolocation.Longitude} ${this.geolocation.Latitude})"}]`);
         console.log(`ATTACH GEOLOCATION: ${location}`);
-        this.updateCurrentLog('field_farm_geofield', location);
+        this.updateCurrentLog('geofield', location);
         this.isWorking = false;
         // If we are getting local areas
       }
