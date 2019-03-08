@@ -88,8 +88,8 @@ const makeLogFactory = (src, dest) => {
           type,
           timestamp,
           images,
-          assets,
-          areas,
+          asset: assets,
+          area: areas,
           geofield,
         };
         /*
@@ -127,12 +127,10 @@ const makeLogFactory = (src, dest) => {
         }
       }
       return log;
-    }
+    };
   }
   if (src === SQL) {
-    return (serializedLog) => {
-      return JSON.parse(serializedLog);
-    }
+    return serializedLog => JSON.parse(serializedLog);
   }
   if (src === SERVER) {
     return (serializedLog) => {
@@ -169,10 +167,11 @@ const makeLogFactory = (src, dest) => {
         asset,
         area,
         geofield,
-      }
-    }
+      };
+    };
   }
-}
+  throw new Error('Incorrect parameters passed to makeLog');
+};
 
 export const makeLog = {
   create: makeLogFactory(),

@@ -44,7 +44,7 @@ export default {
         commit('updateLogs', {
           indices: [params.logIndex],
           mapper(log) {
-            return logFactory({
+            return makeLog.create({
               ...log,
               id: serverId,
               wasPushedToServer: true,
@@ -80,7 +80,7 @@ export default {
         commit('updateLogs', {
           indices: [index],
           mapper(log) {
-            return logFactory({
+            return makeLog.create({
               ...log,
               isReadyToSync: false,
             });
@@ -93,7 +93,7 @@ export default {
         payload.indices.map((index) => {
           // Either send or post logs, depending on whether they originated on the server
           // Logs originating on the server possess an ID field; others do not.
-          let newLog = logFactory(rootState.farm.logs[index], SERVER);
+          let newLog = makeLog.toServer(rootState.farm.logs[index]);
           // if the log type is seeding, I need to remove the area field
           // Is it worth creating a logFactory destination for this?
           if (newLog.type === 'farm_seeding') {
@@ -174,24 +174,24 @@ export default {
             if (checkStatus.localId === null) {
               console.log('ADDING LOG WITH PARAMS: ', log);
               commit('addLogFromServer',
-                logFactory({
+                makeLog.fromServer({
                   ...log,
                   wasPushedToServer: true,
                   area: attachedAreas,
                   asset: attachedAssets,
-                }, STOREFROMSERVER));
+                }));
             } else if (!checkStatus.localChange) {
               // Update the log with all data from the server
               console.log (`UPDATING UNCHANGED LOG ${log.name}`);
               const updateParams = {
                 index: checkStatus.storeIndex,
-                log: logFactory({
+                log: makeLog.fromServer({
                   ...log,
                   wasPushedToServer: true,
                   local_id: checkStatus.localId,
                   area: attachedAreas,
                   asset: attachedAssets
-                }, STOREFROMSERVER)
+                })
               }
               commit('updateLogFromServer', updateParams)
             } else {
