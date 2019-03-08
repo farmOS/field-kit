@@ -27,7 +27,6 @@ export default function (
   // Assign default properties or leave them as optional
   {
     log_owner = '', // eslint-disable-line camelcase
-    notes = '',
     quantity = '',
     id,
     local_id, // eslint-disable-line camelcase
@@ -73,12 +72,11 @@ export default function (
       geofield: parseObjects(geofield), // eslint-disable-line no-use-before-define, max-len
     };
   }
-      // This dest is called when bringing logs from the server into the vuex store
+  // This dest is called when bringing logs from the server into the vuex store
   if (dest === STOREFROMSERVER) {
-    // console.log(`NOTES FIELD FOR ${name}:`, JSON.parse(field_farm_notes))
     log = {
       log_owner,
-      notes: parseNotes(field_farm_notes), // eslint-disable-line no-use-before-define
+      notes: parseNotes(notes), // eslint-disable-line no-use-before-define
       quantity,
       id,
       local_id,
@@ -92,16 +90,16 @@ export default function (
       isCachedLocally: JSON.parse(isCachedLocally),
       wasPushedToServer: JSON.parse(wasPushedToServer),
       remoteUri,
-      field_farm_asset: parseObjects(field_farm_asset), // eslint-disable-line no-use-before-define
-      field_farm_area: parseObjects(field_farm_area), // eslint-disable-line no-use-before-define
-      field_farm_geofield: parseObjects(field_farm_geofield), // eslint-disable-line no-use-before-define, max-len
+      asset: parseObjects(asset), // eslint-disable-line no-use-before-define
+      area: parseObjects(area), // eslint-disable-line no-use-before-define
+      geofield: parseObjects(geofield), // eslint-disable-line no-use-before-define, max-len
     };
   }
   // The format for sending logs to the farmOS REST Server.
   if (dest === SERVER) {
     // Just take the id from the assets/areas before sending
-    const assets = asset.map(asset => ({ id: asset.id }));
-    const areas = area.map(area => ({ id: area.tid }));
+    const assets = asset.map(a => ({ id: a.id }));
+    const areas = area.map(a => ({ id: a.tid }));
     log = {
       notes: {
         format: 'farm_format',
@@ -112,9 +110,9 @@ export default function (
       done,
       type,
       timestamp,
-      images: images,
-      asset: assets,
-      area: areas,
+      images,
+      assets,
+      areas,
       geofield,
     };
     /*
@@ -187,7 +185,6 @@ function parseObjects(x) {
 function parseNotes(notes) {
   if (notes.value !== undefined) {
     if (notes.value !== '' && notes.value !== null) {
-      console.log(`NOTE VALUE: ${notes.value}`);
       return notes.value.slice(3, -5);
     }
   }

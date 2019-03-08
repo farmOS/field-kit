@@ -139,7 +139,7 @@ export default {
             return;
           }
           const errorPayload = {
-            message: `${err.status} error while syncing areas: ${err.statusText}`,
+            message: `${err.status} error while syncing logs: ${err.statusText}`,
             errorCode: err.statusText,
             level: 'warning',
             show: true,

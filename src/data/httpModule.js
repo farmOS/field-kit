@@ -97,8 +97,8 @@ export default {
           // if the log type is seeding, I need to remove the area field
           // Is it worth creating a logFactory destination for this?
           if (newLog.type === 'farm_seeding') {
-            delete newLog.field_farm_area;
-            delete newLog.field_farm_geofield;
+            delete newLog.area;
+            delete newLog.geofield;
           }
           // I need to check wasPushedToServer, which is not in logFactory Server
           const synced = rootState.farm.logs[index].wasPushedToServer;
@@ -165,8 +165,8 @@ export default {
             const allAreas = rootState.farm.areas;
             const allAssets = rootState.farm.assets;
             const checkStatus = checkLog(log);
-            const attachedAssets = getAttached(log, 'field_farm_asset', allAssets, 'id');
-            const attachedAreas = getAttached(log, 'field_farm_area', allAreas, 'tid');
+            const attachedAssets = getAttached(log, 'asset', allAssets, 'id');
+            const attachedAreas = getAttached(log, 'area', allAreas, 'tid');
             // If the log is not present locally, add it.
             // If the log is present locally, but has not been changed since the last sync,
             // update it with the new version from the server
@@ -177,8 +177,8 @@ export default {
                 logFactory({
                   ...log,
                   wasPushedToServer: true,
-                  field_farm_area: attachedAreas,
-                  field_farm_asset: attachedAssets,
+                  area: attachedAreas,
+                  asset: attachedAssets,
                 }, STOREFROMSERVER));
             } else if (!checkStatus.localChange) {
               // Update the log with all data from the server
@@ -189,8 +189,8 @@ export default {
                   ...log,
                   wasPushedToServer: true,
                   local_id: checkStatus.localId,
-                  field_farm_area: attachedAreas,
-                  field_farm_asset: attachedAssets
+                  area: attachedAreas,
+                  asset: attachedAssets
                 }, STOREFROMSERVER)
               }
               commit('updateLogFromServer', updateParams)

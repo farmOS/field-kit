@@ -49,11 +49,9 @@ export default function (host, user, password) {
       .then((response) => {
         const lastPage = +(new URL(response.last)).searchParams.get('page');
         if (page === lastPage) {
-          console.log(`Requesting last page, ${page}`);
           resolve(list.concat(response.list));
           return;
         }
-        console.log(`Requesting page ${page}, ${lastPage - page} more to go.`);
         const newList = list.concat(response.list);
         requestAll(url, page + 1, newList).then(resolve).catch(reject);
       }).catch(reject));
@@ -88,10 +86,6 @@ export default function (host, user, password) {
       },
       get(opts = {}) {
         return request('/taxonomy_vocabulary.json').then((res) => {
-          // I need to see what areaVid(res) is returning
-          // this is how I can filter by assigned users
-          console.log(`TAXONOMY TERMS ARE SORTED BY VOCABULARY OBJECT WITH ${areaVid(res)}`);
-
           // If an ID # is passed instead of an options object
           if (typeof opts === 'number') {
             return request(`/taxonomy_term.json?vocabulary=${areaVid(res)}&tid=${opts}`);
@@ -158,15 +152,17 @@ export default function (host, user, password) {
         return request(`/log/${id}.json`, { method: 'DELETE', token });
       },
       get(opts = {}) {
-
         if (typeof opts === 'number') {
           return request(`/log/${opts}.json`);
         }
 
-        console.log("GETTING LOGS WITH THE FOLLOWING ", opts);
-
         // If an option object is passed, set defaults and parse the string params
-        const { page = null, type = [], assigned = '', completed = ''} = opts;
+        const {
+          page = null,
+          type = [],
+          assigned = '',
+          completed = '',
+        } = opts;
 
         // Build a querystring based on which params have been passed in the opts object
         let queryString = '/log.json?';
@@ -177,13 +173,12 @@ export default function (host, user, password) {
         });
         // Then append other search params
         queryString = (queryString.slice(-1) !== '?' && assigned !== '') ? `${queryString}&` : queryString;
-        queryString = (assigned !== '') ? `${queryString}field_farm_log_owner=${assigned}` : queryString;
+        queryString = (assigned !== '') ? `${queryString}log_owner=${assigned}` : queryString;
         queryString = (queryString.slice(-1) !== '?' && page !== null) ? `${queryString}&` : queryString;
         queryString = (page !== null) ? `${queryString}page=${page}` : queryString;
         queryString = (queryString.slice(-1) !== '?' && completed !== '') ? `${queryString}&` : queryString;
         queryString = (completed !== '') ? `${queryString}done=${completed}` : queryString;
 
-        console.log(`DOING REQUEST WITH QUERYSTRING: ${queryString}`)
         // If no ID is passed but page is passed
         return request(queryString);
       },
@@ -192,8 +187,7 @@ export default function (host, user, password) {
         return request('/log', { method: 'POST', payload, token });
       },
       update(payload, token) {
-        console.log(`SENDING TO NODE ID ${payload.id}`)
-        return request('/log/'+payload.id, { method: 'PUT', payload, token });
+        return request(`/log/${payload.id}`, { method: 'PUT', payload, token });
       },
     },
   };
