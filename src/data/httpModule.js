@@ -204,12 +204,37 @@ export default {
                   isReadyToSync: false,
                   local_id: checkStatus.localId,
                   area: attachedAreas,
-                  asset: attachedAssets
-                }, STOREFROMSERVER)
-              }
-              commit('updateLogFromServer', updateParams)
+                  asset: attachedAssets,
+                }, STOREFROMSERVER),
+              };
+              commit('updateLogFromServer', updateParams);
             } else {
-              console.log(`LOG ${log.name} HAS BEEN CHANGED LOCALLY; WILL NOT BE UPDATED FROM THE SERVER`);
+              console.log(`LOG ${log.name} HAS BEEN CHANGED LOCALLY`);
+              const syncDate = localStorage.getItem('syncDate');
+              if (log.changed > syncDate) {
+                console.log(`LOG ${log.name} HAS BEEN CHANGED ON THE SERVER SINCE LAST SYNC`)
+                /*
+                  Throw a warning with two options:
+                   - Keep what I have on the app, and over-write what I have on the server
+                   - Keep what I have on the server, and over-write what I have on the app
+                  If the user selects the first option, stop here.
+                  If the user selects the second option, execute the following:
+                */
+                const updateParams = {
+                  index: checkStatus.storeIndex,
+                  log: logFactory({
+                    ...log,
+                    wasPushedToServer: true,
+                    isReadyToSync: false,
+                    local_id: checkStatus.localId,
+                    area: attachedAreas,
+                    asset: attachedAssets,
+                  }, STOREFROMSERVER),
+                };
+                commit('updateLogFromServer', updateParams);
+              }
+              // If the log on the server hasn't been changed, do nothing
+              // The local log will over-write whatever is on the server on sendLogs
             }
           }
           // Process one or more logs

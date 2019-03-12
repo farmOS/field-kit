@@ -146,16 +146,13 @@ export default {
         the local log is over-written with a log from the server.
         */
         store.commit('updateAllLogs', logSyncer);
-        /*
-          Logs from the server are either saved as new (with isReadyToSync false)
-          Used to over-write local logs (with isReadyToSync fasle)
-          OR, if the local log has been modified since the last sync, a notification
-          is thrown, and the user selects whether to over-write or sync local to server
-
-          After getServerLogs finishes, we send logs wiht isReadyToSync true to the server
-        */
+        // Get and process logs from the server in httpModule
         store.dispatch('getServerLogs')
           .then(() => {
+            // Save the current time as the most recent syncDate
+            localStorage.setItem('syncDate', (Date.now() / 1000).toFixed(0));
+            console.log(`SAVED SYNCDATE EQUALS ${localStorage.getItem('syncDate')}`);
+            // After getServerLogs finishes, we send logs with isReadyToSync true to the server
             const indices = store.state.farm.logs.reduce(syncReducer, []);
             store.dispatch('sendLogs', { indices, router });
           }).catch((err) => {
