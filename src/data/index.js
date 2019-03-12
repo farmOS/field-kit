@@ -8,11 +8,19 @@ import camModule from './camModule';
 */
 function syncReducer(indices, curLog, curIndex) {
   // Sync all logs to the server; those originally from server will have id fields
-  // if (curLog.isReadyToSync && !curLog.wasPushedToServer) {
-  if (curLog) {
+  if (curLog.isReadyToSync && !curLog.wasPushedToServer) {
+  // if (curLog) {
     return indices.concat(curIndex);
   }
   return indices;
+}
+
+// A function that sets all logs ready to sync; used with updateAllLogs
+function logSyncer(log) {
+  return {
+    ...log,
+    isReadyToSync: true,
+  };
 }
 
 export default {
@@ -60,9 +68,9 @@ export default {
         store.dispatch('updateLogAtIndex', mutation.payload);
       }
       if (mutation.type === 'updateAllLogs') {
-        const indices = store.state.farm.logs.reduce(syncReducer, []);
-        store.dispatch('sendLogs', { indices, router })
-          .then(() => store.dispatch('getServerLogs'));
+        // These will be tentatively called in getServerLogs.then, in the getLogs subscription
+        // const indices = store.state.farm.logs.reduce(syncReducer, []);
+        // store.dispatch('sendLogs', { indices, router });
       }
       if (mutation.type === 'updateLogs') {
         mutation.payload.indices.forEach((i) => {
@@ -132,21 +140,37 @@ export default {
         router.push('/login');
       }
       if (action.type === 'getLogs') {
-        // Triggered when getLogs action is called in client/store/index
-        // Successful requests are handled in httpModule; errors are handled here
-        store.dispatch('getServerLogs', action.payload).then().catch((err) => {
-          if (err.status === 403 || err.status === 401) {
-            router.push('/login');
-            return;
-          }
-          const errorPayload = {
-            message: `${err.status} error while syncing logs: ${err.statusText}`,
-            errorCode: err.statusText,
-            level: 'warning',
-            show: true,
-          };
-          store.commit('logError', errorPayload);
-        });
+        /*
+        Triggered when the 'sync' button is pressed in allLogs
+        First set all local logs ready to sync. This status will be retained unless
+        the local log is over-written with a log from the server.
+        */
+        store.commit('updateAllLogs', logSyncer);
+        /*
+          Logs from the server are either saved as new (with isReadyToSync false)
+          Used to over-write local logs (with isReadyToSync fasle)
+          OR, if the local log has been modified since the last sync, a notification
+          is thrown, and the user selects whether to over-write or sync local to server
+
+          After getServerLogs finishes, we send logs wiht isReadyToSync true to the server
+        */
+        store.dispatch('getServerLogs')
+          .then(() => {
+            const indices = store.state.farm.logs.reduce(syncReducer, []);
+            store.dispatch('sendLogs', { indices, router });
+          }).catch((err) => {
+            if (err.status === 403 || err.status === 401) {
+              router.push('/login');
+              return;
+            }
+            const errorPayload = {
+              message: `${err.status} error while syncing logs: ${err.statusText}`,
+              errorCode: err.statusText,
+              level: 'warning',
+              show: true,
+            };
+            store.commit('logError', errorPayload);
+          });
       }
       if (action.type === 'serverLogToDb') {
         store.dispatch('createLogFromServer', action.payload);

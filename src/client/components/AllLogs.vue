@@ -186,7 +186,9 @@ export default {
       console.log(`Deleting log "${payload.name}"...`);
     },
     syncAll() {
-      // When isReadyToSync is set true, updateAllLogs triggers sendLogs in httpModule
+      // Calling getLogs first.  On return, it will call a check action in httpModule.
+      this.$store.dispatch('getLogs');
+      /*
       function logSyncer(log) {
         return {
           ...log,
@@ -194,6 +196,7 @@ export default {
         };
       }
       this.$store.commit('updateAllLogs', logSyncer);
+      */
       // getServerLogs in the httpModule will be called when sendlogs completes and returns log.ids
     },
   },

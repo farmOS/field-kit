@@ -125,15 +125,27 @@ export default {
       return farm().log.get(rootState.shell.settings.getServerLogsParams, localStorage.getItem('token'))
         .then((res) => {
           console.log('LOGS RECEIVED AS ', res);
+
           // See whether logs are new, or currently in the store
           // If res is a single log, check vs current, run through the logFactory and call addLog
           // If res is multiple, check each vs current, run through logFactory and call addLogs
           // Returns the log index number as logIndex if the log is present; null if not
+          /*
+          Logs from the server are either saved as new (with isReadyToSync false)
+          Used to over-write local logs (with isReadyToSync fasle)
+          OR, if the local log has been modified since the last sync, a notification
+          is thrown, and the user selects whether to over-write or sync local to server
+          */
           function checkLog(serverLog) {
             const allLogs = rootState.farm.logs;
-            const logStatus = { localId: null, storeIndex: null, localChange: true }
+            const logStatus = { localId: null, storeIndex: null, localChange: true };
             allLogs.forEach((localLog, index) => {
               if (localLog.id) {
+                /*
+                  If a local log has an id field, see if it is the same as the server log.
+                  In this case set lotStatus.localId and .storeIndex
+                  Also check whethe the log is unsynced (wasPushedToServer true)
+                */
                 if (localLog.id === serverLog.id) {
                   logStatus.localId = localLog.local_id;
                   logStatus.storeIndex = index;
@@ -177,6 +189,7 @@ export default {
                 logFactory({
                   ...log,
                   wasPushedToServer: true,
+                  isReadyToSync: false,
                   area: attachedAreas,
                   asset: attachedAssets,
                 }, STOREFROMSERVER));
@@ -188,6 +201,7 @@ export default {
                 log: logFactory({
                   ...log,
                   wasPushedToServer: true,
+                  isReadyToSync: false,
                   local_id: checkStatus.localId,
                   area: attachedAreas,
                   asset: attachedAssets
