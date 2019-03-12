@@ -205,7 +205,7 @@ export default {
             processLog(res);
           }
         })
-        .catch((err) => { throw err; });
+        .catch(err => err);
       // Errors are handled in index.js
     },
 

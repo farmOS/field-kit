@@ -133,7 +133,7 @@ const makeLogFactory = (src, dest) => {
     return serializedLog => JSON.parse(serializedLog);
   }
   if (src === SERVER) {
-    return (serializedLog) => {
+    return (deserializedLogFromServer) => {
       const {
         log_owner, // eslint-disable-line camelcase
         quantity,
@@ -149,7 +149,7 @@ const makeLogFactory = (src, dest) => {
         area,
         geofield,
         notes,
-      } = JSON.parse(serializedLog);
+      } = deserializedLogFromServer;
       return {
         log_owner,
         notes: parseNotes(notes), // eslint-disable-line no-use-before-define
