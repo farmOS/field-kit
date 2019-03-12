@@ -36,12 +36,6 @@ export default {
         store.commit('clearLogs');
         store.dispatch('loadCachedUserAndSiteInfo');
         store.dispatch('loadCachedLogs');
-        store.commit('clearAssets');
-        store.commit('clearAreas');
-        store.dispatch('loadCachedAssets')
-          .then(() => store.dispatch('updateAssets'));
-        store.dispatch('loadCachedAreas')
-          .then(() => store.dispatch('updateAreas'));
         next();
       }
       // loads assets, areas and user data when ANY /logs/edit route is called
@@ -160,6 +154,7 @@ export default {
               router.push('/login');
               return;
             }
+            console.log('LOG SYNC ERROR: ', err);
             const errorPayload = {
               message: `${err.status} error while syncing logs: ${err.statusText}`,
               errorCode: err.statusText,

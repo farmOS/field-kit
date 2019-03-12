@@ -23,7 +23,7 @@ export default {
       return farm().asset.get().then((res) => {
         // If a successful response is received, delete and replace all assets
         commit('deleteAllAssets');
-        const assets = res.map(({ id, name }) => ({ id, name }));
+        const assets = res.map(({ id, name, type }) => ({ id, name, type }));
         commit('addAssets', assets);
         console.log('Finished updating assets!');
       }).catch((err) => { throw err; });
@@ -157,28 +157,10 @@ export default {
             });
             return logStatus;
           }
-          // Return all assets/ areas associated with logs
-          function getAttached(log, attribute, resources, resId) {
-            // Only get attached if that attrib exists.  Some logs have no areas!
-            if (log[attribute]) {
-              const logAttached = [];
-              resources.forEach((resrc) => {
-                log[attribute].forEach((attrib) => {
-                  if (resrc[resId] === attrib.id) {
-                    logAttached.push(resrc);
-                  }
-                });
-              });
-              return logAttached;
-            }
-          }
+
           // Process each log on its way from the server to the logFactory
           function processLog(log) {
-            const allAreas = rootState.farm.areas;
-            const allAssets = rootState.farm.assets;
             const checkStatus = checkLog(log);
-            const attachedAssets = getAttached(log, 'asset', allAssets, 'id');
-            const attachedAreas = getAttached(log, 'area', allAreas, 'tid');
             // If the log is not present locally, add it.
             // If the log is present locally, but has not been changed since the last sync,
             // update it with the new version from the server
@@ -190,8 +172,6 @@ export default {
                   ...log,
                   wasPushedToServer: true,
                   isReadyToSync: false,
-                  area: attachedAreas,
-                  asset: attachedAssets,
                 }, STOREFROMSERVER));
             } else if (!checkStatus.localChange) {
               // Update the log with all data from the server
@@ -203,8 +183,6 @@ export default {
                   wasPushedToServer: true,
                   isReadyToSync: false,
                   local_id: checkStatus.localId,
-                  area: attachedAreas,
-                  asset: attachedAssets,
                 }, STOREFROMSERVER),
               };
               commit('updateLogFromServer', updateParams);

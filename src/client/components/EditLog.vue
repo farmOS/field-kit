@@ -86,7 +86,7 @@
       <div class="form-item form-item-name form-group">
         <ul class="list-group">
           <li
-            v-for="(asset, i) in logs[currentLogIndex].asset"
+            v-for="(asset, i) in selectedAssets"
             v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
             class="list-group-item">
             {{ asset.name }}
@@ -172,7 +172,7 @@
       <div class="form-item form-item-name form-group">
         <ul class="list-group">
           <li
-            v-for="(area, i) in logs[currentLogIndex].area"
+            v-for="(area, i) in selectedAreas"
             v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
             class="list-group-item">
             {{ area.name }}
@@ -360,15 +360,15 @@ export default {
     },
 
     addAsset(id) {
-      const selectedAsset = this.assets.find(asset => asset.id === id);
-      const newAssets = this.logs[this.currentLogIndex].asset.concat(selectedAsset);
+      const assetReference = { id: id, resource: 'farm_asset'};
+      const newAssets = this.logs[this.currentLogIndex].asset.concat(assetReference);
       this.updateCurrentLog('asset', newAssets);
     },
 
-    addArea(tid) {
-      if (tid !== '') {
-        const selectedArea = this.areas.find(area => area.tid === tid);
-        const newAreas = this.logs[this.currentLogIndex].area.concat(selectedArea);
+    addArea(id) {
+      if (id !== '') {
+        const areaReference = { id: id, resource: 'farm_area'};
+        const newAreas = this.logs[this.currentLogIndex].area.concat(areaReference);
         this.updateCurrentLog('area', newAreas);
         this.checkAreas();
       }
@@ -383,7 +383,7 @@ export default {
 
     removeArea(area) {
       const newAreas = this.logs[this.currentLogIndex].area
-        .filter(_area => _area.tid !== area.tid);
+        .filter(_area => _area.id !== area.tid);
       this.updateCurrentLog('area', newAreas);
     },
 
@@ -428,6 +428,21 @@ export default {
         }
       });
     },
+
+    getAttached(log, attribute, resources, resId) {
+      // Only get attached if that attrib exists.  Some logs have no areas!
+      if (log[attribute]) {
+        const logAttached = [];
+        resources.forEach((resrc) => {
+          log[attribute].forEach((attrib) => {
+            if (resrc[resId] === attrib.id) {
+              logAttached.push(resrc);
+            }
+          });
+        });
+        return logAttached;
+      }
+    }
   },
 
   computed: {
@@ -437,18 +452,23 @@ export default {
       added to the current log.
     */
     filteredAssets() {
-      const selectedAssets = this.logs[this.currentLogIndex].asset;
+      const selectAssetRefs = this.logs[this.currentLogIndex].asset;
       return this.assets.filter(asset =>
-        !selectedAssets.some(selAsset => asset.id === selAsset.id),
+        !selectAssetRefs.some(selAsset => asset.id === selAsset.id),
       );
     },
     filteredAreas() {
-      const selectedAreas = this.logs[this.currentLogIndex].area;
+      const selectAreaRefs = this.logs[this.currentLogIndex].area;
       return this.areas.filter(area =>
-        !selectedAreas.some(selArea => area.tid === selArea.tid),
+        !selectAreaRefs.some(selArea => area.tid === selArea.tid),
       );
     },
-
+    selectedAssets() {
+      return this.getAttached(this.logs[this.currentLogIndex], 'asset', this.assets, 'id');
+    },
+    selectedAreas() {
+      return this.getAttached(this.logs[this.currentLogIndex], 'area', this.areas, 'tid');
+    },
   },
 
   watch: {
