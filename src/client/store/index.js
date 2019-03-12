@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import logFactory from './logFactory';
+import { makeLog } from '../../data/logFactory';
 import geoModule from './geoModule';
 
 Vue.use(Vuex);
@@ -92,7 +93,7 @@ const farmModule = {
       state.currentLogIndex = index;
     },
     updateCurrentLog(state, newProps) {
-      const updatedLog = logFactory({
+      const updatedLog = makeLog.create({
         ...state.logs[state.currentLogIndex],
         ...newProps,
       });
@@ -166,7 +167,7 @@ const farmModule = {
       const timestamp = Math.floor(curDate / 1000).toString();
       const curTimeString = curDate.toLocaleTimeString('en-US');
       const curDateString = curDate.toLocaleDateString('en-US');
-      const newLog = logFactory({
+      const newLog = makeLog.create({
         type: logType,
         name: `${curDateString} - ${curTimeString}`,
         // TODO: Try to decouple this further from the login plugin
