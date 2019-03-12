@@ -1,4 +1,4 @@
-import logFactory, { STORE, SQL } from './logFactory';
+import { makeLog } from './logFactory';
 
 export default {
 
@@ -6,7 +6,7 @@ export default {
 
     createLog({ commit }, newLog) {
       const tableName = 'log';
-      const newRecord = logFactory(newLog, SQL);
+      const newRecord = makeLog.toSql(newLog);
       openDatabase() // eslint-disable-line no-use-before-define
         .then(db => makeTable(db, tableName, newRecord)) // eslint-disable-line no-use-before-define
         .then(tx => saveRecord(tx, tableName, newRecord)) // eslint-disable-line no-use-before-define, max-len
@@ -22,7 +22,7 @@ export default {
     // This works like createLog, but accepts params {log: , index: }
     createLogFromServer({ commit }, props) {
       const tableName = 'log';
-      const newRecord = logFactory(props.log, SQL);
+      const newRecord = makeLog.toSql(props.log);
       console.log('CREATING THE FOLLOWING LOG IN DBMODULE:', newRecord);
 
       openDatabase() // eslint-disable-line no-use-before-define
@@ -32,11 +32,11 @@ export default {
           (results) => {
             commit('updateLogFromServer', {
               index: props.index,
-              log: logFactory({
+              log: makeLog.create({
                 ...props.log,
                 local_id: results.insertId,
                 isCachedLocally: true,
-              }, STORE),
+              }),
             });
           },
         );
@@ -47,10 +47,10 @@ export default {
         .then(db => getRecords(db, 'log')) // eslint-disable-line no-use-before-define
         .then((results) => {
           const cachedLogs = results.map(log => (
-            logFactory({
+            makeLog.create({
               ...log,
               isCachedLocally: true,
-            }, STORE)
+            })
           ));
           commit('addLogs', cachedLogs);
         })
@@ -58,10 +58,10 @@ export default {
     },
 
     updateLog({ commit, rootState }, newProps) {
-      const newLog = logFactory({
+      const newLog = makeLog.toSql({
         ...rootState.farm.logs[rootState.farm.currentLogIndex],
         ...newProps,
-      }, SQL);
+      });
       const table = 'log';
       openDatabase() // eslint-disable-line no-use-before-define
         .then(db => getTX(db, table)) // eslint-disable-line no-use-before-define
@@ -72,20 +72,20 @@ export default {
     // This works like updateLog, but accepts params {log: , index: }
     updateLogAtIndex({ commit, rootState }, props) {
       console.log('UPDATELOGATINDEX WITH log: ', props.log)
-      const newLog = logFactory({
+      const newLog = makeLog.toSql({
         ...rootState.farm.logs[props.index],
         ...props.log,
-      }, SQL);
+      });
       const table = 'log';
       openDatabase() // eslint-disable-line no-use-before-define
         .then(db => getTX(db, table)) // eslint-disable-line no-use-before-define
         .then(tx => saveRecord(tx, table, newLog)) // eslint-disable-line no-use-before-define
         .then(() => commit('updateLogFromServer', {
           index: props.index,
-          log: logFactory({
+          log: makeLog.create({
             ...props.log,
             isCachedLocally: true,
-          }, STORE),
+          }),
         }));
     },
 
