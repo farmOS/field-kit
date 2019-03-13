@@ -415,7 +415,6 @@ export default {
     },
 
     checkAreas() {
-      console.log('CALLED CHECKAREAS; DOING CHECKINSIDE');
       // Use checkInside with each area to see if the current location is inside an area
       this.filteredAreas.forEach((area) => {
         if (area.geofield[0] !== undefined && this.geolocation.Longitude !== undefined) {

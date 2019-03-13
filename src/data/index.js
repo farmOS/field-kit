@@ -145,7 +145,6 @@ export default {
           .then(() => {
             // Save the current time as the most recent syncDate
             localStorage.setItem('syncDate', (Date.now() / 1000).toFixed(0));
-            console.log(`SAVED SYNCDATE EQUALS ${localStorage.getItem('syncDate')}`);
             // After getServerLogs finishes, we send logs with isReadyToSync true to the server
             const indices = store.state.farm.logs.reduce(syncReducer, []);
             store.dispatch('sendLogs', { indices, router });
@@ -154,7 +153,6 @@ export default {
               router.push('/login');
               return;
             }
-            console.log('LOG SYNC ERROR: ', err);
             const errorPayload = {
               message: `${err.status} error while syncing logs: ${err.statusText}`,
               errorCode: err.statusText,
