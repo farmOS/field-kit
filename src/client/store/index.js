@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import logFactory from './logFactory';
-import { makeLog } from '../../data/logFactory';
+import makeLog from '../../data/logFactory';
 import geoModule from './geoModule';
 
 Vue.use(Vuex);

@@ -1,24 +1,20 @@
 /*
-  DESTINATIONS
-  Import these destination constants when you import the logFactory, and use
-  them instead of using the raw strings. This will make it easier to update the
-  logFactory's API in the future without committing breaking changes. The
-  constants are assigned to string values representing the possible destinations
-  to which the logs may be sent.
+  SOURCES & DESTINATIONS
+  Theses constants are assigned to string values representing the possible
+  sources & destinations to/from which the logs may be sent.
 */
-export const SQL = 'WEBSQL';
-export const SERVER = 'FARMOS_SERVER';
-export const STORE = 'VUEX_STORE';
-export const STOREFROMSERVER = 'VUEX_STORE_FROM_SERVER';
+const SQL = 'WEBSQL';
+const SERVER = 'FARMOS_SERVER';
+const STORE = 'VUEX_STORE';
 
 /*
-  LOGFACTORY
-  A utility function for structuring logs within the data plugin. It can be
-  applied to an existing log before storing it in the database, posting it to
-  the server, or for otherwise rendering logs in a standard format. It can also
+  MAKELOG
+  A utility function for structuring logs within the app. It can be applied
+  to an existing log before storing it in the database, posting it to the
+  server, or for otherwise rendering logs in a standard format. It can also
   be used to generate a new log for the Vuex store by passing in no parameters.
   Provide an optional `dest` parameter to ensure the proper formatting for its
-  destination. TODO: It could be wise to add a source parameter as well.
+  destination.
 
   A CodeSandbox for experimenting with it can be found here:
   https://codesandbox.io/s/github/jgaehring/farmos-logfactory
@@ -130,7 +126,46 @@ const makeLogFactory = (src, dest) => {
     };
   }
   if (src === SQL) {
-    return serializedLog => JSON.parse(serializedLog);
+    return ({
+      // Assign default properties or leave them as optional
+      log_owner = '', // eslint-disable-line camelcase
+      quantity = '',
+      id,
+      local_id, // eslint-disable-line camelcase
+      name = '',
+      type = '',
+      timestamp = '',
+      images = [],
+      done = true,
+      isCachedLocally = false,
+      wasPushedToServer = false,
+      remoteUri = '',
+      asset = [], // eslint-disable-line camelcase
+      area = [], // eslint-disable-line camelcase
+      geofield = [], // eslint-disable-line camelcase
+      notes = { value: '', format: 'farm_format' }, // eslint-disable-line camelcase
+    } = {}) => {
+      return {
+        log_owner,
+        notes,
+        quantity,
+        id: id === 'undefined' ? undefined : id,
+        local_id,
+        name,
+        type,
+        timestamp,
+        // Use Array.concat() to make sure this is an array
+        images: parseImages(images), // eslint-disable-line no-use-before-define
+        // Use JSON.parse() to convert strings back to booleans
+        done: JSON.parse(done),
+        isCachedLocally: JSON.parse(isCachedLocally),
+        wasPushedToServer: JSON.parse(wasPushedToServer),
+        remoteUri,
+        asset: parseObjects(asset), // eslint-disable-line no-use-before-define
+        area: parseObjects(area), // eslint-disable-line no-use-before-define
+        geofield: parseObjects(geofield), // eslint-disable-line no-use-before-define, max-len
+      };
+    };
   }
   if (src === SERVER) {
     return (deserializedLogFromServer) => {
@@ -150,11 +185,11 @@ const makeLogFactory = (src, dest) => {
         geofield,
         notes,
       } = deserializedLogFromServer;
-      return {
+      let log;
+      log = {
         log_owner,
         notes: parseNotes(notes), // eslint-disable-line no-use-before-define
         quantity,
-        id,
         local_id,
         name,
         type,
@@ -168,148 +203,23 @@ const makeLogFactory = (src, dest) => {
         area,
         geofield,
       };
+      if (id) {
+        log.id = id;
+      }
+      return log;
     };
   }
   throw new Error('Incorrect parameters passed to makeLog');
 };
 
-export const makeLog = {
+export default {
   create: makeLogFactory(),
   toStore: makeLogFactory(STORE, STORE),
   toSql: makeLogFactory(STORE, SQL),
   toServer: makeLogFactory(STORE, SERVER),
   fromSql: makeLogFactory(SQL, STORE),
   fromServer: makeLogFactory(SERVER, STORE),
-}
-
-export default function (
-  // Assign default properties or leave them as optional
-  {
-    log_owner = '', // eslint-disable-line camelcase
-    quantity = '',
-    id,
-    local_id, // eslint-disable-line camelcase
-    name = '',
-    type = '',
-    timestamp = '',
-    images = [],
-    done = true,
-    isCachedLocally = false,
-    wasPushedToServer = false,
-    remoteUri = '',
-    asset = [], // eslint-disable-line camelcase
-    area = [], // eslint-disable-line camelcase
-    geofield = [], // eslint-disable-line camelcase
-    notes = { value: '', format: 'farm_format' }, // eslint-disable-line camelcase
-  } = {},
-  dest,
-) {
-  let log;
-  /*
-    The format for adding logs to the Vuex store; this is also the default
-    if there is no destination argument passed.
-  */
-  if (dest === STORE || dest === undefined) {
-    log = {
-      log_owner,
-      notes,
-      quantity,
-      id,
-      local_id,
-      name,
-      type,
-      timestamp,
-      // Use Array.concat() to make sure this is an array
-      images: parseImages(images), // eslint-disable-line no-use-before-define
-      // Use JSON.parse() to convert strings back to booleans
-      done: JSON.parse(done),
-      isCachedLocally: JSON.parse(isCachedLocally),
-      wasPushedToServer: JSON.parse(wasPushedToServer),
-      remoteUri,
-      asset: parseObjects(asset), // eslint-disable-line no-use-before-define
-      area: parseObjects(area), // eslint-disable-line no-use-before-define
-      geofield: parseObjects(geofield), // eslint-disable-line no-use-before-define, max-len
-    };
-  }
-  // This dest is called when bringing logs from the server into the vuex store
-  if (dest === STOREFROMSERVER) {
-    log = {
-      log_owner,
-      notes: parseNotes(notes), // eslint-disable-line no-use-before-define
-      quantity,
-      id,
-      local_id,
-      name,
-      type,
-      timestamp,
-      // Use Array.concat() to make sure this is an array
-      images: parseImages(images), // eslint-disable-line no-use-before-define
-      // Use JSON.parse() to convert strings back to booleans
-      done: JSON.parse(done),
-      isCachedLocally: JSON.parse(isCachedLocally),
-      wasPushedToServer: JSON.parse(wasPushedToServer),
-      remoteUri,
-      asset: parseObjects(asset), // eslint-disable-line no-use-before-define
-      area: parseObjects(area), // eslint-disable-line no-use-before-define
-      geofield: parseObjects(geofield), // eslint-disable-line no-use-before-define, max-len
-    };
-  }
-  // The format for sending logs to the farmOS REST Server.
-  if (dest === SERVER) {
-    // Just take the id from the assets/areas before sending
-    const assets = asset.map(a => ({ id: a.id }));
-    const areas = area.map(a => ({ id: a.tid }));
-    log = {
-      notes: {
-        format: 'farm_format',
-        value: notes,
-      },
-      // quantity,
-      name,
-      done,
-      type,
-      timestamp,
-      images,
-      asset: assets,
-      area: areas,
-      geofield,
-    };
-    /*
-      Only return id property if one has already been assigned by the server,
-      otherwise omit it so the server can assign a new one.
-    */
-    if (id) {
-      log.id = id;
-    }
-  }
-  // The format for inserting logs in WebSQL for local persistence.
-  if (dest === SQL) {
-    log = {
-      log_owner,
-      notes,
-      quantity,
-      id,
-      name,
-      type,
-      timestamp,
-      images,
-      done,
-      wasPushedToServer,
-      remoteUri,
-      asset: JSON.stringify(asset),
-      area: JSON.stringify(area),
-      geofield: JSON.stringify(geofield),
-    };
-    /*
-      Only return local_id property if one has already been assigned by WebSQL,
-      otherwise let WebSQL assign a new one.
-    */
-    if (local_id) { // eslint-disable-line camelcase
-      log.local_id = local_id; // eslint-disable-line camelcase
-    }
-  }
-  return log;
-}
+};
 
 /*
   This utility function, along with the use of `JSON.parse()` above,

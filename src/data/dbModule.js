@@ -1,4 +1,4 @@
-import { makeLog } from './logFactory';
+import makeLog from './logFactory';
 
 export default {
 
@@ -47,7 +47,7 @@ export default {
         .then(db => getRecords(db, 'log')) // eslint-disable-line no-use-before-define
         .then((results) => {
           const cachedLogs = results.map(log => (
-            makeLog.create({
+            makeLog.fromSql({
               ...log,
               isCachedLocally: true,
             })

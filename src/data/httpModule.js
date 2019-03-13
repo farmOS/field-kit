@@ -1,4 +1,4 @@
-import logFactory, { makeLog, SERVER, STOREFROMSERVER } from './logFactory';
+import makeLog from './logFactory';
 import farmSync from './farmSync';
 
 const farm = () => {
