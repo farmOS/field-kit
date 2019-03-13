@@ -39,7 +39,7 @@ const makeLogFactory = (src, dest) => {
       asset = [], // eslint-disable-line camelcase
       area = [], // eslint-disable-line camelcase
       geofield = [], // eslint-disable-line camelcase
-      notes = { value: '', format: 'farm_format' }, // eslint-disable-line camelcase
+      notes = '', // eslint-disable-line camelcase
     } = {}) => {
       let log;
       /*
@@ -143,7 +143,7 @@ const makeLogFactory = (src, dest) => {
       asset = [], // eslint-disable-line camelcase
       area = [], // eslint-disable-line camelcase
       geofield = [], // eslint-disable-line camelcase
-      notes = { value: '', format: 'farm_format' }, // eslint-disable-line camelcase
+      notes = '', // eslint-disable-line camelcase
     } = {}) => {
       return {
         log_owner,
@@ -185,8 +185,7 @@ const makeLogFactory = (src, dest) => {
         geofield,
         notes,
       } = deserializedLogFromServer;
-      let log;
-      log = {
+      const log = {
         log_owner,
         notes: parseNotes(notes), // eslint-disable-line no-use-before-define
         quantity,
