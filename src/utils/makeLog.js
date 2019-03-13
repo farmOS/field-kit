@@ -70,9 +70,6 @@ const makeLogFactory = (src, dest) => {
       }
       // The format for sending logs to the farmOS REST Server.
       if (dest === SERVER) {
-        // Just take the id from the assets/areas before sending
-        const assets = asset.map(a => ({ id: a.id }));
-        const areas = area.map(a => ({ id: a.tid }));
         log = {
           notes: {
             format: 'farm_format',
@@ -84,8 +81,8 @@ const makeLogFactory = (src, dest) => {
           type,
           timestamp,
           images,
-          asset: assets,
-          area: areas,
+          asset,
+          area,
           geofield,
         };
         /*

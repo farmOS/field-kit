@@ -154,7 +154,6 @@ export default {
     return {
       showDeleteDialog: false,
       logIndexToDelete: null,
-      readyToGetLogs: false,
     };
   },
   methods: {
@@ -187,34 +186,12 @@ export default {
       console.log(`Deleting log "${payload.name}"...`);
     },
     syncAll() {
-      // updateAllLogs sends un-synced logs to the server.
-      function logSyncer(log) {
-        return {
-          ...log,
-          isReadyToSync: true,
-        };
-      }
-      this.$store.commit('updateAllLogs', logSyncer);
-      this.readyToGetLogs = true;
-      // ReadyToGetLogs will be set back to false when this.logs updates, meaning the send is complete
-    },
-  },
-  watch: {
-      logs: {
-        handler: function() {
-          if (this.readyToGetLogs) {
-            console.log(`SENDING COMPLETE; TIME TO GET!`)
-            // Get logs from the server after sending
-            this.$store.dispatch('getLogs', {assigned: this.userId, completed: '0',
-            type: ['farm_activity', 'farm_observation', 'farm_harvest', 'farm_input', 'farm_seeding',],
-          })
-          this.readyToGetLogs = false;
-        }
-        deep: true
-      }
+      // Calling getLogs first.  On return, it will call a check action in httpModule.
+      this.$store.dispatch('getLogs');
     },
   },
 };
+
 </script>
 
 <style scoped>

@@ -16,23 +16,19 @@ export default {
         commit('deleteAllAreas');
         const areas = res.map(({ tid, name, geofield }) => ({ tid, name, geofield })); // eslint-disable-line camelcase, max-len
         commit('addAreas', areas);
-        console.log('Finished updating areas!');
       }).catch((err) => { throw err; });
     },
     updateAssets({ commit }) {
       return farm().asset.get().then((res) => {
         // If a successful response is received, delete and replace all assets
         commit('deleteAllAssets');
-        const assets = res.map(({ id, name }) => ({ id, name }));
+        const assets = res.map(({ id, name, type }) => ({ id, name, type }));
         commit('addAssets', assets);
-        console.log('Finished updating assets!');
       }).catch((err) => { throw err; });
     },
 
     // SEND LOGS TO SERVER
-    // May expand this function to accomodate replacement, or write a new one.
-    // For the moment, I am trying a new one
-    sendLogs({ commit, dispatch, rootState }, payload) {
+    sendLogs({ commit, rootState }, payload) {
       // Update logs in the database and local store after send completes
       function handleSyncResponse(response, params) {
         let serverId = null;
@@ -90,10 +86,10 @@ export default {
 
       // Send records to the server, unless the user isn't logged in
       if (localStorage.getItem('token')) {
-        payload.indices.map((index) => {
+        payload.indices.map((index) => { // eslint-disable-line consistent-return, array-callback-return, max-len
           // Either send or post logs, depending on whether they originated on the server
           // Logs originating on the server possess an ID field; others do not.
-          let newLog = makeLog.toServer(rootState.farm.logs[index]);
+          const newLog = makeLog.toServer(rootState.farm.logs[index]);
           // if the log type is seeding, I need to remove the area field
           // Is it worth creating a logFactory destination for this?
           if (newLog.type === 'farm_seeding') {
@@ -103,7 +99,6 @@ export default {
           // I need to check wasPushedToServer, which is not in logFactory Server
           const synced = rootState.farm.logs[index].wasPushedToServer;
           if (!synced) {
-            console.log('SENDING UNSYNCED LOG WITH PAYLOAD: ', newLog);
             if (newLog.id) {
               return farm().log.update(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
                 .then(res => handleSyncResponse(res, { logIndex: index, logId: newLog.id }))
@@ -120,20 +115,29 @@ export default {
     },
 
     // GET LOGS FROM SERVER
-    getServerLogs({ commit, rootState }, payload) {
-      console.log(`GET SERVER LOGS CALLED IN HTTPMODULE WITH`, payload);
-      return farm().log.get(payload, localStorage.getItem('token'))
+    getServerLogs({ commit, rootState }) {
+      return farm().log.get(rootState.shell.settings.getServerLogsParams, localStorage.getItem('token'))
         .then((res) => {
-          console.log('LOGS RECEIVED AS ', res);
           // See whether logs are new, or currently in the store
           // If res is a single log, check vs current, run through the logFactory and call addLog
           // If res is multiple, check each vs current, run through logFactory and call addLogs
           // Returns the log index number as logIndex if the log is present; null if not
+          /*
+          Logs from the server are either saved as new (with isReadyToSync false)
+          Used to over-write local logs (with isReadyToSync fasle)
+          OR, if the local log has been modified since the last sync, a notification
+          is thrown, and the user selects whether to over-write or sync local to server
+          */
           function checkLog(serverLog) {
             const allLogs = rootState.farm.logs;
-            const logStatus = { localId: null, storeIndex: null, localChange: true }
+            const logStatus = { localId: null, storeIndex: null, localChange: true };
             allLogs.forEach((localLog, index) => {
               if (localLog.id) {
+                /*
+                  If a local log has an id field, see if it is the same as the server log.
+                  In this case set lotStatus.localId and .storeIndex
+                  Also check whethe the log is unsynced (wasPushedToServer true)
+                */
                 if (localLog.id === serverLog.id) {
                   logStatus.localId = localLog.local_id;
                   logStatus.storeIndex = index;
@@ -145,57 +149,61 @@ export default {
             });
             return logStatus;
           }
-          // Return all assets/ areas associated with logs
-          function getAttached(log, attribute, resources, resId) {
-            // Only get attached if that attrib exists.  Some logs have no areas!
-            if (log[attribute]) {
-              const logAttached = [];
-              resources.forEach((resrc) => {
-                log[attribute].forEach((attrib) => {
-                  if (resrc[resId] === attrib.id) {
-                    logAttached.push(resrc);
-                  }
-                });
-              });
-              return logAttached;
-            }
-          }
+
           // Process each log on its way from the server to the logFactory
           function processLog(log) {
-            const allAreas = rootState.farm.areas;
-            const allAssets = rootState.farm.assets;
             const checkStatus = checkLog(log);
-            const attachedAssets = getAttached(log, 'asset', allAssets, 'id');
-            const attachedAreas = getAttached(log, 'area', allAreas, 'tid');
-            // If the log is not present locally, add it.
-            // If the log is present locally, but has not been changed since the last sync,
-            // update it with the new version from the server
-            // If the log is present locally and has been changed, do not update it.
+            /*
+            If the log is not present locally, add it.
+            If the log is present locally, but has not been changed since the last sync,
+            update it with the new version from the server
+            If the log is present locally and has been changed, check log.changed from the server
+            against the date of the last sync
+             - If the log.changed is before the syncDate, keep the verson on the app.
+             - If the log was changed more recently than syncDate, throw a warning
+             and let the user decide what to do
+            */
             if (checkStatus.localId === null) {
-              console.log('ADDING LOG WITH PARAMS: ', log);
               commit('addLogFromServer',
                 makeLog.fromServer({
                   ...log,
                   wasPushedToServer: true,
-                  area: attachedAreas,
-                  asset: attachedAssets,
                 }));
             } else if (!checkStatus.localChange) {
               // Update the log with all data from the server
-              console.log (`UPDATING UNCHANGED LOG ${log.name}`);
               const updateParams = {
                 index: checkStatus.storeIndex,
                 log: makeLog.fromServer({
                   ...log,
                   wasPushedToServer: true,
+                  isReadyToSync: false,
                   local_id: checkStatus.localId,
-                  area: attachedAreas,
-                  asset: attachedAssets
                 })
               }
               commit('updateLogFromServer', updateParams)
             } else {
-              console.log(`LOG ${log.name} HAS BEEN CHANGED LOCALLY; WILL NOT BE UPDATED FROM THE SERVER`);
+              const syncDate = localStorage.getItem('syncDate');
+              if (log.changed > syncDate) {
+                /*
+                  Throw a warning with two options:
+                   - Keep what I have on the app, and over-write what I have on the server
+                   - Keep what I have on the server, and over-write what I have on the app
+                  If the user selects the first option, stop here.
+                  If the user selects the second option, execute the following:
+                */
+                const updateParams = {
+                  index: checkStatus.storeIndex,
+                  log: logFactory({
+                    ...log,
+                    wasPushedToServer: true,
+                    isReadyToSync: false,
+                    local_id: checkStatus.localId,
+                  }, STOREFROMSERVER),
+                };
+                commit('updateLogFromServer', updateParams);
+              }
+              // If the log on the server hasn't been changed, do nothing
+              // The local log will over-write whatever is on the server on sendLogs
             }
           }
           // Process one or more logs

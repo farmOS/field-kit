@@ -16,6 +16,12 @@ const shellModule = {
     },
     settings: {
       useGeolocation: true,
+      // search parameters for getting logs from the server.  Assigned set when user.uid is set
+      getServerLogsParams: {
+        assigned: null,
+        completed: '0',
+        type: ['farm_activity', 'farm_observation', 'farm_harvest', 'farm_input', 'farm_seeding'],
+      },
     },
   },
   mutations: {
@@ -37,6 +43,7 @@ const shellModule = {
     },
     changeUid(state, uid) {
       state.user.uid = uid;
+      state.settings.getServerLogsParams.assigned = uid;
     },
     setLoginStatus(state, bool) {
       state.user.isLoggedIn = bool;
@@ -86,7 +93,7 @@ const farmModule = {
     // This is called when new logs from the server are added
     addLogFromServer(state, newLog) {
       const newIndex = state.logs.push(newLog) - 1;
-      this.dispatch('serverLogToDb', { index: newIndex, log: newLog })
+      this.dispatch('serverLogToDb', { index: newIndex, log: newLog });
     },
     setCurrentLogIndex(state, index) {
       state.currentLogIndex = index;
@@ -177,10 +184,10 @@ const farmModule = {
     forceSyncAssetsAndAreas() {
       // this is just a hook for synchronizing via the httpModule
     },
-    getLogs({ commit }, params) {
+    getLogs() {
       // Right now, this is just a hook to call getServerLogs in the httpModule
     },
-    serverLogToDb({ commit }, params) {
+    serverLogToDb() {
       // Right now, this is just a hook to call createLogFromServer in the dbModule
     },
   },
