@@ -144,28 +144,26 @@ const makeLogFactory = (src, dest) => {
       area = [], // eslint-disable-line camelcase
       geofield = [], // eslint-disable-line camelcase
       notes = '', // eslint-disable-line camelcase
-    } = {}) => {
-      return {
-        log_owner,
-        notes,
-        quantity,
-        id: id === 'undefined' ? undefined : id,
-        local_id,
-        name,
-        type,
-        timestamp,
-        // Use Array.concat() to make sure this is an array
-        images: parseImages(images), // eslint-disable-line no-use-before-define
-        // Use JSON.parse() to convert strings back to booleans
-        done: JSON.parse(done),
-        isCachedLocally: JSON.parse(isCachedLocally),
-        wasPushedToServer: JSON.parse(wasPushedToServer),
-        remoteUri,
-        asset: parseObjects(asset), // eslint-disable-line no-use-before-define
-        area: parseObjects(area), // eslint-disable-line no-use-before-define
-        geofield: parseObjects(geofield), // eslint-disable-line no-use-before-define, max-len
-      };
-    };
+    } = {}) => ({
+      log_owner,
+      notes,
+      quantity,
+      id: id === 'undefined' ? undefined : id,
+      local_id,
+      name,
+      type,
+      timestamp,
+      // Use Array.concat() to make sure this is an array
+      images: parseImages(images), // eslint-disable-line no-use-before-define
+      // Use JSON.parse() to convert strings back to booleans
+      done: JSON.parse(done),
+      isCachedLocally: JSON.parse(isCachedLocally),
+      wasPushedToServer: JSON.parse(wasPushedToServer),
+      remoteUri,
+      asset: parseObjects(asset), // eslint-disable-line no-use-before-define
+      area: parseObjects(area), // eslint-disable-line no-use-before-define
+      geofield: parseObjects(geofield), // eslint-disable-line no-use-before-define, max-len
+    });
   }
   if (src === SERVER) {
     return (deserializedLogFromServer) => {
