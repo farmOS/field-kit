@@ -178,9 +178,9 @@ export default {
                   wasPushedToServer: true,
                   isReadyToSync: false,
                   local_id: checkStatus.localId,
-                })
-              }
-              commit('updateLogFromServer', updateParams)
+                }),
+              };
+              commit('updateLogFromServer', updateParams);
             } else {
               const syncDate = localStorage.getItem('syncDate');
               if (log.changed > syncDate) {
@@ -193,12 +193,12 @@ export default {
                 */
                 const updateParams = {
                   index: checkStatus.storeIndex,
-                  log: logFactory({
+                  log: makeLog.fromServer({
                     ...log,
                     wasPushedToServer: true,
                     isReadyToSync: false,
                     local_id: checkStatus.localId,
-                  }, STOREFROMSERVER),
+                  }),
                 };
                 commit('updateLogFromServer', updateParams);
               }
