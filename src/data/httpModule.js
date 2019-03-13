@@ -1,4 +1,4 @@
-import makeLog from './logFactory';
+import makeLog from '../utils/makeLog';
 import farmSync from './farmSync';
 
 const farm = () => {

@@ -1,4 +1,4 @@
-import makeLog from './logFactory';
+import makeLog from '../utils/makeLog';
 
 export default {
 
