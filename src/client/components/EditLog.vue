@@ -318,6 +318,7 @@ export default {
       // If a log index is provided in query params, set it as current log
       this.$store.commit('setCurrentLogIndex', this.$route.params.index);
       console.log(`SETTING CURRENT LOG INDEX AS ${this.$route.params.index}`);
+      console.log('CURRENT LOG IN STORE IS', this.logs[this.currentLogIndex]);
       this.existingLog = true;
     } else {
       // Create a new log.  The 'type' prop is set based on the 'type' param in the local route

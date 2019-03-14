@@ -166,7 +166,7 @@ const makeLogFactory = (src, dest) => {
           name: JSON.stringify(name),
           type: JSON.stringify(type),
           timestamp: JSON.stringify(timestamp),
-          images,
+          images: JSON.stringify({ data: parseImages(images.data), changed: images.changed }), // eslint-disable-line no-use-before-define, max-len
           done: JSON.stringify(done),
           wasPushedToServer: JSON.stringify(wasPushedToServer),
           remoteUri: JSON.stringify(remoteUri),
