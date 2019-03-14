@@ -30,19 +30,13 @@ export default {
     // SEND LOGS TO SERVER
     sendLogs({ commit, rootState }, payload) {
       // Update logs in the database and local store after send completes
-      function handleSyncResponse(response, params) {
-        let serverId = null;
-        if (params.logId) {
-          serverId = params.logId;
-        } else {
-          serverId = response.id;
-        }
+      function handleSyncResponse(response, index) {
         commit('updateLogs', {
-          indices: [params.logIndex],
+          indices: [index],
           mapper(log) {
             return makeLog.create({
               ...log,
-              id: serverId,
+              id: response.id,
               wasPushedToServer: true,
               remoteUri: response.uri,
             });
@@ -93,13 +87,8 @@ export default {
           // I need to check wasPushedToServer, which is not in logFactory Server
           const synced = rootState.farm.logs[index].wasPushedToServer;
           if (!synced) {
-            if (newLog.id) {
-              return farm().log.update(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
-                .then(res => handleSyncResponse(res, { logIndex: index, logId: newLog.id }))
-                .catch(err => handleSyncError(err, index));
-            }
             return farm().log.send(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
-              .then(res => handleSyncResponse(res, { logIndex: index }))
+              .then(res => handleSyncResponse(res, index))
               .catch(err => handleSyncError(err, index));
           }
         });

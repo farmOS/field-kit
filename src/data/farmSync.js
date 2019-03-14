@@ -183,11 +183,17 @@ export default function (host, user, password) {
         return request(queryString);
       },
       send(payload, token) {
-        // ##### I WILL NEED TO FORMAT UPDATES AS PUT REQUESTS TO THE LOG ENDPOINT
+        if (payload.id) {
+          return request(`/log/${payload.id}`, { method: 'PUT', payload, token })
+            // Add properties back to response so it mirrors a POST response
+            .then(res => ({
+              ...res,
+              id: payload.id,
+              uri: payload.uri,
+              resource: 'log',
+            }));
+        }
         return request('/log', { method: 'POST', payload, token });
-      },
-      update(payload, token) {
-        return request(`/log/${payload.id}`, { method: 'PUT', payload, token });
       },
     },
   };
