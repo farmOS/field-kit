@@ -176,10 +176,10 @@ export default {
       const payload = {
         index: this.logIndexToDelete,
         local_id: log.local_id,
-        id: log.id.data,
-        remoteUri: log.remoteUri,
-        name: log.name,
-        type: log.type,
+        id: log.id,
+        remoteUri: log.remoteUri.data,
+        name: log.name.data,
+        type: log.type.data,
       };
       this.$store.commit('deleteLog', payload);
       this.showDeleteDialog = false;
