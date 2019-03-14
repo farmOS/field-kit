@@ -1,10 +1,10 @@
-import farmSync from '../data/farmSync';
+import farmOS from 'farmos';
 
 const lazyFarm = () => {
   const host = localStorage.getItem('host');
   const user = localStorage.getItem('username');
   const password = localStorage.getItem('password');
-  return farmSync(host, user, password);
+  return farmOS(host, user, password);
 };
 
 export default {
@@ -42,7 +42,7 @@ export default {
 
       // Return a promise so the component knows when the action completes.
       return new Promise((resolve) => {
-        const farm = farmSync(url, username, password);
+        const farm = farmOS(url, username, password);
         farm.authenticate()
           .then((tokenResponse) => {
             // Save our username, password & token to the persistant store
@@ -63,7 +63,7 @@ export default {
           .catch(() => {
             // Check if the login attempt failed b/c it's http://, not https://
             const noSslUrl = `http://${payload.farmosUrl}`;
-            const noSslfarm = farmSync(noSslUrl, username, password);
+            const noSslfarm = farmOS(noSslUrl, username, password);
             noSslfarm.authenticate() // eslint-disable-line
               .then((tokenResponse) => {
                 // Save our username, password & token to the persistant store

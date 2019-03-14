@@ -1,11 +1,11 @@
+import farmOS from 'farmos';
 import makeLog from '../utils/makeLog';
-import farmSync from './farmSync';
 
 const farm = () => {
   const host = localStorage.getItem('host');
   const user = localStorage.getItem('username');
   const password = localStorage.getItem('password');
-  return farmSync(host, user, password);
+  return farmOS(host, user, password);
 };
 
 export default {
