@@ -15,7 +15,7 @@ export default {
           // Can we be sure this will always be the CURRENT log?
           // Not if we use this action to add new records received from the server
           commit('updateCurrentLog', {
-            local_id: { data: results.insertId, changed: nowStamp },
+            local_id: results.insertId,
             isCachedLocally: { data: true, changed: nowStamp },
           })
         ));
