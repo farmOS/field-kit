@@ -90,12 +90,6 @@ export default {
           // Either send or post logs, depending on whether they originated on the server
           // Logs originating on the server possess an ID field; others do not.
           const newLog = makeLog.toServer(rootState.farm.logs[index]);
-          // if the log type is seeding, I need to remove the area field
-          // Is it worth creating a logFactory destination for this?
-          if (newLog.type === 'farm_seeding') {
-            delete newLog.area;
-            delete newLog.geofield;
-          }
           // I need to check wasPushedToServer, which is not in logFactory Server
           const synced = rootState.farm.logs[index].wasPushedToServer;
           if (!synced) {

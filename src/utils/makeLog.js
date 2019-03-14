@@ -92,6 +92,12 @@ const makeLogFactory = (src, dest) => {
         if (id) {
           log.id = id;
         }
+        // If the log type is seeding, the server disallows area & geofield
+        if (type === 'farm_seeding') {
+          delete log.area;
+          delete log.asset;
+          delete log.geofield;
+        }
       }
       // The format for inserting logs in WebSQL for local persistence.
       if (dest === SQL) {
