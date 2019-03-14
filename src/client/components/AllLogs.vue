@@ -38,21 +38,21 @@
       >
         <div class="card-body">
           <p>
-            <icon-assignment-done v-if="log.done"/>
+            <icon-assignment-done v-if="log.done.data"/>
             <icon-assignment
-              v-if="!log.done && (log.timestamp * 1000 > new Date().valueOf())"/>
+              v-if="!log.done.data && (log.timestamp.data * 1000 > new Date().valueOf())"/>
             <icon-assignment-late
-              v-if="!log.done && (log.timestamp * 1000 < new Date().valueOf())"/>
-            {{showDate(log.timestamp)}}
+              v-if="!log.done.data && (log.timestamp.data * 1000 < new Date().valueOf())"/>
+            {{showDate(log.timestamp.data)}}
             <span
-              v-if="log.wasPushedToServer"
+              v-if="log.wasPushedToServer.data"
               class="sync-status"
             >
-              <a :href="log.remoteUri">synced</a>
-              ({{syncTime(log.timestamp)}})
+              <a :href="log.remoteUri.data">synced</a>
+              ({{syncTime(log.timestamp.data)}})
             </span>
             <span
-              v-else-if="log.isReadyToSync"
+              v-else-if="log.isReadyToSync && log.isReadyToSync.data"
               class="sync-status"
             >
               <div
@@ -66,9 +66,9 @@
               unsynced
             </span>
           </p>
-          <h5>{{log.name}}</h5>
+          <h5>{{log.name.data}}</h5>
           <router-link
-            :to="{ name: 'edit-log', params: { index: i, type: log.type } }"
+            :to="{ name: 'edit-log', params: { index: i, type: log.type.data } }"
             class="edit-btn">
             <icon-edit />
           </router-link>
@@ -98,9 +98,9 @@
             </button>
           </div>
           <div class="modal-body">
-            Are sure you'd like to delete the log "{{logs[logIndexToDelete].name}}"?&nbsp;
+            Are sure you'd like to delete the log "{{logs[logIndexToDelete].name.data}}"?&nbsp;
             <span
-              v-if='logs[logIndexToDelete].wasPushedToServer'>
+              v-if='logs[logIndexToDelete].wasPushedToServer.data'>
               Deleting it on this device will not remove the log from the server.
             </span>
             <span v-else>
@@ -176,14 +176,14 @@ export default {
       const payload = {
         index: this.logIndexToDelete,
         local_id: log.local_id,
-        id: log.id,
+        id: log.id.data,
         remoteUri: log.remoteUri,
         name: log.name,
         type: log.type,
       };
       this.$store.commit('deleteLog', payload);
       this.showDeleteDialog = false;
-      console.log(`Deleting log "${payload.name}"...`);
+      console.log(`Deleting log "${payload.name.data}"...`);
     },
     syncAll() {
       // Calling getLogs first.  On return, it will call a check action in httpModule.

@@ -55,7 +55,7 @@ export default {
       if (mutation.type === 'addLogAndMakeCurrent') {
         store.dispatch('createLog', mutation.payload);
       }
-      if (mutation.type === 'updateCurrentLog' && !mutation.payload.isCachedLocally) {
+      if (mutation.type === 'updateCurrentLog' && !mutation.payload.isCachedLocally.data) {
         store.dispatch('updateLog', mutation.payload);
       }
       if (mutation.type === 'updateLogFromServer' && !mutation.payload.log.isCachedLocally) {

@@ -10,9 +10,10 @@ export default {
         // commit('setPhotoLoc', photoLoc);
         const prevLog = rootState.farm.logs[rootState.farm.currentLogIndex];
         const dataURL = `data:image/jpeg;base64,${photoLoc}`;
+        const nowStamp = (Date.now() / 1000).toFixed(0);
         const newProps = {
-          images: prevLog.images.concat(dataURL),
-          isCachedLocally: false,
+          images: { data: prevLog.images.data.concat(dataURL), changed: nowStamp },
+          isCachedLocally: { data: false, changed: nowStamp },
         };
         commit('updateCurrentLog', newProps);
       }
@@ -23,10 +24,11 @@ export default {
     },
     loadPhotoBlob({ commit, rootState }, file) {
       const prevLog = rootState.farm.logs[rootState.farm.currentLogIndex];
+      const nowStamp = (Date.now() / 1000).toFixed(0);
       readFileData(file).then((data) => { // eslint-disable-line no-use-before-define
         const newProps = {
-          images: prevLog.images.concat(data),
-          isCachedLocally: false,
+          images: { data: prevLog.images.data.concat(data), changed: nowStamp },
+          isCachedLocally: { data: false, changed: nowStamp },
         };
         commit('updateCurrentLog', newProps);
       });

@@ -8,14 +8,14 @@
         <toggle-check
           label="Done"
           labelPosition="after"
-          :checked="logs[currentLogIndex].done"
+          :checked="logs[currentLogIndex].done.data"
           @input="updateCurrentLog('done', $event)"/>
       </div>
 
       <div class="form-item form-item-name form-group">
         <label for="name" class="control-label">Name</label>
         <input
-          :value="logs[currentLogIndex].name"
+          :value="logs[currentLogIndex].name.data"
           @input="updateCurrentLog('name', $event.target.value)"
           placeholder="Enter name"
           type="text"
@@ -26,7 +26,7 @@
       <div class="form-item form-item-name form-group">
         <label for="Date" class="control-label">Date</label>
         <input
-          :value="convertOutOfUnix(logs[currentLogIndex].timestamp)"
+          :value="convertOutOfUnix(logs[currentLogIndex].timestamp.data)"
           @input="updateCurrentLog('timestamp', convertIntoUnix($event.target.value))"
           type="date"
           class="form-control">
@@ -36,7 +36,7 @@
         <label for="type" class="control-label ">Log Type</label>
         <div class="input-group">
           <select
-            :value="logs[currentLogIndex].type"
+            :value="logs[currentLogIndex].type.data"
             @input="updateCurrentLog('type', $event.target.value)"
             class="custom-select col-sm-3 ">
               <!-- options are defined in the local logTypes variable -->
@@ -53,7 +53,7 @@
       <div class="form-item form-item-name form-group">
         <label for="notes" class="control-label ">Notes</label>
         <textarea
-          :value="logs[currentLogIndex].notes"
+          :value="logs[currentLogIndex].notes.data"
           @input="updateCurrentLog('notes', $event.target.value)"
           placeholder="Enter notes"
           type="text"
@@ -203,8 +203,8 @@
         <ul class="list-group">
           <li
             class="list-group-item"
-            v-if="logs[currentLogIndex].geofield.length > 0">
-            {{ logs[currentLogIndex].geofield[0].geom }}
+            v-if="logs[currentLogIndex].geofield.data.length > 0">
+            {{ logs[currentLogIndex].geofield.data[0].geom }}
             <span class="remove-list-item" @click="updateCurrentLog('geofield', [])">
               &#x2715;
             </span>
@@ -349,11 +349,20 @@ export default {
 
     updateCurrentLog(key, val) {
       console.log('CURRENT LOG IS ',this.logs[this.currentLogIndex]);
+      const nowStamp = (Date.now() / 1000).toFixed(0);
+      const valueString = (typeof val === 'string') ? val : JSON.stringify(val);
+      const newProps = {
+        [key]: { data: valueString, changed: nowStamp},
+        isCachedLocally: { data: false, changed: nowStamp},
+        wasPushedToServer: { data: false, changed: nowStamp},
+      };
+      /*
       const newProps = {
         [key]: val,
         isCachedLocally: false,
         wasPushedToServer: false,
       };
+      */
       this.$store.commit('updateCurrentLog', newProps);
       console.log('WROTE THE FOLLOWING TO CURRENT LOG WITH updateCurrentLog');
       console.log(newProps);
@@ -361,14 +370,14 @@ export default {
 
     addAsset(id) {
       const assetReference = { id: id, resource: 'farm_asset'};
-      const newAssets = this.logs[this.currentLogIndex].asset.concat(assetReference);
+      const newAssets = this.logs[this.currentLogIndex].asset.data.concat(assetReference);
       this.updateCurrentLog('asset', newAssets);
     },
 
     addArea(id) {
       if (id !== '') {
         const areaReference = { id: id, resource: 'farm_area'};
-        const newAreas = this.logs[this.currentLogIndex].area.concat(areaReference);
+        const newAreas = this.logs[this.currentLogIndex].area.data.concat(areaReference);
         this.updateCurrentLog('area', newAreas);
         this.checkAreas();
       }
@@ -376,13 +385,13 @@ export default {
     },
 
     removeAsset(asset) {
-      const newAssets = this.logs[this.currentLogIndex].asset
+      const newAssets = this.logs[this.currentLogIndex].asset.data
         .filter(_asset => _asset.id !== asset.id);
       this.updateCurrentLog('asset', newAssets);
     },
 
     removeArea(area) {
-      const newAreas = this.logs[this.currentLogIndex].area
+      const newAreas = this.logs[this.currentLogIndex].area.data
         .filter(_area => _area.id !== area.tid);
       this.updateCurrentLog('area', newAreas);
     },
@@ -430,10 +439,10 @@ export default {
 
     getAttached(log, attribute, resources, resId) {
       // Only get attached if that attrib exists.  Some logs have no areas!
-      if (log[attribute]) {
+      if (log[attribute].data) {
         const logAttached = [];
         resources.forEach((resrc) => {
-          log[attribute].forEach((attrib) => {
+          log[attribute].data.forEach((attrib) => {
             if (resrc[resId] === attrib.id) {
               logAttached.push(resrc);
             }
@@ -451,13 +460,13 @@ export default {
       added to the current log.
     */
     filteredAssets() {
-      const selectAssetRefs = this.logs[this.currentLogIndex].asset;
+      const selectAssetRefs = this.logs[this.currentLogIndex].asset.data;
       return this.assets.filter(asset =>
         !selectAssetRefs.some(selAsset => asset.id === selAsset.id),
       );
     },
     filteredAreas() {
-      const selectAreaRefs = this.logs[this.currentLogIndex].area;
+      const selectAreaRefs = this.logs[this.currentLogIndex].area.data;
       return this.areas.filter(area =>
         !selectAreaRefs.some(selArea => area.tid === selArea.tid),
       );

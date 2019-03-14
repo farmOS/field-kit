@@ -7,6 +7,7 @@ export default {
     createLog({ commit }, newLog) {
       const tableName = 'log';
       const newRecord = makeLog.toSql(newLog);
+      const nowStamp = (Date.now() / 1000).toFixed(0);
       openDatabase() // eslint-disable-line no-use-before-define
         .then(db => makeTable(db, tableName, newRecord)) // eslint-disable-line no-use-before-define
         .then(tx => saveRecord(tx, tableName, newRecord)) // eslint-disable-line no-use-before-define, max-len
@@ -14,8 +15,8 @@ export default {
           // Can we be sure this will always be the CURRENT log?
           // Not if we use this action to add new records received from the server
           commit('updateCurrentLog', {
-            local_id: results.insertId,
-            isCachedLocally: true,
+            local_id: { data: results.insertId, changed: nowStamp },
+            isCachedLocally: { data: true, changed: nowStamp },
           })
         ));
     },
@@ -49,7 +50,7 @@ export default {
           const cachedLogs = results.map(log => (
             makeLog.fromSql({
               ...log,
-              isCachedLocally: true,
+              isCachedLocally: { data: true, changed: (Date.now() / 1000).toFixed(0) },
             })
           ));
           commit('addLogs', cachedLogs);
@@ -58,6 +59,7 @@ export default {
     },
 
     updateLog({ commit, rootState }, newProps) {
+      console.log('UPDATING LOG WITH ', newProps);
       const newLog = makeLog.toSql({
         ...rootState.farm.logs[rootState.farm.currentLogIndex],
         ...newProps,
@@ -67,7 +69,9 @@ export default {
         .then(db => getTX(db, table)) // eslint-disable-line no-use-before-define
         .then(tx => saveRecord(tx, table, newLog)) // eslint-disable-line no-use-before-define
         // Can we be sure this will always be the CURRENT log?
-        .then(() => commit('updateCurrentLog', { isCachedLocally: true }));
+        .then(() => commit('updateCurrentLog', {
+          isCachedLocally: { data: true, changed: (Date.now() / 1000).toFixed(0) },
+        }));
     },
     // This works like updateLog, but accepts params {log: , index: }
     updateLogAtIndex({ commit, rootState }, props) {
@@ -84,7 +88,7 @@ export default {
           index: props.index,
           log: makeLog.create({
             ...props.log,
-            isCachedLocally: true,
+            isCachedLocally: { data: true, changed: (Date.now() / 1000).toFixed(0) },
           }),
         }));
     },

@@ -174,10 +174,10 @@ const farmModule = {
       const curTimeString = curDate.toLocaleTimeString('en-US');
       const curDateString = curDate.toLocaleDateString('en-US');
       const newLog = makeLog.create({
-        type: logType,
-        name: `${curDateString} - ${curTimeString}`,
+        type: { data: logType, changed: timestamp },
+        name: { data: `${curDateString} - ${curTimeString}`, changed: timestamp },
         // TODO: Try to decouple this further from the login plugin
-        timestamp,
+        timestamp: { data: timestamp, changed: timestamp },
       });
       commit('addLogAndMakeCurrent', newLog);
     },
