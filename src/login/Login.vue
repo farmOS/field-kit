@@ -8,7 +8,7 @@
         v-model="farmosUrl"
         placeholder="Enter your farmOS URL"
         autofocus
-        type="text"
+        type="url"
         autocomplete="url"
         class="form-control"
         v-on:input="checkValues"
