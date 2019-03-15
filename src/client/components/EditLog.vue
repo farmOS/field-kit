@@ -203,7 +203,7 @@
         <ul class="list-group">
           <li
             class="list-group-item"
-            v-if="logs[currentLogIndex].geofield.data.length > 0">
+            v-if="logs[currentLogIndex].geofield && logs[currentLogIndex].geofield.data.length > 0">
             {{ logs[currentLogIndex].geofield.data[0].geom }}
             <span class="remove-list-item" @click="updateCurrentLog('geofield', [])">
               &#x2715;
@@ -440,7 +440,7 @@ export default {
 
     getAttached(log, attribute, resources, resId) {
       // Only get attached if that attrib exists.  Some logs have no areas!
-      if (log[attribute].data) {
+      if (log[attribute]) {
         const logAttached = [];
         resources.forEach((resrc) => {
           log[attribute].data.forEach((attrib) => {
@@ -467,10 +467,14 @@ export default {
       );
     },
     filteredAreas() {
-      const selectAreaRefs = this.logs[this.currentLogIndex].area.data;
-      return this.areas.filter(area =>
-        !selectAreaRefs.some(selArea => area.tid === selArea.tid),
-      );
+      if (this.logs[this.currentLogIndex].area) {
+        const selectAreaRefs = this.logs[this.currentLogIndex].area.data;
+        return this.areas.filter(area =>
+          !selectAreaRefs.some(selArea => area.tid === selArea.tid),
+        );
+      } else {
+        return []
+      }
     },
     selectedAssets() {
       return this.getAttached(this.logs[this.currentLogIndex], 'asset', this.assets, 'id');

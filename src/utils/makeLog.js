@@ -6,6 +6,7 @@
 const SQL = 'WEBSQL';
 const SERVER = 'FARMOS_SERVER';
 const STORE = 'VUEX_STORE';
+const nowStamp = (Date.now() / 1000).toFixed(0);
 /*
   MAKELOG
   A utility function for structuring logs within the app. It can be applied
@@ -83,8 +84,6 @@ const makeLogFactory = (src, dest) => {
           wasPushedToServer: { data: JSON.parse(wasPushedToServer.data), changed: wasPushedToServer.changed }, // eslint-disable-line max-len
           remoteUri,
           asset: { data: parseObjects(asset.data), changed: asset.changed }, // eslint-disable-line no-use-before-define, max-len
-          area: { data: parseObjects(area.data), changed: area.changed }, // eslint-disable-line no-use-before-define, max-len
-          geofield: { data: parseObjects(geofield.data), changed: geofield.changed }, // eslint-disable-line no-use-before-define, max-len
           /*
           log_owner: { data: log_owner, changed: nowStamp },
           notes: { data: notes, changed: nowStamp },
@@ -124,10 +123,28 @@ const makeLogFactory = (src, dest) => {
           geofield: parseObjects(geofield), // eslint-disable-line no-use-before-define, max-len
           */
         };
+        if (type.data !== 'farm_seeding' && area) {
+          log.area = { data: parseObjects(area.data), changed: area.changed }; // eslint-disable-line no-use-before-define, max-len
+        }
+        if (type.data !== 'farm_seeding' && geofield) { // eslint-disable-line no-use-before-define, max-len
+          log.geofield = { data: parseObjects(geofield.data), changed: geofield.changed }; // eslint-disable-line no-use-before-define, max-len
+        }
       }
       // The format for sending logs to the farmOS REST Server.
       if (dest === SERVER) {
         log = {
+          notes: {
+            format: 'farm_format',
+            value: notes.data,
+          },
+          // quantity,
+          name: name.data,
+          done: done.data,
+          type: type.data,
+          timestamp: timestamp.data,
+          images: images.data,
+          asset: asset.data,
+          /*
           notes: {
             format: 'farm_format',
             value: notes,
@@ -141,6 +158,7 @@ const makeLogFactory = (src, dest) => {
           asset,
           area,
           geofield,
+          */
         };
         /*
           Only return id property if one has already been assigned by the server,
@@ -149,11 +167,12 @@ const makeLogFactory = (src, dest) => {
         if (id) {
           log.id = id;
         }
-        // If the log type is seeding, the server disallows area & geofield
-        if (type === 'farm_seeding') {
-          delete log.area;
-          delete log.asset;
-          delete log.geofield;
+        // Seedings do not have areas and geofields
+        if (type.data !== 'farm_seeding' && area) {
+          log.area = area.data;
+        }
+        if (type.data !== 'farm_seeding' && geofield) {
+          log.geofield = geofield.data;
         }
       }
       // The format for inserting logs in WebSQL for local persistence.
@@ -171,8 +190,6 @@ const makeLogFactory = (src, dest) => {
           wasPushedToServer: JSON.stringify(wasPushedToServer),
           remoteUri: JSON.stringify(remoteUri),
           asset: JSON.stringify(asset),
-          area: JSON.stringify(area),
-          geofield: JSON.stringify(geofield),
         };
         /*
           Only return local_id property if one has already been assigned by WebSQL,
@@ -180,6 +197,13 @@ const makeLogFactory = (src, dest) => {
         */
         if (local_id) { // eslint-disable-line camelcase
           log.local_id = local_id; // eslint-disable-line camelcase
+        }
+        // Seedings do not have areas and geofields
+        if (type.data !== 'farm_seeding' && area) {
+          log.area = JSON.stringify(area);
+        }
+        if (type.data !== 'farm_seeding' && geofield) {
+          log.geofield = JSON.stringify(geofield);
         }
       }
       return log;
@@ -223,34 +247,43 @@ const makeLogFactory = (src, dest) => {
       geofield = [], // eslint-disable-line camelcase
       notes = '', // eslint-disable-line camelcase
       */
-    } = {}) => ({
-      log_owner: JSON.parse(log_owner),
-      notes: JSON.parse(notes),
-      quantity: JSON.parse(quantity),
-      id: id === 'undefined' ? undefined : id,
-      local_id,
-      name: JSON.parse(name),
-      type: JSON.parse(type),
-      timestamp: JSON.parse(timestamp),
-      // Use Array.concat() to make sure this is an array
-      images: { data: parseImages(JSON.parse(images).data), changed: JSON.parse(images).changed }, // eslint-disable-line no-use-before-define, max-len
-      // images: parseImages(images), // eslint-disable-line no-use-before-define
-      // Use JSON.parse() to convert strings back to booleans
-      done: JSON.parse(done),
-      // isCachedLocally is not stored in the DB; it is set when makeLog is called
-      isCachedLocally,
-      wasPushedToServer: JSON.parse(wasPushedToServer),
-      remoteUri: JSON.parse(remoteUri),
-      asset: { data: parseObjects(JSON.parse(asset).data), changed: JSON.parse(asset).changed }, // eslint-disable-line no-use-before-define, max-len
-      // asset: parseObjects(asset), // eslint-disable-line no-use-before-define
-      area: { data: parseObjects(JSON.parse(area).data), changed: JSON.parse(area).changed }, // eslint-disable-line no-use-before-define, max-len
-      // area: parseObjects(area), // eslint-disable-line no-use-before-define
-      geofield: { data: parseObjects(JSON.parse(geofield).data), changed: JSON.parse(geofield).changed }, // eslint-disable-line no-use-before-define, max-len
-      // geofield: parseObjects(geofield), // eslint-disable-line no-use-before-define, max-len
-    });
+    } = {}) => {
+      const log = {
+        log_owner: JSON.parse(log_owner),
+        notes: JSON.parse(notes),
+        quantity: JSON.parse(quantity),
+        id: id === 'undefined' ? undefined : id,
+        local_id,
+        name: JSON.parse(name),
+        type: JSON.parse(type),
+        timestamp: JSON.parse(timestamp),
+        // Use Array.concat() to make sure this is an array
+        images: { data: parseImages(JSON.parse(images).data), changed: JSON.parse(images).changed }, // eslint-disable-line no-use-before-define, max-len
+        // images: parseImages(images), // eslint-disable-line no-use-before-define
+        // Use JSON.parse() to convert strings back to booleans
+        done: JSON.parse(done),
+        // isCachedLocally is not stored in the DB; it is set when makeLog is called
+        isCachedLocally,
+        wasPushedToServer: JSON.parse(wasPushedToServer),
+        remoteUri: JSON.parse(remoteUri),
+        asset: { data: parseObjects(JSON.parse(asset).data), changed: JSON.parse(asset).changed }, // eslint-disable-line no-use-before-define, max-len
+        // asset: parseObjects(asset), // eslint-disable-line no-use-before-define
+        // area: parseObjects(area), // eslint-disable-line no-use-before-define
+        // geofield: parseObjects(geofield), // eslint-disable-line no-use-before-define, max-len
+      };
+      // Seedings do not have areas and geofields
+      if (type !== 'farm_seeding' && area) {
+        log.area = { data: parseObjects(JSON.parse(area).data), changed: JSON.parse(area).changed }; // eslint-disable-line no-use-before-define, max-len
+      }
+      if (type !== 'farm_seeding' && geofield) {
+        log.geofield = { data: parseObjects(JSON.parse(geofield).data), changed: JSON.parse(geofield).changed }; // eslint-disable-line no-use-before-define, max-len
+      }
+      return log;
+    };
   }
   if (src === SERVER) {
     return (deserializedLogFromServer) => {
+      // Assign default properties or leave them as optional
       const {
         log_owner, // eslint-disable-line camelcase
         quantity,
@@ -268,6 +301,20 @@ const makeLogFactory = (src, dest) => {
         notes,
       } = deserializedLogFromServer;
       const log = {
+        log_owner: { data: log_owner, changed: nowStamp },
+        notes: { data: parseNotes(notes), changed: nowStamp }, // eslint-disable-line no-use-before-define, max-len
+        quantity: { data: quantity, changed: nowStamp },
+        local_id,
+        name: { data: name, changed: nowStamp },
+        type: { data: type, changed: nowStamp },
+        timestamp: { data: timestamp, changed: nowStamp },
+        images: { data: images, changed: nowStamp },
+        done: { data: done, changed: nowStamp },
+        isCachedLocally: { data: false, changed: nowStamp },
+        wasPushedToServer: { data: true, changed: nowStamp },
+        remoteUri: { data: uri, changed: nowStamp },
+        asset: { data: asset, changed: nowStamp },
+        /*
         log_owner,
         notes: parseNotes(notes), // eslint-disable-line no-use-before-define
         quantity,
@@ -283,7 +330,15 @@ const makeLogFactory = (src, dest) => {
         asset,
         area,
         geofield,
+        */
       };
+      // Seedings do not have areas and geofields
+      if (type !== 'farm_seeding' && area) {
+        log.area = { data: area, changed: nowStamp };
+      }
+      if (type !== 'farm_seeding' && geofield) {
+        log.geofield = { data: geofield, changed: nowStamp };
+      }
       if (id) {
         log.id = id;
       }
@@ -331,7 +386,7 @@ function parseObjects(x) {
   if (typeof x === 'string') {
     return JSON.parse(x);
   }
-  throw new Error(`${x} cannot be parsed as an image array`);
+  throw new Error(`${x} cannot be parsed as an object array`);
 }
 
 // Pull value from SERVER notes and remove html tags

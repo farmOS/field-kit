@@ -7,7 +7,6 @@ export default {
     createLog({ commit }, newLog) {
       const tableName = 'log';
       const newRecord = makeLog.toSql(newLog);
-      const nowStamp = (Date.now() / 1000).toFixed(0);
       openDatabase() // eslint-disable-line no-use-before-define
         .then(db => makeTable(db, tableName, newRecord)) // eslint-disable-line no-use-before-define
         .then(tx => saveRecord(tx, tableName, newRecord)) // eslint-disable-line no-use-before-define, max-len
@@ -16,7 +15,7 @@ export default {
           // Not if we use this action to add new records received from the server
           commit('updateCurrentLog', {
             local_id: results.insertId,
-            isCachedLocally: { data: true, changed: nowStamp },
+            isCachedLocally: { data: true, changed: (Date.now() / 1000).toFixed(0) },
           })
         ));
     },
@@ -36,7 +35,7 @@ export default {
               log: makeLog.create({
                 ...props.log,
                 local_id: results.insertId,
-                isCachedLocally: true,
+                isCachedLocally: { data: true, changed: (Date.now() / 1000).toFixed(0) },
               }),
             });
           },

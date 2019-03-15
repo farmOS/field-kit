@@ -31,6 +31,7 @@ export default {
     sendLogs({ commit, rootState }, payload) {
       // Update logs in the database and local store after send completes
       function handleSyncResponse(response, index) {
+        const nowStamp = (Date.now() / 1000).toFixed(0);
         commit('updateLogs', {
           indices: [index],
           mapper(log) {
@@ -48,7 +49,7 @@ export default {
         // Do something with a TypeError object (mostly likely no connection)
         if (typeof error === 'object' && error.status === undefined) {
           const errorPayload = {
-            message: `Unable to sync "${rootState.farm.logs[index].name}" because the network is currently unavailable. Please try syncing again later.`,
+            message: `Unable to sync "${rootState.farm.logs[index].name.data}" because the network is currently unavailable. Please try syncing again later.`,
             errorCode: error.statusText,
             level: 'warning',
             show: true,
@@ -60,7 +61,7 @@ export default {
         } else {
           // handle some other type of runtime error (if possible)
           const errorPayload = {
-            message: `${error.status} error while syncing "${rootState.farm.logs[index].name}": ${error.statusText}`,
+            message: `${error.status} error while syncing "${rootState.farm.logs[index].name.data}": ${error.statusText}`,
             errorCode: error.statusText,
             level: 'warning',
             show: true,
@@ -85,7 +86,7 @@ export default {
           // Logs originating on the server possess an ID field; others do not.
           const newLog = makeLog.toServer(rootState.farm.logs[index]);
           // I need to check wasPushedToServer, which is not in logFactory Server
-          const synced = rootState.farm.logs[index].wasPushedToServer;
+          const synced = rootState.farm.logs[index].wasPushedToServer.data;
           if (!synced) {
             return farm().log.send(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
               .then(res => handleSyncResponse(res, index))
@@ -124,7 +125,7 @@ export default {
                 if (localLog.id === serverLog.id) {
                   logStatus.localId = localLog.local_id;
                   logStatus.storeIndex = index;
-                  if (localLog.wasPushedToServer) {
+                  if (localLog.wasPushedToServer.data) {
                     logStatus.localChange = false;
                   }
                 }
@@ -166,6 +167,12 @@ export default {
               commit('updateLogFromServer', updateParams);
             } else {
               const syncDate = localStorage.getItem('syncDate');
+              /*
+              I will need to iterate through each prop individually
+              I can either build an update, or do a fresh update for each
+              The former is better.
+              Better still, bring all this into checkLog
+              */
               if (log.changed > syncDate) {
                 /*
                   Throw a warning with two options:
