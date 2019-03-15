@@ -31,6 +31,7 @@ export default {
     sendLogs({ commit, rootState }, payload) {
       // Update logs in the database and local store after send completes
       function handleSyncResponse(response, index) {
+        const nowStamp = (Date.now() / 1000).toFixed(0);
         commit('updateLogs', {
           indices: [index],
           mapper(log) {
@@ -85,7 +86,7 @@ export default {
           // Logs originating on the server possess an ID field; others do not.
           const newLog = makeLog.toServer(rootState.farm.logs[index]);
           // I need to check wasPushedToServer, which is not in logFactory Server
-          const synced = rootState.farm.logs[index].wasPushedToServer;
+          const synced = rootState.farm.logs[index].wasPushedToServer.data;
           if (!synced) {
             return farm().log.send(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
               .then(res => handleSyncResponse(res, index))
