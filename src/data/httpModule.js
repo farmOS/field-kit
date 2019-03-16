@@ -27,7 +27,7 @@ export default {
       }).catch((err) => { throw err; });
     },
 
-    // SEND LOGS TO SERVER
+    // SEND LOGS TO SERVER (step 2 of sync)
     sendLogs({ commit, rootState }, payload) {
       // Update logs in the database and local store after send completes
       function handleSyncResponse(response, index) {
@@ -98,8 +98,9 @@ export default {
       }
     },
 
-    // GET LOGS FROM SERVER
+    // GET LOGS FROM SERVER (step 1 of sync)
     getServerLogs({ commit, rootState }) {
+      const syncDate = localStorage.getItem('syncDate');
       return farm().log.get(rootState.shell.settings.logFilters, localStorage.getItem('token'))
         .then((res) => {
           // See whether logs are new, or currently in the store
@@ -119,6 +120,7 @@ export default {
               localId: null,
               storeIndex: null,
               localChange: true,
+              serverChange: false,
               log: null,
             };
             allLogs.forEach((localLog, index) => {
@@ -135,6 +137,9 @@ export default {
                     logStatus.localChange = false;
                   } else {
                     logStatus.log = localLog;
+                  }
+                  if (parseInt(serverLog.changed, 10) > parseInt(syncDate, 10)) {
+                    logStatus.serverChange = true;
                   }
                 }
               }
@@ -164,7 +169,7 @@ export default {
                   isReadyToSync: false,
                 }));
             }
-            if (!checkStatus.localChange && checkStatus.localId !== null) {
+            if (!checkStatus.localChange && checkStatus.localId !== null && checkStatus.serverChange) { // eslint-disable-line max-len
               // Update the log with all data from the server
               const updateParams = {
                 index: checkStatus.storeIndex,
@@ -178,8 +183,7 @@ export default {
               console.log('CHECK STATUS UPDATING LOG FROM SERVER', updateParams);
               commit('updateLogFromServer', updateParams);
             }
-            if (checkStatus.localChange && checkStatus.localId !== null) {
-              const syncDate = localStorage.getItem('syncDate');
+            if (checkStatus.localChange && checkStatus.localId !== null && checkStatus.serverChange) { // eslint-disable-line max-len
               /*
               Replace properties of the local log that have not been modified since
               the last sync with data from the server.
@@ -205,8 +209,8 @@ export default {
                 }
               });
               /*
-              This is where we can optionally throw a warning about a field or fields
-              that have been changed more recently on the app than on the server
+              This is where we can optionally throw a warning about log attributes
+              that have been changed since last sync on both the app and the server.
                - If retaining local field changes, run the following uncommented code
                - If discarding local field changes, run this commented code
                const updateParams = {
