@@ -86,7 +86,7 @@ export default {
           // Logs originating on the server possess an ID field; others do not.
           const newLog = makeLog.toServer(rootState.farm.logs[index]);
           // I need to check wasPushedToServer, which is not in logFactory Server
-          const synced = rootState.farm.logs[index].wasPushedToServer.data;
+          const synced = rootState.farm.logs[index].wasPushedToServer;
           if (!synced) {
             return farm().log.send(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
               .then(res => handleSyncResponse(res, index))
@@ -151,6 +151,7 @@ export default {
           // Process each log on its way from the server to the logFactory
           function processLog(log) {
             const checkStatus = checkLog(log);
+            console.log('CHECK STATUS IS ', checkStatus);
             /*
             If the log is not present locally, add it.
             If the log is present locally, but has not been changed since the last sync,

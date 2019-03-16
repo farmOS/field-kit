@@ -33,7 +33,7 @@ export default {
               log: makeLog.create({
                 ...props.log,
                 local_id: results.insertId,
-                isCachedLocally: { data: true, changed: (Date.now() / 1000).toFixed(0) },
+                isCachedLocally: true,
               }),
             });
           },

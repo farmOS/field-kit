@@ -1,6 +1,6 @@
 <template lang="html">
   <div>
-    <h1>My Logs*</h1>
+    <h1>My Logs</h1>
     <div class="btn-wrapper">
         <!-- Initialize the new log as an observation -->
         <router-link :to="{ name: 'edit-log', params: { type: 'farm_observation' } }">
