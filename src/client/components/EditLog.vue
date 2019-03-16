@@ -354,8 +354,8 @@ export default {
       const valueString = (typeof val === 'string') ? val : JSON.stringify(val);
       const newProps = {
         [key]: { data: valueString, changed: nowStamp},
-        isCachedLocally: { data: false, changed: nowStamp},
-        wasPushedToServer: { data: false, changed: nowStamp},
+        isCachedLocally: false,
+        wasPushedToServer: false,
       };
       /*
       const newProps = {

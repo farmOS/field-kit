@@ -1,6 +1,6 @@
 <template lang="html">
   <div>
-    <h1>My Logs*</h1>
+    <h1>My Logs</h1>
     <div class="btn-wrapper">
         <!-- Initialize the new log as an observation -->
         <router-link :to="{ name: 'edit-log', params: { type: 'farm_observation' } }">
@@ -45,10 +45,10 @@
               v-if="!log.done.data && (log.timestamp.data * 1000 < new Date().valueOf())"/>
             {{showDate(log.timestamp.data)}}
             <span
-              v-if="log.wasPushedToServer.data"
+              v-if="log.wasPushedToServer"
               class="sync-status"
             >
-              <a :href="log.remoteUri.data">synced</a>
+              <a :href="log.remoteUri">synced</a>
               ({{syncTime(log.timestamp.data)}})
             </span>
             <span
@@ -100,7 +100,7 @@
           <div class="modal-body">
             Are sure you'd like to delete the log "{{logs[logIndexToDelete].name.data}}"?&nbsp;
             <span
-              v-if='logs[logIndexToDelete].wasPushedToServer.data'>
+              v-if='logs[logIndexToDelete].wasPushedToServer'>
               Deleting it on this device will not remove the log from the server.
             </span>
             <span v-else>
@@ -177,7 +177,7 @@ export default {
         index: this.logIndexToDelete,
         local_id: log.local_id,
         id: log.id,
-        remoteUri: log.remoteUri.data,
+        remoteUri: log.remoteUri,
         name: log.name.data,
         type: log.type.data,
       };

@@ -34,9 +34,9 @@ const makeLogFactory = (src, dest) => {
       timestamp = { changed: null, data: '' },
       images = { changed: null, data: [] },
       done = { changed: null, data: true },
-      isCachedLocally = { changed: null, data: false },
-      wasPushedToServer = { changed: null, data: false },
-      remoteUri = { changed: null, data: '' },
+      isCachedLocally = false,
+      wasPushedToServer = false,
+      remoteUri = '',
       asset = { changed: null, data: [] }, // eslint-disable-line camelcase
       area = { changed: null, data: [] }, // eslint-disable-line camelcase
       geofield = { changed: null, data: [] }, // eslint-disable-line camelcase
@@ -80,8 +80,8 @@ const makeLogFactory = (src, dest) => {
           images: { data: parseImages(images.data), changed: images.changed }, // eslint-disable-line no-use-before-define, max-len
           // Use JSON.parse() to convert strings back to booleans
           done: { data: JSON.parse(done.data), changed: done.changed },
-          isCachedLocally: { data: JSON.parse(isCachedLocally.data), changed: isCachedLocally.changed }, // eslint-disable-line max-len
-          wasPushedToServer: { data: JSON.parse(wasPushedToServer.data), changed: wasPushedToServer.changed }, // eslint-disable-line max-len
+          isCachedLocally: JSON.parse(isCachedLocally), // eslint-disable-line max-len
+          wasPushedToServer: JSON.parse(wasPushedToServer), // eslint-disable-line max-len
           remoteUri,
           asset: { data: parseObjects(asset.data), changed: asset.changed }, // eslint-disable-line no-use-before-define, max-len
           /*
@@ -187,8 +187,8 @@ const makeLogFactory = (src, dest) => {
           timestamp: JSON.stringify(timestamp),
           images: JSON.stringify({ data: parseImages(images.data), changed: images.changed }), // eslint-disable-line no-use-before-define, max-len
           done: JSON.stringify(done),
-          wasPushedToServer: JSON.stringify(wasPushedToServer),
-          remoteUri: JSON.stringify(remoteUri),
+          wasPushedToServer,
+          remoteUri,
           asset: JSON.stringify(asset),
         };
         /*
@@ -222,9 +222,9 @@ const makeLogFactory = (src, dest) => {
       timestamp = { changed: null, data: '' },
       images = { changed: null, data: [] },
       done = { changed: null, data: true },
-      isCachedLocally = { changed: null, data: false },
-      wasPushedToServer = { changed: null, data: false },
-      remoteUri = { changed: null, data: '' },
+      isCachedLocally = false,
+      wasPushedToServer = false,
+      remoteUri = '',
       asset = { changed: null, data: [] }, // eslint-disable-line camelcase
       area = { changed: null, data: [] }, // eslint-disable-line camelcase
       geofield = { changed: null, data: [] }, // eslint-disable-line camelcase
@@ -262,10 +262,9 @@ const makeLogFactory = (src, dest) => {
         // images: parseImages(images), // eslint-disable-line no-use-before-define
         // Use JSON.parse() to convert strings back to booleans
         done: JSON.parse(done),
-        // isCachedLocally is not stored in the DB; it is set when makeLog is called
-        isCachedLocally,
+        isCachedLocally: JSON.parse(isCachedLocally),
         wasPushedToServer: JSON.parse(wasPushedToServer),
-        remoteUri: JSON.parse(remoteUri),
+        remoteUri,
         asset: { data: parseObjects(JSON.parse(asset).data), changed: JSON.parse(asset).changed }, // eslint-disable-line no-use-before-define, max-len
         // asset: parseObjects(asset), // eslint-disable-line no-use-before-define
         // area: parseObjects(area), // eslint-disable-line no-use-before-define
@@ -310,9 +309,9 @@ const makeLogFactory = (src, dest) => {
         timestamp: { data: timestamp, changed: nowStamp },
         images: { data: images, changed: nowStamp },
         done: { data: done, changed: nowStamp },
-        isCachedLocally: { data: false, changed: nowStamp },
-        wasPushedToServer: { data: true, changed: nowStamp },
-        remoteUri: { data: uri, changed: nowStamp },
+        isCachedLocally: false,
+        wasPushedToServer: true,
+        remoteUri: uri,
         asset: { data: asset, changed: nowStamp },
         /*
         log_owner,

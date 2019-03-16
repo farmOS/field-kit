@@ -8,7 +8,7 @@ import camModule from './camModule';
 */
 function syncReducer(indices, curLog, curIndex) {
   // Sync all logs to the server; those originally from server will have id fields
-  if (curLog.isReadyToSync && !curLog.wasPushedToServer.data) {
+  if (curLog.isReadyToSync && !curLog.wasPushedToServer) {
   // if (curLog) {
     return indices.concat(curIndex);
   }
@@ -55,7 +55,7 @@ export default {
       if (mutation.type === 'addLogAndMakeCurrent') {
         store.dispatch('createLog', mutation.payload);
       }
-      if (mutation.type === 'updateCurrentLog' && !mutation.payload.isCachedLocally.data) {
+      if (mutation.type === 'updateCurrentLog' && !mutation.payload.isCachedLocally) {
         store.dispatch('updateLog', mutation.payload);
       }
       if (mutation.type === 'updateLogFromServer' && !mutation.payload.log.isCachedLocally) {

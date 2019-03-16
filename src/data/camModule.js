@@ -13,7 +13,8 @@ export default {
         const nowStamp = (Date.now() / 1000).toFixed(0);
         const newProps = {
           images: { data: prevLog.images.data.concat(dataURL), changed: nowStamp },
-          isCachedLocally: { data: false, changed: nowStamp },
+          isCachedLocally: false,
+          wasPushedToServer: false,
         };
         commit('updateCurrentLog', newProps);
       }
@@ -28,7 +29,8 @@ export default {
       readFileData(file).then((data) => { // eslint-disable-line no-use-before-define
         const newProps = {
           images: { data: prevLog.images.data.concat(data), changed: nowStamp },
-          isCachedLocally: { data: false, changed: nowStamp },
+          isCachedLocally: false,
+          wasPushedToServer: false,
         };
         commit('updateCurrentLog', newProps);
       });

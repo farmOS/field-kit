@@ -86,7 +86,7 @@ export default {
           // Logs originating on the server possess an ID field; others do not.
           const newLog = makeLog.toServer(rootState.farm.logs[index]);
           // I need to check wasPushedToServer, which is not in logFactory Server
-          const synced = rootState.farm.logs[index].wasPushedToServer.data;
+          const synced = rootState.farm.logs[index].wasPushedToServer;
           if (!synced) {
             return farm().log.send(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
               .then(res => handleSyncResponse(res, index))
@@ -114,7 +114,13 @@ export default {
           */
           function checkLog(serverLog) {
             const allLogs = rootState.farm.logs;
-            const logStatus = { localId: null, storeIndex: null, localChange: true };
+            // The localLog will be passed as logStatus.log if localChange checks true
+            const logStatus = {
+              localId: null,
+              storeIndex: null,
+              localChange: true,
+              log: null,
+            };
             allLogs.forEach((localLog, index) => {
               if (localLog.id) {
                 /*
@@ -125,8 +131,10 @@ export default {
                 if (localLog.id === serverLog.id) {
                   logStatus.localId = localLog.local_id;
                   logStatus.storeIndex = index;
-                  if (localLog.wasPushedToServer.data) {
+                  if (localLog.wasPushedToServer) {
                     logStatus.localChange = false;
+                  } else {
+                    logStatus.log = localLog;
                   }
                 }
               }
@@ -137,15 +145,15 @@ export default {
           // Process each log on its way from the server to the logFactory
           function processLog(log) {
             const checkStatus = checkLog(log);
+            console.log('CHECK STATUS IS ', checkStatus);
             /*
             If the log is not present locally, add it.
             If the log is present locally, but has not been changed since the last sync,
             update it with the new version from the server
             If the log is present locally and has been changed, check log.changed from the server
-            against the date of the last sync
-             - If the log.changed is before the syncDate, keep the verson on the app.
-             - If the log was changed more recently than syncDate, throw a warning
-             and let the user decide what to do
+            against the changed property of each log attribute
+             - If any attribute has been changed more recently than the server log, keep it
+             - Otherwise take changes from the server
             */
             if (checkStatus.localId === null) {
               commit('addLogFromServer',
@@ -153,7 +161,8 @@ export default {
                   ...log,
                   wasPushedToServer: true,
                 }));
-            } else if (!checkStatus.localChange) {
+            }
+            if (!checkStatus.localChange && checkStatus.localId !== null) {
               // Update the log with all data from the server
               const updateParams = {
                 index: checkStatus.storeIndex,
@@ -165,35 +174,62 @@ export default {
                 }),
               };
               commit('updateLogFromServer', updateParams);
-            } else {
-              const syncDate = localStorage.getItem('syncDate');
+            }
+            if (checkStatus.localChange && checkStatus.localId !== null) {
               /*
-              I will need to iterate through each prop individually
-              I can either build an update, or do a fresh update for each
-              The former is better.
-              Better still, bring all this into checkLog
+              Replace properties of the local log that have not been modified since
+              the servers completed date with data from the server.
+              Retain properties that have been modified since the completed date.
               */
-              if (log.changed > syncDate) {
-                /*
-                  Throw a warning with two options:
-                   - Keep what I have on the app, and over-write what I have on the server
-                   - Keep what I have on the server, and over-write what I have on the app
-                  If the user selects the first option, stop here.
-                  If the user selects the second option, execute the following:
-                */
+              const storeLog = checkStatus.log;
+              const servLogBuilder = {};
+              const locLogBuilder = {};
+              /*
+              We compare changed dates for local log properties against the changed
+              property in the raw server response. madeFromServer is used as a source
+              for building the merged log, to keep formatting consistent
+              */
+              const madeFromServer = makeLog.fromServer({ ...log });
+              Object.keys(storeLog).forEach((key) => {
+                if (storeLog[key].changed && storeLog[key].changed !== null) {
+                  if (parseInt(storeLog[key].changed, 10) < parseInt(log.changed, 10)) {
+                    servLogBuilder[key] = madeFromServer[key];
+                  } else {
+                    locLogBuilder[key] = storeLog[key];
+                  }
+                }
+              });
+              /*
+              This is where we can optionally throw a warning about a field or fields
+              that have been changed more recently on the app than on the server
+               - If retaining local field changes the app, run the following uncommented code
+               - If discarding local field changes, run this commented code
+               const updateParams = {
+                 index: checkStatus.storeIndex,
+                 log: makeLog.fromServer({
+                   ...log,
+                   wasPushedToServer: true,
+                   isReadyToSync: false,
+                   local_id: checkStatus.localId,
+                 }),
+               };
+               commit('updateLogFromServer', updateParams);
+              */
+              if (locLogBuilder !== {}) {
                 const updateParams = {
                   index: checkStatus.storeIndex,
-                  log: makeLog.fromServer({
-                    ...log,
+                  log: makeLog.toStore({
+                    ...locLogBuilder,
+                    ...servLogBuilder,
                     wasPushedToServer: true,
                     isReadyToSync: false,
                     local_id: checkStatus.localId,
+                    id: log.id,
                   }),
                 };
+                console.log('CHECK STATUS UPDATEPARAMS', updateParams);
                 commit('updateLogFromServer', updateParams);
               }
-              // If the log on the server hasn't been changed, do nothing
-              // The local log will over-write whatever is on the server on sendLogs
             }
           }
           // Process one or more logs

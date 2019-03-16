@@ -15,7 +15,7 @@ export default {
           // Not if we use this action to add new records received from the server
           commit('updateCurrentLog', {
             local_id: results.insertId,
-            isCachedLocally: { data: true, changed: (Date.now() / 1000).toFixed(0) },
+            isCachedLocally: true,
           })
         ));
     },
@@ -35,7 +35,7 @@ export default {
               log: makeLog.create({
                 ...props.log,
                 local_id: results.insertId,
-                isCachedLocally: { data: true, changed: (Date.now() / 1000).toFixed(0) },
+                isCachedLocally: true,
               }),
             });
           },
@@ -49,7 +49,7 @@ export default {
           const cachedLogs = results.map(log => (
             makeLog.fromSql({
               ...log,
-              isCachedLocally: { data: true, changed: (Date.now() / 1000).toFixed(0) },
+              isCachedLocally: true,
             })
           ));
           commit('addLogs', cachedLogs);
@@ -69,7 +69,7 @@ export default {
         .then(tx => saveRecord(tx, table, newLog)) // eslint-disable-line no-use-before-define
         // Can we be sure this will always be the CURRENT log?
         .then(() => commit('updateCurrentLog', {
-          isCachedLocally: { data: true, changed: (Date.now() / 1000).toFixed(0) },
+          isCachedLocally: true,
         }));
     },
     // This works like updateLog, but accepts params {log: , index: }
@@ -87,7 +87,7 @@ export default {
           index: props.index,
           log: makeLog.create({
             ...props.log,
-            isCachedLocally: { data: true, changed: (Date.now() / 1000).toFixed(0) },
+            isCachedLocally: true,
           }),
         }));
     },
