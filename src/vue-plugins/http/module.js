@@ -31,7 +31,6 @@ export default {
     sendLogs({ commit, rootState }, payload) {
       // Update logs in the database and local store after send completes
       function handleSyncResponse(response, index) {
-        const nowStamp = (Date.now() / 1000).toFixed(0);
         commit('updateLogs', {
           indices: [index],
           mapper(log) {
@@ -151,7 +150,6 @@ export default {
           // Process each log on its way from the server to the logFactory
           function processLog(log) {
             const checkStatus = checkLog(log);
-            console.log('CHECK STATUS IS ', checkStatus);
             /*
             If the log is not present locally, add it.
             If the log is present locally, but has not been changed since the last sync,
