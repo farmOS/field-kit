@@ -11,7 +11,6 @@ export default {
   actions: {
 
     didSubmitCredentials({ commit }, payload) {
-      console.log('RUNNING didSubmitCredentials');
       const url = (process.env.NODE_ENV === 'development')
         ? ''
         : `https://${payload.farmosUrl}`;
@@ -35,7 +34,6 @@ export default {
             level: 'warning',
             show: true,
           };
-          console.log(`Server response: ${error.status}`);
           commit('logError', errorPayload);
         }
       }

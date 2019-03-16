@@ -15,13 +15,10 @@ export default {
         currentLoc.Heading = position.coords.heading;
         currentLoc.Speed = position.coords.speed;
         currentLoc.Timestamp = position.timestamp;
-        console.log('SETTING GEOLOCATION AS:');
-        console.log(currentLoc);
         // Set 'geolocation' variable in the app store
         commit('setGeoloc', currentLoc);
       }
-      function onError(error) {
-        console.log(`Code: ${error.code} Message: ${error.message}`);
+      function onError(error) { // eslint-disable-line no-unused-vars
       }
       // Use the Cordova geolocation plugin to get current location from the device OR browser
       navigator.geolocation.getCurrentPosition(onSuccess, onError);
@@ -61,7 +58,6 @@ export default {
       const polygon = turf.polygon(geomJSON);
       const isInside = turf.inside(params.point, polygon);
       const isNear = turf.intersect(circle, polygon) !== null;
-      console.log(`${params.area.name} ISINSIDE RESULTS: ${isInside}; ISNEAR RESULTS: ${isNear}`);
       if (isInside || isNear) {
         commit('addLocalArea', params.area);
       }

@@ -18,7 +18,7 @@ export default {
         };
         commit('updateCurrentLog', newProps);
       }
-      function handleError(error) {
+      function handleError(error) { // eslint-disable-line no-unused-vars
       }
       getPhotoFromCamera() // eslint-disable-line no-use-before-define
         .then(handleResponse, handleError);
@@ -43,14 +43,10 @@ Utilizes the Cordova camera plugin to obtain an image URI
 */
 function getPhotoFromCamera() {
   return new Promise((resolve, reject) => {
-    console.log('GETTING IMAGE FROM CAMERA');
-
     function onSuccess(imageURI) {
-      console.log(`RETRIEVED THE FOLLOWING IMAGE: ${imageURI}`);
       resolve(imageURI);
     }
     function onFail(message) {
-      console.log(`FAILED TO RETRIEVE IMAGE BECAUSE: ${message}`);
       reject(message);
     }
 
@@ -75,7 +71,6 @@ and could even gain new life if it turns out the problem was on the server-end, 
 */
 function getFileContentAsBase64(path, callback) { // eslint-disable-line no-unused-vars
   function fail() {
-    console.log('Cannot find requested file');
   }
 
   function gotFile(fileEntry) {

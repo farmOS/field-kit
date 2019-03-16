@@ -105,7 +105,6 @@ export default {
         });
     },
     onDeviceReady() {
-      console.log('RECEIVED DEVICEREADY');
       this.loadUserInfo();
     },
 
@@ -119,8 +118,6 @@ export default {
 
   },
   created() {
-    console.log('VUE IS READY');
-
     // Listens for deviceReady event emitted by Cordova
     document.addEventListener('deviceready', this.onDeviceReady(), false);
     this.loadUserInfo();

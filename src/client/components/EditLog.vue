@@ -317,13 +317,10 @@ export default {
     if (typeof this.$route.params.index === 'number') {
       // If a log index is provided in query params, set it as current log
       this.$store.commit('setCurrentLogIndex', this.$route.params.index);
-      console.log(`SETTING CURRENT LOG INDEX AS ${this.$route.params.index}`);
-      console.log('CURRENT LOG IN STORE IS', this.logs[this.currentLogIndex]);
       this.existingLog = true;
     } else {
       // Create a new log.  The 'type' prop is set based on the 'type' param in the local route
       this.$store.dispatch('initializeLog', this.type);
-      console.log(`LOG IS RECEIVING TYPE AS ${this.type}`);
     }
   },
 
@@ -349,7 +346,6 @@ export default {
     },
 
     updateCurrentLog(key, val) {
-      console.log('CURRENT LOG IS ',this.logs[this.currentLogIndex]);
       const nowStamp = (Date.now() / 1000).toFixed(0);
       const valueString = (typeof val === 'string') ? val : JSON.stringify(val);
       const newProps = {
@@ -365,8 +361,6 @@ export default {
       };
       */
       this.$store.commit('updateCurrentLog', newProps);
-      console.log('WROTE THE FOLLOWING TO CURRENT LOG WITH updateCurrentLog');
-      console.log(newProps);
     },
 
     addAsset(id) {
@@ -419,7 +413,6 @@ export default {
       if (this.geolocation.Longitude !== undefined) {
         this.attachGeo = true;
         const location = JSON.parse(`[{"geom":"POINT (${this.geolocation.Longitude} ${this.geolocation.Latitude})"}]`);
-        console.log(`ATTACH GEOLOCATION: ${location}`);
         this.updateCurrentLog('geofield', location);
       }
     },
@@ -487,14 +480,12 @@ export default {
   watch: {
     // When photoLoc changes, this updates the images property of the current log
     photoLoc() {
-      console.log(`UPDATING CURRENT RECORD PHOTO LOC: ${this.photoLoc}`);
       this.updateCurrentLog('images', this.photoLoc);
     },
     geolocation() {
       // When geolocation is set, EITHER set geofield OR select areas based on location
       if (this.attachGeo && this.geolocation.Longitude !== undefined) {
         const location = JSON.parse(`[{"geom":"POINT (${this.geolocation.Longitude} ${this.geolocation.Latitude})"}]`);
-        console.log(`ATTACH GEOLOCATION: ${location}`);
         this.updateCurrentLog('geofield', location);
         this.isWorking = false;
         // If we are getting local areas
@@ -507,7 +498,6 @@ export default {
     useLocalAreas() {
       // If useLocalAreas is set to true, get geolocation and checkAreas
       if (this.useLocalAreas) {
-        console.log('USELOCALAREAS SET TO TRUE');
         // If necessary get geolocation; otherwise run checkAreas
         if (this.geolocation.Longitude === undefined) {
           // Clear local areas before populating
@@ -532,7 +522,6 @@ export default {
       } else {
         // Create a new log.  The 'type' prop is set based on the 'type' param in the local route
         this.$store.dispatch('initializeLog', this.type);
-        console.log(`LOG IS RECEIVING TYPE AS ${this.type}`);
       }
     },
   },

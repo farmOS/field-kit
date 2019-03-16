@@ -31,7 +31,6 @@ export default {
     sendLogs({ commit, rootState }, payload) {
       // Update logs in the database and local store after send completes
       function handleSyncResponse(response, index) {
-        const nowStamp = (Date.now() / 1000).toFixed(0);
         commit('updateLogs', {
           indices: [index],
           mapper(log) {
@@ -150,7 +149,6 @@ export default {
           // Process each log on its way from the server to the logFactory
           function processLog(log) {
             const checkStatus = checkLog(log);
-            console.log('CHECK STATUS IS ', checkStatus);
             /*
             If the log is not present locally, add it.
             If the log is present locally, but has not been changed since the last sync,
@@ -180,7 +178,6 @@ export default {
                   local_id: checkStatus.localId,
                 }),
               };
-              console.log('CHECK STATUS UPDATING LOG FROM SERVER', updateParams);
               commit('updateLogFromServer', updateParams);
             }
             if (checkStatus.localChange && checkStatus.localId !== null && checkStatus.serverChange) { // eslint-disable-line max-len
@@ -194,8 +191,8 @@ export default {
               const servLogBuilder = {};
               const locLogBuilder = {};
               /*
-              We compare changed dates for local log properties against the changed
-              property in the raw server response. madeFromServer is used as a source
+              We compare changed dates for local log properties against the date of last sync.
+              madeFromServer is used as a source
               for building the merged log, to keep formatting consistent
               */
               const madeFromServer = makeLog.fromServer({ ...log });
@@ -236,7 +233,6 @@ export default {
                   }),
                 };
                 updateParams.log.isReadyToSync = true;
-                console.log('CHECK STATUS UPDATEPARAMS', updateParams);
                 commit('updateLogFromServer', updateParams);
               }
             }

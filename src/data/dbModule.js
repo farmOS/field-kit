@@ -23,8 +23,6 @@ export default {
     createLogFromServer({ commit }, props) {
       const tableName = 'log';
       const newRecord = makeLog.toSql(props.log);
-      console.log('CREATING THE FOLLOWING LOG IN DBMODULE:', newRecord);
-
       openDatabase() // eslint-disable-line no-use-before-define
         .then(db => makeTable(db, tableName, newRecord)) // eslint-disable-line no-use-before-define
         .then(tx => saveRecord(tx, tableName, newRecord)) // eslint-disable-line no-use-before-define, max-len
@@ -54,11 +52,10 @@ export default {
           ));
           commit('addLogs', cachedLogs);
         })
-        .catch(console.error);
+        .catch(console.error); // eslint-disable-line no-console
     },
 
     updateLog({ commit, rootState }, newProps) {
-      console.log('UPDATING LOG WITH ', newProps);
       const newLog = makeLog.toSql({
         ...rootState.farm.logs[rootState.farm.currentLogIndex],
         ...newProps,
@@ -74,7 +71,6 @@ export default {
     },
     // This works like updateLog, but accepts params {log: , index: }
     updateLogAtIndex({ commit, rootState }, props) {
-      console.log('UPDATELOGATINDEX WITH log: ', props.log)
       const newLog = makeLog.toSql({
         ...rootState.farm.logs[props.index],
         ...props.log,
@@ -92,26 +88,21 @@ export default {
         }));
     },
 
-    deleteLog(_, { local_id, name }) { // eslint-disable-line camelcase
+    deleteLog(_, { local_id }) { // eslint-disable-line camelcase
       // delete record from WebSQL
-      console.log(
-        'deleteRecord() action dispatched on ',
-        name,
-      );
       openDatabase() // eslint-disable-line no-use-before-define
         .then(db => getTX(db, 'log')) // eslint-disable-line no-use-before-define
         .then(tx => deleteRecord(tx, 'log', local_id)) // eslint-disable-line no-use-before-define
-        .then(console.log)
-        .catch(console.error);
+        .then(console.log) // eslint-disable-line no-console
+        .catch(console.error); // eslint-disable-line no-console
     },
 
     deleteAllCachedLogs() {
-      console.log('Deleting all logs');
       openDatabase() // eslint-disable-line no-use-before-define
         .then(db => getTX(db, 'log')) // eslint-disable-line no-use-before-define
         .then(tx => dropTable(tx, 'log')) // eslint-disable-line no-use-before-define
-        .then(console.log)
-        .catch(console.error);
+        .then(console.log) // eslint-disable-line no-console
+        .catch(console.error); // eslint-disable-line no-console
     },
 
     createCachedAsset(_, newAsset) {
@@ -131,12 +122,11 @@ export default {
     },
 
     deleteAllCachedAssets() {
-      console.log('Deleting all assets');
       openDatabase() // eslint-disable-line no-use-before-define
         .then(db => getTX(db, 'asset')) // eslint-disable-line no-use-before-define
         .then(tx => dropTable(tx, 'asset')) // eslint-disable-line no-use-before-define
-        .then(console.log)
-        .catch(console.error);
+        .then(console.log) // eslint-disable-line no-console
+        .catch(console.error); // eslint-disable-line no-console
     },
 
     loadCachedAssets({ commit }) {
@@ -144,7 +134,6 @@ export default {
         openDatabase() // eslint-disable-line no-use-before-define
           .then(db => getRecords(db, 'asset')) // eslint-disable-line no-use-before-define
           .then((results) => {
-            console.log('Cached Assets: ', results);
             commit('addAssets', results);
             resolve();
           })
@@ -169,12 +158,11 @@ export default {
     },
 
     deleteAllCachedAreas() {
-      console.log('Deleting all areas');
       openDatabase() // eslint-disable-line no-use-before-define
         .then(db => getTX(db, 'area')) // eslint-disable-line no-use-before-define
         .then(tx => dropTable(tx, 'area')) // eslint-disable-line no-use-before-define
-        .then(console.log)
-        .catch(console.error);
+        .then(console.log) // eslint-disable-line no-console
+        .catch(console.error); // eslint-disable-line no-console
     },
 
     loadCachedAreas({ commit }) {
@@ -182,7 +170,6 @@ export default {
         openDatabase() // eslint-disable-line no-use-before-define
           .then(db => getRecords(db, 'area')) // eslint-disable-line no-use-before-define
           .then((results) => {
-            console.log('Cached Areas: ', results);
             commit('addAreas', results);
             resolve();
           })
@@ -201,7 +188,6 @@ export default {
 // TODO: break out helper functions into separate module
 function openDatabase() {
   return new Promise((resolve) => {
-    console.log('opening database');
     // Check whether a local webSQL database exists.  If not, make it!
     const db = window.openDatabase('farmOSLocalDB', '1.0', 'farmOS Local Database', 200000);
     // window.openDatabase either opens an existing DB or creates a new one.
@@ -212,12 +198,10 @@ function openDatabase() {
 // This function obtains the transaction object; it assumes the table is already created.
 function getTX(db, table, key) {
   return new Promise((resolve, reject) => {
-    function handleResponse(_tx, result) {
-      console.log('Get TX success. Result: ', result);
+    function handleResponse(_tx) {
       resolve(_tx);
     }
-    function handleError(_tx, error) {
-      console.log('Get TX error: ', error.message);
+    function handleError(_tx) {
       // Reject will return the tx object in case you want to try again.
       reject(_tx);
     }
@@ -236,7 +220,6 @@ function getTX(db, table, key) {
 
 function makeTable(db, table, record, primaryKey) {
   return new Promise((resolve, reject) => {
-    console.log(`making table with name ${table} and the following data template: ${JSON.stringify(record)}`);
     // Creates a table called 'tableName' in the DB if none yet exists
     db.transaction((tx) => {
       let fieldString = '';
@@ -273,12 +256,9 @@ function makeTable(db, table, record, primaryKey) {
            ${fieldString}
          )`;
       }
-
-      tx.executeSql(sql, null, (_tx, result) => {
-        console.log('Make table success. Result: ', result);
+      tx.executeSql(sql, null, (_tx) => {
         resolve(_tx);
-      }, (_tx, error) => {
-        console.log(`Make table error: ${error.message}`);
+      }, (_tx) => {
         // Reject will return the tx object in case you want to try again.
         reject(_tx);
       });
@@ -298,9 +278,6 @@ log - object following the template for that logType
 
 function saveRecord(tx, table, log) {
   return new Promise((resolve, reject) => {
-    console.log('SAVING THE FOLLOWING RECORDS:');
-    console.log(log);
-
     let fieldString = '';
     let queryString = '';
     const keys = Object.keys(log);
@@ -309,17 +286,9 @@ function saveRecord(tx, table, log) {
       fieldString = `${fieldString + i}, `;
       queryString = `${queryString}?, `;
     });
-
     // I need to trim the last two characters of each string to avoid trailing commas
     fieldString = fieldString.substring(0, fieldString.length - 2);
     queryString = queryString.substring(0, queryString.length - 2);
-
-
-    console.log('add record strings');
-    console.log(fieldString);
-    console.log(queryString);
-    console.log(values);
-
     // Set SQL based on whether the log contains a local_id fieldString
     const sql = `INSERT OR REPLACE INTO ${
       table
@@ -327,10 +296,8 @@ function saveRecord(tx, table, log) {
     + `VALUES (${queryString})`;
 
     tx.executeSql(sql, values, (_tx, results) => {
-      console.log('INSERT success');
       resolve(results);
     }, (_tx, error) => {
-      console.log(`INSERT error: ${error.message}`);
       reject(error.message);
     });
   });
@@ -343,7 +310,6 @@ function getRecords(db, table) {
       const resultSet = [];
       for (let i = 0; i < results.rows.length; i += 1) {
         const row = results.rows.item(i);
-        console.log(`RAW GETRECORDS RESULT ${i}: ${JSON.stringify(row)}`);
         resultSet.push(row);
       }
       resolve(resultSet);
@@ -355,7 +321,6 @@ function getRecords(db, table) {
     }
     // This is called if the db.transaction fails to obtain data
     function errorHandler() {
-      console.log('No old logs found in cache.');
       resolve([]);
     }
 

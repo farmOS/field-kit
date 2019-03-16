@@ -172,7 +172,6 @@ export default {
     },
     confirmDelete() {
       const log = this.logs[this.logIndexToDelete];
-      console.log('Log to be deleted: ', log);
       const payload = {
         index: this.logIndexToDelete,
         local_id: log.local_id,
@@ -183,7 +182,6 @@ export default {
       };
       this.$store.commit('deleteLog', payload);
       this.showDeleteDialog = false;
-      console.log(`Deleting log "${payload.name.data}"...`);
     },
     syncAll() {
       // Calling getLogs first.  On return, it will call a check action in httpModule.

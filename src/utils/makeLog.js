@@ -41,25 +41,6 @@ const makeLogFactory = (src, dest) => {
       area = { changed: null, data: [] }, // eslint-disable-line camelcase
       geofield = { changed: null, data: [] }, // eslint-disable-line camelcase
       notes = { changed: null, data: '' }, // eslint-disable-line camelcase
-      /*
-      log_owner = '', // eslint-disable-line camelcase
-      // Quantity will be an array of objects, similar to area or asset
-      quantity = [],
-      id,
-      local_id, // eslint-disable-line camelcase
-      name = '',
-      type = '',
-      timestamp = '',
-      images = [],
-      done = true,
-      isCachedLocally = false,
-      wasPushedToServer = false,
-      remoteUri = '',
-      asset = [], // eslint-disable-line camelcase
-      area = [], // eslint-disable-line camelcase
-      geofield = [], // eslint-disable-line camelcase
-      notes = '', // eslint-disable-line camelcase
-      */
     } = {}) => {
       let log;
       /*
@@ -84,44 +65,6 @@ const makeLogFactory = (src, dest) => {
           wasPushedToServer: JSON.parse(wasPushedToServer), // eslint-disable-line max-len
           remoteUri,
           asset: { data: parseObjects(asset.data), changed: asset.changed }, // eslint-disable-line no-use-before-define, max-len
-          /*
-          log_owner: { data: log_owner, changed: nowStamp },
-          notes: { data: notes, changed: nowStamp },
-          quantity: { data: quantity, changed: nowStamp },
-          id: { data: id, changed: nowStamp },
-          local_id: { data: local_id, changed: nowStamp },
-          name: { data: name, changed: nowStamp },
-          type: { data: type, changed: nowStamp },
-          timestamp: { data: timestamp, changed: nowStamp },
-          // Use Array.concat() to make sure this is an array
-          images: { data: parseImages(images), changed: nowStamp }, // eslint-disable-line no-use-before-define, max-len
-          // Use JSON.parse() to convert strings back to booleans
-          done: { data: JSON.parse(done), changed: nowStamp },
-          isCachedLocally: { data: JSON.parse(isCachedLocally), changed: nowStamp },
-          wasPushedToServer: { data: JSON.parse(wasPushedToServer), changed: nowStamp },
-          remoteUri: { data: remoteUri, changed: nowStamp },
-          asset: { data: parseObjects(asset), changed: nowStamp }, // eslint-disable-line no-use-before-define, max-len
-          area: { data: parseObjects(area), changed: nowStamp }, // eslint-disable-line no-use-before-define, max-len
-          geofield: { data: parseObjects(geofield), changed: nowStamp }, // eslint-disable-line no-use-before-define, max-len
-          log_owner,
-          notes,
-          quantity,
-          id,
-          local_id,
-          name,
-          type,
-          timestamp,
-          // Use Array.concat() to make sure this is an array
-          images: parseImages(images), // eslint-disable-line no-use-before-define
-          // Use JSON.parse() to convert strings back to booleans
-          done: JSON.parse(done),
-          isCachedLocally: JSON.parse(isCachedLocally),
-          wasPushedToServer: JSON.parse(wasPushedToServer),
-          remoteUri,
-          asset: parseObjects(asset), // eslint-disable-line no-use-before-define
-          area: parseObjects(area), // eslint-disable-line no-use-before-define
-          geofield: parseObjects(geofield), // eslint-disable-line no-use-before-define, max-len
-          */
         };
         if (type.data !== 'farm_seeding' && area) {
           log.area = { data: parseObjects(area.data), changed: area.changed }; // eslint-disable-line no-use-before-define, max-len
@@ -144,21 +87,6 @@ const makeLogFactory = (src, dest) => {
           timestamp: timestamp.data,
           images: images.data,
           asset: asset.data,
-          /*
-          notes: {
-            format: 'farm_format',
-            value: notes,
-          },
-          // quantity,
-          name,
-          done,
-          type,
-          timestamp,
-          images,
-          asset,
-          area,
-          geofield,
-          */
         };
         /*
           Only return id property if one has already been assigned by the server,
@@ -229,24 +157,6 @@ const makeLogFactory = (src, dest) => {
       area = { changed: null, data: [] }, // eslint-disable-line camelcase
       geofield = { changed: null, data: [] }, // eslint-disable-line camelcase
       notes = { changed: null, data: '' }, // eslint-disable-line camelcase
-      /*
-      log_owner = '', // eslint-disable-line camelcase
-      quantity = '',
-      id,
-      local_id, // eslint-disable-line camelcase
-      name = '',
-      type = '',
-      timestamp = '',
-      images = [],
-      done = true,
-      isCachedLocally = false,
-      wasPushedToServer = false,
-      remoteUri = '',
-      asset = [], // eslint-disable-line camelcase
-      area = [], // eslint-disable-line camelcase
-      geofield = [], // eslint-disable-line camelcase
-      notes = '', // eslint-disable-line camelcase
-      */
     } = {}) => {
       const log = {
         log_owner: JSON.parse(log_owner),
@@ -259,16 +169,12 @@ const makeLogFactory = (src, dest) => {
         timestamp: JSON.parse(timestamp),
         // Use Array.concat() to make sure this is an array
         images: { data: parseImages(JSON.parse(images).data), changed: JSON.parse(images).changed }, // eslint-disable-line no-use-before-define, max-len
-        // images: parseImages(images), // eslint-disable-line no-use-before-define
         // Use JSON.parse() to convert strings back to booleans
         done: JSON.parse(done),
         isCachedLocally: JSON.parse(isCachedLocally),
         wasPushedToServer: JSON.parse(wasPushedToServer),
         remoteUri,
         asset: { data: parseObjects(JSON.parse(asset).data), changed: JSON.parse(asset).changed }, // eslint-disable-line no-use-before-define, max-len
-        // asset: parseObjects(asset), // eslint-disable-line no-use-before-define
-        // area: parseObjects(area), // eslint-disable-line no-use-before-define
-        // geofield: parseObjects(geofield), // eslint-disable-line no-use-before-define, max-len
       };
       // Seedings do not have areas and geofields
       if (type !== 'farm_seeding' && area) {
@@ -313,23 +219,6 @@ const makeLogFactory = (src, dest) => {
         wasPushedToServer: true,
         remoteUri: uri,
         asset: { data: asset, changed: nowStamp },
-        /*
-        log_owner,
-        notes: parseNotes(notes), // eslint-disable-line no-use-before-define
-        quantity,
-        local_id,
-        name,
-        type,
-        timestamp,
-        images,
-        done,
-        isCachedLocally: false,
-        wasPushedToServer: true,
-        remoteUri: uri,
-        asset,
-        area,
-        geofield,
-        */
       };
       // Seedings do not have areas and geofields
       if (type !== 'farm_seeding' && area) {
