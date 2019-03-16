@@ -8,8 +8,11 @@ import camModule from './camModule';
 */
 function syncReducer(indices, curLog, curIndex) {
   // Sync all logs to the server; those originally from server will have id fields
-  if (curLog.isReadyToSync && !curLog.wasPushedToServer) {
+  console.log('CHECK STATUS REDUCER ISREADYTOSYNC', curLog.isReadyToSync);
+  console.log('CHECK STATUS REDUCER WASPUSHEDTOSERVER', JSON.parse(curLog.wasPushedToServer));
+  if (curLog.isReadyToSync !== undefined && JSON.parse(curLog.isReadyToSync) && !JSON.parse(curLog.wasPushedToServer)) {
   // if (curLog) {
+    console.log('CHECK STATUS INDEXED TO SEND', curIndex);
     return indices.concat(curIndex);
   }
   return indices;
@@ -17,6 +20,7 @@ function syncReducer(indices, curLog, curIndex) {
 
 // A function that sets all logs ready to sync; used with updateAllLogs
 function logSyncer(log) {
+  console.log('CHECK STATUS RUNNING LOG SYNCER')
   return {
     ...log,
     isReadyToSync: true,
@@ -55,10 +59,10 @@ export default {
       if (mutation.type === 'addLogAndMakeCurrent') {
         store.dispatch('createLog', mutation.payload);
       }
-      if (mutation.type === 'updateCurrentLog' && !mutation.payload.isCachedLocally) {
+      if (mutation.type === 'updateCurrentLog' && !JSON.parse(mutation.payload.isCachedLocally)) {
         store.dispatch('updateLog', mutation.payload);
       }
-      if (mutation.type === 'updateLogFromServer' && !mutation.payload.log.isCachedLocally) {
+      if (mutation.type === 'updateLogFromServer' && !JSON.parse(mutation.payload.log.isCachedLocally)) {
         store.dispatch('updateLogAtIndex', mutation.payload);
       }
       if (mutation.type === 'updateAllLogs') {

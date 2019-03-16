@@ -131,7 +131,7 @@ export default {
                 if (localLog.id === serverLog.id) {
                   logStatus.localId = localLog.local_id;
                   logStatus.storeIndex = index;
-                  if (localLog.wasPushedToServer) {
+                  if (JSON.parse(localLog.wasPushedToServer) === true) {
                     logStatus.localChange = false;
                   } else {
                     logStatus.log = localLog;
@@ -160,6 +160,8 @@ export default {
                 makeLog.fromServer({
                   ...log,
                   wasPushedToServer: true,
+                  // Trying to make isReady..
+                  isReadyToSync: false,
                 }));
             }
             if (!checkStatus.localChange && checkStatus.localId !== null) {
@@ -173,13 +175,16 @@ export default {
                   local_id: checkStatus.localId,
                 }),
               };
+              console.log('CHECK STATUS UPDATING LOG FROM SERVER', updateParams);
               commit('updateLogFromServer', updateParams);
             }
             if (checkStatus.localChange && checkStatus.localId !== null) {
+              const syncDate = localStorage.getItem('syncDate');
               /*
               Replace properties of the local log that have not been modified since
-              the servers completed date with data from the server.
-              Retain properties that have been modified since the completed date.
+              the last sync with data from the server.
+              For properties that have been completed since the sync date,
+              Present choice to retain either the log or the server version
               */
               const storeLog = checkStatus.log;
               const servLogBuilder = {};
@@ -192,7 +197,7 @@ export default {
               const madeFromServer = makeLog.fromServer({ ...log });
               Object.keys(storeLog).forEach((key) => {
                 if (storeLog[key].changed && storeLog[key].changed !== null) {
-                  if (parseInt(storeLog[key].changed, 10) < parseInt(log.changed, 10)) {
+                  if (parseInt(storeLog[key].changed, 10) < parseInt(syncDate, 10)) {
                     servLogBuilder[key] = madeFromServer[key];
                   } else {
                     locLogBuilder[key] = storeLog[key];
@@ -202,7 +207,7 @@ export default {
               /*
               This is where we can optionally throw a warning about a field or fields
               that have been changed more recently on the app than on the server
-               - If retaining local field changes the app, run the following uncommented code
+               - If retaining local field changes, run the following uncommented code
                - If discarding local field changes, run this commented code
                const updateParams = {
                  index: checkStatus.storeIndex,
@@ -221,12 +226,12 @@ export default {
                   log: makeLog.toStore({
                     ...locLogBuilder,
                     ...servLogBuilder,
-                    wasPushedToServer: true,
-                    isReadyToSync: false,
+                    wasPushedToServer: false,
                     local_id: checkStatus.localId,
                     id: log.id,
                   }),
                 };
+                updateParams.log.isReadyToSync = true;
                 console.log('CHECK STATUS UPDATEPARAMS', updateParams);
                 commit('updateLogFromServer', updateParams);
               }
