@@ -17,7 +17,7 @@ const shellModule = {
     settings: {
       useGeolocation: true,
       // search parameters for getting logs from the server.  Assigned set when user.uid is set
-      getServerLogsParams: {
+      logFilters: {
         assigned: null,
         completed: '0',
         type: ['farm_activity', 'farm_observation', 'farm_harvest', 'farm_input', 'farm_seeding'],
@@ -43,7 +43,7 @@ const shellModule = {
     },
     changeUid(state, uid) {
       state.user.uid = uid;
-      state.settings.getServerLogsParams.assigned = uid;
+      state.settings.logFilters.assigned = uid;
     },
     setLoginStatus(state, bool) {
       state.user.isLoggedIn = bool;

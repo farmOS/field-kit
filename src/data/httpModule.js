@@ -99,7 +99,7 @@ export default {
 
     // GET LOGS FROM SERVER
     getServerLogs({ commit, rootState }) {
-      return farm().log.get(rootState.shell.settings.getServerLogsParams, localStorage.getItem('token'))
+      return farm().log.get(rootState.shell.settings.logFilters, localStorage.getItem('token'))
         .then((res) => {
           // See whether logs are new, or currently in the store
           // If res is a single log, check vs current, run through the logFactory and call addLog
