@@ -60,6 +60,21 @@
           class="form-control">
         </textarea>
       </div>
+      <h4>Quantities</h4>
+      <!-- <div v-if="logs[currentLogIndex].quantity.data !== []" class="form-item form-item-name form-group"> -->
+      <div class="form-item form-item-name form-group">
+        <ul v-if="logs[currentLogIndex].quantity.data.length > 0" class="list-group">
+          <li
+            v-for="(quant, i) in logs[currentLogIndex].quantity.data"
+            v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
+            class="list-group-item">
+            {{ quant.measure }} {{ quant.value }} {{ quant.label }}
+            <span class="remove-list-item" @click="removeQuant(i)">
+              &#x2715;
+            </span>
+          </li>
+        </ul>
+      </div>
 
       <h4>Assets</h4>
       <Autocomplete
@@ -314,6 +329,7 @@ export default {
   ],
 
   created() {
+    console.log('LOG QUANTITIES: ', this.logs[this.currentLogIndex].quantity.data);
     if (typeof this.$route.params.index === 'number') {
       // If a log index is provided in query params, set it as current log
       this.$store.commit('setCurrentLogIndex', this.$route.params.index);
@@ -389,6 +405,14 @@ export default {
       const newAreas = this.logs[this.currentLogIndex].area.data
         .filter(_area => _area.id !== area.tid);
       this.updateCurrentLog('area', newAreas);
+    },
+
+    removeQuant(index) {
+      const newQuant = this.logs[this.currentLogIndex].quantity.data;
+      newQuant.splice(index, 1);
+      console.log('NEW QUANTITY', JSON.stringify(newQuant));
+      this.updateCurrentLog('quantity', JSON.stringify(newQuant));
+      console.log('QUANTITY LENGTH AFTER UPDATE: ', this.logs[this.currentLogIndex].quantity.data.length);
     },
 
     getPhoto() {

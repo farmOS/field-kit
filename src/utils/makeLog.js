@@ -51,7 +51,7 @@ const makeLogFactory = (src, dest) => {
         log = {
           log_owner,
           notes,
-          quantity,
+          quantity: { data: parseObjects(quantity.data), changed: quantity.changed }, // eslint-disable-line no-use-before-define, max-len
           id,
           local_id,
           name,
@@ -80,13 +80,13 @@ const makeLogFactory = (src, dest) => {
             format: 'farm_format',
             value: notes.data,
           },
-          // quantity,
           name: name.data,
           done: done.data,
           type: type.data,
           timestamp: timestamp.data,
           images: images.data,
           asset: asset.data,
+          quantity: quantity.data,
         };
         /*
           Only return id property if one has already been assigned by the server,
@@ -161,7 +161,7 @@ const makeLogFactory = (src, dest) => {
       const log = {
         log_owner: JSON.parse(log_owner),
         notes: JSON.parse(notes),
-        quantity: JSON.parse(quantity),
+        quantity: { data: parseObjects(JSON.parse(quantity).data), changed: JSON.parse(quantity).changed }, // eslint-disable-line no-use-before-define, max-len
         id: id === 'undefined' ? undefined : id,
         local_id,
         name: JSON.parse(name),
