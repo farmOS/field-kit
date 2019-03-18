@@ -42,10 +42,8 @@ export default {
         store.dispatch('loadCachedUserAndSiteInfo');
         store.commit('clearAssets');
         store.commit('clearAreas');
-        store.dispatch('loadCachedAssets')
-          .then(() => store.dispatch('updateAssets'));
-        store.dispatch('loadCachedAreas')
-          .then(() => store.dispatch('updateAreas'));
+        store.dispatch('loadCachedAssets');
+        store.dispatch('loadCachedAreas');
         next();
       }
       next();
@@ -164,6 +162,12 @@ export default {
         }
         if (action.type === 'serverLogToDb') {
           store.dispatch('createLogFromServer', action.payload);
+        }
+        if (action.type === 'loadCachedAssets') {
+          store.dispatch('updateAssets');
+        }
+        if (action.type === 'loadCachedAreas') {
+          store.dispatch('updateAreas');
         }
       },
     });
