@@ -56,7 +56,7 @@ export default {
         store.dispatch('updateCachedLog', mutation.payload);
       }
       if (mutation.type === 'updateLogFromServer' && !JSON.parse(mutation.payload.log.isCachedLocally)) {
-        store.dispatch('updateLogAtIndex', mutation.payload);
+        store.dispatch('updateCachedLogAtIndex', mutation.payload);
       }
       if (mutation.type === 'updateAllLogs') {
         // These will be tentatively called in getServerLogs.then, in the getLogs subscription

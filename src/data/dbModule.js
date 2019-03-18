@@ -70,7 +70,7 @@ export default {
         }));
     },
     // This works like updateCachedLog, but accepts params {log: , index: }
-    updateLogAtIndex({ commit, rootState }, props) {
+    updateCachedLogAtIndex({ commit, rootState }, props) {
       const newLog = makeLog.toSql({
         ...rootState.farm.logs[props.index],
         ...props.log,
