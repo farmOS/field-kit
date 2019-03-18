@@ -59,7 +59,7 @@
 
 <script>
 import { mapState } from 'vuex';
-import iconSpinner from '../icons/icon-spinner.vue';
+import iconSpinner from '@/icons/icon-spinner.vue';
 
 export default {
   components: {

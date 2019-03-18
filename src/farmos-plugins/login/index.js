@@ -1,6 +1,6 @@
 import Login from './Login.vue'; // eslint-disable-line import/extensions
 import Logout from './Logout.vue'; // eslint-disable-line import/extensions
-import loginModule from './loginModule';
+import loginModule from './module';
 
 export default {
   install(Vue, { router, store }) {

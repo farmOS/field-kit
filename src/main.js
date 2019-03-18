@@ -1,6 +1,6 @@
 import app from '@/client/app';
 import data from '@/data';
-import login from '@/login';
+import login from '@/farmos-plugins/login';
 
 app('#app', [
   data,
