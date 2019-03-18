@@ -60,9 +60,14 @@ export default function (host, user, password) {
   // Utility for parsing if there's an ID provided, then formatting the params
   const params = id => (id ? `/${id}.json` : '.json');
 
-  // Utility for finding the vid of the farm_assets vocabulary
+  // Utility for finding the vid of the farm_areas vocabulary
   const areaVid = vocab => vocab.list
     .find(voc => voc.machine_name === 'farm_areas')
+    .vid;
+
+  // Find the vid of the farm_quantity_units vocabulary
+  const unitVid = vocab => vocab.list
+    .find(voc => voc.machine_name === 'farm_quantity_units')
     .vid;
 
   return {
@@ -179,7 +184,6 @@ export default function (host, user, password) {
         queryString = (queryString.slice(-1) !== '?' && completed !== '') ? `${queryString}&` : queryString;
         queryString = (completed !== '') ? `${queryString}done=${completed}` : queryString;
 
-        // If no ID is passed but page is passed
         return request(queryString);
       },
       send(payload, token) {
@@ -188,6 +192,21 @@ export default function (host, user, password) {
       },
       update(payload, token) {
         return request(`/log/${payload.id}`, { method: 'PUT', payload, token });
+      },
+    },
+    unit: {
+      get(opts = {}) {
+        return request('/taxonomy_vocabulary.json').then((res) => {
+          // If an option object is passed, set defaults and parse the string params
+          const { page = null } = opts;
+          const pageParams = (page !== null) ? `page=${page}` : '';
+          // If no page # is passed, get all of them
+          if (page === null) {
+            return requestAll(`/taxonomy_term.json?vocabulary=${unitVid(res)}`);
+          }
+          // If page is passed
+          return request(`/taxonomy_term.json?vocabulary=${unitVid(res)}&${pageParams}`);
+        });
       },
     },
   };

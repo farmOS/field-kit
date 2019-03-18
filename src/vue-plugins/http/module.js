@@ -26,7 +26,12 @@ export default {
         commit('addAssets', assets);
       }).catch((err) => { throw err; });
     },
-
+    updateUnits() {
+      // Return units only.
+      return farm().unit.get().then((res) => {
+        console.log('UNITS FROM SERVER ARE ', res);
+      }).catch((err) => { throw err; });
+    },
     // SEND LOGS TO SERVER (step 2 of sync)
     sendLogs({ commit, rootState }, payload) {
       // Update logs in the database and local store after send completes
@@ -250,6 +255,5 @@ export default {
         .catch(err => err);
       // Errors are handled in index.js
     },
-
   },
 };
