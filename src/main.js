@@ -1,8 +1,12 @@
 import app from '@/client/app';
-import data from '@/data';
-import login from '@/farmos-plugins/login';
+import camera from '@/vue-plugins/camera-cordova';
+import db from '@/vue-plugins/websql';
+import http from '@/vue-plugins/http';
+import login from '@/vue-plugins/login';
 
 app('#app', [
-  data,
+  camera,
+  db,
+  http,
   login,
 ]);

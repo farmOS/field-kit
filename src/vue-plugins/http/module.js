@@ -1,5 +1,5 @@
 import farmOS from 'farmos';
-import makeLog from '../utils/makeLog';
+import makeLog from '@/utils/makeLog';
 
 const farm = () => {
   const host = localStorage.getItem('host');
