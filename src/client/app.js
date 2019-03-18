@@ -12,7 +12,7 @@ export default (el, plugins) => {
     plugins.forEach(p => Vue.use(p, { store, router }));
   }
   return new Vue({
-    el: '#app',
+    el,
     store,
     router,
     components: { App },
