@@ -4,7 +4,7 @@ export default {
 
   actions: {
 
-    createLog({ commit }, newLog) {
+    createCachedLog({ commit }, newLog) {
       const tableName = 'log';
       const newRecord = makeLog.toSql(newLog);
       openDatabase() // eslint-disable-line no-use-before-define
@@ -19,7 +19,7 @@ export default {
           })
         ));
     },
-    // This works like createLog, but accepts params {log: , index: }
+    // This works like createCachedLog, but accepts params {log: , index: }
     createLogFromServer({ commit }, props) {
       const tableName = 'log';
       const newRecord = makeLog.toSql(props.log);
@@ -55,7 +55,7 @@ export default {
         .catch(console.error); // eslint-disable-line no-console
     },
 
-    updateLog({ commit, rootState }, newProps) {
+    updateCachedLog({ commit, rootState }, newProps) {
       const newLog = makeLog.toSql({
         ...rootState.farm.logs[rootState.farm.currentLogIndex],
         ...newProps,
@@ -69,7 +69,7 @@ export default {
           isCachedLocally: true,
         }));
     },
-    // This works like updateLog, but accepts params {log: , index: }
+    // This works like updateCachedLog, but accepts params {log: , index: }
     updateLogAtIndex({ commit, rootState }, props) {
       const newLog = makeLog.toSql({
         ...rootState.farm.logs[props.index],
@@ -88,7 +88,7 @@ export default {
         }));
     },
 
-    deleteLog(_, { local_id }) { // eslint-disable-line camelcase
+    deleteCachedLog(_, { local_id }) { // eslint-disable-line camelcase
       // delete record from WebSQL
       openDatabase() // eslint-disable-line no-use-before-define
         .then(db => getTX(db, 'log')) // eslint-disable-line no-use-before-define

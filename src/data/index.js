@@ -52,10 +52,10 @@ export default {
     });
     store.subscribe((mutation) => {
       if (mutation.type === 'addLogAndMakeCurrent') {
-        store.dispatch('createLog', mutation.payload);
+        store.dispatch('createCachedLog', mutation.payload);
       }
       if (mutation.type === 'updateCurrentLog' && !JSON.parse(mutation.payload.isCachedLocally)) {
-        store.dispatch('updateLog', mutation.payload);
+        store.dispatch('updateCachedLog', mutation.payload);
       }
       if (mutation.type === 'updateLogFromServer' && !JSON.parse(mutation.payload.log.isCachedLocally)) {
         store.dispatch('updateLogAtIndex', mutation.payload);
@@ -67,11 +67,11 @@ export default {
       }
       if (mutation.type === 'updateLogs') {
         mutation.payload.indices.forEach((i) => {
-          store.dispatch('updateLog', store.state.farm.logs[i]);
+          store.dispatch('updateCachedLog', store.state.farm.logs[i]);
         });
       }
       if (mutation.type === 'deleteLog') {
-        store.dispatch('deleteLog', mutation.payload);
+        store.dispatch('deleteCachedLog', mutation.payload);
       }
       if (mutation.type === 'addAssets') {
         mutation.payload.forEach((asset) => {
