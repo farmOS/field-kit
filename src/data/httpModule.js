@@ -112,6 +112,8 @@ export default {
           OR, if the local log has been modified since the last sync, a notification
           is thrown, and the user selects whether to over-write or sync local to server
           */
+          console.log('GET LOGS RESPONSE', res);
+
           function checkLog(serverLog) {
             const allLogs = rootState.farm.logs;
             // The localLog will be passed as logStatus.log if localChange checks true
@@ -240,6 +242,8 @@ export default {
           // Process one or more logs
           if (res.list) {
             res.list.forEach(log => processLog(log));
+          } else if (Array.isArray(res)) {
+            res.forEach(log => processLog(log));
           } else {
             processLog(res);
           }
