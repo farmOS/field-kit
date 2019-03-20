@@ -16,10 +16,10 @@ const shellModule = {
     },
     settings: {
       useGeolocation: true,
-      // search parameters for getting logs from the server.  Assigned set when user.uid is set
+      // search parameters for getting logs from the server.  Log owner set when user.uid is set
       logFilters: {
-        assigned: null,
-        completed: '0',
+        log_owner: null,
+        done: '0',
         type: ['farm_activity', 'farm_observation', 'farm_harvest', 'farm_input', 'farm_seeding'],
       },
     },
@@ -43,7 +43,7 @@ const shellModule = {
     },
     changeUid(state, uid) {
       state.user.uid = uid;
-      state.settings.logFilters.assigned = uid;
+      state.settings.logFilters.log_owner = uid;
     },
     setLoginStatus(state, bool) {
       state.user.isLoggedIn = bool;
