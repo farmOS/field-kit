@@ -60,20 +60,53 @@
           class="form-control">
         </textarea>
       </div>
+
       <h4>Quantities</h4>
-      <!-- <div v-if="logs[currentLogIndex].quantity.data !== []" class="form-item form-item-name form-group"> -->
+      <ul v-if="logs[currentLogIndex].quantity.data.length > 0" class="list-group">
+        <li
+          v-for="(quant, i) in logs[currentLogIndex].quantity.data"
+          v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
+          class="list-group-item">
+          {{ quant.measure }} {{ quant.value }} {{ quant.label }}
+          <span class="remove-list-item" @click="removeQuant(i)">
+            &#x2715;
+          </span>
+        </li>
+      </ul>
+      <label for="type" class="control-label ">Add a quantity</label>
       <div class="form-item form-item-name form-group">
-        <ul v-if="logs[currentLogIndex].quantity.data.length > 0" class="list-group">
-          <li
-            v-for="(quant, i) in logs[currentLogIndex].quantity.data"
-            v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
-            class="list-group-item">
-            {{ quant.measure }} {{ quant.value }} {{ quant.label }}
-            <span class="remove-list-item" @click="removeQuant(i)">
-              &#x2715;
-            </span>
-          </li>
-        </ul>
+        <select
+          :value="(logs[currentLogIndex].quantity.data[newQuantIndex]) ? logs[currentLogIndex].quantity.data[newQuantIndex].measure : ''"
+          @input="updateNewQuant('measure', $event.target.value)"
+          class="custom-select col-sm-3 ">
+            <!-- options are defined in the local quantMeasures variable -->
+            <option
+              v-for="measure in quantMeasures"
+              :value="measure">
+              {{ measure }}
+            </option>
+        </select>
+        <textarea
+          :value="(logs[currentLogIndex].quantity.data[newQuantIndex]) ? logs[currentLogIndex].quantity.data[newQuantIndex].value : 0"
+          @input="updateNewQuant('value', $event.target.value)"
+          placeholder="Quantity value"
+          type="number"
+          class="form-control">
+        </textarea>
+        <textarea
+          :value="(logs[currentLogIndex].quantity.data[newQuantIndex]) ? logs[currentLogIndex].quantity.data[newQuantIndex].label : ''"
+          @input="updateNewQuant('label', $event.target.value)"
+          placeholder="Quantity label"
+          type="text"
+          class="form-control">
+        </textarea>
+        <button
+          type="button"
+          class="btn btn-success"
+          @click="addQuant"
+          name="addNewQuantity">
+          Add another quantity
+        </button>
       </div>
 
       <h4>Assets</h4>
@@ -311,6 +344,21 @@ export default {
         farm_harvest: 'Harvest',
         farm_seeding: 'Seeding',
       },
+      quantMeasures: [
+        'Count',
+        'Length',
+        'Weight',
+        'Area',
+        'Volume',
+        'Time',
+        'Temperature',
+        'Water content',
+        'Value',
+        'Rating',
+        'Ratio',
+        'Probability',
+      ],
+      newQuantIndex: 0,
     };
   },
 
@@ -329,7 +377,6 @@ export default {
   ],
 
   created() {
-    console.log('LOG QUANTITIES: ', this.logs[this.currentLogIndex].quantity.data);
     if (typeof this.$route.params.index === 'number') {
       // If a log index is provided in query params, set it as current log
       this.$store.commit('setCurrentLogIndex', this.$route.params.index);
@@ -338,6 +385,9 @@ export default {
       // Create a new log.  The 'type' prop is set based on the 'type' param in the local route
       this.$store.dispatch('initializeLog', this.type);
     }
+    console.log('LOG QUANTITIES: ', this.logs[this.currentLogIndex].quantity.data);
+    this.newQuantIndex = this.logs[this.currentLogIndex].quantity.data.length;
+    console.log(`NEW QUANT INDEX: ${this.newQuantIndex}`);
   },
 
   methods: {
@@ -363,19 +413,40 @@ export default {
 
     updateCurrentLog(key, val) {
       const nowStamp = (Date.now() / 1000).toFixed(0);
-      const valueString = (typeof val === 'string') ? val : JSON.stringify(val);
+      let valueString = (typeof val === 'string') ? val : JSON.stringify(val);
       const newProps = {
         [key]: { data: valueString, changed: nowStamp},
         isCachedLocally: false,
         wasPushedToServer: false,
       };
-      /*
+      this.$store.commit('updateCurrentLog', newProps);
+    },
+
+    updateNewQuant(key, value) {
+      // Unit is hard-coded until the taxonomy terms endpoint opens
+      const quanTemplate = {
+        measure: '',
+        value: 0,
+        unit: {
+          uri: 'http://localhost/taxonomy_term/16',
+          id: 16,
+          resource: 'taxonomy_term',
+        },
+        label: '',
+      };
+      console.log(`NEW QUANT INDEX: ${this.newQuantIndex}`)
+      // if a new quantity does not currently exist, create it!
+      if (!this.logs[this.currentLogIndex].quantity.data[this.newQuantIndex]){
+        this.logs[this.currentLogIndex].quantity.data.push(quanTemplate);
+      } // if this works, turn newQuant into a local var
+      this.logs[this.currentLogIndex].quantity.data[this.newQuantIndex][key] = value;
+      console.log('QUANTITY UPDATED TO ', this.logs[this.currentLogIndex].quantity);
+      // now update the log in the store
       const newProps = {
-        [key]: val,
+        quantity: this.logs[this.currentLogIndex].quantity,
         isCachedLocally: false,
         wasPushedToServer: false,
       };
-      */
       this.$store.commit('updateCurrentLog', newProps);
     },
 
@@ -393,6 +464,10 @@ export default {
         this.checkAreas();
       }
       this.checkAreas();
+    },
+
+    addQuant() {
+      ++this.newQuantIndex;
     },
 
     removeAsset(asset) {
@@ -413,6 +488,9 @@ export default {
       console.log('NEW QUANTITY', JSON.stringify(newQuant));
       this.updateCurrentLog('quantity', JSON.stringify(newQuant));
       console.log('QUANTITY LENGTH AFTER UPDATE: ', this.logs[this.currentLogIndex].quantity.data.length);
+      if (index !== this.newQuantIndex) {
+        --this.newQuantIndex
+      }
     },
 
     getPhoto() {
