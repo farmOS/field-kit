@@ -18,8 +18,10 @@ export default {
         store.dispatch('loadCachedUserAndSiteInfo');
         store.commit('clearAssets');
         store.commit('clearAreas');
+        store.commit('clearUnits');
         store.dispatch('loadCachedAssets');
         store.dispatch('loadCachedAreas');
+        store.dispatch('loadCachedUnits');
         next();
       }
       next();

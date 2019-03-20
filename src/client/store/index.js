@@ -65,6 +65,7 @@ const farmModule = {
     photoLoc: '',
     geolocation: {},
     localArea: [],
+    units: [],
   },
   mutations: {
     changeFarmName(state, name) {
@@ -83,6 +84,9 @@ const farmModule = {
     addAreas(state, areas) {
       state.areas = state.areas.concat(areas);
     },
+    addUnits(state, units) {
+      state.units = state.units.concat(units);
+    }
     /*
       This pushes the new log onto the `logs` array, and b/c `.push()` returns
       the length of the new array, it resets the index to the new item too
@@ -150,6 +154,9 @@ const farmModule = {
     },
     clearAreas(state) {
       state.areas.splice(0, state.areas.length);
+    },
+    clearUnits(state) {
+      state.units.splice(0, state.units.length);
     },
     setPhotoLoc(state, loc) {
       state.photoLoc = loc;

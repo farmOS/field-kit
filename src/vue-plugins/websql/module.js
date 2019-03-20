@@ -177,6 +177,42 @@ export default {
       });
     },
 
+    createCachedUnit(_, newUnit) {
+      const tableName = 'unit';
+      const key = 'tid';
+      openDatabase() // eslint-disable-line no-use-before-define
+        .then(db => makeTable(db, tableName, newUnit, key)) // eslint-disable-line no-use-before-define, max-len
+        .then(tx => saveRecord(tx, tableName, newUnit)); // eslint-disable-line no-use-before-define, max-len
+    },
+
+    updateCachedUnit(context, unit) {
+      const table = 'unit';
+      const key = 'tid';
+      openDatabase() // eslint-disable-line no-use-before-define
+        .then(db => getTX(db, table, key)) // eslint-disable-line no-use-before-define
+        .then(tx => saveRecord(tx, table, unit)); // eslint-disable-line no-use-before-define, max-len
+    },
+
+    deleteAllCachedUnits() {
+      openDatabase() // eslint-disable-line no-use-before-define
+        .then(db => getTX(db, 'unit')) // eslint-disable-line no-use-before-define
+        .then(tx => dropTable(tx, 'unit')) // eslint-disable-line no-use-before-define
+        .then(console.log) // eslint-disable-line no-console
+        .catch(console.error); // eslint-disable-line no-console
+    },
+
+    loadCachedUnits({ commit }) {
+      return new Promise((resolve, reject) => {
+        openDatabase() // eslint-disable-line no-use-before-define
+          .then(db => getRecords(db, 'unit')) // eslint-disable-line no-use-before-define
+          .then((results) => {
+            commit('addUnits', results);
+            resolve();
+          })
+          .catch(reject);
+      });
+    },
+
   },
 };
 

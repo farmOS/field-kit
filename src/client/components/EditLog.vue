@@ -86,6 +86,17 @@
               {{ measure }}
             </option>
         </select>
+        <select
+          :value="(logs[currentLogIndex].quantity.data[newQuantIndex]) ? logs[currentLogIndex].quantity.data[newQuantIndex].unit : ''"
+          @input="updateNewQuant('measure', $event.target.value)"
+          class="custom-select col-sm-3 ">
+            <!-- options are defined in the local quantMeasures variable -->
+            <option
+              v-for="unit in units"
+              :value="unit">
+              {{ unit.name }}
+            </option>
+        </select>
         <textarea
           :value="(logs[currentLogIndex].quantity.data[newQuantIndex]) ? logs[currentLogIndex].quantity.data[newQuantIndex].value : 0"
           @input="updateNewQuant('value', $event.target.value)"
@@ -372,6 +383,7 @@ export default {
     'geolocation',
     'localArea',
     'useGeolocation',
+    'units',
     // Set by router via edit/:type props=true
     'type',
   ],

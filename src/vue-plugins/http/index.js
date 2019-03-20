@@ -95,6 +95,9 @@ export default {
         if (action.type === 'loadCachedAreas') {
           store.dispatch('updateAreas');
         }
+        if (action.type === 'loadCachedUnits') {
+          store.dispatch('updateUnits');
+        }
       },
     });
   },

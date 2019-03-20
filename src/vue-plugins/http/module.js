@@ -28,12 +28,9 @@ export default {
     },
     updateUnits() {
       // Return units only.
-      console.log('UNITS ARE COMING SOON');
-      /*
-      return farm().unit.get().then((res) => {
+      return farm().term.get('farm_quantity_units').then((res) => {
         console.log('UNITS FROM SERVER ARE ', res);
       }).catch((err) => { throw err; });
-      */
     },
     // SEND LOGS TO SERVER (step 2 of sync)
     sendLogs({ commit, rootState }, payload) {

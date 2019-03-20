@@ -9,6 +9,7 @@
       :geolocation='geolocation'
       :localArea='localArea'
       :useGeolocation='useGeolocation'
+      :units='units'
       :userId='userId'
     />
   </div>
@@ -28,6 +29,7 @@ export default {
     photoLoc: state => state.farm.photoLoc,
     geolocation: state => state.farm.geolocation,
     localArea: state => state.farm.localArea,
+    units: state => state.farm.units,
     userId: state => state.shell.user.uid,
   }),
   beforeDestroy() {
