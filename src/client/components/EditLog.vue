@@ -67,7 +67,7 @@
           v-for="(quant, i) in logs[currentLogIndex].quantity.data"
           v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
           class="list-group-item">
-          {{ quant.measure }} {{ quant.value }} {{ quant.label }}
+          {{ quant.measure }} {{ quant.value }} {{ (selectedUnits.length > 0) ? selectedUnits[i].name : 'noUnits' }} {{ quant.label }}
           <span class="remove-list-item" @click="removeQuant(i)">
             &#x2715;
           </span>
@@ -87,14 +87,12 @@
             </option>
         </select>
         <select
-          :value="(logs[currentLogIndex].quantity.data[newQuantIndex]) ? logs[currentLogIndex].quantity.data[newQuantIndex].unit : ''"
-          @input="updateNewQuant('measure', $event.target.value)"
+          @input="updateNewQuant('unit', $event.target.value)"
           class="custom-select col-sm-3 ">
-            <!-- options are defined in the local quantMeasures variable -->
             <option
               v-for="unit in units"
-              :value="unit">
-              {{ unit.name }}
+              :value="unit.tid">
+              {{ (units) ? unit.name : '' }}
             </option>
         </select>
         <textarea
@@ -400,6 +398,7 @@ export default {
     console.log('LOG QUANTITIES: ', this.logs[this.currentLogIndex].quantity.data);
     this.newQuantIndex = this.logs[this.currentLogIndex].quantity.data.length;
     console.log(`NEW QUANT INDEX: ${this.newQuantIndex}`);
+    console.log('UNITS: ', this.units);
   },
 
   methods: {
@@ -439,11 +438,7 @@ export default {
       const quanTemplate = {
         measure: '',
         value: 0,
-        unit: {
-          uri: 'http://localhost/taxonomy_term/16',
-          id: 16,
-          resource: 'taxonomy_term',
-        },
+        unit: {id: 0, resource: 'taxonomy_term'},
         label: '',
       };
       console.log(`NEW QUANT INDEX: ${this.newQuantIndex}`)
@@ -451,7 +446,15 @@ export default {
       if (!this.logs[this.currentLogIndex].quantity.data[this.newQuantIndex]){
         this.logs[this.currentLogIndex].quantity.data.push(quanTemplate);
       } // if this works, turn newQuant into a local var
-      this.logs[this.currentLogIndex].quantity.data[this.newQuantIndex][key] = value;
+      if (key === 'unit') {
+        const unitRef = {id: value, resource: 'taxonomy_term'}
+        console.log('UPDATING UNIT WITH: ', unitRef)
+        console.log('QUANT BEING UPDATED: ', this.logs[this.currentLogIndex].quantity.data[this.newQuantIndex])
+        // Error: cannot set property unit of undefined.
+        this.logs[this.currentLogIndex].quantity.data[this.newQuantIndex][key] = unitRef;
+      } else {
+        this.logs[this.currentLogIndex].quantity.data[this.newQuantIndex][key] = value;
+      }
       console.log('QUANTITY UPDATED TO ', this.logs[this.currentLogIndex].quantity);
       // now update the log in the store
       const newProps = {
@@ -545,20 +548,17 @@ export default {
       });
     },
 
-    getAttached(log, attribute, resources, resId) {
-      // Only get attached if that attrib exists.  Some logs have no areas!
-      if (log[attribute]) {
+    getAttached(attribute, resources, resId) {
         const logAttached = [];
         resources.forEach((resrc) => {
-          log[attribute].data.forEach((attrib) => {
+          attribute.forEach((attrib) => {
             if (resrc[resId] === attrib.id) {
               logAttached.push(resrc);
             }
           });
         });
         return logAttached;
-      }
-    }
+    },
   },
 
   computed: {
@@ -584,10 +584,29 @@ export default {
       }
     },
     selectedAssets() {
-      return this.getAttached(this.logs[this.currentLogIndex], 'asset', this.assets, 'id');
+      if (this.logs[this.currentLogIndex].asset) {
+        return this.getAttached(this.logs[this.currentLogIndex].asset.data, this.assets, 'id');
+      }
     },
     selectedAreas() {
-      return this.getAttached(this.logs[this.currentLogIndex], 'area', this.areas, 'tid');
+      if (this.logs[this.currentLogIndex].area) {
+        return this.getAttached(this.logs[this.currentLogIndex].area.data, this.areas, 'tid');
+      }
+    },
+    selectedUnits() {
+      if (this.logs[this.currentLogIndex].quantity.data.length > 0 && this.units.length > 0) {
+        const quantUnits = [];
+        this.units.forEach((unit) => {
+          this.logs[this.currentLogIndex].quantity.data.forEach((quant) => {
+            if (unit.tid === quant.unit.id) {
+              quantUnits.push(unit);
+            }
+          });
+        });
+        console.log('SELECTED UNITS:', quantUnits)
+        return quantUnits;
+      }
+      return [];
     },
   },
 

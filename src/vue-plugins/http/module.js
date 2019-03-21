@@ -26,9 +26,12 @@ export default {
         commit('addAssets', assets);
       }).catch((err) => { throw err; });
     },
-    updateUnits() {
+    updateUnits({ commit }) {
       // Return units only.
       return farm().term.get('farm_quantity_units').then((res) => {
+        commit('deleteAllUnits')
+        const units = res.list.map(({ tid, name }) => ({ tid, name }));
+        commit('addUnits', units);
         console.log('UNITS FROM SERVER ARE ', res);
       }).catch((err) => { throw err; });
     },

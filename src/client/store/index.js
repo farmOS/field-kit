@@ -16,10 +16,10 @@ const shellModule = {
     },
     settings: {
       useGeolocation: true,
-      // search parameters for getting logs from the server.  Log owner set when user.uid is set
+      // search parameters for getting logs from the server.  Assigned set when user.uid is set
       logFilters: {
-        log_owner: null,
-        done: '0',
+        assigned: null,
+        completed: '0',
         type: ['farm_activity', 'farm_observation', 'farm_harvest', 'farm_input', 'farm_seeding'],
       },
     },
@@ -43,7 +43,7 @@ const shellModule = {
     },
     changeUid(state, uid) {
       state.user.uid = uid;
-      state.settings.logFilters.log_owner = uid;
+      state.settings.logFilters.assigned = uid;
     },
     setLoginStatus(state, bool) {
       state.user.isLoggedIn = bool;
@@ -85,8 +85,9 @@ const farmModule = {
       state.areas = state.areas.concat(areas);
     },
     addUnits(state, units) {
+      console.log('ADDING UNITS', units)
       state.units = state.units.concat(units);
-    }
+    },
     /*
       This pushes the new log onto the `logs` array, and b/c `.push()` returns
       the length of the new array, it resets the index to the new item too
@@ -145,6 +146,9 @@ const farmModule = {
     },
     deleteAllAreas(state) {
       state.areas = [];
+    },
+    deleteAllUnits(state) {
+      state.units = [];
     },
     clearLogs(state) {
       state.logs.splice(0, state.logs.length);

@@ -58,6 +58,9 @@ export default {
       if (mutation.type === 'deleteAllAreas') {
         store.dispatch('deleteAllCachedAreas');
       }
+      if (mutation.type === 'deleteAllUnits') {
+        store.dispatch('deleteAllCachedUnits');
+      }
       if (mutation.type === 'addAreas') {
         mutation.payload.forEach((area) => {
           store.dispatch('createCachedArea', area);
