@@ -73,22 +73,31 @@
           </span>
         </li>
       </ul>
-      <label for="type" class="control-label ">Add a quantity</label>
+      <label for="type" class="control-label ">Add new or edit existing quantity</label>
       <div class="form-item form-item-name form-group">
         <select
-          :value="(logs[currentLogIndex].quantity.data[newQuantIndex]) ? logs[currentLogIndex].quantity.data[newQuantIndex].measure : ''"
+          :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].measure : ''"
           @input="updateNewQuant('measure', $event.target.value)"
+          placeholder="Quantity measure"
           class="custom-select col-sm-3 ">
-            <!-- options are defined in the local quantMeasures variable -->
             <option
               v-for="measure in quantMeasures"
               :value="measure">
               {{ measure }}
             </option>
         </select>
+        <textarea
+          :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].value : 0"
+          @input="updateNewQuant('value', $event.target.value)"
+          placeholder="Quantity value"
+          type="number"
+          class="form-control">
+        </textarea>
         <select
           @input="updateNewQuant('unit', $event.target.value)"
+          placeholder="Quantity unit"
           class="custom-select col-sm-3 ">
+            <option>Quantity unit</option>
             <option
               v-for="unit in units"
               :value="unit.tid">
@@ -96,14 +105,7 @@
             </option>
         </select>
         <textarea
-          :value="(logs[currentLogIndex].quantity.data[newQuantIndex]) ? logs[currentLogIndex].quantity.data[newQuantIndex].value : 0"
-          @input="updateNewQuant('value', $event.target.value)"
-          placeholder="Quantity value"
-          type="number"
-          class="form-control">
-        </textarea>
-        <textarea
-          :value="(logs[currentLogIndex].quantity.data[newQuantIndex]) ? logs[currentLogIndex].quantity.data[newQuantIndex].label : ''"
+          :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].label : ''"
           @input="updateNewQuant('label', $event.target.value)"
           placeholder="Quantity label"
           type="text"
@@ -367,7 +369,6 @@ export default {
         'ratio',
         'probability',
       ],
-      newQuantIndex: 0,
     };
   },
 
@@ -395,10 +396,6 @@ export default {
       // Create a new log.  The 'type' prop is set based on the 'type' param in the local route
       this.$store.dispatch('initializeLog', this.type);
     }
-    console.log('LOG QUANTITIES: ', this.logs[this.currentLogIndex].quantity.data);
-    this.newQuantIndex = this.logs[this.currentLogIndex].quantity.data.length;
-    console.log(`NEW QUANT INDEX: ${this.newQuantIndex}`);
-    console.log('UNITS: ', this.units);
   },
 
   methods: {
@@ -434,30 +431,18 @@ export default {
     },
 
     updateNewQuant(key, value) {
-      // Check unit names
-      console.log('QUANT UNIT NAMES', this.quantUnitNames);
-      // Unit is hard-coded until the taxonomy terms endpoint opens
-      const quanTemplate = {
-        measure: '',
-        value: 0,
-        unit: {id: 0, resource: 'taxonomy_term'},
-        label: '',
-      };
-      console.log(`NEW QUANT INDEX: ${this.newQuantIndex}`)
-      // if a new quantity does not currently exist, create it!
-      if (!this.logs[this.currentLogIndex].quantity.data[this.newQuantIndex]){
-        this.logs[this.currentLogIndex].quantity.data.push(quanTemplate);
-      } // if this works, turn newQuant into a local var
+      const quantLength = this.logs[this.currentLogIndex].quantity.data.length;
+      // If no quantities exist at the newQuantIndex, create a new one!
+      if (quantLength === 0){
+        this.addQuant();
+
+      }
       if (key === 'unit') {
         const unitRef = {id: value, resource: 'taxonomy_term'}
-        console.log('UPDATING UNIT WITH: ', unitRef)
-        console.log('QUANT BEING UPDATED: ', this.logs[this.currentLogIndex].quantity.data[this.newQuantIndex])
-        // Error: cannot set property unit of undefined.
-        this.logs[this.currentLogIndex].quantity.data[this.newQuantIndex][key] = unitRef;
+        this.logs[this.currentLogIndex].quantity.data[quantLength - 1][key] = unitRef;
       } else {
-        this.logs[this.currentLogIndex].quantity.data[this.newQuantIndex][key] = value;
+        this.logs[this.currentLogIndex].quantity.data[quantLength - 1][key] = value;
       }
-      console.log('QUANTITY UPDATED TO ', this.logs[this.currentLogIndex].quantity);
       // now update the log in the store
       const newProps = {
         quantity: this.logs[this.currentLogIndex].quantity,
@@ -484,7 +469,13 @@ export default {
     },
 
     addQuant() {
-      ++this.newQuantIndex;
+      const quanTemplate = {
+        measure: 'weight',
+        value: 0,
+        unit: {id: 0, resource: 'taxonomy_term'},
+        label: '',
+      };
+      this.logs[this.currentLogIndex].quantity.data.push(quanTemplate);
     },
 
     removeAsset(asset) {
@@ -502,12 +493,7 @@ export default {
     removeQuant(index) {
       const newQuant = this.logs[this.currentLogIndex].quantity.data;
       newQuant.splice(index, 1);
-      console.log('NEW QUANTITY', JSON.stringify(newQuant));
       this.updateCurrentLog('quantity', JSON.stringify(newQuant));
-      console.log('QUANTITY LENGTH AFTER UPDATE: ', this.logs[this.currentLogIndex].quantity.data.length);
-      if (index !== this.newQuantIndex) {
-        --this.newQuantIndex
-      }
     },
 
     getPhoto() {
@@ -595,7 +581,7 @@ export default {
         return this.getAttached(this.logs[this.currentLogIndex].area.data, this.areas, 'tid');
       }
     },
-    quantUnitNames(quant) {
+    quantUnitNames() {
       if (this.units.length > 0 && this.logs[this.currentLogIndex].quantity.data.length > 0) {
         let unitNames = []
         this.logs[this.currentLogIndex].quantity.data.forEach((quant) => {

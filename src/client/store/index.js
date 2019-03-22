@@ -16,10 +16,10 @@ const shellModule = {
     },
     settings: {
       useGeolocation: true,
-      // search parameters for getting logs from the server.  Assigned set when user.uid is set
+      // search parameters for getting logs from the server.  Log_owner set when user.uid is set
       logFilters: {
-        assigned: null,
-        completed: '0',
+        log_owner: null,
+        done: '0',
         type: ['farm_activity', 'farm_observation', 'farm_harvest', 'farm_input', 'farm_seeding'],
       },
     },
@@ -43,8 +43,7 @@ const shellModule = {
     },
     changeUid(state, uid) {
       state.user.uid = uid;
-      state.settings.logFilters.assigned = uid;
-      console.log('UID SET TO ', state.settings.logFilters.assigned);
+      state.settings.logFilters.log_owner = uid;
     },
     setLoginStatus(state, bool) {
       state.user.isLoggedIn = bool;
@@ -86,7 +85,6 @@ const farmModule = {
       state.areas = state.areas.concat(areas);
     },
     addUnits(state, units) {
-      console.log('ADDING UNITS', units)
       state.units = state.units.concat(units);
     },
     /*

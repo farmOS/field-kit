@@ -29,10 +29,9 @@ export default {
     updateUnits({ commit }) {
       // Return units only.
       return farm().term.get('farm_quantity_units').then((res) => {
-        commit('deleteAllUnits')
+        commit('deleteAllUnits');
         const units = res.list.map(({ tid, name }) => ({ tid, name }));
         commit('addUnits', units);
-        console.log('UNITS FROM SERVER ARE ', res);
       }).catch((err) => { throw err; });
     },
     // SEND LOGS TO SERVER (step 2 of sync)
