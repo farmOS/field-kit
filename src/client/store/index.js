@@ -44,6 +44,7 @@ const shellModule = {
     changeUid(state, uid) {
       state.user.uid = uid;
       state.settings.logFilters.assigned = uid;
+      console.log('UID SET TO ', state.settings.logFilters.assigned);
     },
     setLoginStatus(state, bool) {
       state.user.isLoggedIn = bool;

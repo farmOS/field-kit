@@ -67,7 +67,7 @@
           v-for="(quant, i) in logs[currentLogIndex].quantity.data"
           v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
           class="list-group-item">
-          {{ quant.measure }} {{ quant.value }} {{ (selectedUnits.length > 0) ? selectedUnits[i].name : 'noUnits' }} {{ quant.label }}
+          {{ quant.measure }} {{ quant.value }} {{ (quantUnitNames.length > 0) ? quantUnitNames[i] : 'noUnits' }} {{ quant.label }}
           <span class="remove-list-item" @click="removeQuant(i)">
             &#x2715;
           </span>
@@ -354,18 +354,18 @@ export default {
         farm_seeding: 'Seeding',
       },
       quantMeasures: [
-        'Count',
-        'Length',
-        'Weight',
-        'Area',
-        'Volume',
-        'Time',
-        'Temperature',
-        'Water content',
-        'Value',
-        'Rating',
-        'Ratio',
-        'Probability',
+        'count',
+        'length',
+        'weight',
+        'area',
+        'volume',
+        'time',
+        'temperature',
+        'water_content',
+        'value',
+        'rating',
+        'ratio',
+        'probability',
       ],
       newQuantIndex: 0,
     };
@@ -434,6 +434,8 @@ export default {
     },
 
     updateNewQuant(key, value) {
+      // Check unit names
+      console.log('QUANT UNIT NAMES', this.quantUnitNames);
       // Unit is hard-coded until the taxonomy terms endpoint opens
       const quanTemplate = {
         measure: '',
@@ -593,18 +595,17 @@ export default {
         return this.getAttached(this.logs[this.currentLogIndex].area.data, this.areas, 'tid');
       }
     },
-    selectedUnits() {
-      if (this.logs[this.currentLogIndex].quantity.data.length > 0 && this.units.length > 0) {
-        const quantUnits = [];
-        this.units.forEach((unit) => {
-          this.logs[this.currentLogIndex].quantity.data.forEach((quant) => {
+    quantUnitNames(quant) {
+      if (this.units.length > 0 && this.logs[this.currentLogIndex].quantity.data.length > 0) {
+        let unitNames = []
+        this.logs[this.currentLogIndex].quantity.data.forEach((quant) => {
+          this.units.forEach((unit) => {
             if (unit.tid === quant.unit.id) {
-              quantUnits.push(unit);
+              unitNames.push(unit.name);
             }
           });
         });
-        console.log('SELECTED UNITS:', quantUnits)
-        return quantUnits;
+        return unitNames;
       }
       return [];
     },
