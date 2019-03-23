@@ -206,7 +206,7 @@ export default {
         openDatabase() // eslint-disable-line no-use-before-define
           .then(db => getRecords(db, 'unit')) // eslint-disable-line no-use-before-define
           .then((results) => {
-            commit('addUnits', results);
+            commit('updateUnitsFromCache', results);
             resolve();
           })
           .catch(reject);

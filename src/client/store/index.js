@@ -88,6 +88,15 @@ const farmModule = {
       state.units = state.units.concat(units);
     },
     /*
+    updateUnitsFromCache is distinct from addUnits because it is NOT a hook for updating
+    units in the database.  It ONLY adds units to the local store.
+    updateUnitsFromCache is called by websql/module/loadCachedUnits
+    addUnits is called by http/module/updateUnits
+    */
+    updateUnitsFromCache(state, units) {
+      state.units = state.units.concat(units);
+    },
+    /*
       This pushes the new log onto the `logs` array, and b/c `.push()` returns
       the length of the new array, it resets the index to the new item too
     */

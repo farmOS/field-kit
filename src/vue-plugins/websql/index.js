@@ -72,6 +72,11 @@ export default {
       if (mutation.type === 'setUseGeolocation') {
         localStorage.setItem('useGeolocation', mutation.payload);
       }
+      if (mutation.type === 'addUnits') {
+        mutation.payload.forEach((unit) => {
+          store.dispatch('createCachedUnit', unit);
+        });
+      }
     });
   },
 };

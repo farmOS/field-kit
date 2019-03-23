@@ -67,7 +67,7 @@
           v-for="(quant, i) in logs[currentLogIndex].quantity.data"
           v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
           class="list-group-item">
-          {{ quant.measure }} {{ quant.value }} {{ (quantUnitNames.length > 0) ? quantUnitNames[i] : 'noUnits' }} {{ quant.label }}
+          {{ quant.measure }} {{ quant.value }} {{ (quantUnitNames.length > 0) ? quantUnitNames[i] : '' }} {{ quant.label }}
           <span class="remove-list-item" @click="removeQuant(i)">
             &#x2715;
           </span>
@@ -97,7 +97,6 @@
           @input="updateNewQuant('unit', $event.target.value)"
           placeholder="Quantity unit"
           class="custom-select col-sm-3 ">
-            <option>Quantity unit</option>
             <option
               v-for="unit in units"
               :value="unit.tid">
@@ -586,7 +585,7 @@ export default {
         let unitNames = []
         this.logs[this.currentLogIndex].quantity.data.forEach((quant) => {
           this.units.forEach((unit) => {
-            if (unit.tid === quant.unit.id) {
+            if (parseInt(unit.tid, 10) === parseInt(quant.unit.id, 10)) {
               unitNames.push(unit.name);
             }
           });

@@ -95,9 +95,17 @@ export default {
         if (action.type === 'loadCachedAreas') {
           store.dispatch('updateAreas');
         }
+        // Only update units when logs have been obtained from the server
+
+        if (action.type === 'sendLogs') {
+          store.dispatch('updateUnits');
+        }
+
+/*
         if (action.type === 'loadCachedUnits') {
           store.dispatch('updateUnits');
         }
+        */
       },
     });
   },
