@@ -3,12 +3,6 @@
     <transition name="filter">
       <div class="modal-filter" v-if="showDrawer" @click="showDrawer = !showDrawer"/>
     </transition>
-    <header class="navbar navbar-light fixed-top bg-light">
-      <div class="menu" @click="showDrawer = !showDrawer">
-        <icon-menu/>
-      </div>
-      <img class="logo" src='./farmOS.png' alt="farmOS">
-    </header>
 
     <transition name="drawer">
       <div class="drawer container-fluid" v-if="showDrawer">
@@ -95,6 +89,7 @@
 
               <router-view
                 :useGeolocation="useGeolocation"
+                @toggleDrawer="showDrawer = !showDrawer"
               />
 
             </div>

@@ -1,6 +1,10 @@
 <template lang="html">
   <div>
     <router-view
+      name="menubar"
+      @toggleDrawer="$emit('toggleDrawer')"
+    />
+    <router-view
       :logs='logs'
       :areas='areas'
       :assets='assets'
