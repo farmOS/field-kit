@@ -14,7 +14,7 @@
           <icon-open-in-new/>
         </li>
       </a>
-      <li>
+      <li @click="$emit('deleteCurrentLog')">
         <icon-delete/>
       </li>
       <li>

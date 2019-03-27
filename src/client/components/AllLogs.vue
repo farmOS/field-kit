@@ -57,7 +57,7 @@
             class="edit-btn">
             <icon-edit />
           </router-link>
-          <div class="del-btn" @click="openDeleteDialog(i)">
+          <div class="del-btn" @click="$emit('deleteLog', i)">
             <icon-delete/>
           </div>
         </div>
@@ -73,52 +73,6 @@
       </div>
     </router-link>
 
-    <div
-      v-if="showDeleteDialog"
-      class="modal"
-      id="delete-dialog"
-      tabindex="-1"
-      role="dialog">
-      <div class="modal-filter"></div>
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Confirm Deletion</h5>
-            <button
-              type="button"
-              class="close"
-              @click='cancelDelete'
-              aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            Are sure you'd like to delete the log "{{logs[logIndexToDelete].name.data}}"?&nbsp;
-            <span
-              v-if='logs[logIndexToDelete].wasPushedToServer'>
-              Deleting it on this device will not remove the log from the server.
-            </span>
-            <span v-else>
-              It has not yet been synced to the server and cannot be recovered after it's deleted.
-            </span>
-          </div>
-          <div class="modal-footer">
-            <button
-            type="button"
-            class="btn btn-secondary"
-            @click='cancelDelete'>
-            Cancel
-          </button>
-          <button
-            type="button"
-            class="btn btn-danger"
-            @click='confirmDelete()'>
-            Delete
-          </button>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 
 </template>
@@ -149,38 +103,12 @@ export default {
     IconEdit,
     IconSync,
   },
-  data() {
-    return {
-      showDeleteDialog: false,
-      logIndexToDelete: null,
-    };
-  },
   methods: {
     syncTime(unixTimestamp) {
       return moment.unix(unixTimestamp).format('YYYY-MM-DD');
     },
     showDate(unixTimestamp) {
       return moment.unix(unixTimestamp).format('MMM DD YYYY');
-    },
-    openDeleteDialog(index) {
-      this.showDeleteDialog = true;
-      this.logIndexToDelete = index;
-    },
-    cancelDelete() {
-      this.showDeleteDialog = false;
-    },
-    confirmDelete() {
-      const log = this.logs[this.logIndexToDelete];
-      const payload = {
-        index: this.logIndexToDelete,
-        local_id: log.local_id,
-        id: log.id,
-        remoteUri: log.remoteUri,
-        name: log.name.data,
-        type: log.type.data,
-      };
-      this.$store.commit('deleteLog', payload);
-      this.showDeleteDialog = false;
     },
   },
 };
@@ -274,33 +202,6 @@ export default {
     top: .375rem;
     left: .375rem;
     z-index: -10;
-  }
-
-  .modal {
-    display: block;
-    padding-right: 15px;
-    overflow-x: hidden;
-    overflow-y: auto;
-    opacity: 1;
-  }
-  .modal-filter {
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    background-color: #ccc;
-    opacity: .5;
-  }
-  .modal-dialog {
-    transform: translate(0,0);
-    width: auto;
-    margin: 3rem;
-    pointer-events: none;
-  }
-  @media (min-width: 576px) {
-    .modal-dialog {
-      max-width: 500px;
-      margin: 1.75rem auto;
-    }
   }
 
 </style>
