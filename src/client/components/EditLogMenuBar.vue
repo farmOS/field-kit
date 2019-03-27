@@ -4,7 +4,7 @@
       <li class="menu" @click="$emit('toggleDrawer')">
         <icon-menu/>
       </li>
-      <li>My Logs</li>
+      <li>Edit Log</li>
     </ul>
   </header>
 </template>
@@ -13,7 +13,7 @@
 import IconMenu from '../../icons/icon-menu.vue'; // eslint-disable-line import/extensions
 
 export default {
-  name: 'AllLogsMenuBar',
+  name: 'EditLogsMenuBar',
   components: { IconMenu },
 };
 </script>

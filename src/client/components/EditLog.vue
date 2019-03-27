@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h1>Edit Log</h1>
     <div class="well" >
 
       <br>

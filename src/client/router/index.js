@@ -3,6 +3,7 @@ import Router from 'vue-router';
 import Logs from '../components/Logs';
 import AllLogs from '../components/AllLogs';
 import AllLogsMenuBar from '../components/AllLogsMenuBar';
+import EditLogMenuBar from '../components/EditLogMenuBar';
 import EditLog from '../components/EditLog';
 
 Vue.use(Router);
@@ -31,7 +32,7 @@ export default new Router({
           name: 'edit-log',
           components: {
             default: EditLog,
-            menubar: AllLogsMenuBar,
+            menubar: EditLogMenuBar,
           },
           props: true,
         },
