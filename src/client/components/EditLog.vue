@@ -307,18 +307,6 @@
           class="preview" />
       </div>
 
-      <div class="input-group">
-        <router-link :to="'/logs'">
-          <button
-            :disabled='false'
-            title="Done Editing"
-            type="button"
-            class="btn btn-success btn-lg">
-            Done Editing
-          </button>
-        </router-link>
-      </div>
-      <br>
       <div class="well">
       </div>
     </div>

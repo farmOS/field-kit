@@ -3,6 +3,9 @@
     <router-view
       name="menubar"
       @toggleDrawer="$emit('toggleDrawer')"
+      @syncAll="syncAll"
+      :logs='logs'
+      :currentLogIndex='currentLogIndex'
     />
     <router-view
       :logs='logs'
@@ -39,6 +42,12 @@ export default {
   beforeDestroy() {
     this.$store.commit('clearLogs');
   },
+  methods: {
+    syncAll() {
+      // Calling getLogs first.  On return, it will call a check action in httpModule.
+      this.$store.dispatch('getLogs');
+    },
+  }
 };
 </script>
 

@@ -1,13 +1,5 @@
 <template lang="html">
   <div>
-    <div class="btn-wrapper">
-      <button
-        @click="syncAll"
-        type="button"
-        class="btn btn-info btn-navbar navbar-right">
-        Sync all to farmOS
-      </button>
-    </div>
     <div class="card-deck">
       <div
         class="card"
@@ -17,7 +9,9 @@
           <h4 class="card-title">Let's Get Started!</h4>
           <p class="card-text">
             You don't have any logs to display yet. Logs are records of events
-            in farmOS. You can add some by clicking the "+" sign below.
+            in farmOS. You can add some by clicking the <IconAddCircle class="inline-svg"/>
+            icon below, or you can get uncompleted tasks from the server by
+            clicking the <IconCloudUpload class="inline-svg"/> icon above.
           </p>
         </div>
       </div>
@@ -135,6 +129,7 @@ import IconAddCircle from '../../icons/icon-add-circle.vue'; // eslint-disable-l
 import IconAssignment from '../../icons/icon-assignment.vue'; // eslint-disable-line import/extensions
 import IconAssignmentDone from '../../icons/icon-assignment-done.vue'; // eslint-disable-line import/extensions
 import IconAssignmentLate from '../../icons/icon-assignment-late.vue'; // eslint-disable-line import/extensions
+import IconCloudUpload from '../../icons/icon-cloud-upload.vue'; // eslint-disable-line import/extensions
 import IconDelete from '../../icons/icon-delete.vue'; // eslint-disable-line import/extensions
 import IconEdit from '../../icons/icon-edit.vue'; // eslint-disable-line import/extensions
 import IconSync from '../../icons/icon-sync.vue'; // eslint-disable-line import/extensions
@@ -149,6 +144,7 @@ export default {
     IconAssignment,
     IconAssignmentDone,
     IconAssignmentLate,
+    IconCloudUpload,
     IconDelete,
     IconEdit,
     IconSync,
@@ -186,22 +182,14 @@ export default {
       this.$store.commit('deleteLog', payload);
       this.showDeleteDialog = false;
     },
-    syncAll() {
-      // Calling getLogs first.  On return, it will call a check action in httpModule.
-      this.$store.dispatch('getLogs');
-    },
   },
 };
 
 </script>
 
 <style scoped>
-  .btn-wrapper {
-    margin: 1rem 0;
-  }
-
-  .btn-wrapper > button {
-    margin-right: 1rem;
+  .inline-svg {
+    height: 1rem;
   }
 
   .sync-status {
