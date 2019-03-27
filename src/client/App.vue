@@ -188,7 +188,7 @@ export default {
   }
 
   .drawer header {
-    background-color: var(--farmos-green);
+    background-color: var(--farmos-green-dark);
     color: white;
     height: 9rem;
   }

@@ -1,14 +1,6 @@
 <template lang="html">
   <div>
     <div class="btn-wrapper">
-        <!-- Initialize the new log as an observation -->
-        <router-link :to="{ name: 'edit-log', params: { type: 'farm_observation' } }">
-        <button
-          type="button"
-          class="btn btn-success btn-navbar">
-          Create log
-        </button>
-      </router-link>
       <button
         @click="syncAll"
         type="button"
@@ -25,7 +17,7 @@
           <h4 class="card-title">Let's Get Started!</h4>
           <p class="card-text">
             You don't have any logs to display yet. Logs are records of events
-            in farmOS. You can add some by clicking "Create Log" above.
+            in farmOS. You can add some by clicking the "+" sign below.
           </p>
         </div>
       </div>
@@ -77,6 +69,16 @@
         </div>
       </div>
     </div>
+
+    <!-- Initialize the new log as an observation -->
+    <router-link :to="{ name: 'edit-log', params: { type: 'farm_observation' } }">
+      <div class="add-circle" @click="">
+        <div class="background-circle">
+        </div>
+        <icon-add-circle/>
+      </div>
+    </router-link>
+
     <div
       v-if="showDeleteDialog"
       class="modal"
@@ -129,6 +131,7 @@
 
 <script>
 import moment from 'moment';
+import IconAddCircle from '../../icons/icon-add-circle.vue'; // eslint-disable-line import/extensions
 import IconAssignment from '../../icons/icon-assignment.vue'; // eslint-disable-line import/extensions
 import IconAssignmentDone from '../../icons/icon-assignment-done.vue'; // eslint-disable-line import/extensions
 import IconAssignmentLate from '../../icons/icon-assignment-late.vue'; // eslint-disable-line import/extensions
@@ -142,6 +145,7 @@ export default {
     'userId',
     ],
   components: {
+    IconAddCircle,
     IconAssignment,
     IconAssignmentDone,
     IconAssignmentLate,
@@ -259,6 +263,29 @@ export default {
       to {
           transform: rotate(-360deg);
       }
+  }
+
+  .add-circle {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    fill: var(--farmos-green-light);
+  }
+
+  .add-circle svg {
+    height: 4.5rem;
+    width: 4.5rem;
+  }
+
+  .background-circle {
+    height: 3.75rem;
+    width: 3.75rem;
+    border-radius: 2rem;
+    background-color: var(--farmos-green-dark);
+    position: absolute;
+    top: .375rem;
+    left: .375rem;
+    z-index: -10;
   }
 
   .modal {
