@@ -198,6 +198,7 @@ export default {
     width: 3.75rem;
     border-radius: 2rem;
     background-color: var(--farmos-green-dark);
+    box-shadow: -1px 2px 5px rgba(0, 0, 0, .25);
     position: absolute;
     top: .375rem;
     left: .375rem;
