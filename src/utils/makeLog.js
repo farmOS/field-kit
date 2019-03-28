@@ -244,7 +244,6 @@ export default {
   fromSql: makeLogFactory(SQL, STORE),
   fromServer: makeLogFactory(SERVER, STORE),
 };
-
 /*
   parseImages and parseObjects are used both in src: store and src: SQL
   For now, I will retain them in their original form, and use only on the data: property
@@ -258,9 +257,32 @@ export default {
 */
 function parseImages(x) {
   if (typeof x === 'object') {
-    return x;
+    // Image references obtained from the server are objects
+    const imageArray = [];
+    if (Array.isArray(x)) {
+      x.forEach((img) => {
+        if (typeof img === 'string') {
+          // imageArray.push(checkJSON(img));
+          imageArray.push(img);
+        } else {
+          Object.keys(img).forEach((key) => {
+            if (img[key].id) {
+              imageArray.push(`${img[key].id}`);
+            } else {
+              imageArray.push(img[key]);
+            }
+          });
+        }
+      });
+    } else {
+      Object.keys(x).forEach((key) => {
+        imageArray.push(x[key]);
+      });
+    }
+    return imageArray;
   }
   if (typeof x === 'string') {
+    // return (x === '') ? [] : [].concat(checkJSON(x));
     return (x === '') ? [] : [].concat(x);
   }
   throw new Error(`${x} cannot be parsed as an image array`);

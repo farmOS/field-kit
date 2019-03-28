@@ -100,12 +100,6 @@ export default {
         if (action.type === 'sendLogs') {
           store.dispatch('updateUnits');
         }
-
-/*
-        if (action.type === 'loadCachedUnits') {
-          store.dispatch('updateUnits');
-        }
-        */
       },
     });
   },
