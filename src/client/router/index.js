@@ -34,7 +34,7 @@ export default new Router({
             default: EditLog,
             menubar: EditLogMenuBar,
           },
-          props: true,
+          props: { default: true, menubar: true },
         },
       ],
     },
