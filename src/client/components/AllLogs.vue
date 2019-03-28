@@ -23,35 +23,26 @@
       >
         <router-link :to="{ name: 'edit-log', params: { index: i, type: log.type.data } }">
           <div class="card-body">
-            <p>
-              <icon-assignment-done v-if="log.done.data"/>
-              <icon-assignment
-                v-if="!log.done.data && (log.timestamp.data * 1000 > new Date().valueOf())"/>
-              <icon-assignment-late
-                v-if="!log.done.data && (log.timestamp.data * 1000 < new Date().valueOf())"/>
-              {{showDate(log.timestamp.data)}}
-              <span
-                v-if="log.wasPushedToServer"
-                class="sync-status"
-              >
-                <icon-cloud-done/>
-              </span>
-              <span
-                v-else-if="log.isReadyToSync"
-                class="sync-status"
-              >
-                <div
-                  class="spin"
-                  aria-hidden="true"
-                >
-                  <icon-sync/>
-                </div>
-              </span>
-              <span v-else class="sync-status">
-                <icon-cloud-upload/>
-              </span>
-            </p>
+            <icon-assignment-done
+              class="assignment"
+              v-if="log.done.data"/>
+            <icon-assignment
+              class="assignment"
+              v-if="!log.done.data && (log.timestamp.data * 1000 > new Date().valueOf())"/>
+            <icon-assignment-late
+              class="assignment"
+              v-if="!log.done.data && (log.timestamp.data * 1000 < new Date().valueOf())"/>
             <h5>{{log.name.data}}</h5>
+            <icon-cloud-done v-if="log.wasPushedToServer" class="sync-status"/>
+            <div
+              class="spin sync-status"
+              v-else-if="log.isReadyToSync"
+              aria-hidden="true">
+              <icon-sync/>
+            </div>
+            <icon-cloud-upload v-else class="sync-status"/>
+            <p>{{log.notes.data}}</p>
+            {{showDate(log.timestamp.data)}}
           </div>
         </router-link>
       </div>
@@ -108,6 +99,18 @@ export default {
 </script>
 
 <style scoped>
+  .assignment {
+    position: absolute;
+  }
+
+  .card-body h5 {
+    margin-left: 2rem;
+  }
+
+  .card-body p {
+    margin-bottom: 0.5rem;
+  }
+
   .inline-svg {
     height: 1rem;
   }
@@ -122,6 +125,7 @@ export default {
 
   .sync-status {
     position: absolute;
+    top: 1.25rem;
     right: 1.25rem;
   }
 
