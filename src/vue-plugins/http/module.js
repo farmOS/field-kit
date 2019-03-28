@@ -109,6 +109,7 @@ export default {
           // Logs originating on the server possess an ID field; others do not.
           const newLog = makeLog.toServer(rootState.farm.logs[index]);
           newLog.images = processImages(newLog.images);
+          newLog.done = newLog.done ? 1 : 0;
           // I need to check wasPushedToServer, which is not in logFactory Server
           const synced = rootState.farm.logs[index].wasPushedToServer;
           if (!synced) {
@@ -191,6 +192,7 @@ export default {
                   wasPushedToServer: true,
                   // Trying to make isReady..
                   isReadyToSync: false,
+                  done: (parseInt(log.done, 10) === 1),
                 }));
             }
             if (!checkStatus.localChange && checkStatus.localId !== null && checkStatus.serverChange) { // eslint-disable-line max-len
@@ -202,6 +204,7 @@ export default {
                   wasPushedToServer: true,
                   isReadyToSync: false,
                   local_id: checkStatus.localId,
+                  done: (parseInt(log.done, 10) === 1),
                 }),
               };
               commit('updateLogFromServer', updateParams);
@@ -256,6 +259,7 @@ export default {
                     wasPushedToServer: false,
                     local_id: checkStatus.localId,
                     id: log.id,
+                    done: (parseInt(log.done, 10) === 1),
                   }),
                 };
                 updateParams.log.isReadyToSync = true;
