@@ -1,6 +1,6 @@
 <template lang="html">
   <div>
-    <div class="card-deck">
+    <div class="card-group">
       <div
         class="card"
         v-if="logs.length < 1">
@@ -21,46 +21,39 @@
         v-for="(log, i) in logs"
         :key="`card-${logs.indexOf(log)}`"
       >
-        <div class="card-body">
-          <p>
-            <icon-assignment-done v-if="log.done.data"/>
-            <icon-assignment
-              v-if="!log.done.data && (log.timestamp.data * 1000 > new Date().valueOf())"/>
-            <icon-assignment-late
-              v-if="!log.done.data && (log.timestamp.data * 1000 < new Date().valueOf())"/>
-            {{showDate(log.timestamp.data)}}
-            <span
-              v-if="log.wasPushedToServer"
-              class="sync-status"
-            >
-              <a :href="log.remoteUri">synced</a>
-              ({{syncTime(log.timestamp.data)}})
-            </span>
-            <span
-              v-else-if="log.isReadyToSync"
-              class="sync-status"
-            >
-              <div
-                class="spin"
-                aria-hidden="true"
+        <router-link :to="{ name: 'edit-log', params: { index: i, type: log.type.data } }">
+          <div class="card-body">
+            <p>
+              <icon-assignment-done v-if="log.done.data"/>
+              <icon-assignment
+                v-if="!log.done.data && (log.timestamp.data * 1000 > new Date().valueOf())"/>
+              <icon-assignment-late
+                v-if="!log.done.data && (log.timestamp.data * 1000 < new Date().valueOf())"/>
+              {{showDate(log.timestamp.data)}}
+              <span
+                v-if="log.wasPushedToServer"
+                class="sync-status"
               >
-                <icon-sync/>
-              </div>
-            </span>
-            <span v-else class="sync-status">
-              unsynced
-            </span>
-          </p>
-          <h5>{{log.name.data}}</h5>
-          <router-link
-            :to="{ name: 'edit-log', params: { index: i, type: log.type.data } }"
-            class="edit-btn">
-            <icon-edit />
-          </router-link>
-          <div class="del-btn" @click="$emit('deleteLog', i)">
-            <icon-delete/>
+                <icon-cloud-done/>
+              </span>
+              <span
+                v-else-if="log.isReadyToSync"
+                class="sync-status"
+              >
+                <div
+                  class="spin"
+                  aria-hidden="true"
+                >
+                  <icon-sync/>
+                </div>
+              </span>
+              <span v-else class="sync-status">
+                <icon-cloud-upload/>
+              </span>
+            </p>
+            <h5>{{log.name.data}}</h5>
           </div>
-        </div>
+        </router-link>
       </div>
     </div>
 
@@ -83,6 +76,7 @@ import IconAddCircle from '../../icons/icon-add-circle.vue'; // eslint-disable-l
 import IconAssignment from '../../icons/icon-assignment.vue'; // eslint-disable-line import/extensions
 import IconAssignmentDone from '../../icons/icon-assignment-done.vue'; // eslint-disable-line import/extensions
 import IconAssignmentLate from '../../icons/icon-assignment-late.vue'; // eslint-disable-line import/extensions
+import IconCloudDone from '../../icons/icon-cloud-done.vue'; // eslint-disable-line import/extensions
 import IconCloudUpload from '../../icons/icon-cloud-upload.vue'; // eslint-disable-line import/extensions
 import IconDelete from '../../icons/icon-delete.vue'; // eslint-disable-line import/extensions
 import IconEdit from '../../icons/icon-edit.vue'; // eslint-disable-line import/extensions
@@ -98,15 +92,13 @@ export default {
     IconAssignment,
     IconAssignmentDone,
     IconAssignmentLate,
+    IconCloudDone,
     IconCloudUpload,
     IconDelete,
     IconEdit,
     IconSync,
   },
   methods: {
-    syncTime(unixTimestamp) {
-      return moment.unix(unixTimestamp).format('YYYY-MM-DD');
-    },
     showDate(unixTimestamp) {
       return moment.unix(unixTimestamp).format('MMM DD YYYY');
     },
@@ -118,6 +110,14 @@ export default {
 <style scoped>
   .inline-svg {
     height: 1rem;
+  }
+
+  .card-group > .card {
+    margin-bottom: 0;
+  }
+
+  .card-body {
+    color: var(--gray-dark);
   }
 
   .sync-status {
@@ -135,9 +135,9 @@ export default {
   }
 
   @media (min-width: 576px) {
-    .card-deck .card {
+    .card-group .card {
       flex: 0 0 576px;
-      margin-bottom: 15px;
+      /* margin-bottom: 15px; */
     }
   }
 

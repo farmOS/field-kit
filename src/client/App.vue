@@ -63,41 +63,39 @@
       </div>
     </transition>
 
-    <div class="main-container container-fluid">
-      <div class="row">
-        <section class="col-sm-12">
+    <main>
+      <section>
 
+        <div
+          v-for="(err, index) in errors"
+          :key="`err-${errors.indexOf(err)}`">
           <div
-            v-for="(err, index) in errors"
-            :key="`err-${errors.indexOf(err)}`">
-            <div
-              v-if="err.show"
-              class="alert alert-warning alert-dismissable" >
-              <span v-html="err.message"></span>
-              <button
-                type="button"
-                @click="closeError(index)"
-                class="close"
-                aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
+            v-if="err.show"
+            class="alert alert-warning alert-dismissable" >
+            <span v-html="err.message"></span>
+            <button
+              type="button"
+              @click="closeError(index)"
+              class="close"
+              aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
           </div>
+        </div>
 
-          <div class="region region-content">
-            <div class="block block-system">
+        <div class="region region-content">
+          <div class="block block-system">
 
-              <router-view
-                :useGeolocation="useGeolocation"
-                @toggleDrawer="showDrawer = !showDrawer"
-              />
+            <router-view
+              :useGeolocation="useGeolocation"
+              @toggleDrawer="showDrawer = !showDrawer"
+            />
 
-            </div>
           </div>
+        </div>
 
-        </section>
-      </div>
-    </div>
+      </section>
+    </main>
   </div>
 </template>
 
@@ -202,7 +200,7 @@ export default {
     margin-top: 0.5rem;
   }
 
-  .main-container {
+  main {
     margin-top: 3rem;
   }
 
