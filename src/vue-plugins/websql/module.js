@@ -213,6 +213,44 @@ export default {
       });
     },
 
+    createCachedCategory(_, newCat) {
+      const tableName = 'category';
+      const key = 'tid';
+      console.log('CREATING CATEGORY IN DB: ', newCat);
+      openDatabase() // eslint-disable-line no-use-before-define
+        .then(db => makeTable(db, tableName, newCat, key)) // eslint-disable-line no-use-before-define, max-len
+        .then(tx => saveRecord(tx, tableName, newCat)); // eslint-disable-line no-use-before-define, max-len
+    },
+
+    updateCachedCategory(context, cat) {
+      const table = 'category';
+      const key = 'tid';
+      openDatabase() // eslint-disable-line no-use-before-define
+        .then(db => getTX(db, table, key)) // eslint-disable-line no-use-before-define
+        .then(tx => saveRecord(tx, table, cat)); // eslint-disable-line no-use-before-define, max-len
+    },
+
+    deleteAllCachedCategories() {
+      openDatabase() // eslint-disable-line no-use-before-define
+        .then(db => getTX(db, 'category')) // eslint-disable-line no-use-before-define
+        .then(tx => dropTable(tx, 'category')) // eslint-disable-line no-use-before-define
+        .then(console.log) // eslint-disable-line no-console
+        .catch(console.error); // eslint-disable-line no-console
+    },
+
+    loadCachedCategories({ commit }) {
+      return new Promise((resolve, reject) => {
+        openDatabase() // eslint-disable-line no-use-before-define
+          .then(db => getRecords(db, 'category')) // eslint-disable-line no-use-before-define
+          .then((results) => {
+            console.log('GETTING CATEGORIES FROM DB: ', results);
+            commit('updateCategoriesFromCache', results);
+            resolve();
+          })
+          .catch(reject);
+      });
+    },
+
   },
 };
 

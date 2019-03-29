@@ -38,6 +38,9 @@ export default {
       // Return categories only.
       return farm().term.get('farm_log_categories').then((res) => {
         console.log('CATEGORIES FROM SERVER: ', res);
+        commit('deleteAllCategories');
+        const cats = res.list.map(({ tid, name }) => ({ tid, name }));
+        commit('addCategories', cats);
       }).catch((err) => { throw err; });
     },
     // SEND LOGS TO SERVER (step 2 of sync)

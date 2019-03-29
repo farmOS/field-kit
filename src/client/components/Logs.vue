@@ -19,6 +19,7 @@
       :localArea='localArea'
       :useGeolocation='useGeolocation'
       :units='units'
+      :categories='categories'
       :userId='userId'
     />
 
@@ -95,6 +96,7 @@ export default {
     localArea: state => state.farm.localArea,
     units: state => state.farm.units,
     userId: state => state.shell.user.uid,
+    categories: state => state.farm.categories,
   }),
   created() {
     this.$store.dispatch('onLogsComponentCreated');

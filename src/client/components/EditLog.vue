@@ -50,6 +50,20 @@
       </div>
 
       <div class="form-item form-item-name form-group">
+        <label for="type" class="control-label ">Log Categories</label>
+        <div class="input-group">
+          <select
+            class="custom-select col-sm-3 ">
+              <option
+                v-for="cat in categories"
+                :value="cat.tid">
+                {{ (cat) ? cat.name : '' }}
+              </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-item form-item-name form-group">
         <label for="notes" class="control-label ">Notes</label>
         <textarea
           :value="logs[currentLogIndex].notes.data"
@@ -369,6 +383,7 @@ export default {
     'localArea',
     'useGeolocation',
     'units',
+    'categories',
     // Set by router via edit/:type props=true
     'type',
   ],

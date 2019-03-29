@@ -11,10 +11,11 @@ export default {
         store.commit('clearAssets');
         store.commit('clearAreas');
         store.commit('clearUnits');
-        store.dispatch('loadCachedLogs');
+        store.commit('clearCategories');
         store.dispatch('loadCachedAssets');
         store.dispatch('loadCachedAreas');
         store.dispatch('loadCachedUnits');
+        store.dispatch('loadCachedCategories');
       }
     });
     store.subscribe((mutation) => {
@@ -52,6 +53,9 @@ export default {
       if (mutation.type === 'deleteAllUnits') {
         store.dispatch('deleteAllCachedUnits');
       }
+      if (mutation.type === 'deleteAllCategories') {
+        store.dispatch('deleteAllCachedCategories');
+      }
       if (mutation.type === 'addAreas') {
         mutation.payload.forEach((area) => {
           store.dispatch('createCachedArea', area);
@@ -66,6 +70,11 @@ export default {
       if (mutation.type === 'addUnits') {
         mutation.payload.forEach((unit) => {
           store.dispatch('createCachedUnit', unit);
+        });
+      }
+      if (mutation.type === 'addCategories') {
+        mutation.payload.forEach((cat) => {
+          store.dispatch('createCachedCategory', cat);
         });
       }
     });

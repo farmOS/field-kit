@@ -66,6 +66,7 @@ const farmModule = {
     geolocation: {},
     localArea: [],
     units: [],
+    categories: [],
   },
   mutations: {
     changeFarmName(state, name) {
@@ -87,14 +88,21 @@ const farmModule = {
     addUnits(state, units) {
       state.units = state.units.concat(units);
     },
+    addCategories(state, cats) {
+      state.categories = state.categories.concat(cats);
+      console.log('CATEGORIES IN THE STORE: ', state.categories);
+    },
     /*
-    updateUnitsFromCache is distinct from addUnits because it is NOT a hook for updating
-    units in the database.  It ONLY adds units to the local store.
-    updateUnitsFromCache is called by websql/module/loadCachedUnits
+    updateUnitsFromCache and updateCategoriesFromCache are distinct from addUnits because
+    they are NOT hooks for updating units/ cats in the database.  They ONLY add units/ cats
+    to the local store.  updateUnitsFromCache is called by websql/module/loadCachedUnits
     addUnits is called by http/module/updateUnits
     */
     updateUnitsFromCache(state, units) {
       state.units = state.units.concat(units);
+    },
+    updateCategoriesFromCache(state, cats) {
+      state.categories = state.categories.concat(cats);
     },
     /*
       This pushes the new log onto the `logs` array, and b/c `.push()` returns
@@ -158,6 +166,9 @@ const farmModule = {
     deleteAllUnits(state) {
       state.units = [];
     },
+    deleteAllCategories(state) {
+      state.categories = [];
+    },
     clearLogs(state) {
       state.logs.splice(0, state.logs.length);
     },
@@ -169,6 +180,9 @@ const farmModule = {
     },
     clearUnits(state) {
       state.units.splice(0, state.units.length);
+    },
+    clearCategories(state) {
+      state.categories.splice(0, state.categories.length);
     },
     setPhotoLoc(state, loc) {
       state.photoLoc = loc;
