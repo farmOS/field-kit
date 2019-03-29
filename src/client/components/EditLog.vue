@@ -60,6 +60,19 @@
                 {{ (cat) ? cat.name : '' }}
               </option>
           </select>
+          <ul v-if="logs[currentLogIndex].log_category.data.length > 0" class="list-group">
+            <li
+              v-for="(cat, i) in logs[currentLogIndex].log_category.data"
+              v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
+              class="list-group-item">
+              {{ (categoryNames.length > 0) ? categoryNames[i] : '' }}
+              <!--
+              <span class="remove-list-item" @click="removeQuant(i)">
+                &#x2715;
+              </span>
+              -->
+            </li>
+          </ul>
         </div>
       </div>
 
@@ -593,6 +606,20 @@ export default {
           });
         });
         return unitNames;
+      }
+      return [];
+    },
+    categoryNames() {
+      if (this.categories.length > 0 && this.logs[this.currentLogIndex].log_category.data.length > 0) {
+        let catNames = []
+        this.logs[this.currentLogIndex].log_category.data.forEach((logCat) => {
+          this.categories.forEach((cat) => {
+            if (parseInt(cat.tid, 10) === parseInt(logCat.id, 10)) {
+              catNames.push(cat.name);
+            }
+          });
+        });
+        return catNames;
       }
       return [];
     },

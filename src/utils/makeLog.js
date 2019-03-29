@@ -27,6 +27,7 @@ const makeLogFactory = (src, dest) => {
       log_owner = { changed: null, data: '' }, // eslint-disable-line camelcase
       // Quantity will be an array of objects, similar to area or asset
       quantity = { changed: null, data: [] },
+      log_category = { changed: null, data: [] }, // eslint-disable-line camelcase
       id,
       local_id, // eslint-disable-line camelcase
       name = { changed: null, data: '' },
@@ -52,6 +53,7 @@ const makeLogFactory = (src, dest) => {
           log_owner,
           notes,
           quantity: { data: parseObjects(quantity.data), changed: quantity.changed }, // eslint-disable-line no-use-before-define, max-len
+          log_category: { data: parseObjects(log_category.data), changed: log_category.changed }, // eslint-disable-line no-use-before-define, max-len
           id,
           local_id,
           name,
@@ -87,6 +89,7 @@ const makeLogFactory = (src, dest) => {
           images: images.data,
           asset: asset.data,
           quantity: quantity.data,
+          log_category: log_category.data,
         };
         /*
           Only return id property if one has already been assigned by the server,
@@ -109,6 +112,7 @@ const makeLogFactory = (src, dest) => {
           log_owner: JSON.stringify(log_owner),
           notes: JSON.stringify(notes),
           quantity: JSON.stringify(quantity),
+          log_category: JSON.stringify(log_category),
           id,
           name: JSON.stringify(name),
           type: JSON.stringify(type),
@@ -143,6 +147,7 @@ const makeLogFactory = (src, dest) => {
       log_owner = { changed: null, data: '' }, // eslint-disable-line camelcase
       // quantity will be an array of objects, similar to area or asset
       quantity = { changed: null, data: [] },
+      log_category = { changed: null, data: [] }, // eslint-disable-line camelcase
       id,
       local_id, // eslint-disable-line camelcase
       name = { changed: null, data: '' },
@@ -162,6 +167,7 @@ const makeLogFactory = (src, dest) => {
         log_owner: JSON.parse(log_owner),
         notes: JSON.parse(notes),
         quantity: { data: parseObjects(JSON.parse(quantity).data), changed: JSON.parse(quantity).changed }, // eslint-disable-line no-use-before-define, max-len
+        log_category: { data: parseObjects(JSON.parse(log_category).data), changed: JSON.parse(log_category).changed }, // eslint-disable-line no-use-before-define, max-len
         id: id === 'undefined' ? undefined : id,
         local_id,
         name: JSON.parse(name),
@@ -192,6 +198,7 @@ const makeLogFactory = (src, dest) => {
       const {
         log_owner, // eslint-disable-line camelcase
         quantity,
+        log_category, // eslint-disable-line camelcase
         id,
         local_id, // eslint-disable-line camelcase
         name,
@@ -209,6 +216,7 @@ const makeLogFactory = (src, dest) => {
         log_owner: { data: log_owner, changed: nowStamp },
         notes: { data: parseNotes(notes), changed: nowStamp }, // eslint-disable-line no-use-before-define, max-len
         quantity: { data: quantity, changed: nowStamp },
+        log_category: { data: log_category, changed: nowStamp },
         local_id,
         name: { data: name, changed: nowStamp },
         type: { data: type, changed: nowStamp },
