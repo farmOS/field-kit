@@ -37,7 +37,6 @@ export default {
     updateCategories({ commit }) {
       // Return categories only.
       return farm().term.get('farm_log_categories').then((res) => {
-        console.log('CATEGORIES FROM SERVER: ', res);
         commit('deleteAllCategories');
         const cats = res.list.map(({ tid, name }) => ({ tid, name }));
         commit('addCategories', cats);
@@ -137,7 +136,6 @@ export default {
       const syncDate = localStorage.getItem('syncDate');
       return farm().log.get(rootState.shell.settings.logFilters, localStorage.getItem('token'))
         .then((res) => {
-          console.log('LOGS FROM SERVER', res)
           // See whether logs are new, or currently in the store
           // If res is a single log, check vs current, run through the logFactory and call addLog
           // If res is multiple, check each vs current, run through logFactory and call addLogs

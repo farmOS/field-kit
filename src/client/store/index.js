@@ -90,7 +90,6 @@ const farmModule = {
     },
     addCategories(state, cats) {
       state.categories = state.categories.concat(cats);
-      console.log('CATEGORIES IN THE STORE: ', state.categories);
     },
     /*
     updateUnitsFromCache and updateCategoriesFromCache are distinct from addUnits because

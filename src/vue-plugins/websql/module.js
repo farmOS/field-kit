@@ -216,7 +216,6 @@ export default {
     createCachedCategory(_, newCat) {
       const tableName = 'category';
       const key = 'tid';
-      console.log('CREATING CATEGORY IN DB: ', newCat);
       openDatabase() // eslint-disable-line no-use-before-define
         .then(db => makeTable(db, tableName, newCat, key)) // eslint-disable-line no-use-before-define, max-len
         .then(tx => saveRecord(tx, tableName, newCat)); // eslint-disable-line no-use-before-define, max-len
@@ -243,7 +242,6 @@ export default {
         openDatabase() // eslint-disable-line no-use-before-define
           .then(db => getRecords(db, 'category')) // eslint-disable-line no-use-before-define
           .then((results) => {
-            console.log('GETTING CATEGORIES FROM DB: ', results);
             commit('updateCategoriesFromCache', results);
             resolve();
           })
