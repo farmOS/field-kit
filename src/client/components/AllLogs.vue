@@ -182,6 +182,11 @@ export default {
     flex: 0 0 auto;
   }
 
+  .log-date span {
+    margin-bottom: .25rem;
+    padding: .125rem;
+  }
+
   .tags {
     display: flex;
     justify-content: flex-end;
