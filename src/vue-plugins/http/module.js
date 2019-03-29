@@ -34,6 +34,12 @@ export default {
         commit('addUnits', units);
       }).catch((err) => { throw err; });
     },
+    updateCategories({ commit }) {
+      // Return categories only.
+      return farm().term.get('farm_log_categories').then((res) => {
+        console.log('CATEGORIES FROM SERVER: ', res);
+      }).catch((err) => { throw err; });
+    },
     // SEND LOGS TO SERVER (step 2 of sync)
     sendLogs({ commit, rootState }, payload) {
       // Update logs in the database and local store after send completes
@@ -128,6 +134,7 @@ export default {
       const syncDate = localStorage.getItem('syncDate');
       return farm().log.get(rootState.shell.settings.logFilters, localStorage.getItem('token'))
         .then((res) => {
+          console.log('LOGS FROM SERVER', res)
           // See whether logs are new, or currently in the store
           // If res is a single log, check vs current, run through the logFactory and call addLog
           // If res is multiple, check each vs current, run through logFactory and call addLogs
