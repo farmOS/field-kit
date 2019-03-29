@@ -199,7 +199,7 @@ const makeLogFactory = (src, dest) => {
         timestamp,
         images,
         done,
-        uri,
+        url,
         asset,
         area,
         geofield,
@@ -217,7 +217,7 @@ const makeLogFactory = (src, dest) => {
         done: { data: done, changed: nowStamp },
         isCachedLocally: false,
         wasPushedToServer: true,
-        remoteUri: uri,
+        remoteUri: url,
         asset: { data: asset, changed: nowStamp },
       };
       // Seedings do not have areas and geofields
