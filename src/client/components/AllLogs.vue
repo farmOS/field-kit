@@ -23,26 +23,47 @@
       >
         <router-link :to="{ name: 'edit-log', params: { index: i, type: log.type.data } }">
           <div class="card-body">
-            <icon-assignment-done
-              class="assignment"
-              v-if="log.done.data"/>
-            <icon-assignment
-              class="assignment"
-              v-if="!log.done.data && (log.timestamp.data * 1000 > new Date().valueOf())"/>
-            <icon-assignment-late
-              class="assignment"
-              v-if="!log.done.data && (log.timestamp.data * 1000 < new Date().valueOf())"/>
-            <h5>{{log.name.data}}</h5>
-            <icon-cloud-done v-if="log.wasPushedToServer" class="sync-status"/>
-            <div
-              class="spin sync-status"
-              v-else-if="log.isReadyToSync"
-              aria-hidden="true">
-              <icon-sync/>
+
+            <div class="card-row-1">
+              <icon-assignment-done
+                class="assignment"
+                v-if="log.done.data"/>
+              <icon-assignment
+                class="assignment"
+                v-if="!log.done.data && (log.timestamp.data * 1000 > new Date().valueOf())"/>
+              <icon-assignment-late
+                class="assignment"
+                v-if="!log.done.data && (log.timestamp.data * 1000 < new Date().valueOf())"/>
+              <div class="log-name">
+                <h5>{{log.name.data}}</h5>
+              </div>
+              <icon-cloud-done v-if="log.wasPushedToServer" class="sync-status"/>
+              <div
+                class="spin sync-status"
+                v-else-if="log.isReadyToSync"
+                aria-hidden="true">
+                <icon-sync/>
+              </div>
+              <icon-cloud-upload v-else class="sync-status"/>
             </div>
-            <icon-cloud-upload v-else class="sync-status"/>
-            <p>{{log.notes.data}}</p>
-            {{showDate(log.timestamp.data)}}
+
+            <div class="card-row-2">
+              <p>{{log.notes.data}}</p>
+            </div>
+
+            <div class="card-row-3">
+              <div class="log-date">
+                <span>{{showDate(log.timestamp.data)}}</span>
+              </div>
+              <div class="tags">
+                <span
+                  v-for="area in mapTidsToAreas(log)"
+                  class="tag tag-area">
+                  {{area.name}}
+                </span>
+              </div>
+            </div>
+
           </div>
         </router-link>
       </div>
@@ -77,6 +98,8 @@ export default {
   props: [
     'logs',
     'userId',
+    'assets',
+    'areas',
     ],
   components: {
     IconAddCircle,
@@ -93,24 +116,20 @@ export default {
     showDate(unixTimestamp) {
       return moment.unix(unixTimestamp).format('MMM DD YYYY');
     },
+    // Pass in a log and get back an array of the areas attached to that log
+    mapTidsToAreas(log) {
+      return log.area.data.map(a1 => this.areas.find(a2 => a2.tid === a1.id))
+    },
+    // Pass in a log and get back an array of the areas attached to that log
+    mapIdsToAssets(log) {
+      return log.asset.data.map(a1 => this.assets.find(a2 => a2.id === a1.id))
+    },
   },
 };
 
 </script>
 
 <style scoped>
-  .assignment {
-    position: absolute;
-  }
-
-  .card-body h5 {
-    margin-left: 2rem;
-  }
-
-  .card-body p {
-    margin-bottom: 0.5rem;
-  }
-
   .inline-svg {
     height: 1rem;
   }
@@ -123,19 +142,63 @@ export default {
     color: var(--gray-dark);
   }
 
+  .card-row-1 {
+    display: flex;
+    flex-flow: row nowrap;
+  }
+
+  .card-row-2 {
+    display: flex;
+    flex-flow: row nowrap;
+  }
+
+  .card-row-3 {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+  }
+
+  .assignment {
+    flex: 0 1 auto;
+  }
+
+  .log-name {
+    flex: 5 0 auto;
+    margin-left: 1rem;
+  }
+
   .sync-status {
-    position: absolute;
-    top: 1.25rem;
-    right: 1.25rem;
+    flex: 0 1 auto;
   }
 
-  .edit-btn, .del-btn {
-    display: inline-block;
-    fill: var(--gray-dark)
+  .card-body p {
+    margin-bottom: 0.5rem;
   }
 
-  .del-btn {
-    float: right;
+  .log-date {
+    display: flex;
+    flex-flow: column;
+    justify-content: flex-end;
+    flex: 0 0 auto;
+  }
+
+  .tags {
+    display: flex;
+    justify-content: flex-end;
+    flex-flow: row wrap;
+    flex: 0 1 auto;
+  }
+
+  .tag {
+    margin-left: .25rem;
+    margin-bottom: .25rem;
+    padding: .125rem;
+  }
+
+  .tag-area {
+    border: 1px solid rgba(0, 123, 255, 1);
+    border-radius: .25rem;
+    background-color: rgba(0, 123, 255, .125)
   }
 
   @media (min-width: 576px) {
