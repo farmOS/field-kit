@@ -52,7 +52,8 @@
             </div>
 
             <div class="card-row-3">
-              <div class="log-date">
+              <div class="date-and-type">
+                <span class="log-type">{{getLogType(log.type.data).toUpperCase()}}</span>
                 <span>{{showDate(log.timestamp.data)}}</span>
               </div>
               <div class="tags">
@@ -60,6 +61,11 @@
                   v-for="area in mapTidsToAreas(log)"
                   class="tag tag-area">
                   {{area.name}}
+                </span>
+                <span
+                  v-for="asset in mapIdsToAssets(log)"
+                  class="tag tag-asset">
+                  {{asset.name}}
                 </span>
               </div>
             </div>
@@ -84,6 +90,7 @@
 
 <script>
 import moment from 'moment';
+import getLogType from '@/utils/getLogType'
 import IconAddCircle from '../../icons/icon-add-circle.vue'; // eslint-disable-line import/extensions
 import IconAssignment from '../../icons/icon-assignment.vue'; // eslint-disable-line import/extensions
 import IconAssignmentDone from '../../icons/icon-assignment-done.vue'; // eslint-disable-line import/extensions
@@ -124,6 +131,9 @@ export default {
     mapIdsToAssets(log) {
       return log.asset.data.map(a1 => this.assets.find(a2 => a2.id === a1.id))
     },
+    getLogType(type) {
+      return getLogType(type);
+    },
   },
 };
 
@@ -145,6 +155,10 @@ export default {
   .card-row-1 {
     display: flex;
     flex-flow: row nowrap;
+  }
+
+  .card-row-1 h5 {
+    font-weight: 700;
   }
 
   .card-row-2 {
@@ -175,21 +189,26 @@ export default {
     margin-bottom: 0.5rem;
   }
 
-  .log-date {
+  .date-and-type {
     display: flex;
     flex-flow: column;
     justify-content: flex-end;
     flex: 0 0 auto;
   }
 
-  .log-date span {
+  .date-and-type span {
     margin-bottom: .25rem;
-    padding: .125rem;
+    padding: .125rem 0;
+  }
+
+  .log-type {
+    font-size: .75rem;
   }
 
   .tags {
     display: flex;
     justify-content: flex-end;
+    align-items: flex-end;
     flex-flow: row wrap;
     flex: 0 1 auto;
   }
@@ -198,12 +217,17 @@ export default {
     margin-left: .25rem;
     margin-bottom: .25rem;
     padding: .125rem;
+    border-radius: .25rem;
   }
 
   .tag-area {
     border: 1px solid rgba(0, 123, 255, 1);
-    border-radius: .25rem;
     background-color: rgba(0, 123, 255, .125)
+  }
+
+  .tag-asset {
+    border: 1px solid rgba(96, 175, 50, 1);
+    background-color: rgba(96, 175, 50, .125)
   }
 
   @media (min-width: 576px) {
