@@ -209,6 +209,9 @@ const farmModule = {
     serverLogToDb() {
       // Right now, this is just a hook to call createLogFromServer in the dbModule
     },
+    onLogsComponentCreated() {
+      // A hook for initializng other actions when Logs.vue is created
+    },
   },
 };
 

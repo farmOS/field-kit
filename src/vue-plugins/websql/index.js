@@ -1,30 +1,21 @@
 import module from './module';
 
 export default {
-  install(Vue, { store, router }) {
+  install(Vue, { store }) {
     store.registerModule('data', module);
-    router.beforeEach((to, from, next) => {
-      // Loads logs and user data when /logs or /logs/ routes are called
-      // The former is called at app load; the latter when the user navigates
-      // back to AllLogs using the menu (child view w/ url '')
-      if (to.path === '/logs/' || to.path === '/logs') {
+    store.subscribeAction((action) => {
+      // Load logs, areas, assets & user info when the Logs component is created
+      if (action.type === 'onLogsComponentCreated') {
+        store.dispatch('loadCachedUserAndSiteInfo');
         store.commit('clearLogs');
-        store.dispatch('loadCachedUserAndSiteInfo');
-        store.dispatch('loadCachedLogs');
-        next();
-      }
-      // loads assets, areas and user data when ANY /logs/edit route is called
-      if (to.path.includes('/logs/edit')) {
-        store.dispatch('loadCachedUserAndSiteInfo');
         store.commit('clearAssets');
         store.commit('clearAreas');
         store.commit('clearUnits');
+        store.dispatch('loadCachedLogs');
         store.dispatch('loadCachedAssets');
         store.dispatch('loadCachedAreas');
         store.dispatch('loadCachedUnits');
-        next();
       }
-      next();
     });
     store.subscribe((mutation) => {
       if (mutation.type === 'addLogAndMakeCurrent') {

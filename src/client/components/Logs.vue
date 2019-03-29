@@ -96,6 +96,9 @@ export default {
     units: state => state.farm.units,
     userId: state => state.shell.user.uid,
   }),
+  mounted() {
+    this.$store.dispatch('onLogsComponentCreated');
+  },
   beforeDestroy() {
     this.$store.commit('clearLogs');
   },
