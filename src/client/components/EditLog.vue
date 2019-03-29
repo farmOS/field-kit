@@ -53,6 +53,7 @@
         <label for="type" class="control-label ">Log Categories</label>
         <div class="input-group">
           <select
+            @input="addCategory($event.target.value)"
             class="custom-select col-sm-3 ">
               <option
                 v-for="cat in categories"
@@ -66,11 +67,9 @@
               v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
               class="list-group-item">
               {{ (categoryNames.length > 0) ? categoryNames[i] : '' }}
-              <!--
-              <span class="remove-list-item" @click="removeQuant(i)">
+              <span class="remove-list-item" @click="removeCategory(i)">
                 &#x2715;
               </span>
-              -->
             </li>
           </ul>
         </div>
@@ -466,6 +465,12 @@ export default {
       this.$store.commit('updateCurrentLog', newProps);
     },
 
+    addCategory(id) {
+      const catReference = { id: id, resource: 'taxonomy_term'};
+      const newCategories = this.logs[this.currentLogIndex].log_category.data.concat(catReference);
+      this.updateCurrentLog('log_category', newCategories);
+    },
+
     addAsset(id) {
       const assetReference = { id: id, resource: 'farm_asset'};
       const newAssets = this.logs[this.currentLogIndex].asset.data.concat(assetReference);
@@ -507,7 +512,13 @@ export default {
     removeQuant(index) {
       const newQuant = this.logs[this.currentLogIndex].quantity.data;
       newQuant.splice(index, 1);
-      this.updateCurrentLog('quantity', JSON.stringify(newQuant));
+      this.updateCurrentLog('quantity', newQuant);
+    },
+
+    removeCategory(index) {
+      const newCat = this.logs[this.currentLogIndex].log_category.data;
+      newCat.splice(index, 1);
+      this.updateCurrentLog('category', newCat);
     },
 
     getPhoto() {
