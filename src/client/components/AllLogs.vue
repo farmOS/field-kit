@@ -25,13 +25,13 @@
 
             <div class="card-row-1">
               <icon-assignment-done
-                class="assignment"
+                class="assignment done"
                 v-if="log.done.data"/>
               <icon-assignment
                 class="assignment"
                 v-if="!log.done.data && (log.timestamp.data * 1000 > new Date().valueOf())"/>
               <icon-assignment-late
-                class="assignment"
+                class="assignment late"
                 v-if="!log.done.data && (log.timestamp.data * 1000 < new Date().valueOf())"/>
               <div class="log-name">
                 <h5>{{log.name.data}}</h5>
@@ -181,6 +181,10 @@ export default {
     flex: 0 1 auto;
   }
 
+  .assignment.late {
+    fill: var(--orange);
+  }
+
   .log-name {
     flex: 5 0 auto;
     margin-left: 1rem;
@@ -226,8 +230,8 @@ export default {
   }
 
   .tag-area {
-    border: 1px solid rgba(0, 123, 255, 1);
-    background-color: rgba(0, 123, 255, .125)
+    border: 1px solid rgba(2, 154, 207, 1);
+    background-color: rgba(2, 154, 207, .125)
   }
 
   .tag-asset {
@@ -238,7 +242,6 @@ export default {
   @media (min-width: 576px) {
     .card-group .card {
       flex: 0 0 576px;
-      /* margin-bottom: 15px; */
     }
   }
 
