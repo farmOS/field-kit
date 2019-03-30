@@ -4,7 +4,6 @@
       <div
         class="card"
         v-if="logs.length < 1">
-        <!-- <div class="card-header">Logs will go here</div> -->
         <div class="card-body">
           <h4 class="card-title">Let's Get Started!</h4>
           <p class="card-text">
