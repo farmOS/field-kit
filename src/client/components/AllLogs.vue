@@ -125,15 +125,15 @@ export default {
     },
     // Pass in a log and get back an array of the areas attached to that log
     mapTidsToAreas(log) {
-      if (log.area) {
-        return log.area.data.map(a1 => this.areas.find(a2 => a2.tid === a1.id))
+      if (log.area && this.areas.length > 0) {
+        return log.area.data.map(a1 => this.areas.find(a2 => +a2.tid === +a1.id));
       }
       return [];
     },
     // Pass in a log and get back an array of the areas attached to that log
     mapIdsToAssets(log) {
-      if (log.asset) {
-        return log.asset.data.map(a1 => this.assets.find(a2 => a2.id === a1.id))
+      if (log.asset && this.assets.length > 0) {
+        return log.asset.data.map(a1 => this.assets.find(a2 => +a2.id === +a1.id));
       }
       return [];
     },
