@@ -12,6 +12,7 @@ export default {
         store.commit('clearAreas');
         store.commit('clearUnits');
         store.commit('clearCategories');
+        store.dispatch('loadCachedLogs');
         store.dispatch('loadCachedAssets');
         store.dispatch('loadCachedAreas');
         store.dispatch('loadCachedUnits');
