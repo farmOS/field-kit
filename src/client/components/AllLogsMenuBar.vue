@@ -7,6 +7,9 @@
       <li>My Logs</li>
     </ul>
     <ul class="right-menu">
+      <li class="filter">
+        <icon-filter/>
+      </li>
       <li @click="$emit('syncAll')">
         <icon-cloud-upload/>
       </li>
@@ -22,12 +25,18 @@
 
 <script>
 import IconCloudUpload from '../../icons/icon-cloud-upload.vue'; // eslint-disable-line import/extensions
+import IconFilter from '../../icons/icon-filter.vue'; // eslint-disable-line import/extensions
 import IconMenu from '../../icons/icon-menu.vue'; // eslint-disable-line import/extensions
 import IconMoreVert from '../../icons/icon-more-vert.vue'; // eslint-disable-line import/extensions
 
 export default {
   name: 'AllLogsMenuBar',
-  components: { IconMenu, IconCloudUpload, IconMoreVert },
+  components: {
+    IconCloudUpload,
+    IconFilter,
+    IconMenu,
+    IconMoreVert,
+  },
   data() {
     return {
       showMore: false,
@@ -86,7 +95,16 @@ export default {
   }
 
   .right-menu li {
-    margin-left: .5rem;
+    margin-left: 1rem;
+  }
+
+  .filter {
+    padding: 2px;
+  }
+
+  .filter svg {
+    height: 18px;
+    width: 18px;
   }
 
   #more-menu {
