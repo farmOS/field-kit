@@ -45,7 +45,6 @@ export default new Router({
             default: FilterLogs,
             menubar: FilterLogsMenuBar,
           },
-          props: { default: true, menubar: true },
         },
       ],
     },
