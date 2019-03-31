@@ -5,6 +5,8 @@ import AllLogs from '../components/AllLogs';
 import AllLogsMenuBar from '../components/AllLogsMenuBar';
 import EditLogMenuBar from '../components/EditLogMenuBar';
 import EditLog from '../components/EditLog';
+import FilterLogsMenuBar from '../components/FilterLogsMenuBar';
+import FilterLogs from '../components/FilterLogs';
 
 Vue.use(Router);
 
@@ -33,6 +35,15 @@ export default new Router({
           components: {
             default: EditLog,
             menubar: EditLogMenuBar,
+          },
+          props: { default: true, menubar: true },
+        },
+        {
+          path: 'filter',
+          name: 'filter-logs',
+          components: {
+            default: FilterLogs,
+            menubar: FilterLogsMenuBar,
           },
           props: { default: true, menubar: true },
         },

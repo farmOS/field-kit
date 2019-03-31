@@ -7,9 +7,11 @@
       <li>My Logs</li>
     </ul>
     <ul class="right-menu">
-      <li class="filter">
-        <icon-filter/>
-      </li>
+      <router-link :to="{ name: 'filter-logs' }">
+        <li class="filter">
+          <icon-filter/>
+        </li>
+      </router-link>
       <li @click="$emit('syncAll')">
         <icon-cloud-upload/>
       </li>
@@ -65,8 +67,11 @@ export default {
   header {
     background-color: var(--farmos-green-dark);
     color: white;
-    fill: white;
     border: none;
+  }
+
+  header svg {
+    fill: white;
   }
 
   header ul {

@@ -6,46 +6,29 @@
           <icon-arrow-back/>
         </li>
       </router-link>
-      <li>Edit Log</li>
+      <li>Log Filters</li>
     </ul>
     <ul class="right-menu">
-      <a
-        v-if="logs[currentLogIndex].remoteUri !==''"
-        :href="logs[currentLogIndex].remoteUri">
-        <li>
-          <icon-open-in-new/>
-        </li>
-      </a>
-      <li @click="$emit('deleteCurrentLog')">
-        <icon-delete/>
-      </li>
       <li @click="openMoreMenu">
         <icon-more-vert/>
       </li>
     </ul>
     <ul id="more-menu" v-if="showMore">
-      <a
-        v-if="logs[currentLogIndex].remoteUri !==''"
-        :href="logs[currentLogIndex].remoteUri">
-        <li>Open in browser</li>
-      </a>
-      <li @click="$emit('deleteCurrentLog')">
-        Delete from device
-      </li>
+      <li>Reset filters</li>
     </ul>
   </header>
 </template>
 
 <script>
 import IconArrowBack from '../../icons/icon-arrow-back.vue'; // eslint-disable-line import/extensions
-import IconDelete from '../../icons/icon-delete.vue'; // eslint-disable-line import/extensions
 import IconMoreVert from '../../icons/icon-more-vert.vue'; // eslint-disable-line import/extensions
-import IconOpenInNew from '../../icons/icon-open-in-new.vue'; // eslint-disable-line import/extensions
 
 export default {
-  name: 'EditLogsMenuBar',
-  components: { IconArrowBack, IconDelete, IconMoreVert, IconOpenInNew },
-  props: [ 'logs', 'currentLogIndex' ],
+  name: 'AllLogsMenuBar',
+  components: {
+    IconArrowBack,
+    IconMoreVert,
+  },
   data() {
     return {
       showMore: false,
@@ -66,6 +49,7 @@ export default {
   destroyed() {
     document.removeEventListener('click', this.handleClickOutside);
   },
+
 };
 </script>
 
@@ -106,7 +90,7 @@ export default {
   }
 
   .right-menu li {
-    margin-left: .5rem;
+    margin-left: 1rem;
   }
 
   #more-menu {
