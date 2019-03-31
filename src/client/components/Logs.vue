@@ -21,6 +21,7 @@
       :units='units'
       :categories='categories'
       :userId='userId'
+      :logDisplayFilters='logDisplayFilters'
     />
 
     <div
@@ -97,6 +98,7 @@ export default {
     units: state => state.farm.units,
     userId: state => state.shell.user.uid,
     categories: state => state.farm.categories,
+    logDisplayFilters: state => state.shell.settings.logDisplayFilters,
   }),
   created() {
     this.$store.dispatch('onLogsComponentCreated');

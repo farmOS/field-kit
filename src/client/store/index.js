@@ -22,6 +22,11 @@ const shellModule = {
         done: '0',
         type: ['farm_activity', 'farm_observation', 'farm_harvest', 'farm_input', 'farm_seeding'],
       },
+      logDisplayFilters: {
+        date: 'ALL_TIME',
+        excludeTypes: [],
+        excludeCategories: [],
+      },
     },
   },
   mutations: {
@@ -50,6 +55,29 @@ const shellModule = {
     },
     setUseGeolocation(state, bool) {
       state.settings.useGeolocation = bool;
+    },
+    addToExcludeTypes(state, type) {
+      const newArr = state.settings.logDisplayFilters.excludeTypes.concat(type);
+      state.settings.logDisplayFilters.excludeTypes = newArr;
+    },
+    removeFromExcludeTypes(state, type) {
+      const newArr = state.settings.logDisplayFilters.excludeTypes.filter(_type => (
+        type !== _type
+      ));
+      state.settings.logDisplayFilters.excludeTypes = newArr;
+    },
+    addToExcludeCategories(state, type) {
+      const newArr = state.settings.logDisplayFilters.excludeCategories.concat(type);
+      state.settings.logDisplayFilters.excludeCategories = newArr;
+    },
+    removeFromExcludeCategories(state, type) {
+      const newArr = state.settings.logDisplayFilters.excludeCategories.filter(_type => (
+        type !== _type
+      ));
+      state.settings.logDisplayFilters.excludeCategories = newArr;
+    },
+    setDateFilter(state, value) {
+      state.settings.logDisplayFilters.date = value;
     },
   },
 };
