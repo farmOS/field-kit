@@ -186,6 +186,10 @@ export default {
     height: 1rem;
   }
 
+  a:hover {
+    text-decoration: none;
+  }
+
   .card-group > .card {
     margin-bottom: 0;
   }
