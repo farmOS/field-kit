@@ -123,4 +123,8 @@ export default {
     padding: 1rem 1rem;
     font-size: 1rem;
   }
+
+  #more-menu a {
+    color: var(--gray-dark);
+  }
 </style>

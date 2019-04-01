@@ -20,7 +20,10 @@
       </li>
     </ul>
     <ul id="more-menu" v-if="showMore">
-      <li @click="$emit('syncAll')">Sync all logs</li>
+      <li @click="$emit('syncAll'); showMore = false">Sync all logs</li>
+      <router-link :to="{ name: 'filter-logs' }">
+        <li class="filter">Filter logs</li>
+      </router-link>
     </ul>
   </header>
 </template>
@@ -50,6 +53,7 @@ export default {
       document.addEventListener('click', this.handleClickOutside);
     },
     handleClickOutside(evt) {
+      evt.stopImmediatePropagation();
       const moreMenu = document.getElementById('more-menu');
       if (moreMenu !== null && !moreMenu.contains(evt.target)) {
         this.showMore = false;
@@ -125,5 +129,8 @@ export default {
   #more-menu li {
     padding: 1rem 1rem;
     font-size: 1rem;
+  }
+  #more-menu a {
+    color: var(--gray-dark);
   }
 </style>
