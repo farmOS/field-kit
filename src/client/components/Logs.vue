@@ -102,6 +102,8 @@ export default {
   }),
   created() {
     this.$store.dispatch('onLogsComponentCreated');
+    this.$store.commit('clearDisplayFilters');
+    this.$store.dispatch('loadCachedDisplayFilters');
   },
   beforeDestroy() {
     this.$store.commit('clearLogs');

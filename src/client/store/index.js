@@ -59,25 +59,54 @@ const shellModule = {
     addToExcludeTypes(state, type) {
       const newArr = state.settings.logDisplayFilters.excludeTypes.concat(type);
       state.settings.logDisplayFilters.excludeTypes = newArr;
+      localStorage.setItem('excludeTypes', JSON.stringify(newArr));
     },
     removeFromExcludeTypes(state, type) {
       const newArr = state.settings.logDisplayFilters.excludeTypes.filter(_type => (
         type !== _type
       ));
       state.settings.logDisplayFilters.excludeTypes = newArr;
+      localStorage.setItem('excludeTypes', JSON.stringify(newArr));
     },
     addToExcludeCategories(state, cat) {
       const newArr = state.settings.logDisplayFilters.excludeCategories.concat(cat);
       state.settings.logDisplayFilters.excludeCategories = newArr;
+      localStorage.setItem('excludeCategories', JSON.stringify(newArr));
     },
     removeFromExcludeCategories(state, cat) {
       const newArr = state.settings.logDisplayFilters.excludeCategories.filter(_cat => (
         cat !== _cat
       ));
       state.settings.logDisplayFilters.excludeCategories = newArr;
+      localStorage.setItem('excludeCategories', JSON.stringify(newArr));
     },
     setDateFilter(state, value) {
       state.settings.logDisplayFilters.date = value;
+      localStorage.setItem('dateFilter', value);
+    },
+    clearDisplayFilters(state) {
+      state.settings.logDisplayFilters = {
+        date: 'ALL_TIME',
+        excludeTypes: [],
+        excludeCategories: [],
+      };
+    },
+  },
+  actions: {
+    loadCachedDisplayFilters({ commit }) {
+      const exTypes = JSON.parse(localStorage.getItem('excludeTypes'));
+      const exCats = JSON.parse(localStorage.getItem('excludeCategories'));
+      const date = localStorage.getItem('dateFilter');
+
+      if (exTypes !== null) {
+        exTypes.forEach(type => commit('addToExcludeTypes', type));
+      }
+      if (exCats !== null) {
+        exCats.forEach(cat => commit('addToExcludeCategories', cat));
+      }
+      if (date !== null) {
+        commit('setDateFilter', date);
+      }
     },
   },
 };
