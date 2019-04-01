@@ -153,6 +153,20 @@
 
     <h4>Log Category</h4>
     <div class="form-item form-group">
+      <div class="form-check">
+        <input
+          type="checkbox"
+          id="category-none"
+          name="log-categories"
+          :checked="!logDisplayFilters.excludeCategories.includes(-1)"
+          @input="updateExcludeLogCategory(-1, $event.target.checked)">
+        <label
+          for="log-categories"
+          @click="updateExcludeLogCategory(-1, checkChecked('category-none'))"
+          :class="{selected: !logDisplayFilters.excludeCategories.includes(-1)}">
+          No Category
+        </label>
+      </div>
       <div class="form-check" v-for="category in categories">
         <input
           type="checkbox"

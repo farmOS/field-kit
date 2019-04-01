@@ -142,9 +142,14 @@ export default {
     },
     passesFilters(log) {
       const passesTypeFilter = !this.logDisplayFilters.excludeTypes.includes(log.type.data);
-      const passesCategoryFilter = !log.log_category.data.some(cat => (
-        this.logDisplayFilters.excludeCategories.some(exCat => +exCat === +cat.id)
-      ));
+      const passesCategoryFilter = () => {
+        if (log.log_category.data.length === 0 && this.logDisplayFilters.excludeCategories.includes(-1)) {
+          return false;
+        }
+        return !log.log_category.data.some(cat => (
+          this.logDisplayFilters.excludeCategories.some(exCat => +exCat === +cat.id)
+        )
+      )};
       const passesDateFilter = () => {
         const filter = this.logDisplayFilters.date;
         const d = new Date();
@@ -171,7 +176,7 @@ export default {
         return log.timestamp.data > dateLimit;
       }
 
-      if (passesTypeFilter && passesCategoryFilter && passesDateFilter()) {
+      if (passesTypeFilter && passesCategoryFilter() && passesDateFilter()) {
         return true;
       }
       return false;
