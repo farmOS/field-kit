@@ -16,7 +16,7 @@
       </div>
       <div
         class="card"
-        v-if="logs.length > 0"
+        v-if="logs.length > 0 && passesFilters(log)"
         v-for="(log, i) in logs"
         :key="`card-${logs.indexOf(log)}`"
       >
@@ -105,6 +105,7 @@ export default {
     'logs',
     'userId',
     'assets',
+    'logDisplayFilters',
     'areas',
     ],
   components: {
@@ -138,6 +139,42 @@ export default {
     },
     getLogType(type) {
       return getLogType(type);
+    },
+    passesFilters(log) {
+      const passesTypeFilter = !this.logDisplayFilters.excludeTypes.includes(log.type.data);
+      const passesCategoryFilter = !log.log_category.data.some(cat => (
+        this.logDisplayFilters.excludeCategories.some(exCat => +exCat === +cat.id)
+      ));
+      const passesDateFilter = () => {
+        const filter = this.logDisplayFilters.date;
+        const d = new Date();
+        let dateLimit;
+        if (filter === 'TODAY') {
+          d.setDate(d.getDate() - 1);
+          dateLimit = d.valueOf() / 1000 | 0
+        }
+        if (filter === 'THIS_WEEK') {
+          d.setDate(d.getDate() - 7);
+          dateLimit = d.valueOf() / 1000 | 0
+        }
+        if (filter === 'THIS_MONTH') {
+          d.setMonth(d.getMonth() - 1);
+          dateLimit = d.valueOf() / 1000 | 0
+        }
+        if (filter === 'THIS_YEAR') {
+          d.setYear(d.getYear() - 1);
+          dateLimit = d.valueOf() / 1000 | 0
+        }
+        if (filter === 'ALL_TIME') {
+          dateLimit = 0
+        }
+        return log.timestamp.data > dateLimit;
+      }
+
+      if (passesTypeFilter && passesCategoryFilter && passesDateFilter()) {
+        return true;
+      }
+      return false;
     },
   },
 };

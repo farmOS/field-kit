@@ -7,43 +7,47 @@
       <h4>Date</h4>
       <div class="form-check">
         <input
-        type="radio"
-        name="date"
-        :value="'TODAY'"
-        @input="setDateFilter($event.target.value)">
+          type="radio"
+          name="date"
+          :value="'TODAY'"
+          @input="setDateFilter($event.target.value)"
+          :checked="logDisplayFilters.date === 'TODAY'">
         <label for="date">Today</label>
       </div>
       <div class="form-check">
         <input
-        type="radio"
-        name="date"
-        :value="'THIS_WEEK'"
-        @input="setDateFilter($event.target.value)">
+          type="radio"
+          name="date"
+          :value="'THIS_WEEK'"
+          @input="setDateFilter($event.target.value)"
+          :checked="logDisplayFilters.date === 'THIS_WEEK'">
         <label for="date">This Week</label>
       </div>
       <div class="form-check">
         <input
-        type="radio"
-        name="date"
-        :value="'THIS_MONTH'"
-        @input="setDateFilter($event.target.value)">
+          type="radio"
+          name="date"
+          :value="'THIS_MONTH'"
+          @input="setDateFilter($event.target.value)"
+          :checked="logDisplayFilters.date === 'THIS_MONTH'">
         <label for="date">This Month</label>
       </div>
       <div class="form-check">
         <input
-        type="radio"
-        name="date"
-        :value="'THIS_YEAR'"
-        @input="setDateFilter($event.target.value)">
+          type="radio"
+          name="date"
+          :value="'THIS_YEAR'"
+          @input="setDateFilter($event.target.value)"
+          :checked="logDisplayFilters.date === 'THIS_YEAR'">
         <label for="date">This Year</label>
       </div>
       <div class="form-check">
         <input
-        type="radio"
-        name="date"
-        :value="'ALL_TIME'"
-        @input="setDateFilter($event.target.value)"
-        checked>
+          type="radio"
+          name="date"
+          :value="'ALL_TIME'"
+          @input="setDateFilter($event.target.value)"
+          :checked="logDisplayFilters.date === 'ALL_TIME'">
         <label for="date">All Time</label>
       </div>
     </div>
