@@ -108,6 +108,12 @@ const shellModule = {
         commit('setDateFilter', date);
       }
     },
+    resetDisplayFilters({ commit }) {
+      commit('clearDisplayFilters');
+      localStorage.setItem('excludeTypes', '[]');
+      localStorage.setItem('excludeCategories', '[]');
+      localStorage.setItem('dateFilter', 'ALL_TIME');
+    },
   },
 };
 

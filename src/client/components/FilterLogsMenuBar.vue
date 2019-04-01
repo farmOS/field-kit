@@ -14,7 +14,7 @@
       </li>
     </ul>
     <ul id="more-menu" v-if="showMore">
-      <li>Reset filters</li>
+      <li @click="resetDisplayFilters">Reset filters</li>
     </ul>
   </header>
 </template>
@@ -44,6 +44,9 @@ export default {
       if (moreMenu !== null && !moreMenu.contains(evt.target)) {
         this.showMore = false;
       }
+    },
+    resetDisplayFilters() {
+      this.$store.dispatch('resetDisplayFilters');
     },
   },
   destroyed() {
