@@ -66,13 +66,13 @@ const shellModule = {
       ));
       state.settings.logDisplayFilters.excludeTypes = newArr;
     },
-    addToExcludeCategories(state, type) {
-      const newArr = state.settings.logDisplayFilters.excludeCategories.concat(type);
+    addToExcludeCategories(state, cat) {
+      const newArr = state.settings.logDisplayFilters.excludeCategories.concat(cat);
       state.settings.logDisplayFilters.excludeCategories = newArr;
     },
-    removeFromExcludeCategories(state, type) {
-      const newArr = state.settings.logDisplayFilters.excludeCategories.filter(_type => (
-        type !== _type
+    removeFromExcludeCategories(state, cat) {
+      const newArr = state.settings.logDisplayFilters.excludeCategories.filter(_cat => (
+        cat !== _cat
       ));
       state.settings.logDisplayFilters.excludeCategories = newArr;
     },
