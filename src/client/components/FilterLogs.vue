@@ -191,6 +191,7 @@ export default {
   name: 'FilterLogs',
   props: [ 'categories', 'logDisplayFilters' ],
   methods: {
+    // NOTE: We're tracking which types/categiries to EXCLUDE from My Logs
     updateExcludeLogType(type, checked) {
       if (!checked) {
         this.$store.commit('addToExcludeTypes', type);

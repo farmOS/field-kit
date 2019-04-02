@@ -24,6 +24,8 @@ const shellModule = {
       },
       logDisplayFilters: {
         date: 'ALL_TIME',
+        // NOTE: We're tracking which types/categories to EXCLUDE, so we can manage
+        // defaults more easily w/o having to poll the server for the list
         excludeTypes: [],
         excludeCategories: [],
       },
