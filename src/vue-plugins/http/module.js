@@ -134,7 +134,7 @@ export default {
     // GET LOGS FROM SERVER (step 1 of sync)
     getServerLogs({ commit, rootState }) {
       const syncDate = localStorage.getItem('syncDate');
-      return farm().log.get(rootState.shell.settings.logFilters, localStorage.getItem('token'))
+      return farm().log.get(rootState.shell.settings.logImportFilters, localStorage.getItem('token'))
         .then((res) => {
           // See whether logs are new, or currently in the store
           // If res is a single log, check vs current, run through the logFactory and call addLog
