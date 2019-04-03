@@ -12,11 +12,13 @@ export default {
         store.commit('clearAreas');
         store.commit('clearUnits');
         store.commit('clearCategories');
+        store.commit('clearEquipment');
         store.dispatch('loadCachedLogs');
         store.dispatch('loadCachedAssets');
         store.dispatch('loadCachedAreas');
         store.dispatch('loadCachedUnits');
         store.dispatch('loadCachedCategories');
+        store.dispatch('loadCachedEquipment');
       }
     });
     store.subscribe((mutation) => {
@@ -48,15 +50,6 @@ export default {
       if (mutation.type === 'deleteAllAssets') {
         store.dispatch('deleteAllCachedAssets');
       }
-      if (mutation.type === 'deleteAllAreas') {
-        store.dispatch('deleteAllCachedAreas');
-      }
-      if (mutation.type === 'deleteAllUnits') {
-        store.dispatch('deleteAllCachedUnits');
-      }
-      if (mutation.type === 'deleteAllCategories') {
-        store.dispatch('deleteAllCachedCategories');
-      }
       if (mutation.type === 'addAreas') {
         mutation.payload.forEach((area) => {
           store.dispatch('createCachedArea', area);
@@ -65,18 +58,35 @@ export default {
       if (mutation.type === 'updateArea') {
         store.dispatch('updateCachedArea', mutation.payload);
       }
-      if (mutation.type === 'setUseGeolocation') {
-        localStorage.setItem('useGeolocation', mutation.payload);
+      if (mutation.type === 'deleteAllAreas') {
+        store.dispatch('deleteAllCachedAreas');
       }
       if (mutation.type === 'addUnits') {
         mutation.payload.forEach((unit) => {
           store.dispatch('createCachedUnit', unit);
         });
       }
+      if (mutation.type === 'deleteAllUnits') {
+        store.dispatch('deleteAllCachedUnits');
+      }
       if (mutation.type === 'addCategories') {
         mutation.payload.forEach((cat) => {
           store.dispatch('createCachedCategory', cat);
         });
+      }
+      if (mutation.type === 'deleteAllCategories') {
+        store.dispatch('deleteAllCachedCategories');
+      }
+      if (mutation.type === 'addEquipment') {
+        mutation.payload.forEach((equip) => {
+          store.dispatch('createCachedEquipment', equip);
+        });
+      }
+      if (mutation.type === 'deleteAllEquipment') {
+        store.dispatch('deleteAllCachedEquipment');
+      }
+      if (mutation.type === 'setUseGeolocation') {
+        localStorage.setItem('useGeolocation', mutation.payload);
       }
     });
   },

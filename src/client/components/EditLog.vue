@@ -396,6 +396,7 @@ export default {
     'useGeolocation',
     'units',
     'categories',
+    'equipment',
     // Set by router via edit/:type props=true
     'type',
   ],

@@ -42,6 +42,15 @@ export default {
         commit('addCategories', cats);
       }).catch((err) => { throw err; });
     },
+    updateEquipment({ commit }) {
+      return farm().area.get().then((res) => {
+        // If a successful response is received, delete and replace all areas
+        commit('deleteAllEquipment');
+        const areas = res.map(({ tid, name, type }) => ({ tid, name, type })); // eslint-disable-line camelcase, max-len
+        commit('addEquipment', areas);
+      }).catch((err) => { throw err; });
+    },
+
     // SEND LOGS TO SERVER (step 2 of sync)
     sendLogs({ commit, rootState }, payload) {
       // Update logs in the database and local store after send completes

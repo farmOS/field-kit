@@ -20,6 +20,7 @@
       :useGeolocation='useGeolocation'
       :units='units'
       :categories='categories'
+      :equipment='equipment'
       :userId='userId'
       :logDisplayFilters='logDisplayFilters'
     />
@@ -98,6 +99,7 @@ export default {
     units: state => state.farm.units,
     userId: state => state.shell.user.uid,
     categories: state => state.farm.categories,
+    equipment: state => state.farm.equipment,
     logDisplayFilters: state => state.shell.settings.logDisplayFilters,
   }),
   created() {

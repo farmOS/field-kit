@@ -132,6 +132,7 @@ const farmModule = {
     localArea: [],
     units: [],
     categories: [],
+    equipment: [],
   },
   mutations: {
     changeFarmName(state, name) {
@@ -156,10 +157,13 @@ const farmModule = {
     addCategories(state, cats) {
       state.categories = state.categories.concat(cats);
     },
+    addEquipment(state, equip) {
+      state.equipment = state.categories.concat(equip);
+    },
     /*
-    updateUnitsFromCache and updateCategoriesFromCache are distinct from addUnits because
-    they are NOT hooks for updating units/ cats in the database.  They ONLY add units/ cats
-    to the local store.  updateUnitsFromCache is called by websql/module/loadCachedUnits
+    updateUnitsFromCache. updateCategoriesFromCache and updateEquipmentFromCache are distinct from
+    addUnits because they are NOT hooks for updating units/ cats in the database.  They ONLY add
+    units/ cats to the local store.  updateUnitsFromCache is called by websql/module/loadCachedUnits
     addUnits is called by http/module/updateUnits
     */
     updateUnitsFromCache(state, units) {
@@ -167,6 +171,9 @@ const farmModule = {
     },
     updateCategoriesFromCache(state, cats) {
       state.categories = state.categories.concat(cats);
+    },
+    updateEquipmentFromCache(state, equip) {
+      state.equipment = state.equipment.concat(equip);
     },
     /*
       This pushes the new log onto the `logs` array, and b/c `.push()` returns
@@ -233,6 +240,12 @@ const farmModule = {
     deleteAllCategories(state) {
       state.categories = [];
     },
+    deleteAllEquipment(state) {
+      state.equipment = [];
+    },
+    // ClearX followed by loadCachedX are called when the app loads
+    // clearX is NOT a hook, and do not trigger deletion in the DB
+    // in contrast, deleteAllX is a hook which calls deleteAllCachedX in the db
     clearLogs(state) {
       state.logs.splice(0, state.logs.length);
     },
@@ -248,6 +261,10 @@ const farmModule = {
     clearCategories(state) {
       state.categories.splice(0, state.categories.length);
     },
+    clearEquipment(state) {
+      state.equipment.splice(0, state.categories.length);
+    },
+
     setPhotoLoc(state, loc) {
       state.photoLoc = loc;
     },

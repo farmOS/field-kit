@@ -249,6 +249,43 @@ export default {
       });
     },
 
+    createCachedEquipment(_, newEquip) {
+      const tableName = 'equipment';
+      const key = 'id';
+      openDatabase() // eslint-disable-line no-use-before-define
+        .then(db => makeTable(db, tableName, newEquip, key)) // eslint-disable-line no-use-before-define, max-len
+        .then(tx => saveRecord(tx, tableName, newEquip)); // eslint-disable-line no-use-before-define, max-len
+    },
+
+    updateCachedEquipment(context, equip) {
+      const table = 'equipment';
+      const key = 'id';
+      openDatabase() // eslint-disable-line no-use-before-define
+        .then(db => getTX(db, table, key)) // eslint-disable-line no-use-before-define
+        .then(tx => saveRecord(tx, table, equip)); // eslint-disable-line no-use-before-define, max-len
+    },
+
+    deleteAllCachedEquipment() {
+      openDatabase() // eslint-disable-line no-use-before-define
+        .then(db => getTX(db, 'equipment')) // eslint-disable-line no-use-before-define
+        .then(tx => dropTable(tx, 'equipment')) // eslint-disable-line no-use-before-define
+        .then(console.log) // eslint-disable-line no-console
+        .catch(console.error); // eslint-disable-line no-console
+    },
+
+    loadCachedEquipment({ commit }) {
+      return new Promise((resolve, reject) => {
+        openDatabase() // eslint-disable-line no-use-before-define
+          .then(db => getRecords(db, 'equipment')) // eslint-disable-line no-use-before-define
+          .then((results) => {
+            commit('addEquipment', results);
+            resolve();
+          })
+          .catch(reject);
+      });
+    },
+
+
   },
 };
 
