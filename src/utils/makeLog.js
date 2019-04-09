@@ -28,6 +28,7 @@ const makeLogFactory = (src, dest) => {
       // Quantity will be an array of objects, similar to area or asset
       quantity = { changed: null, data: [] },
       log_category = { changed: null, data: [] }, // eslint-disable-line camelcase
+      equipment = { changed: null, data: [] },
       id,
       local_id, // eslint-disable-line camelcase
       name = { changed: null, data: '' },
@@ -54,6 +55,7 @@ const makeLogFactory = (src, dest) => {
           notes,
           quantity: { data: parseObjects(quantity.data), changed: quantity.changed }, // eslint-disable-line no-use-before-define, max-len
           log_category: { data: parseObjects(log_category.data), changed: log_category.changed }, // eslint-disable-line no-use-before-define, max-len
+          equipment: { data: parseObjects(equipment.data), changed: equipment.changed }, // eslint-disable-line no-use-before-define, max-len
           id,
           local_id,
           name,
@@ -90,6 +92,7 @@ const makeLogFactory = (src, dest) => {
           asset: asset.data,
           quantity: quantity.data,
           log_category: log_category.data,
+          equipment: equipment.data,
         };
         /*
           Only return id property if one has already been assigned by the server,
@@ -113,6 +116,7 @@ const makeLogFactory = (src, dest) => {
           notes: JSON.stringify(notes),
           quantity: JSON.stringify(quantity),
           log_category: JSON.stringify(log_category),
+          equipment: JSON.stringify(equipment),
           id,
           name: JSON.stringify(name),
           type: JSON.stringify(type),
@@ -148,6 +152,7 @@ const makeLogFactory = (src, dest) => {
       // quantity will be an array of objects, similar to area or asset
       quantity = { changed: null, data: [] },
       log_category = { changed: null, data: [] }, // eslint-disable-line camelcase
+      equipment = { changed: null, data: [] },
       id,
       local_id, // eslint-disable-line camelcase
       name = { changed: null, data: '' },
@@ -168,6 +173,7 @@ const makeLogFactory = (src, dest) => {
         notes: JSON.parse(notes),
         quantity: { data: parseObjects(JSON.parse(quantity).data), changed: JSON.parse(quantity).changed }, // eslint-disable-line no-use-before-define, max-len
         log_category: { data: parseObjects(JSON.parse(log_category).data), changed: JSON.parse(log_category).changed }, // eslint-disable-line no-use-before-define, max-len
+        equipment: { data: parseObjects(JSON.parse(equipment).data), changed: JSON.parse(equipment).changed }, // eslint-disable-line no-use-before-define, max-len
         id: id === 'undefined' ? undefined : id,
         local_id,
         name: JSON.parse(name),
@@ -199,6 +205,8 @@ const makeLogFactory = (src, dest) => {
         log_owner, // eslint-disable-line camelcase
         quantity,
         log_category, // eslint-disable-line camelcase
+        // restore when server response contains equipment:
+        // equipment,
         id,
         local_id, // eslint-disable-line camelcase
         name,
@@ -217,6 +225,9 @@ const makeLogFactory = (src, dest) => {
         notes: { data: parseNotes(notes), changed: nowStamp }, // eslint-disable-line no-use-before-define, max-len
         quantity: { data: quantity, changed: nowStamp },
         log_category: { data: log_category, changed: nowStamp },
+        // Inserting fake equipment data into server responses
+        equipment: { data: [{ id: '1', type: 'farm_equipment' }], changed: nowStamp },
+        //  equipment, changed: nowStamp },
         local_id,
         name: { data: name, changed: nowStamp },
         type: { data: type, changed: nowStamp },

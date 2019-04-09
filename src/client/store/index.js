@@ -158,7 +158,7 @@ const farmModule = {
       state.categories = state.categories.concat(cats);
     },
     addEquipment(state, equip) {
-      state.equipment = state.categories.concat(equip);
+      state.equipment = state.equipment.concat(equip);
     },
     /*
     updateUnitsFromCache. updateCategoriesFromCache and updateEquipmentFromCache are distinct from
@@ -262,7 +262,7 @@ const farmModule = {
       state.categories.splice(0, state.categories.length);
     },
     clearEquipment(state) {
-      state.equipment.splice(0, state.categories.length);
+      state.equipment.splice(0, state.equipment.length);
     },
 
     setPhotoLoc(state, loc) {

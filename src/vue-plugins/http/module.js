@@ -43,12 +43,19 @@ export default {
       }).catch((err) => { throw err; });
     },
     updateEquipment({ commit }) {
-      return farm().area.get().then((res) => {
-        // If a successful response is received, delete and replace all areas
+      const sampleEquip = [
+        { id: 1, name: 'Olde Forde tractor', type: 'farm_equipment' },
+        { id: 2, name: 'Lil blue BCS', type: 'farm_equipment' },
+        { id: 3, name: 'Big Orange', type: 'farm_equipment' },
+      ];
+      commit('addEquipment', sampleEquip);
+      /* Receive equipment from endpoint
+      return farm().equipment.get().then((res) => {
         commit('deleteAllEquipment');
-        const areas = res.map(({ tid, name, type }) => ({ tid, name, type })); // eslint-disable-line camelcase, max-len
-        commit('addEquipment', areas);
+        const equipment = res.map(({ id, name, type }) => ({ id, name, type })); // eslint-disable-line camelcase, max-len
+        commit('addEquipment', equipment);
       }).catch((err) => { throw err; });
+      */
     },
 
     // SEND LOGS TO SERVER (step 2 of sync)

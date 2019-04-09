@@ -180,6 +180,32 @@
         </ul>
       </div>
 
+      <div class="form-item form-item-name form-group">
+        <label for="type" class="control-label ">Equipment</label>
+        <div class="input-group">
+          <select
+          @input="addEquipment($event.target.value)"
+            class="custom-select col-sm-3 ">
+              <option
+                v-for="equip in equipment"
+                :value="equip.id">
+                {{ (equip) ? equip.name : '' }}
+              </option>
+          </select>
+          <ul v-if="logs[currentLogIndex].equipment" class="list-group">
+            <li
+              v-for="(equip, i) in logs[currentLogIndex].equipment.data"
+              v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
+              class="list-group-item">
+              {{ (equipmentNames.length > 0) ? equipmentNames[i] : '' }}
+              <span class="remove-list-item" @click="removeEquipment(i)">
+                &#x2715;
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
       <h4>Areas &amp; Location</h4>
       <!-- We're using a radio button to choose whether areas are selected
       automatically based on device location, or using an Autocomplete.
@@ -472,6 +498,12 @@ export default {
       this.updateCurrentLog('log_category', newCategories);
     },
 
+    addEquipment(id) {
+      const equipReference = { id: id, resource: 'farm_equipment'};
+      const newEquipment = this.logs[this.currentLogIndex].equipment.data.concat(equipReference);
+      this.updateCurrentLog('equipment', newEquipment);
+    },
+
     addAsset(id) {
       const assetReference = { id: id, resource: 'farm_asset'};
       const newAssets = this.logs[this.currentLogIndex].asset.data.concat(assetReference);
@@ -520,6 +552,12 @@ export default {
       const newCat = this.logs[this.currentLogIndex].log_category.data;
       newCat.splice(index, 1);
       this.updateCurrentLog('category', newCat);
+    },
+
+    removeEquipment(index) {
+      const newEquip = this.logs[this.currentLogIndex].equipment.data;
+      newEquip.splice(index, 1);
+      this.updateCurrentLog('equipment', newEquip);
     },
 
     getPhoto() {
@@ -635,10 +673,29 @@ export default {
       }
       return [];
     },
+    equipmentNames() {
+      if (this.equipment.length > 0 && this.logs[this.currentLogIndex].equipment && this.logs[this.currentLogIndex].equipment.data.length > 0) {
+        let equipNames = []
+        this.logs[this.currentLogIndex].equipment.data.forEach((logEquip) => {
+          this.equipment.forEach((equip) => {
+            if (parseInt(equip.id, 10) === parseInt(logEquip.id, 10)) {
+              equipNames.push(equip.name);
+            }
+          });
+        });
+        return equipNames;
+      }
+      return [];
+    },
   },
 
   watch: {
     // When photoLoc changes, this updates the images property of the current log
+    // TEMPORARY
+    equipment() {
+      console.log('EQUIPMENT IS ', this.equipment)
+    },
+    //
     photoLoc() {
       this.updateCurrentLog('images', this.photoLoc);
     },
