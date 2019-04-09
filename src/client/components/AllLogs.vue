@@ -224,7 +224,7 @@ export default {
   }
 
   .assignment {
-    flex: 0 1 auto;
+    flex: 0 0 auto;
   }
 
   .assignment.late {
@@ -232,12 +232,12 @@ export default {
   }
 
   .log-name {
-    flex: 5 0 auto;
+    flex: 3 1 auto;
     margin-left: 1rem;
   }
 
   .sync-status {
-    flex: 0 1 auto;
+    flex: 0 0 auto;
   }
 
   .card-body p {
