@@ -226,7 +226,7 @@ const makeLogFactory = (src, dest) => {
         quantity: { data: quantity, changed: nowStamp },
         log_category: { data: log_category, changed: nowStamp },
         // Inserting fake equipment data into server responses
-        equipment: { data: [{ id: '1', type: 'farm_equipment' }], changed: nowStamp },
+        equipment: { data: [{ id: '6', type: 'equipment' }], changed: nowStamp },
         //  equipment, changed: nowStamp },
         local_id,
         name: { data: name, changed: nowStamp },

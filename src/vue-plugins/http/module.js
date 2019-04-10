@@ -23,6 +23,7 @@ export default {
         // If a successful response is received, delete and replace all assets
         commit('deleteAllAssets');
         const assets = res.map(({ id, name, type }) => ({ id, name, type }));
+        console.log('GOT ASSETS: ', assets);
         commit('addAssets', assets);
       }).catch((err) => { throw err; });
     },
@@ -48,14 +49,22 @@ export default {
         { id: 2, name: 'Lil blue BCS', type: 'farm_equipment' },
         { id: 3, name: 'Big Orange', type: 'farm_equipment' },
       ];
-      commit('addEquipment', sampleEquip);
-      /* Receive equipment from endpoint
-      return farm().equipment.get().then((res) => {
+      function getEquip(assets) {
+        const equip = [];
+        assets.forEach((asset) => {
+          if (asset.type === 'equipment') {
+            equip.push(asset);
+          }
+        });
+        return equip;
+      }
+      return farm().asset.get().then((res) => {
         commit('deleteAllEquipment');
-        const equipment = res.map(({ id, name, type }) => ({ id, name, type })); // eslint-disable-line camelcase, max-len
+        const assets = res.map(({ id, name, type }) => ({ id, name, type })); // eslint-disable-line camelcase, max-len
+        const equipment = getEquip(assets);
+        console.log('GOT EQUIPMENT: ', equipment)
         commit('addEquipment', equipment);
       }).catch((err) => { throw err; });
-      */
     },
 
     // SEND LOGS TO SERVER (step 2 of sync)

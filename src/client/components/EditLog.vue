@@ -499,7 +499,7 @@ export default {
     },
 
     addEquipment(id) {
-      const equipReference = { id: id, resource: 'farm_equipment'};
+      const equipReference = { id: id, resource: 'farm_asset'};
       const newEquipment = this.logs[this.currentLogIndex].equipment.data.concat(equipReference);
       this.updateCurrentLog('equipment', newEquipment);
     },
