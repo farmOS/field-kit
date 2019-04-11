@@ -97,13 +97,15 @@ export default {
           payload.router.push('/login');
         } else {
           // handle some other type of runtime error (if possible)
-          const errorPayload = {
-            message: `${error.status} error while syncing "${rootState.farm.logs[index].name.data}": ${error.statusText}`,
-            errorCode: error.statusText,
-            level: 'warning',
-            show: true,
-          };
-          commit('logError', errorPayload);
+          error.text().then((errorText) => {
+            const errorPayload = {
+              message: `${error.status} error while syncing "${rootState.farm.logs[index].name.data}": ${errorText}`,
+              errorCode: error.statusText,
+              level: 'warning',
+              show: true,
+            };
+            commit('logError', errorPayload);
+          });
         }
         commit('updateLogs', {
           indices: [index],
