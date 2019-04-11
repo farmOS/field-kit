@@ -649,11 +649,13 @@ export default {
       if (this.units.length > 0 && this.logs[this.currentLogIndex].quantity.data.length > 0) {
         let unitNames = []
         this.logs[this.currentLogIndex].quantity.data.forEach((quant) => {
-          this.units.forEach((unit) => {
-            if (parseInt(unit.tid, 10) === parseInt(quant.unit.id, 10)) {
-              unitNames.push(unit.name);
-            }
-          });
+          if (quant.unit) {
+            this.units.forEach((unit) => {
+              if (parseInt(unit.tid, 10) === parseInt(quant.unit.id, 10)) {
+                unitNames.push(unit.name);
+              }
+            });
+          }
         });
         return unitNames;
       }
@@ -691,11 +693,6 @@ export default {
 
   watch: {
     // When photoLoc changes, this updates the images property of the current log
-    // TEMPORARY
-    equipment() {
-      console.log('EQUIPMENT IS ', this.equipment)
-    },
-    //
     photoLoc() {
       this.updateCurrentLog('images', this.photoLoc);
     },

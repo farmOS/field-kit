@@ -205,8 +205,7 @@ const makeLogFactory = (src, dest) => {
         log_owner, // eslint-disable-line camelcase
         quantity,
         log_category, // eslint-disable-line camelcase
-        // restore when server response contains equipment:
-        // equipment,
+        equipment,
         id,
         local_id, // eslint-disable-line camelcase
         name,
@@ -225,9 +224,7 @@ const makeLogFactory = (src, dest) => {
         notes: { data: parseNotes(notes), changed: nowStamp }, // eslint-disable-line no-use-before-define, max-len
         quantity: { data: quantity, changed: nowStamp },
         log_category: { data: log_category, changed: nowStamp },
-        // Inserting fake equipment data into server responses
-        equipment: { data: [{ id: '6', type: 'equipment' }], changed: nowStamp },
-        //  equipment, changed: nowStamp },
+        equipment: { data: equipment, changed: nowStamp },
         local_id,
         name: { data: name, changed: nowStamp },
         type: { data: type, changed: nowStamp },

@@ -23,7 +23,6 @@ export default {
         // If a successful response is received, delete and replace all assets
         commit('deleteAllAssets');
         const assets = res.map(({ id, name, type }) => ({ id, name, type }));
-        console.log('GOT ASSETS: ', assets);
         commit('addAssets', assets);
       }).catch((err) => { throw err; });
     },
@@ -62,7 +61,6 @@ export default {
         commit('deleteAllEquipment');
         const assets = res.map(({ id, name, type }) => ({ id, name, type })); // eslint-disable-line camelcase, max-len
         const equipment = getEquip(assets);
-        console.log('GOT EQUIPMENT: ', equipment)
         commit('addEquipment', equipment);
       }).catch((err) => { throw err; });
     },
