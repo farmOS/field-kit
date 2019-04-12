@@ -149,7 +149,8 @@
         :objects="filteredAssets"
         searchKey="name"
         searchId="id"
-        label="Add assets to the log"
+        :label="assetsRequired() ? 'Seedings must include assets!' : 'Add assets to the log'"
+        :class="{ invalid: assetsRequired() }"
         v-on:results="addAsset($event)">
         <template slot="empty">
           <div class="empty-slot">
@@ -611,6 +612,9 @@ export default {
         });
         return logAttached;
     },
+    assetsRequired() {
+      return this.logs[this.currentLogIndex].type.data === 'farm_seeding' && this.selectedAssets < 1;
+    }
   },
 
   computed: {

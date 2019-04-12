@@ -34,6 +34,7 @@
 
 <script>
 export default {
+  name: 'Autocomplete',
   /*
     PROPS: The objects are an array of JS objects we are searching through. The
     searchKey must be provided so we know specifically which property on each
@@ -129,5 +130,12 @@ export default {
   .search-results li:hover:not(.empty) {
     background-color: var(--cyan);
     color: white;
+  }
+
+  .invalid input {
+    border-color: red;
+  }
+  .invalid label {
+    color: red;
   }
 </style>
