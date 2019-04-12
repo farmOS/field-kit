@@ -313,8 +313,9 @@
         <ul class="list-group">
           <li
             class="list-group-item"
-            v-if="logs[currentLogIndex].geofield && logs[currentLogIndex].geofield.data.length > 0">
-            {{ logs[currentLogIndex].geofield.data[0].geom }}
+            v-for="geofield in logs[currentLogIndex].geofield.data"
+            v-if="showGeofieldData(geofield)">
+            {{ geofield.geom }}
             <span class="remove-list-item" @click="updateCurrentLog('geofield', [])">
               &#x2715;
             </span>
@@ -372,6 +373,7 @@ import IconSpinner from '../../icons/icon-spinner.vue'; // eslint-disable-line i
 import ToggleCheck from './ToggleCheck.vue';
 
 export default {
+  name: 'EditLog',
   components: {
     Autocomplete,
     IconSpinner,
@@ -614,7 +616,11 @@ export default {
     },
     assetsRequired() {
       return this.logs[this.currentLogIndex].type.data === 'farm_seeding' && this.selectedAssets < 1;
-    }
+    },
+    showGeofieldData(geofield) {
+      const log = this.logs[this.currentLogIndex]
+      return log.geofield && log.geofield.data.length > 0 && !geofield.geom.includes('POLYGON');
+    },
   },
 
   computed: {
