@@ -92,7 +92,7 @@
           v-for="(quant, i) in logs[currentLogIndex].quantity.data"
           v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
           class="list-group-item">
-          {{ quant.measure }} {{ quant.value }} {{ (quantUnitNames.length > 0) ? quantUnitNames[i] : '' }} {{ quant.label }}
+          {{ quant.value }} {{ (quantUnitNames.length > 0) ? quantUnitNames[i] : '' }} {{ quant.label }}
           <span class="remove-list-item" @click="removeQuant(i)">
             &#x2715;
           </span>
