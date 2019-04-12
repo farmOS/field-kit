@@ -207,123 +207,128 @@
         </div>
       </div>
 
-      <h4>Areas &amp; Location</h4>
-      <!-- We're using a radio button to choose whether areas are selected
-      automatically based on device location, or using an Autocomplete.
-      This will use the useLocalAreas conditional var -->
-      <div  v-if="useGeolocation" class="form-item form-item-name form-group">
-        <div class="form-check">
-          <input
-          v-model="useLocalAreas"
-          type="radio"
-          class="form-check-input"
-          id="dontUseGeo"
-          name="geoRadioGroup"
-          v-bind:value="false"
-          checked>
-          <label class="form-check-label" for="dontUseGeo">Search areas</label>
-        </div>
-        <div class="form-check">
-          <input
-          v-model="useLocalAreas"
-          type="radio"
-          class="form-check-input"
-          id="doUseGeo"
-          name="geoRadioGroup"
-          v-bind:value="true"
-          >
-          <label class="form-check-label" for="doUseGeo">Use my location</label>
-        </div>
-      </div>
+      <div
+        v-if="!(logs[currentLogIndex].type.data === 'farm_seeding')"
+        id="areas-and-location">
+        <h4>Areas &amp; Location</h4>
 
-      <!-- If using the user's, show a select menu of nearby locations -->
-      <div v-if="useLocalAreas" class="form-group">
-        <label for="areaSelector">Farm areas near your current location</label>
-        <select
-          @input="addArea($event.target.value)"
-          class="form-control"
-          name="areas">
-          <option v-if="localArea.length < 1" value="">No other areas nearby</option>
-          <option v-if="localArea.length > 0" value="" selected>-- Select an Area --</option>
-          <option
-            v-if="localArea.length > 0"
-            v-for="area in localArea"
-            :value="area.tid"
-            v-bind:key="`area-${area.tid}`">
-            {{area.name}}
-          </option>
-        </select>
-      </div>
-
-      <!-- If not using the user's location, show a search bar -->
-      <Autocomplete
-        v-if="!useLocalAreas"
-        :objects="filteredAreas"
-        searchKey="name"
-        searchId="tid"
-        label="Add areas to the log"
-        v-on:results="addArea($event)">
-        <template slot="empty">
-          <div class="empty-slot">
-            <em>No areas found.</em>
-            <br>
-            <button
-              type="button"
-              class="btn btn-light"
-              @click="forceSync"
-              name="button">
-              Sync Now
-            </button>
+        <!-- We're using a radio button to choose whether areas are selected
+        automatically based on device location, or using an Autocomplete.
+        This will use the useLocalAreas conditional var -->
+        <div  v-if="useGeolocation" class="form-item form-item-name form-group">
+          <div class="form-check">
+            <input
+            v-model="useLocalAreas"
+            type="radio"
+            class="form-check-input"
+            id="dontUseGeo"
+            name="geoRadioGroup"
+            v-bind:value="false"
+            checked>
+            <label class="form-check-label" for="dontUseGeo">Search areas</label>
           </div>
-        </template>
-      </Autocomplete>
+          <div class="form-check">
+            <input
+            v-model="useLocalAreas"
+            type="radio"
+            class="form-check-input"
+            id="doUseGeo"
+            name="geoRadioGroup"
+            v-bind:value="true"
+            >
+            <label class="form-check-label" for="doUseGeo">Use my location</label>
+          </div>
+        </div>
 
-      <!-- Display the areas attached to each log -->
-      <div class="form-item form-item-name form-group">
-        <ul class="list-group">
-          <li
-            v-for="(area, i) in selectedAreas"
-            v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
-            class="list-group-item">
-            {{ area.name }}
-            <span class="remove-list-item" @click="removeArea(area)">
-              &#x2715;
-            </span>
-          </li>
-        </ul>
-      </div>
+        <!-- If using the user's, show a select menu of nearby locations -->
+        <div v-if="useLocalAreas" class="form-group">
+          <label for="areaSelector">Farm areas near your current location</label>
+          <select
+            @input="addArea($event.target.value)"
+            class="form-control"
+            name="areas">
+            <option v-if="localArea.length < 1" value="">No other areas nearby</option>
+            <option v-if="localArea.length > 0" value="" selected>-- Select an Area --</option>
+            <option
+              v-if="localArea.length > 0"
+              v-for="area in localArea"
+              :value="area.tid"
+              v-bind:key="`area-${area.tid}`">
+              {{area.name}}
+            </option>
+          </select>
+        </div>
+
+        <!-- If not using the user's location, show a search bar -->
+        <Autocomplete
+          v-if="!useLocalAreas"
+          :objects="filteredAreas"
+          searchKey="name"
+          searchId="tid"
+          label="Add areas to the log"
+          v-on:results="addArea($event)">
+          <template slot="empty">
+            <div class="empty-slot">
+              <em>No areas found.</em>
+              <br>
+              <button
+                type="button"
+                class="btn btn-light"
+                @click="forceSync"
+                name="button">
+                Sync Now
+              </button>
+            </div>
+          </template>
+        </Autocomplete>
+
+        <!-- Display the areas attached to each log -->
+        <div class="form-item form-item-name form-group">
+          <ul class="list-group">
+            <li
+              v-for="(area, i) in selectedAreas"
+              v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
+              class="list-group-item">
+              {{ area.name }}
+              <span class="remove-list-item" @click="removeArea(area)">
+                &#x2715;
+              </span>
+            </li>
+          </ul>
+        </div>
 
 
-      <!-- We're using a button to attach the current location to the log
-      as a geofield -->
+        <!-- We're using a button to attach the current location to the log
+        as a geofield -->
 
-      <div v-if="useGeolocation" class="form-item form-item-name form-group">
-        <button
-          :disabled='false'
-          title="Add my GPS location to the log"
-          @click="addLocation"
-          type="button"
-          class="btn btn-success btn-navbar">
-          Add my GPS location to the log
-        </button>
-      </div>
+        <div v-if="useGeolocation" class="form-item form-item-name form-group">
+          <button
+            :disabled='false'
+            title="Add my GPS location to the log"
+            @click="addLocation"
+            type="button"
+            class="btn btn-success btn-navbar">
+            Add my GPS location to the log
+          </button>
+        </div>
 
-      <!-- Display a spinner while getting geolocation, then display the location -->
-      <div class="form-item form-item-name form-group">
-        <ul class="list-group">
-          <li
-            class="list-group-item"
-            v-for="geofield in logs[currentLogIndex].geofield.data"
-            v-if="showGeofieldData(geofield)">
-            {{ geofield.geom }}
-            <span class="remove-list-item" @click="updateCurrentLog('geofield', [])">
-              &#x2715;
-            </span>
-          </li>
-          <li class="list-item-group" v-if="attachGeo && isWorking">
-            <icon-spinner/>
-          </li>
-        </ul>
+        <!-- Display a spinner while getting geolocation, then display the location -->
+        <div class="form-item form-item-name form-group">
+          <ul class="list-group">
+            <li
+              class="list-group-item"
+              v-for="geofield in logs[currentLogIndex].geofield.data"
+              v-if="showGeofieldData(geofield)">
+              {{ geofield.geom }}
+              <span class="remove-list-item" @click="updateCurrentLog('geofield', [])">
+                &#x2715;
+              </span>
+            </li>
+            <li class="list-item-group" v-if="attachGeo && isWorking">
+              <icon-spinner/>
+            </li>
+          </ul>
+        </div>
       </div>
 
       <h4>Images</h4>
