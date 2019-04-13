@@ -87,18 +87,7 @@
       </div>
 
       <h4>Quantities</h4>
-      <ul v-if="logs[currentLogIndex].quantity.data.length > 0" class="list-group">
-        <li
-          v-for="(quant, i) in logs[currentLogIndex].quantity.data"
-          v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
-          class="list-group-item">
-          {{ quant.value }} {{ (quantUnitNames.length > 0) ? quantUnitNames[i] : '' }} {{ quant.label }}
-          <span class="remove-list-item" @click="removeQuant(i)">
-            &#x2715;
-          </span>
-        </li>
-      </ul>
-      <label for="type" class="control-label ">Add new or edit existing quantity</label>
+      <label for="quantity" class="control-label ">Add new or edit existing quantity</label>
       <div class="form-item form-item-name form-group">
         <select
           :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].measure : ''"
@@ -111,13 +100,13 @@
               {{ measure }}
             </option>
         </select>
-        <textarea
+        <input
           :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].value : 0"
           @input="updateNewQuant('value', $event.target.value)"
           placeholder="Quantity value"
           type="number"
           class="form-control">
-        </textarea>
+        </input>
         <select
           @input="updateNewQuant('unit', $event.target.value)"
           placeholder="Quantity unit"
@@ -128,13 +117,30 @@
               {{ (units) ? unit.name : '' }}
             </option>
         </select>
-        <textarea
+        <input
           :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].label : ''"
           @input="updateNewQuant('label', $event.target.value)"
           placeholder="Quantity label"
           type="text"
           class="form-control">
-        </textarea>
+        </input>
+      </div>
+
+      <div class="form-item form-group">
+        <ul v-if="logs[currentLogIndex].quantity.data.length > 0" class="list-group">
+          <li
+            v-for="(quant, i) in logs[currentLogIndex].quantity.data"
+            v-bind:key="`quantity-${i}-${Math.floor(Math.random() * 1000000)}`"
+            class="list-group-item">
+            {{ quant.value }} {{ (quantUnitNames.length > 0) ? quantUnitNames[i] : '' }} {{ quant.label }}
+            <span class="remove-list-item" @click="removeQuant(i)">
+              &#x2715;
+            </span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="form-item form-group">
         <button
           type="button"
           class="btn btn-success"
