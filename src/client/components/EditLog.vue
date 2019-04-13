@@ -185,13 +185,14 @@
         <label for="type" class="control-label ">Equipment</label>
         <div class="input-group">
           <select
-          @input="addEquipment($event.target.value)"
+            @input="addEquipment($event.target.value)"
             class="custom-select col-sm-3 ">
-              <option
-                v-for="equip in equipment"
-                :value="equip.id">
-                {{ (equip) ? equip.name : '' }}
-              </option>
+            <option value=""></option>
+            <option
+              v-for="equip in equipment"
+              :value="equip.id">
+              {{ (equip) ? equip.name : '' }}
+            </option>
           </select>
           <ul v-if="logs[currentLogIndex].equipment" class="list-group">
             <li
@@ -507,9 +508,12 @@ export default {
     },
 
     addEquipment(id) {
-      const equipReference = { id: id, resource: 'farm_asset'};
-      const newEquipment = this.logs[this.currentLogIndex].equipment.data.concat(equipReference);
-      this.updateCurrentLog('equipment', newEquipment);
+      console.log('Equipment id: ', id);
+      if (id !== '') {
+        const equipReference = { id: id, resource: 'farm_asset'};
+        const newEquipment = this.logs[this.currentLogIndex].equipment.data.concat(equipReference);
+        this.updateCurrentLog('equipment', newEquipment);
+      }
     },
 
     addAsset(id) {
