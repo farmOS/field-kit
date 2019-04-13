@@ -14,16 +14,7 @@ module.exports = {
     proxy: [{
       logLevel: 'debug',
       context: [
-        '/user',
-        '/login/',
-        '/restws/',
-        '/log',
-        '/log.json',
-        '/taxonomy_term.json',
-        '/taxonomy_vocabulary.json',
-        '/farm_asset',
-        '/farm_asset.json',
-        '/farm.json',
+        '/'
       ],
       target: 'http://localhost:80',
       changeOrigin: true,
