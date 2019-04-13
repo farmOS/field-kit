@@ -194,18 +194,20 @@
               {{ (equip) ? equip.name : '' }}
             </option>
           </select>
-          <ul v-if="logs[currentLogIndex].equipment" class="list-group">
-            <li
-              v-for="(equip, i) in logs[currentLogIndex].equipment.data"
-              v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
-              class="list-group-item">
-              {{ (equipmentNames.length > 0) ? equipmentNames[i] : '' }}
-              <span class="remove-list-item" @click="removeEquipment(i)">
-                &#x2715;
-              </span>
-            </li>
-          </ul>
         </div>
+      </div>
+      <div class="form-item form-group">
+        <ul v-if="logs[currentLogIndex].equipment" class="list-group">
+          <li
+            v-for="(equip, i) in logs[currentLogIndex].equipment.data"
+            v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
+            class="list-group-item">
+            {{ (equipmentNames.length > 0) ? equipmentNames[i] : '' }}
+            <span class="remove-list-item" @click="removeEquipment(i)">
+              &#x2715;
+            </span>
+          </li>
+        </ul>
       </div>
 
       <div
