@@ -213,7 +213,7 @@ export default {
     },
     checkChecked(id) {
       return !document.getElementById(id).checked;
-    }
+    },
   },
 };
 </script>
