@@ -43,11 +43,6 @@ export default {
       }).catch((err) => { throw err; });
     },
     updateEquipment({ commit }) {
-      const sampleEquip = [
-        { id: 1, name: 'Olde Forde tractor', type: 'farm_equipment' },
-        { id: 2, name: 'Lil blue BCS', type: 'farm_equipment' },
-        { id: 3, name: 'Big Orange', type: 'farm_equipment' },
-      ];
       function getEquip(assets) {
         const equip = [];
         assets.forEach((asset) => {
