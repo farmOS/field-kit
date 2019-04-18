@@ -49,9 +49,10 @@
         </div>
       </div>
 
-      <div class="form-item form-group">
-        <label for="log-categories">Log Categories</label>
+      <div id="categories" class="form-item form-group">
+        <label for="log-categories" id="categories-label">Log Categories</label>
         <select-box
+          small
           v-for="cat in categories"
           :id="`category-${cat.tid}-${cat.name}`"
           :selected="logs[currentLogIndex].log_category.data.some(_cat => cat.tid === _cat.id)"
@@ -782,6 +783,16 @@ export default {
 
   .remove-list-item {
     float: right;
+  }
+
+  #categories {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+  }
+
+  #categories-label {
+    flex: 1 0 100%;
   }
 
 </style>

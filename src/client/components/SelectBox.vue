@@ -8,7 +8,7 @@
     <label
       :for="id"
       @click="$emit('input', checkChecked(id))"
-      :class="{selected: selected}">
+      :class="[{selected: selected}, {small: small}]">
       {{label}}
     </label>
   </div>
@@ -16,11 +16,12 @@
 
 <script>
 export default {
-  props: [
-    'id',
-    'selected',
-    'label'
-  ],
+  props: {
+    id: String,
+    selected: Boolean,
+    label: String,
+    small: Boolean,
+  },
   methods: {
     checkChecked(id) {
       return !document.getElementById(this.id).checked;
@@ -46,6 +47,12 @@ export default {
     border: solid 2px var(--cyan);
     font-size: 1rem;
     font-weight: bold;
+  }
+
+  label.small {
+    padding: .5rem;
+    font-size: .875rem;
+    margin: .25rem;
   }
 
   .selected {
