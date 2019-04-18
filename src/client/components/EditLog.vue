@@ -49,30 +49,19 @@
         </div>
       </div>
 
-      <div class="form-item form-item-name form-group">
-        <label for="type" class="control-label ">Log Categories</label>
-        <div class="input-group">
-          <select
-            @input="addCategory($event.target.value)"
-            class="custom-select col-sm-3 ">
-              <option
-                v-for="cat in categories"
-                :value="cat.tid">
-                {{ (cat) ? cat.name : '' }}
-              </option>
-          </select>
-          <ul v-if="logs[currentLogIndex].log_category.data.length > 0" class="list-group">
-            <li
-              v-for="(cat, i) in logs[currentLogIndex].log_category.data"
-              v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
-              class="list-group-item">
-              {{ (categoryNames.length > 0) ? categoryNames[i] : '' }}
-              <span class="remove-list-item" @click="removeCategory(i)">
-                &#x2715;
-              </span>
-            </li>
-          </ul>
-        </div>
+      <div class="form-item form-group">
+        <label for="log-categories">Log Categories</label>
+        <select-box
+          v-for="cat in categories"
+          :id="`category-${cat.tid}-${cat.name}`"
+          :selected="logs[currentLogIndex].log_category.data.some(_cat => cat.tid === _cat.id)"
+          :label="cat.name"
+          :key="`category-${cat.tid}-${cat.name}`"
+          @input="
+            $event
+            ? addCategory(cat.tid)
+            : removeCategory(logs[currentLogIndex].log_category.data.findIndex(_cat => cat.tid === _cat.id))"
+          />
       </div>
 
       <div class="form-item form-item-name form-group">
@@ -385,6 +374,7 @@
 import Autocomplete from './Autocomplete';
 import IconSpinner from '../../icons/icon-spinner.vue'; // eslint-disable-line import/extensions
 import ToggleCheck from './ToggleCheck.vue';
+import SelectBox from './SelectBox.vue';
 
 export default {
   name: 'EditLog',
@@ -392,6 +382,7 @@ export default {
     Autocomplete,
     IconSpinner,
     ToggleCheck,
+    SelectBox,
   },
 
   data() {

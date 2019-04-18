@@ -4,11 +4,10 @@
       type="checkbox"
       :id="id"
       :name="id"
-      :checked="selected"
-      @input="$emit('click', $event.target.checked)">
+      :checked="selected">
     <label
       :for="id"
-      @click="$emit('click', checkChecked(id))"
+      @click="$emit('input', checkChecked(id))"
       :class="{selected: selected}">
       {{label}}
     </label>
@@ -21,18 +20,23 @@ export default {
     'id',
     'selected',
     'label'
-  ]
+  ],
   methods: {
     checkChecked(id) {
       return !document.getElementById(this.id).checked;
     },
-  }
+  },
 }
 </script>
 
 <style lang="css" scoped>
+  .form-check {
+    padding: 0;
+  }
+
   input {
     position: absolute;
+    left: -10000px;
     opacity: 0;
   }
 
