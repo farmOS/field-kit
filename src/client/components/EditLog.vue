@@ -51,9 +51,11 @@
 
       <div id="categories" class="form-item form-group">
         <label for="log-categories" id="categories-label">Log Categories</label>
+        <p v-if="!showAllCategories && logs[currentLogIndex].log_category.data.length < 1">No categories selected</p>
         <select-box
           small
           v-for="cat in categories"
+          v-if="showAllCategories || logs[currentLogIndex].log_category.data.some(_cat => cat.tid === _cat.id)"
           :id="`category-${cat.tid}-${cat.name}`"
           :selected="logs[currentLogIndex].log_category.data.some(_cat => cat.tid === _cat.id)"
           :label="cat.name"
@@ -63,6 +65,14 @@
             ? addCategory(cat.tid)
             : removeCategory(logs[currentLogIndex].log_category.data.findIndex(_cat => cat.tid === _cat.id))"
           />
+        <div class="show-hide">
+          <div v-if="!showAllCategories" @click="showAllCategories = !showAllCategories">
+            <p><icon-expand-more/>Show More</p>
+          </div>
+          <div v-if="showAllCategories" @click="showAllCategories = !showAllCategories">
+            <p><icon-expand-less/>Show Less</p>
+          </div>
+        </div>
       </div>
 
       <div class="form-item form-item-name form-group">
@@ -373,6 +383,8 @@
 
 <script>
 import Autocomplete from './Autocomplete';
+import IconExpandLess from '../../icons/icon-expand-less.vue'; // eslint-disable-line import/extensions
+import IconExpandMore from '../../icons/icon-expand-more.vue'; // eslint-disable-line import/extensions
 import IconSpinner from '../../icons/icon-spinner.vue'; // eslint-disable-line import/extensions
 import ToggleCheck from './ToggleCheck.vue';
 import SelectBox from './SelectBox.vue';
@@ -381,6 +393,8 @@ export default {
   name: 'EditLog',
   components: {
     Autocomplete,
+    IconExpandLess,
+    IconExpandMore,
     IconSpinner,
     ToggleCheck,
     SelectBox,
@@ -394,6 +408,7 @@ export default {
       addedArea: false,
       isWorking: false,
       existingLog: false,
+      showAllCategories: false,
       // All types available to the log, with system_name:display name as key:value
       logTypes: {
         farm_observation: 'Observation',
@@ -793,6 +808,22 @@ export default {
 
   #categories-label {
     flex: 1 0 100%;
+  }
+
+  #categories p {
+    font-style: italic;
+  }
+
+  .show-hide {
+    flex: 1 0 100%;
+  }
+
+  .show-hide p {
+    font-size: 1rem;
+  }
+
+  .show-hide svg {
+    vertical-align: bottom;
   }
 
 </style>
