@@ -153,9 +153,11 @@ export default {
 
     // GET LOGS FROM SERVER (step 1 of sync)
     getServerLogs({ commit, rootState }) {
+      console.log('Running getServerLogs...');
       const syncDate = localStorage.getItem('syncDate');
       return farm().log.get(rootState.shell.settings.logImportFilters)
         .then((res) => {
+          console.log('Response returned: ', res);
           // See whether logs are new, or currently in the store
           // If res is a single log, check vs current, run through the logFactory and call addLog
           // If res is multiple, check each vs current, run through logFactory and call addLogs
@@ -237,7 +239,9 @@ export default {
               };
               commit('updateLogFromServer', updateParams);
             }
-            if (checkStatus.localChange && checkStatus.localId !== null && checkStatus.serverChange) { // eslint-disable-line max-len
+            if (checkStatus.localChange
+              && checkStatus.localId !== null
+              && checkStatus.serverChange) {
               /*
               Replace properties of the local log that have not been modified since
               the last sync with data from the server.
@@ -247,6 +251,9 @@ export default {
               const storeLog = checkStatus.log;
               const servLogBuilder = {};
               const locLogBuilder = {};
+              const serverConflicts = {};
+
+              console.log('There may be conflicts...');
               /*
               We compare changed dates for local log properties against the date of last sync.
               madeFromServer is used as a source
@@ -255,10 +262,12 @@ export default {
               const madeFromServer = makeLog.fromServer({ ...log });
               Object.keys(storeLog).forEach((key) => {
                 if (storeLog[key].changed && storeLog[key].changed !== null) {
-                  if (parseInt(storeLog[key].changed, 10) < parseInt(syncDate, 10)) {
+                  // TODO: Would it be better to compare against madeFromServer.changed
+                  if (+storeLog[key].changed < +syncDate) {
                     servLogBuilder[key] = madeFromServer[key];
                   } else {
                     locLogBuilder[key] = storeLog[key];
+                    serverConflicts[key] = madeFromServer[key];
                   }
                 }
               });
@@ -279,6 +288,7 @@ export default {
                commit('updateLogFromServer', updateParams);
               */
               if (locLogBuilder !== {}) {
+                console.log('locLogBuilder is not empty', serverConflicts);
                 const updateParams = {
                   index: checkStatus.storeIndex,
                   log: makeLog.toStore({
@@ -292,6 +302,7 @@ export default {
                 };
                 updateParams.log.isReadyToSync = true;
                 commit('updateLogFromServer', updateParams);
+                commit('addServerConflicts', serverConflicts);
               }
             }
           }

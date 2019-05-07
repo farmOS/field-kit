@@ -124,6 +124,7 @@ const farmModule = {
     name: '',
     url: '',
     logs: [],
+    serverConflicts: [],
     assets: [],
     areas: [],
     currentLogIndex: 0,
@@ -160,6 +161,10 @@ const farmModule = {
     addEquipment(state, equip) {
       state.equipment = state.equipment.concat(equip);
     },
+    addServerConflicts(state, conflicts) {
+      console.log('running addServerConflicts');
+      state.serverConflicts = state.serverConflicts.concat(conflicts);
+    },
     /*
     updateUnitsFromCache. updateCategoriesFromCache and updateEquipmentFromCache are distinct from
     addUnits because they are NOT hooks for updating units/ cats in the database.  They ONLY add
@@ -183,6 +188,7 @@ const farmModule = {
       state.currentLogIndex = state.logs.push(newLog) - 1;
     },
     // This is called when new logs from the server are added
+    // FIXME: Leaky abstraction; shouldn't have server/db details here
     addLogFromServer(state, newLog) {
       const newIndex = state.logs.push(newLog) - 1;
       this.dispatch('serverLogToDb', { index: newIndex, log: newLog });
