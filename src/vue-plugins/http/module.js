@@ -155,6 +155,7 @@ export default {
     getServerLogs({ commit, rootState }) {
       console.log('Running getServerLogs...');
       const syncDate = localStorage.getItem('syncDate');
+      const allLogs = rootState.farm.logs;
       return farm().log.get(rootState.shell.settings.logImportFilters)
         .then((res) => {
           console.log('Response returned: ', res);
@@ -169,43 +170,9 @@ export default {
           is thrown, and the user selects whether to over-write or sync local to server
           */
 
-          function checkLog(serverLog) {
-            const allLogs = rootState.farm.logs;
-            // The localLog will be passed as logStatus.log if localChange checks true
-            const logStatus = {
-              localId: null,
-              storeIndex: null,
-              localChange: true,
-              serverChange: false,
-              log: null,
-            };
-            allLogs.forEach((localLog, index) => {
-              if (localLog.id) {
-                /*
-                  If a local log has an id field, see if it is the same as the server log.
-                  In this case set lotStatus.localId and .storeIndex
-                  Also check whethe the log is unsynced (wasPushedToServer true)
-                */
-                if (localLog.id === serverLog.id) {
-                  logStatus.localId = localLog.local_id;
-                  logStatus.storeIndex = index;
-                  if (JSON.parse(localLog.wasPushedToServer) === true) {
-                    logStatus.localChange = false;
-                  } else {
-                    logStatus.log = localLog;
-                  }
-                  if (parseInt(serverLog.changed, 10) > parseInt(syncDate, 10)) {
-                    logStatus.serverChange = true;
-                  }
-                }
-              }
-            });
-            return logStatus;
-          }
-
           // Process each log on its way from the server to the logFactory
           function processLog(log) {
-            const checkStatus = checkLog(log);
+            const checkStatus = checkLog(log, allLogs, syncDate); // eslint-disable-line no-use-before-define, max-len
             /*
             If the log is not present locally, add it.
             If the log is present locally, but has not been changed since the last sync,
@@ -320,3 +287,36 @@ export default {
     },
   },
 };
+
+function checkLog(serverLog, allLogs, syncDate) {
+  // The localLog will be passed as logStatus.log if localChange checks true
+  const logStatus = {
+    localId: null,
+    storeIndex: null,
+    localChange: true,
+    serverChange: false,
+    log: null,
+  };
+  allLogs.forEach((localLog, index) => {
+    if (localLog.id) {
+      /*
+        If a local log has an id field, see if it is the same as the server log.
+        In this case set lotStatus.localId and .storeIndex
+        Also check whethe the log is unsynced (wasPushedToServer true)
+      */
+      if (localLog.id === serverLog.id) {
+        logStatus.localId = localLog.local_id;
+        logStatus.storeIndex = index;
+        if (JSON.parse(localLog.wasPushedToServer) === true) {
+          logStatus.localChange = false;
+        } else {
+          logStatus.log = localLog;
+        }
+        if (parseInt(serverLog.changed, 10) > parseInt(syncDate, 10)) {
+          logStatus.serverChange = true;
+        }
+      }
+    }
+  });
+  return logStatus;
+}
