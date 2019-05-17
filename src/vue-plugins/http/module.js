@@ -153,31 +153,24 @@ export default {
 
     // GET LOGS FROM SERVER (step 1 of sync)
     getServerLogs({ commit, rootState }) {
-      console.log('Running getServerLogs...');
       const syncDate = localStorage.getItem('syncDate');
       const allLogs = rootState.farm.logs;
       return farm().log.get(rootState.shell.settings.logImportFilters)
         .then((res) => {
-          console.log('Response returned: ', res);
-
-          // Process one or more logs
-          if (res.list) {
-            console.log('Response contains list');
-            res.list.forEach((log) => {
-              const checkStatus = checkLog(log, allLogs, syncDate); // eslint-disable-line no-use-before-define, max-len
-              processLog(log, checkStatus, syncDate, commit); // eslint-disable-line no-use-before-define, max-len
-            });
-          } else if (Array.isArray(res)) {
-            console.log('Response does not contain list');
-            res.forEach((log) => {
-              const checkStatus = checkLog(log, allLogs, syncDate); // eslint-disable-line no-use-before-define, max-len
-              processLog(log, checkStatus, syncDate, commit); // eslint-disable-line no-use-before-define, max-len
-            });
-          } else {
-            console.log('Response is a single log');
-            const checkStatus = checkLog(res, allLogs, syncDate); // eslint-disable-line no-use-before-define, max-len
-            processLog(res, checkStatus, syncDate, commit); // eslint-disable-line no-use-before-define, max-len
-          }
+          res.forEach((log) => {
+            const checkStatus = checkLog(log, allLogs, syncDate); // eslint-disable-line no-use-before-define, max-len
+            if (checkStatus.serverChange) {
+              const mergedLog = processLog(log, checkStatus, syncDate); // eslint-disable-line no-use-before-define, max-len
+              if (checkStatus.localId === null) {
+                commit('addLogFromServer', mergedLog);
+              } else {
+                commit('updateLogFromServer', {
+                  index: checkStatus.storeIndex,
+                  log: mergedLog,
+                });
+              }
+            }
+          });
         })
         .catch(err => err);
       // Errors are handled in index.js
@@ -219,104 +212,73 @@ function checkLog(serverLog, allLogs, syncDate) {
 }
 
 // Process each log on its way from the server to the logFactory
-function processLog(log, checkStatus, syncDate, commit) {
+function processLog(log, checkStatus, syncDate) {
   /*
-  If the log is not present locally, add it.
+  If the log is not present locally, return the server version.
   If the log is present locally, but has not been changed since the last sync,
-  update it with the new version from the server
+  return the new version from the server (with local_id)
   If the log is present locally and has been changed, check log.changed from the server
   against the changed property of each log attribute
    - If any attribute has been changed more recently than the server log, keep it
    - Otherwise take changes from the server
   */
   if (checkStatus.localId === null) {
-    commit('addLogFromServer',
-      makeLog.fromServer({
-        ...log,
-        wasPushedToServer: true,
-        // Trying to make isReady..
-        isReadyToSync: false,
-        done: (parseInt(log.done, 10) === 1),
-      }));
-  }
-  if (!checkStatus.localChange && checkStatus.localId !== null && checkStatus.serverChange) { // eslint-disable-line max-len
-    // Update the log with all data from the server
-    const updateParams = {
-      index: checkStatus.storeIndex,
-      log: makeLog.fromServer({
-        ...log,
-        wasPushedToServer: true,
-        isReadyToSync: false,
-        local_id: checkStatus.localId,
-        done: (parseInt(log.done, 10) === 1),
-      }),
-    };
-    commit('updateLogFromServer', updateParams);
-  }
-  if (checkStatus.localChange
-    && checkStatus.localId !== null
-    && checkStatus.serverChange) {
-    /*
-    Replace properties of the local log that have not been modified since
-    the last sync with data from the server.
-    For properties that have been completed since the sync date,
-    Present choice to retain either the log or the server version
-    */
-    const storeLog = checkStatus.log;
-    const servLogBuilder = {};
-    const locLogBuilder = {};
-    const serverConflicts = {};
-
-    console.log('There may be conflicts...');
-    /*
-    We compare changed dates for local log properties against the date of last sync.
-    madeFromServer is used as a source
-    for building the merged log, to keep formatting consistent
-    */
-    const madeFromServer = makeLog.fromServer({ ...log });
-    Object.keys(storeLog).forEach((key) => {
-      if (storeLog[key].changed && storeLog[key].changed !== null) {
-        // TODO: Would it be better to compare against madeFromServer.changed
-        if (+storeLog[key].changed < +syncDate) {
-          servLogBuilder[key] = madeFromServer[key];
-        } else {
-          locLogBuilder[key] = storeLog[key];
-          serverConflicts[key] = madeFromServer[key];
-        }
-      }
+    return makeLog.fromServer({
+      ...log,
+      wasPushedToServer: true,
+      // Trying to make isReady..
+      isReadyToSync: false,
+      done: (parseInt(log.done, 10) === 1),
     });
-    /*
-    This is where we can optionally throw a warning about log attributes
-    that have been changed since last sync on both the app and the server.
-     - If retaining local field changes, run the following uncommented code
-     - If discarding local field changes, run this commented code
-     const updateParams = {
-       index: checkStatus.storeIndex,
-       log: makeLog.fromServer({
-         ...log,
-         wasPushedToServer: true,
-         isReadyToSync: false,
-         local_id: checkStatus.localId,
-       }),
-     };
-     commit('updateLogFromServer', updateParams);
-    */
-    if (locLogBuilder !== {}) {
-      console.log('locLogBuilder is not empty', serverConflicts);
-      const updateParams = {
-        index: checkStatus.storeIndex,
-        log: makeLog.toStore({
-          ...locLogBuilder,
-          ...servLogBuilder,
-          wasPushedToServer: false,
-          local_id: checkStatus.localId,
-          id: log.id,
-          done: (parseInt(log.done, 10) === 1),
-        }),
-      };
-      updateParams.log.isReadyToSync = true;
-      commit('updateLogFromServer', updateParams);
-      commit('addServerConflicts', serverConflicts);
-    }
   }
+  if (!checkStatus.localChange && checkStatus.serverChange) {
+    // Update the log with all data from the server
+    return makeLog.fromServer({
+      ...log,
+      wasPushedToServer: true,
+      isReadyToSync: false,
+      local_id: checkStatus.localId,
+      done: (parseInt(log.done, 10) === 1),
+    });
+  }
+  /*
+  Replace properties of the local log that have not been modified since
+  the last sync with data from the server.
+  For properties that have been completed since the sync date,
+  Present choice to retain either the log or the server version
+  */
+  const storeLog = checkStatus.log;
+  const servLogBuilder = {};
+  const locLogBuilder = {};
+  const serverConflicts = {};
+
+  /*
+  We compare changed dates for local log properties against the date of last sync.
+  madeFromServer is used as a source
+  for building the merged log, to keep formatting consistent
+  */
+  const madeFromServer = makeLog.fromServer(log);
+  Object.keys(storeLog).forEach((key) => {
+    if (storeLog[key].changed && storeLog[key].changed !== null) {
+      // TODO: Would it be better to compare against madeFromServer.changed
+      if (+storeLog[key].changed < +syncDate) {
+        servLogBuilder[key] = madeFromServer[key];
+      } else {
+        locLogBuilder[key] = storeLog[key];
+        serverConflicts[key] = madeFromServer[key];
+      }
+    }
+  });
+  return makeLog.toStore({
+    ...locLogBuilder,
+    ...servLogBuilder,
+    wasPushedToServer: false,
+    local_id: checkStatus.localId,
+    id: log.id,
+    done: {
+      changed: Math.floor(Date.now() / 1000),
+      data: (+log.done === 1),
+    },
+    isReadyToSync: true,
+  });
 }
