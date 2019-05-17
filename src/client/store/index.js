@@ -124,7 +124,6 @@ const farmModule = {
     name: '',
     url: '',
     logs: [],
-    serverConflicts: [],
     assets: [],
     areas: [],
     currentLogIndex: 0,
@@ -160,10 +159,6 @@ const farmModule = {
     },
     addEquipment(state, equip) {
       state.equipment = state.equipment.concat(equip);
-    },
-    addServerConflicts(state, conflicts) {
-      console.log('running addServerConflicts');
-      state.serverConflicts = state.serverConflicts.concat(conflicts);
     },
     /*
     updateUnitsFromCache. updateCategoriesFromCache and updateEquipmentFromCache are distinct from
