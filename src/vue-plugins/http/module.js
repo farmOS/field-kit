@@ -14,7 +14,7 @@ export default {
       return farm().area.get().then((res) => {
         // If a successful response is received, delete and replace all areas
         commit('deleteAllAreas');
-        const areas = res.map(({ tid, name, geofield }) => ({ tid, name, geofield })); // eslint-disable-line camelcase, max-len
+        const areas = res.list.map(({ tid, name, geofield }) => ({ tid, name, geofield })); // eslint-disable-line camelcase, max-len
         commit('addAreas', areas);
       }).catch((err) => { throw err; });
     },
@@ -22,7 +22,7 @@ export default {
       return farm().asset.get().then((res) => {
         // If a successful response is received, delete and replace all assets
         commit('deleteAllAssets');
-        const assets = res.map(({ id, name, type }) => ({ id, name, type }));
+        const assets = res.list.map(({ id, name, type }) => ({ id, name, type }));
         commit('addAssets', assets);
       }).catch((err) => { throw err; });
     },
@@ -54,7 +54,7 @@ export default {
       }
       return farm().asset.get().then((res) => {
         commit('deleteAllEquipment');
-        const assets = res.map(({ id, name, type }) => ({ id, name, type })); // eslint-disable-line camelcase, max-len
+        const assets = res.list.map(({ id, name, type }) => ({ id, name, type })); // eslint-disable-line camelcase, max-len
         const equipment = getEquip(assets);
         commit('addEquipment', equipment);
       }).catch((err) => { throw err; });
@@ -157,7 +157,7 @@ export default {
       const allLogs = rootState.farm.logs;
       return farm().log.get(rootState.shell.settings.logImportFilters)
         .then((res) => {
-          res.forEach((log) => {
+          res.list.forEach((log) => {
             const checkStatus = checkLog(log, allLogs, syncDate); // eslint-disable-line no-use-before-define, max-len
             if (checkStatus.serverChange) {
               const mergedLog = processLog(log, checkStatus, syncDate); // eslint-disable-line no-use-before-define, max-len
