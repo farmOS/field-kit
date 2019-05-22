@@ -87,13 +87,9 @@ export default {
     },
 
     logout() {
-      const host = localStorage.getItem('host');
-      const user = localStorage.getItem('username');
-      const password = localStorage.getItem('password');
-      console.log('HOST: '+host+'USER: '+user+'PASSWORD '+password);
-      const farm = farmOS(host, user, password);
-      farm.logout()
-        .then(this.deleteCachedUserAndSiteInfo);
+      lazyFarm().logout().then((res) => {
+        // Currently farmOS.js returns no response to logout requests
+      });
     },
 
     updateUserAndSiteInfo({ commit }) {
@@ -136,6 +132,7 @@ export default {
     },
 
     deleteCachedUserAndSiteInfo() {
+      console.log('USER AND SITE INFO DELETED')
       localStorage.removeItem('username');
       localStorage.removeItem('email');
       localStorage.removeItem('username');

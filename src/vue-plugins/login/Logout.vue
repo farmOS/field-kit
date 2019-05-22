@@ -50,6 +50,10 @@
         this.$router.back()
       },
       logout() {
+
+        // Call logout function from farmos.js
+        this.$store.dispatch('logout');
+
         // Remove logs, assets, areas, user info & site info from store
         this.$store.commit('clearLogs')
         this.$store.commit('clearAssets')
@@ -65,9 +69,6 @@
         this.$store.dispatch('deleteAllCachedAssets')
         this.$store.dispatch('deleteAllCachedAreas')
         this.$store.dispatch('deleteCachedUserAndSiteInfo')
-
-        // Call logout function from farmos.js
-        this.$store.dispatch('logout');
 
         // Set login status to false and return to login screen
         this.$store.commit('setLoginStatus', false)
