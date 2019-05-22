@@ -161,14 +161,14 @@ export default {
             const checkStatus = checkLog(log, allLogs, syncDate); // eslint-disable-line no-use-before-define, max-len
             if (checkStatus.serverChange) {
               const mergedLog = processLog(log, checkStatus, syncDate); // eslint-disable-line no-use-before-define, max-len
-              if (checkStatus.localId === null) {
-                commit('addLogFromServer', mergedLog);
-              } else {
-                commit('updateLogFromServer', {
-                  index: checkStatus.storeIndex,
-                  log: mergedLog,
-                });
-              }
+              commit('updateLogFromServer', {
+                index: checkStatus.storeIndex,
+                log: mergedLog,
+              });
+            }
+            if (checkStatus.localId === null) {
+              const mergedLog = processLog(log, checkStatus, syncDate); // eslint-disable-line no-use-before-define, max-len
+              commit('addLogFromServer', mergedLog);
             }
           });
         })
@@ -202,7 +202,7 @@ function checkLog(serverLog, allLogs, syncDate) {
         } else {
           logStatus.log = localLog;
         }
-        if (parseInt(serverLog.changed, 10) > parseInt(syncDate, 10)) {
+        if (+serverLog.changed > +syncDate) {
           logStatus.serverChange = true;
         }
       }
