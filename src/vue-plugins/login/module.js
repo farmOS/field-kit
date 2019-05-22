@@ -87,7 +87,7 @@ export default {
     },
 
     logout() {
-      lazyFarm().logout().then((res) => {
+      lazyFarm().logout().then(() => {
         // Currently farmOS.js returns no response to logout requests
       });
     },
@@ -132,7 +132,6 @@ export default {
     },
 
     deleteCachedUserAndSiteInfo() {
-      console.log('USER AND SITE INFO DELETED')
       localStorage.removeItem('username');
       localStorage.removeItem('email');
       localStorage.removeItem('username');
