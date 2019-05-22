@@ -66,6 +66,9 @@
         this.$store.dispatch('deleteAllCachedAreas')
         this.$store.dispatch('deleteCachedUserAndSiteInfo')
 
+        // Call logout function from farmos.js
+        this.$store.dispatch('logout');
+
         // Set login status to false and return to login screen
         this.$store.commit('setLoginStatus', false)
         this.$router.push({ path: '/login' })

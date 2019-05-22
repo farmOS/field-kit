@@ -86,6 +86,16 @@ export default {
       });
     },
 
+    logout() {
+      const host = localStorage.getItem('host');
+      const user = localStorage.getItem('username');
+      const password = localStorage.getItem('password');
+      console.log('HOST: '+host+'USER: '+user+'PASSWORD '+password);
+      const farm = farmOS(host, user, password);
+      farm.logout()
+        .then(this.deleteCachedUserAndSiteInfo);
+    },
+
     updateUserAndSiteInfo({ commit }) {
       const username = localStorage.getItem('username');
       if (username) {
