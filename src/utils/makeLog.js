@@ -37,6 +37,7 @@ const makeLogFactory = (src, dest) => {
       images = { changed: null, data: [] },
       done = { changed: null, data: true },
       isCachedLocally = false,
+      isReadyToSync = false,
       wasPushedToServer = false,
       remoteUri = '',
       asset = { changed: null, data: [] }, // eslint-disable-line camelcase
@@ -66,6 +67,7 @@ const makeLogFactory = (src, dest) => {
           // Use JSON.parse() to convert strings back to booleans
           done: { data: JSON.parse(done.data), changed: done.changed },
           isCachedLocally: JSON.parse(isCachedLocally), // eslint-disable-line max-len
+          isReadyToSync: JSON.parse(isReadyToSync), // eslint-disable-line max-len
           wasPushedToServer: JSON.parse(wasPushedToServer), // eslint-disable-line max-len
           remoteUri,
           asset: { data: parseObjects(asset.data), changed: asset.changed }, // eslint-disable-line no-use-before-define, max-len

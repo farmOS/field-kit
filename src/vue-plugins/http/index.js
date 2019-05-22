@@ -6,7 +6,9 @@ import module from './module';
 */
 function syncReducer(indices, curLog, curIndex) {
   // Sync all logs to the server; those originally from server will have id fields
-  if (curLog.isReadyToSync !== undefined && JSON.parse(curLog.isReadyToSync) && !JSON.parse(curLog.wasPushedToServer)) { // eslint-disable-line max-len
+  if (curLog.isReadyToSync !== undefined
+    && JSON.parse(curLog.isReadyToSync)
+    && !JSON.parse(curLog.wasPushedToServer)) {
     return indices.concat(curIndex);
   }
   return indices;
