@@ -71,6 +71,7 @@ export default {
               ...log,
               id: response.id,
               wasPushedToServer: true,
+              isReadyToSync: false,
               remoteUri: response.uri,
             });
           },
