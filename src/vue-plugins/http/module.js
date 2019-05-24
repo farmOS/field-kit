@@ -272,7 +272,6 @@ function processLog(log, checkStatus, syncDate) {
   const storeLog = checkStatus.log;
   const servLogBuilder = {};
   const locLogBuilder = {};
-  const serverConflicts = {};
 
   /*
   We compare changed dates for local log properties against the date of last sync.
@@ -282,12 +281,10 @@ function processLog(log, checkStatus, syncDate) {
   const madeFromServer = makeLog.fromServer(log);
   Object.keys(storeLog).forEach((key) => {
     if (storeLog[key].changed && storeLog[key].changed !== null) {
-      // TODO: Would it be better to compare against madeFromServer.changed
       if (+storeLog[key].changed < +syncDate) {
         servLogBuilder[key] = madeFromServer[key];
       } else {
         locLogBuilder[key] = storeLog[key];
-        serverConflicts[key] = madeFromServer[key];
       }
     }
   });
