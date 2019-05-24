@@ -157,8 +157,9 @@ export default {
       const syncDate = localStorage.getItem('syncDate');
       const allLogs = rootState.farm.logs;
       return farm().log.get(rootState.shell.settings.logImportFilters)
-        .then((res) => {
-          res.list.forEach((log) => {
+        .then(res => (
+          // Returns an array of ids which have already been checked & merged
+          res.list.map((log) => {
             const checkStatus = checkLog(log, allLogs, syncDate); // eslint-disable-line no-use-before-define, max-len
             if (checkStatus.serverChange) {
               const mergedLog = processLog(log, checkStatus, syncDate); // eslint-disable-line no-use-before-define, max-len
@@ -170,6 +171,26 @@ export default {
             if (checkStatus.localId === null) {
               const mergedLog = processLog(log, checkStatus, syncDate); // eslint-disable-line no-use-before-define, max-len
               commit('addLogFromServer', mergedLog);
+            }
+            return log.id;
+          })
+        ))
+        // Run a 2nd request for the remaining logs not included in the import filters
+        .then((checkedIds) => {
+          const uncheckedIds = allLogs
+            .filter(log => log.id && !checkedIds.some(checkedId => log.id === checkedId))
+            .map(log => log.id);
+          return farm().log.get(uncheckedIds);
+        })
+        .then((res) => {
+          res.list.forEach((log) => {
+            const checkStatus = checkLog(log, allLogs, syncDate); // eslint-disable-line no-use-before-define, max-len
+            if (checkStatus.serverChange) {
+              const mergedLog = processLog(log, checkStatus, syncDate); // eslint-disable-line no-use-before-define, max-len
+              commit('updateLogFromServer', {
+                index: checkStatus.storeIndex,
+                log: mergedLog,
+              });
             }
           });
         })
