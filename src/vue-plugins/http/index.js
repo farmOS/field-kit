@@ -67,10 +67,11 @@ export default {
           */
           store.commit('updateAllLogs', logSyncer);
           // Get and process logs from the server in httpModule
-          store.dispatch('getServerLogs')
+          store.dispatch('getServerLogs', { router })
             .then(() => {
               // Save the current time as the most recent syncDate
               localStorage.setItem('syncDate', (Date.now() / 1000).toFixed(0));
+              console.log('GETSERVERLOGS COMPLETED');
               // After getServerLogs finishes, we send logs with isReadyToSync true to the server
               const indices = store.state.farm.logs.reduce(syncReducer, []);
               store.dispatch('sendLogs', { indices, router });

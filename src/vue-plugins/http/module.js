@@ -8,6 +8,43 @@ const farm = () => {
   return farmOS(host, user, password);
 };
 
+function handleSyncError(error, index, rootState, router, commit) {
+  console.log('HANDLING SEND LOG ERROR')
+  // Do something with a TypeError object (mostly likely no connection)
+  if (typeof error === 'object' && error.status === undefined) {
+    const errorPayload = {
+      message: `Unable to sync "${rootState.farm.logs[index].name.data}" because the network is currently unavailable. Please try syncing again later.`,
+      errorCode: error.statusText,
+      level: 'warning',
+      show: true,
+    };
+    commit('logError', errorPayload);
+  } else if (error.status === 401 || error.status === 403) {
+    // Reroute authentication or authorization errors to login page
+    router.push('/login');
+  } else {
+    // handle some other type of runtime error (if possible)
+    error.text().then((errorText) => {
+      const errorPayload = {
+        message: `${error.status} error while syncing "${rootState.farm.logs[index].name.data}": ${errorText}`,
+        errorCode: error.statusText,
+        level: 'warning',
+        show: true,
+      };
+      commit('logError', errorPayload);
+    });
+  }
+  commit('updateLogs', {
+    indices: [index],
+    mapper(log) {
+      return makeLog.create({
+        ...log,
+        isReadyToSync: false,
+      });
+    },
+  });
+}
+
 export default {
   actions: {
     updateAreas({ commit }) {
@@ -64,6 +101,7 @@ export default {
     sendLogs({ commit, rootState }, payload) {
       // Update logs in the database and local store after send completes
       function handleSyncResponse(response, index) {
+        console.log('PROCESSING SEND LOG RESPONSE')
         commit('updateLogs', {
           indices: [index],
           mapper(log) {
@@ -73,42 +111,6 @@ export default {
               wasPushedToServer: true,
               isReadyToSync: false,
               remoteUri: response.uri,
-            });
-          },
-        });
-      }
-
-      function handleSyncError(error, index) {
-        // Do something with a TypeError object (mostly likely no connection)
-        if (typeof error === 'object' && error.status === undefined) {
-          const errorPayload = {
-            message: `Unable to sync "${rootState.farm.logs[index].name.data}" because the network is currently unavailable. Please try syncing again later.`,
-            errorCode: error.statusText,
-            level: 'warning',
-            show: true,
-          };
-          commit('logError', errorPayload);
-        } else if (error.status === 401 || error.status === 403) {
-          // Reroute authentication or authorization errors to login page
-          payload.router.push('/login');
-        } else {
-          // handle some other type of runtime error (if possible)
-          error.text().then((errorText) => {
-            const errorPayload = {
-              message: `${error.status} error while syncing "${rootState.farm.logs[index].name.data}": ${errorText}`,
-              errorCode: error.statusText,
-              level: 'warning',
-              show: true,
-            };
-            commit('logError', errorPayload);
-          });
-        }
-        commit('updateLogs', {
-          indices: [index],
-          mapper(log) {
-            return makeLog.create({
-              ...log,
-              isReadyToSync: false,
             });
           },
         });
@@ -144,7 +146,7 @@ export default {
           if (!synced) {
             return farm().log.send(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
               .then(res => handleSyncResponse(res, index))
-              .catch(err => handleSyncError(err, index));
+              .catch(err => handleSyncError(err, index, rootState, payload.router, commit));
           }
         });
       } else {
@@ -153,7 +155,7 @@ export default {
     },
 
     // GET LOGS FROM SERVER (step 1 of sync)
-    getServerLogs({ commit, rootState }) {
+    getServerLogs({ commit, rootState }, router) {
       const syncDate = localStorage.getItem('syncDate');
       const allLogs = rootState.farm.logs;
       return farm().log.get(rootState.shell.settings.logImportFilters)
@@ -194,8 +196,12 @@ export default {
             }
           });
         })
-        .catch(err => err);
-      // Errors are handled in index.js
+        // The index param is used only in formulating error messages
+        // Using 0 as a placeholder for now.
+        // Does payload need to contain anything but the router??
+        .catch(err => handleSyncError(err, 0, rootState, router, commit));
+      // Errors previously handled in index.js
+      // .catch(err => err);
     },
   },
 };
