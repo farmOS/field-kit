@@ -29,32 +29,8 @@ export default {
       after: (action) => {
         if (action.type === 'forceSyncAssetsAndAreas') {
           if (localStorage.getItem('host') !== null) {
-            store.dispatch('updateAssets').then().catch((err) => {
-              if (err.status === 403 || err.status === 401) {
-                router.push('/login');
-                return;
-              }
-              const errorPayload = {
-                message: `${err.status} error while syncing assets: ${err.statusText}`,
-                errorCode: err.statusText,
-                level: 'warning',
-                show: true,
-              };
-              store.commit('logError', errorPayload);
-            });
-            store.dispatch('updateAreas').then().catch((err) => {
-              if (err.status === 403 || err.status === 401) {
-                router.push('/login');
-                return;
-              }
-              const errorPayload = {
-                message: `${err.status} error while syncing areas: ${err.statusText}`,
-                errorCode: err.statusText,
-                level: 'warning',
-                show: true,
-              };
-              store.commit('logError', errorPayload);
-            });
+            store.dispatch('updateAssets', router);
+            store.dispatch('updateAreas', router);
             return;
           }
           router.push('/login');
@@ -67,26 +43,13 @@ export default {
           */
           store.commit('updateAllLogs', logSyncer);
           // Get and process logs from the server in httpModule
-          store.dispatch('getServerLogs', { router })
+          store.dispatch('getServerLogs', router)
             .then(() => {
               // Save the current time as the most recent syncDate
               localStorage.setItem('syncDate', (Date.now() / 1000).toFixed(0));
-              console.log('GETSERVERLOGS COMPLETED');
               // After getServerLogs finishes, we send logs with isReadyToSync true to the server
               const indices = store.state.farm.logs.reduce(syncReducer, []);
               store.dispatch('sendLogs', { indices, router });
-            }).catch((err) => {
-              if (err.status === 403 || err.status === 401) {
-                router.push('/login');
-                return;
-              }
-              const errorPayload = {
-                message: `${err.status} error while syncing logs: ${err.statusText}`,
-                errorCode: err.statusText,
-                level: 'warning',
-                show: true,
-              };
-              store.commit('logError', errorPayload);
             });
         }
         if (action.type === 'serverLogToDb') {
@@ -96,16 +59,16 @@ export default {
         // This means a call to the server on app load.
         // *** I think it would be better to retrieve only when the sync button is tapped
         if (action.type === 'loadCachedAssets') {
-          store.dispatch('updateAssets');
+          store.dispatch('updateAssets', router);
         }
         if (action.type === 'loadCachedAreas') {
-          store.dispatch('updateAreas');
+          store.dispatch('updateAreas', router);
         }
         // Update units, categories and equipment from server ONLY when sync button is tapped
         if (action.type === 'sendLogs') {
-          store.dispatch('updateUnits')
-            .then(store.dispatch('updateCategories'))
-            .then(store.dispatch('updateEquipment'));
+          store.dispatch('updateUnits', router)
+            .then(store.dispatch('updateCategories', router))
+            .then(store.dispatch('updateEquipment', router));
         }
       },
     });

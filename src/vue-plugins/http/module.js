@@ -9,9 +9,8 @@ const farm = () => {
 };
 
 function handleSyncError(error, index, rootState, router, commit) {
-  console.log('HANDLING SEND LOG ERROR')
   // Do something with a TypeError object (mostly likely no connection)
-  if (typeof error === 'object' && error.status === undefined) {
+  if (typeof error === 'object' && error.response.status === undefined) {
     const errorPayload = {
       message: `Unable to sync "${rootState.farm.logs[index].name.data}" because the network is currently unavailable. Please try syncing again later.`,
       errorCode: error.statusText,
@@ -19,67 +18,68 @@ function handleSyncError(error, index, rootState, router, commit) {
       show: true,
     };
     commit('logError', errorPayload);
-  } else if (error.status === 401 || error.status === 403) {
+  } else if (error.response.status === 401 || error.response.status === 403 || error.response.status === 404) { // eslint-disable-line max-len
     // Reroute authentication or authorization errors to login page
     router.push('/login');
   } else {
-    // handle some other type of runtime error (if possible)
-    error.text().then((errorText) => {
-      const errorPayload = {
-        message: `${error.status} error while syncing "${rootState.farm.logs[index].name.data}": ${errorText}`,
-        errorCode: error.statusText,
-        level: 'warning',
-        show: true,
-      };
-      commit('logError', errorPayload);
-    });
+    /*
+    Handle some other type of runtime error (if possible)
+    The error message format varies based on whether the function passes a log index
+    If an index is passed, it displays a verbose error including the log name
+    Otherwise, the error consists of only the error code and statusText
+    */
+    let errMsg = '';
+    if (index !== null) {
+      errMsg = `${error.response.status} error while syncing "${rootState.farm.logs[index].name.data}": ${error.response.statusText}`;
+    } else {
+      errMsg = `${error.response.status} error: ${error.response.statusText}`;
+    }
+
+    const errorPayload = {
+      message: errMsg,
+      errorCode: error.statusText,
+      level: 'warning',
+      show: true,
+    };
+    commit('logError', errorPayload);
   }
-  commit('updateLogs', {
-    indices: [index],
-    mapper(log) {
-      return makeLog.create({
-        ...log,
-        isReadyToSync: false,
-      });
-    },
-  });
 }
 
 export default {
   actions: {
-    updateAreas({ commit }) {
+    updateAreas({ commit, rootState }, router) {
       return farm().area.get().then((res) => {
         // If a successful response is received, delete and replace all areas
         commit('deleteAllAreas');
         const areas = res.list.map(({ tid, name, geofield }) => ({ tid, name, geofield })); // eslint-disable-line camelcase, max-len
         commit('addAreas', areas);
-      }).catch((err) => { throw err; });
+      }).catch(err => handleSyncError(err, null, rootState, router, commit));
     },
-    updateAssets({ commit }) {
+    updateAssets({ commit, rootState }, router) {
       return farm().asset.get().then((res) => {
         // If a successful response is received, delete and replace all assets
         commit('deleteAllAssets');
         const assets = res.list.map(({ id, name, type }) => ({ id, name, type }));
         commit('addAssets', assets);
-      }).catch((err) => { throw err; });
+      }).catch(err => handleSyncError(err, null, rootState, router, commit));
     },
-    updateUnits({ commit }) {
+    updateUnits({ commit, rootState }, router) {
       // Return units only.
       return farm().term.get('farm_quantity_units').then((res) => {
         commit('deleteAllUnits');
         const units = res.list.map(({ tid, name }) => ({ tid, name }));
         commit('addUnits', units);
-      }).catch((err) => { throw err; });
+      }).catch(err => handleSyncError(err, null, rootState, router, commit));
     },
-    updateCategories({ commit }) {
+    updateCategories({ commit, rootState }, router) {
       // Return categories only.
       return farm().term.get('farm_log_categories').then((res) => {
         commit('deleteAllCategories');
         const cats = res.list.map(({ tid, name }) => ({ tid, name }));
         commit('addCategories', cats);
-      }).catch((err) => { throw err; });
+      }).catch(err => handleSyncError(err, null, rootState, router, commit));
     },
-    updateEquipment({ commit }) {
+    updateEquipment({ commit, rootState }, router) {
       function getEquip(assets) {
         const equip = [];
         assets.forEach((asset) => {
@@ -94,14 +94,13 @@ export default {
         const assets = res.list.map(({ id, name, type }) => ({ id, name, type })); // eslint-disable-line camelcase, max-len
         const equipment = getEquip(assets);
         commit('addEquipment', equipment);
-      }).catch((err) => { throw err; });
+      }).catch(err => handleSyncError(err, null, rootState, router, commit));
     },
 
     // SEND LOGS TO SERVER (step 2 of sync)
     sendLogs({ commit, rootState }, payload) {
       // Update logs in the database and local store after send completes
       function handleSyncResponse(response, index) {
-        console.log('PROCESSING SEND LOG RESPONSE')
         commit('updateLogs', {
           indices: [index],
           mapper(log) {
@@ -197,9 +196,9 @@ export default {
           });
         })
         // The index param is used only in formulating error messages
-        // Using 0 as a placeholder for now.
+        // Using null as a placeholder for now.
         // Does payload need to contain anything but the router??
-        .catch(err => handleSyncError(err, 0, rootState, router, commit));
+        .catch(err => handleSyncError(err, null, rootState, router, commit));
       // Errors previously handled in index.js
       // .catch(err => err);
     },
