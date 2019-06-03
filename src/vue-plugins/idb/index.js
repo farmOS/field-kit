@@ -2,7 +2,7 @@ import module from './module';
 
 export default {
   install(Vue, { store }) {
-    store.registerModule('websql', module);
+    store.registerModule('idb', module);
     store.subscribeAction((action) => {
       // Load logs, areas, assets & user info when the Logs component is created
       if (action.type === 'onLogsComponentCreated') {
