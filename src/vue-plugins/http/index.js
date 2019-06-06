@@ -29,8 +29,8 @@ export default {
       after: (action) => {
         if (action.type === 'forceSyncAssetsAndAreas') {
           if (localStorage.getItem('host') !== null) {
-            store.dispatch('updateAssets', router);
-            store.dispatch('updateAreas', router);
+            store.dispatch('updateAssets');
+            store.dispatch('updateAreas');
             return;
           }
           router.push('/login');
@@ -59,16 +59,16 @@ export default {
         // This means a call to the server on app load.
         // *** I think it would be better to retrieve only when the sync button is tapped
         if (action.type === 'loadCachedAssets') {
-          store.dispatch('updateAssets', router);
+          store.dispatch('updateAssets');
         }
         if (action.type === 'loadCachedAreas') {
-          store.dispatch('updateAreas', router);
+          store.dispatch('updateAreas');
         }
         // Update units, categories and equipment from server ONLY when sync button is tapped
         if (action.type === 'sendLogs') {
-          store.dispatch('updateUnits', router)
-            .then(store.dispatch('updateCategories', router))
-            .then(store.dispatch('updateEquipment', router));
+          store.dispatch('updateUnits')
+            .then(store.dispatch('updateCategories'))
+            .then(store.dispatch('updateEquipment'));
         }
       },
     });

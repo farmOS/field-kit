@@ -47,39 +47,39 @@ function handleSyncError(error, index, rootState, router, commit) {
 
 export default {
   actions: {
-    updateAreas({ commit, rootState }, router) {
+    updateAreas({ commit }) {
       return farm().area.get().then((res) => {
         // If a successful response is received, delete and replace all areas
         commit('deleteAllAreas');
         const areas = res.list.map(({ tid, name, geofield }) => ({ tid, name, geofield })); // eslint-disable-line camelcase, max-len
         commit('addAreas', areas);
-      }).catch(err => handleSyncError(err, null, rootState, router, commit));
+      });
     },
-    updateAssets({ commit, rootState }, router) {
+    updateAssets({ commit }) {
       return farm().asset.get().then((res) => {
         // If a successful response is received, delete and replace all assets
         commit('deleteAllAssets');
         const assets = res.list.map(({ id, name, type }) => ({ id, name, type }));
         commit('addAssets', assets);
-      }).catch(err => handleSyncError(err, null, rootState, router, commit));
+      });
     },
-    updateUnits({ commit, rootState }, router) {
+    updateUnits({ commit }) {
       // Return units only.
       return farm().term.get('farm_quantity_units').then((res) => {
         commit('deleteAllUnits');
         const units = res.list.map(({ tid, name }) => ({ tid, name }));
         commit('addUnits', units);
-      }).catch(err => handleSyncError(err, null, rootState, router, commit));
+      });
     },
-    updateCategories({ commit, rootState }, router) {
+    updateCategories({ commit }) {
       // Return categories only.
       return farm().term.get('farm_log_categories').then((res) => {
         commit('deleteAllCategories');
         const cats = res.list.map(({ tid, name }) => ({ tid, name }));
         commit('addCategories', cats);
-      }).catch(err => handleSyncError(err, null, rootState, router, commit));
+      });
     },
-    updateEquipment({ commit, rootState }, router) {
+    updateEquipment({ commit }) {
       function getEquip(assets) {
         const equip = [];
         assets.forEach((asset) => {
@@ -94,7 +94,7 @@ export default {
         const assets = res.list.map(({ id, name, type }) => ({ id, name, type })); // eslint-disable-line camelcase, max-len
         const equipment = getEquip(assets);
         commit('addEquipment', equipment);
-      }).catch(err => handleSyncError(err, null, rootState, router, commit));
+      });
     },
 
     // SEND LOGS TO SERVER (step 2 of sync)
