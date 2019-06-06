@@ -87,7 +87,7 @@ export default {
     },
 
     logout() {
-      lazyFarm().logout().then((res) => {
+      lazyFarm().logout().then(() => {
         // Currently farmOS.js returns no response to logout requests
       });
     },
