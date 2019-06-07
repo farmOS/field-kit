@@ -15,19 +15,39 @@ function openDatabase() {
 }
 
 function getRecords(db, storeName) {
-  // do something
+  return new Promise((resolve, reject) => {
+    const store = db.transaction(storeName, 'readonly').objectStore(storeName);
+    const request = store.getAll();
+    request.onerror = event => reject(event.target);
+    request.onsuccess = event => resolve(event.target.result);
+  });
 }
 
 function saveRecord(db, storeName, record) {
-  // do something
+  return new Promise((resolve, reject) => {
+    const store = db.transaction(storeName, 'readwrite').objectStore(storeName);
+    const request = store.put(record);
+    request.onerror = event => reject(new Error(event.target.errorcode));
+    request.onsuccess = event => resolve(event.target.result);
+  });
 }
 
 function deleteRecord(db, storeName, key) {
-  // do something
+  return new Promise((resolve, reject) => {
+    const store = db.transaction(storeName, 'readwrite').objectStore(storeName);
+    const request = store.delete(key);
+    request.onsuccess = event => resolve(event.target.result);
+    request.onerror = event => reject(event.error);
+  });
 }
 
-function deleteStore(db, storeName) {
-  // do something
+function clearStore(db, storeName) {
+  return new Promise((resolve, reject) => {
+    const store = db.transaction(storeName, 'readwrite').objectStore(storeName);
+    const request = store.clear();
+    request.onsuccess = event => resolve(event.target.result);
+    request.onerror = event => reject(event.error);
+  });
 }
 
 export {
@@ -35,5 +55,5 @@ export {
   getRecords,
   saveRecord,
   deleteRecord,
-  deleteStore,
+  clearStore,
 };
