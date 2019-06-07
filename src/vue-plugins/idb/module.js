@@ -1,4 +1,14 @@
 import makeLog from '@/utils/makeLog';
+import { openDatabase } from './idb';
+import config from './idb.config';
+
+const [
+  logConfig,
+  assetConfig,
+  areaConfig,
+  catConfig,
+  equipConfig,
+] = config.stores;
 
 export default {
 
