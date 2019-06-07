@@ -6,6 +6,7 @@
 const SQL = 'WEBSQL';
 const SERVER = 'FARMOS_SERVER';
 const STORE = 'VUEX_STORE';
+const IDB = 'INDEXEDDB';
 const nowStamp = (Date.now() / 1000).toFixed(0);
 /*
   MAKELOG
@@ -144,6 +145,39 @@ const makeLogFactory = (src, dest) => {
           log.geofield = JSON.stringify(geofield);
         }
       }
+      // The format for inserting logs in IDB for local persistence.
+      if (dest === IDB) {
+        log = {
+          log_owner,
+          notes,
+          quantity,
+          log_category,
+          equipment,
+          id,
+          name,
+          type,
+          timestamp,
+          images,
+          done,
+          wasPushedToServer,
+          remoteUri,
+          asset,
+        };
+        /*
+          Only return local_id property if one has already been assigned by WebSQL,
+          otherwise let WebSQL assign a new one.
+        */
+        if (local_id) { // eslint-disable-line camelcase
+          log.local_id = local_id; // eslint-disable-line camelcase
+        }
+        // Seedings do not have areas and geofields
+        if (type.data !== 'farm_seeding' && area) {
+          log.area = area;
+        }
+        if (type.data !== 'farm_seeding' && geofield) {
+          log.geofield = geofield;
+        }
+      }
       return log;
     };
   }
@@ -258,6 +292,7 @@ export default {
   create: makeLogFactory(),
   toStore: makeLogFactory(STORE, STORE),
   toSql: makeLogFactory(STORE, SQL),
+  toIdb: makeLogFactory(STORE, IDB),
   toServer: makeLogFactory(STORE, SERVER),
   fromSql: makeLogFactory(SQL, STORE),
   fromServer: makeLogFactory(SERVER, STORE),

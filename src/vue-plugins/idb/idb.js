@@ -4,7 +4,7 @@ function openDatabase() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(config.name, config.version);
     request.onerror = event => reject(event.target.errorcode);
-    request.onsuccess = () => resolve(this.result);
+    request.onsuccess = () => resolve(request.result);
     request.onupgradeneeded = (event) => {
       const db = event.currentTarget.result;
       config.stores.forEach(({ name, keyPath, autoIncrement }) => {

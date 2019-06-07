@@ -18,8 +18,13 @@ export default {
       autoIncrement: false,
     },
     {
+      name: 'units',
+      keyPath: 'tid',
+      autoIncrement: false,
+    },
+    {
       name: 'categories',
-      keyPath: 'id',
+      keyPath: 'tid',
       autoIncrement: false,
     },
     {
