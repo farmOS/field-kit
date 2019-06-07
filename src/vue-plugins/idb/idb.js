@@ -14,4 +14,26 @@ function openDatabase() {
   });
 }
 
-export { openDatabase };
+function getRecords(db, storeName) {
+  // do something
+}
+
+function saveRecord(db, storeName, record) {
+  // do something
+}
+
+function deleteRecord(db, storeName, key) {
+  // do something
+}
+
+function deleteStore(db, storeName) {
+  // do something
+}
+
+export {
+  openDatabase,
+  getRecords,
+  saveRecord,
+  deleteRecord,
+  deleteStore,
+};
