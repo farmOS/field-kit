@@ -103,14 +103,12 @@ export default {
     deleteCachedLog(_, { local_id }) { // eslint-disable-line camelcase
       openDatabase()
         .then(db => deleteRecord(db, logStore.name, local_id))
-        .then(console.log) // eslint-disable-line no-console
         .catch(console.error); // eslint-disable-line no-console
     },
 
     deleteAllCachedLogs() {
       openDatabase()
         .then(db => clearStore(db, logStore.name))
-        .then(console.log) // eslint-disable-line no-console
         .catch(console.error); // eslint-disable-line no-console
     },
 
@@ -130,7 +128,6 @@ export default {
     deleteAllCachedAssets() {
       openDatabase()
         .then(db => clearStore(db, assetStore.name))
-        .then(console.log) // eslint-disable-line no-console
         .catch(console.error); // eslint-disable-line no-console
     },
 
@@ -159,7 +156,6 @@ export default {
     deleteAllCachedAreas() {
       openDatabase()
         .then(db => clearStore(db, areaStore.name))
-        .then(console.log) // eslint-disable-line no-console
         .catch(console.error); // eslint-disable-line no-console
     },
 
@@ -188,7 +184,6 @@ export default {
     deleteAllCachedUnits() {
       openDatabase()
         .then(db => clearStore(db, unitStore.name))
-        .then(console.log) // eslint-disable-line no-console
         .catch(console.error); // eslint-disable-line no-console
     },
 
@@ -217,7 +212,6 @@ export default {
     deleteAllCachedCategories() {
       openDatabase()
         .then(db => clearStore(db, catStore.name))
-        .then(console.log) // eslint-disable-line no-console
         .catch(console.error); // eslint-disable-line no-console
     },
 
@@ -246,7 +240,6 @@ export default {
     deleteAllCachedEquipment() {
       openDatabase()
         .then(db => clearStore(db, equipStore.name))
-        .then(console.log) // eslint-disable-line no-console
         .catch(console.error); // eslint-disable-line no-console
     },
 
