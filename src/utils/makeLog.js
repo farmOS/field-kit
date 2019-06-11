@@ -3,7 +3,6 @@
   Theses constants are assigned to string values representing the possible
   sources & destinations to/from which the logs may be sent.
 */
-const SQL = 'WEBSQL';
 const SERVER = 'FARMOS_SERVER';
 const STORE = 'VUEX_STORE';
 const IDB = 'INDEXEDDB';
@@ -112,39 +111,6 @@ const makeLogFactory = (src, dest) => {
           log.geofield = geofield.data;
         }
       }
-      // The format for inserting logs in WebSQL for local persistence.
-      if (dest === SQL) {
-        log = {
-          log_owner: JSON.stringify(log_owner),
-          notes: JSON.stringify(notes),
-          quantity: JSON.stringify(quantity),
-          log_category: JSON.stringify(log_category),
-          equipment: JSON.stringify(equipment),
-          id,
-          name: JSON.stringify(name),
-          type: JSON.stringify(type),
-          timestamp: JSON.stringify(timestamp),
-          images: JSON.stringify({ data: parseImages(images.data), changed: images.changed }), // eslint-disable-line no-use-before-define, max-len
-          done: JSON.stringify(done),
-          wasPushedToServer,
-          remoteUri,
-          asset: JSON.stringify(asset),
-        };
-        /*
-          Only return local_id property if one has already been assigned by WebSQL,
-          otherwise let WebSQL assign a new one.
-        */
-        if (local_id) { // eslint-disable-line camelcase
-          log.local_id = local_id; // eslint-disable-line camelcase
-        }
-        // Seedings do not have areas and geofields
-        if (type.data !== 'farm_seeding' && area) {
-          log.area = JSON.stringify(area);
-        }
-        if (type.data !== 'farm_seeding' && geofield) {
-          log.geofield = JSON.stringify(geofield);
-        }
-      }
       // The format for inserting logs in IDB for local persistence.
       if (dest === IDB) {
         log = {
@@ -177,59 +143,6 @@ const makeLogFactory = (src, dest) => {
         if (type.data !== 'farm_seeding' && geofield) {
           log.geofield = geofield;
         }
-      }
-      return log;
-    };
-  }
-  if (src === SQL) {
-    return ({
-      // Assign default properties or leave them as optional
-      log_owner = { changed: null, data: '' }, // eslint-disable-line camelcase
-      // quantity will be an array of objects, similar to area or asset
-      quantity = { changed: null, data: [] },
-      log_category = { changed: null, data: [] }, // eslint-disable-line camelcase
-      equipment = { changed: null, data: [] },
-      id,
-      local_id, // eslint-disable-line camelcase
-      name = { changed: null, data: '' },
-      type = { changed: null, data: '' },
-      timestamp = { changed: null, data: '' },
-      images = { changed: null, data: [] },
-      done = { changed: null, data: true },
-      isCachedLocally = false,
-      wasPushedToServer = false,
-      remoteUri = '',
-      asset = { changed: null, data: [] }, // eslint-disable-line camelcase
-      area = { changed: null, data: [] }, // eslint-disable-line camelcase
-      geofield = { changed: null, data: [] }, // eslint-disable-line camelcase
-      notes = { changed: null, data: '' }, // eslint-disable-line camelcase
-    } = {}) => {
-      const log = {
-        log_owner: JSON.parse(log_owner),
-        notes: JSON.parse(notes),
-        quantity: { data: parseObjects(JSON.parse(quantity).data), changed: JSON.parse(quantity).changed }, // eslint-disable-line no-use-before-define, max-len
-        log_category: { data: parseObjects(JSON.parse(log_category).data), changed: JSON.parse(log_category).changed }, // eslint-disable-line no-use-before-define, max-len
-        equipment: { data: parseObjects(JSON.parse(equipment).data), changed: JSON.parse(equipment).changed }, // eslint-disable-line no-use-before-define, max-len
-        id: id === 'undefined' ? undefined : id,
-        local_id,
-        name: JSON.parse(name),
-        type: JSON.parse(type),
-        timestamp: JSON.parse(timestamp),
-        // Use Array.concat() to make sure this is an array
-        images: { data: parseImages(JSON.parse(images).data), changed: JSON.parse(images).changed }, // eslint-disable-line no-use-before-define, max-len
-        // Use JSON.parse() to convert strings back to booleans
-        done: JSON.parse(done),
-        isCachedLocally: JSON.parse(isCachedLocally),
-        wasPushedToServer: JSON.parse(wasPushedToServer),
-        remoteUri,
-        asset: { data: parseObjects(JSON.parse(asset).data), changed: JSON.parse(asset).changed }, // eslint-disable-line no-use-before-define, max-len
-      };
-      // Seedings do not have areas and geofields
-      if (type !== 'farm_seeding' && area) {
-        log.area = { data: parseObjects(JSON.parse(area).data), changed: JSON.parse(area).changed }; // eslint-disable-line no-use-before-define, max-len
-      }
-      if (type !== 'farm_seeding' && geofield) {
-        log.geofield = { data: parseObjects(JSON.parse(geofield).data), changed: JSON.parse(geofield).changed }; // eslint-disable-line no-use-before-define, max-len
       }
       return log;
     };
@@ -291,10 +204,8 @@ const makeLogFactory = (src, dest) => {
 export default {
   create: makeLogFactory(),
   toStore: makeLogFactory(STORE, STORE),
-  toSql: makeLogFactory(STORE, SQL),
   toIdb: makeLogFactory(STORE, IDB),
   toServer: makeLogFactory(STORE, SERVER),
-  fromSql: makeLogFactory(SQL, STORE),
   fromServer: makeLogFactory(SERVER, STORE),
 };
 /*
