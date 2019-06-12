@@ -47,7 +47,7 @@
     name: 'Logout',
     methods: {
       goBack() {
-        this.$router.back()
+        this.$router.back();
       },
       logout() {
 
@@ -55,9 +55,9 @@
         this.$store.dispatch('logout');
 
         // Remove logs, assets, areas, user info & site info from store
-        this.$store.commit('clearLogs')
-        this.$store.commit('clearAssets')
-        this.$store.commit('clearAreas')
+        this.$store.commit('clearLogs');
+        this.$store.commit('clearAssets');
+        this.$store.commit('clearAreas');
         this.$store.commit('changeUsername', '');
         this.$store.commit('changeEmail', '');
         this.$store.commit('changeUid', '');
@@ -65,14 +65,17 @@
         this.$store.commit('changeFarmUrl', '');
 
         // Remove logs, assets, areas, user info & site info from local persistance
-        this.$store.dispatch('deleteAllCachedLogs')
-        this.$store.dispatch('deleteAllCachedAssets')
-        this.$store.dispatch('deleteAllCachedAreas')
-        this.$store.dispatch('deleteCachedUserAndSiteInfo')
+        this.$store.dispatch('deleteAllCachedLogs');
+        this.$store.dispatch('deleteAllCachedAssets');
+        this.$store.dispatch('deleteAllCachedAreas');
+        this.$store.dispatch('deleteAllCachedUnits');
+        this.$store.dispatch('deleteAllCachedEquipment');
+        this.$store.dispatch('deleteAllCachedCategories');
+        this.$store.dispatch('deleteCachedUserAndSiteInfo');
 
         // Set login status to false and return to login screen
-        this.$store.commit('setLoginStatus', false)
-        this.$router.push({ path: '/login' })
+        this.$store.commit('setLoginStatus', false);
+        this.$router.push({ path: '/login' });
       },
     },
   }
