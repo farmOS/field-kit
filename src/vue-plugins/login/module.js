@@ -132,13 +132,7 @@ export default {
     },
 
     deleteCachedUserAndSiteInfo() {
-      localStorage.removeItem('username');
-      localStorage.removeItem('email');
-      localStorage.removeItem('username');
-      localStorage.removeItem('isLoggedIn');
-      localStorage.removeItem('farmName');
-      localStorage.removeItem('host');
-      localStorage.removeItem('useGeolocation');
+      localStorage.clear();
     },
   },
 };
