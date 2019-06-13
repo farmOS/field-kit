@@ -29,7 +29,7 @@ export default {
           commit('logError', errorPayload);
         } else {
           const errorPayload = {
-            message: `Unable to reach the server. Please check that you have the correct URL and that your device has a network connection. Status: ${error.status}`,
+            message: `Unable to reach the server. Please check that you have the correct URL and that your device has a network connection. Status: ${error.message}`,
             errorCode: error.statusText,
             level: 'warning',
             show: true,
