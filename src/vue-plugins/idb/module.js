@@ -26,11 +26,11 @@ export default {
       const newRecord = makeLog.toIdb(newLog);
       openDatabase()
         .then(db => saveRecord(db, logStore.name, newRecord))
-        .then(results => (
+        .then(key => (
           // Can we be sure this will always be the CURRENT log?
           // Not if we use this action to add new records received from the server
           commit('updateCurrentLog', {
-            local_id: results.insertId,
+            local_id: key,
             isCachedLocally: true,
           })
         ));
@@ -42,12 +42,12 @@ export default {
       const newRecord = makeLog.toIdb(log);
       openDatabase()
         .then(db => saveRecord(db, logStore.name, newRecord))
-        .then((results) => {
+        .then((key) => {
           commit('updateLogFromServer', {
             index,
             log: makeLog.create({
               ...log,
-              local_id: results.insertId,
+              local_id: key,
               isCachedLocally: true,
             }),
           });
@@ -77,8 +77,9 @@ export default {
       openDatabase()
         .then(db => saveRecord(db, logStore.name, newLog))
         // Can we be sure this will always be the CURRENT log?
-        .then(() => commit('updateCurrentLog', {
+        .then(key => commit('updateCurrentLog', {
           isCachedLocally: true,
+          local_id: key,
         }));
     },
 
@@ -91,11 +92,12 @@ export default {
       });
       openDatabase()
         .then(db => saveRecord(db, logStore.name, newLog))
-        .then(() => commit('updateLogFromServer', {
+        .then(key => commit('updateLogFromServer', {
           index,
           log: makeLog.create({
             ...log,
             isCachedLocally: true,
+            local_id: key,
           }),
         }));
     },
