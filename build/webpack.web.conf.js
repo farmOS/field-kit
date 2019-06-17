@@ -83,6 +83,15 @@ const webpackConfig = merge(baseWebpackConfig, {
       {
         from: 'CNAME',
         to: config.web.assetsRoot
+      },
+      {
+        from: 'manifest.json',
+        to: config.web.assetsRoot
+      },
+      {
+        from: 'res/icons/web/**',
+        to: config.web.assetsRoot + '/icons',
+        flatten: true
       }
     ])
   ],
