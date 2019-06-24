@@ -69,6 +69,15 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       {
         from: 'favicon.ico',
         to: config.web.assetsRoot
+      },
+      {
+        from: 'manifest.json',
+        to: config.web.assetsRoot
+      },
+      {
+        from: 'res/icons/web/**',
+        to: config.web.assetsRoot + '/icons',
+        flatten: true
       }
     ])
   ]
