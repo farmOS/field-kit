@@ -9,31 +9,24 @@ const farm = () => {
 };
 
 function handleSyncError(error, index, rootState, router, commit) {
+  const logName = index ? ` ${rootState.farm.logs[index].name.data}` : 'UNKNOWN';
   // Do something with a TypeError object (mostly likely no connection)
-  if (typeof error === 'object' && error.response.status === undefined) {
+  if (typeof error === 'object' && error.status === undefined) {
     const errorPayload = {
-      message: `Unable to sync "${rootState.farm.logs[index].name.data}" because the network is currently unavailable. Please try syncing again later.`,
+      message: `Unable to sync "${logName}" because the network is currently unavailable. Please try syncing again later.`,
       errorCode: error.statusText,
       level: 'warning',
       show: true,
     };
     commit('logError', errorPayload);
-  } else if (error.response.status === 401 || error.response.status === 403 || error.response.status === 404) { // eslint-disable-line max-len
+  } else if (error.status === 401 || error.status === 403 || error.status === 404) { // eslint-disable-line max-len
     // Reroute authentication or authorization errors to login page
     router.push('/login');
   } else {
     /*
     Handle some other type of runtime error (if possible)
-    The error message format varies based on whether the function passes a log index
-    If an index is passed, it displays a verbose error including the log name
-    Otherwise, the error consists of only the error code and statusText
     */
-    let errMsg = '';
-    if (index !== null) {
-      errMsg = `${error.response.status} error while syncing "${rootState.farm.logs[index].name.data}": ${error.response.statusText}`;
-    } else {
-      errMsg = `${error.response.status} error: ${error.response.statusText}`;
-    }
+    const errMsg = `${error.status} error while syncing "${logName}": ${error.statusText}`;
 
     const errorPayload = {
       message: errMsg,
