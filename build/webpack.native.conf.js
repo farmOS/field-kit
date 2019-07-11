@@ -78,7 +78,15 @@ const webpackConfig = merge(baseWebpackConfig, {
         to: `${config.native.assetsRoot}/config.xml`
       },
       {
-        from: 'res/**',
+        from: 'res/icons/android/**',
+        to: config.native.assetsRoot
+      },
+      {
+        from: 'res/icons/ios/**',
+        to: config.native.assetsRoot
+      },
+      {
+        from: 'res/screens/**',
         to: config.native.assetsRoot
       },
       {
