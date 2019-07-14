@@ -14,14 +14,6 @@ function syncReducer(indices, curLog, curIndex) {
   return indices;
 }
 
-// A function that sets all logs ready to sync; used with updateAllLogs
-function logSyncer(log) {
-  return {
-    ...log,
-    isReadyToSync: true,
-  };
-}
-
 export default {
   install(Vue, { store, router }) {
     store.registerModule('http', module);
@@ -41,7 +33,7 @@ export default {
           First set all local logs ready to sync. This status will be retained unless
           the local log is over-written with a log from the server.
           */
-          store.commit('updateAllLogs', logSyncer);
+          store.commit('updateAllLogs', log => ({ ...log, isReadyToSync: true }));
           // Get and process logs from the server in httpModule
           store.dispatch('getServerLogs', router)
             .then(() => {
@@ -50,6 +42,9 @@ export default {
               // After getServerLogs finishes, we send logs with isReadyToSync true to the server
               const indices = store.state.farm.logs.reduce(syncReducer, []);
               store.dispatch('sendLogs', { indices, router });
+            })
+            .then(() => {
+              store.commit('updateAllLogs', log => ({ ...log, isReadyToSync: false }));
             });
         }
         if (action.type === 'serverLogToDb') {
