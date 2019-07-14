@@ -8,33 +8,19 @@ const farm = () => {
   return farmOS(host, user, password);
 };
 
-function handleSyncError(error, index, rootState, router, commit) {
-  const logName = index ? ` ${rootState.farm.logs[index].name.data}` : 'UNKNOWN';
-  // Do something with a TypeError object (mostly likely no connection)
-  if (typeof error === 'object' && error.status === undefined) {
-    const errorPayload = {
-      message: `Unable to sync "${logName}" because the network is currently unavailable. Please try syncing again later.`,
-      errorCode: error.statusText,
-      level: 'warning',
-      show: true,
-    };
-    commit('logError', errorPayload);
-  } else if (error.status === 401 || error.status === 403 || error.status === 404) { // eslint-disable-line max-len
-    // Reroute authentication or authorization errors to login page
-    router.push('/login');
-  } else {
-    /*
-    Handle some other type of runtime error (if possible)
-    */
-    const errMsg = `${error.status} error while syncing "${logName}": ${error.statusText}`;
+// Extend Error so we can propagate more info to the error handler
+class SyncError extends Error {
+  constructor({
+    indices = [],
+    http,
+  } = {}, ...params) {
+    // Pass remaining arguments (including vendor specific ones) to parent constructor
+    super(...params);
 
-    const errorPayload = {
-      message: errMsg,
-      errorCode: error.statusText,
-      level: 'warning',
-      show: true,
-    };
-    commit('logError', errorPayload);
+    this.name = 'SyncError';
+    // Custom debugging information
+    this.indices = indices;
+    this.http = http;
   }
 }
 
@@ -91,7 +77,7 @@ export default {
     },
 
     // SEND LOGS TO SERVER (step 2 of sync)
-    sendLogs({ commit, rootState }, payload) {
+    sendLogs({ commit, rootState }, indices) {
       // Update logs in the database and local store after send completes
       function handleSyncResponse(response, index) {
         commit('updateLogs', {
@@ -125,29 +111,26 @@ export default {
         return image;
       }
 
-      // Send records to the server, unless the user isn't logged in
-      if (localStorage.getItem('token')) {
-        payload.indices.map((index) => { // eslint-disable-line consistent-return, array-callback-return, max-len
-          // Either send or post logs, depending on whether they originated on the server
-          // Logs originating on the server possess an ID field; others do not.
-          const newLog = makeLog.toServer(rootState.farm.logs[index]);
-          newLog.images = processImages(newLog.images);
-          newLog.done = newLog.done ? 1 : 0;
-          // I need to check wasPushedToServer, which is not in logFactory Server
-          const synced = rootState.farm.logs[index].wasPushedToServer;
-          if (!synced) {
-            return farm().log.send(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
-              .then(res => handleSyncResponse(res, index))
-              .catch(err => handleSyncError(err, index, rootState, payload.router, commit));
-          }
-        });
-      } else {
-        payload.router.push('/login');
-      }
+      indices.forEach((index) => { // eslint-disable-line array-callback-return, max-len
+        // Either send or post logs, depending on whether they originated on the server
+        // Logs originating on the server possess an ID field; others do not.
+        const newLog = makeLog.toServer(rootState.farm.logs[index]);
+        newLog.images = processImages(newLog.images);
+        newLog.done = newLog.done ? 1 : 0;
+        farm().log.send(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
+          .then(res => handleSyncResponse(res, index))
+          // .catch(err => handleSyncError(err, index, rootState, payload.router, commit));
+          .catch((err) => {
+            throw new SyncError({
+              indices: [index],
+              http: err,
+            });
+          });
+      });
     },
 
     // GET LOGS FROM SERVER (step 1 of sync)
-    getServerLogs({ commit, rootState }, router) {
+    getServerLogs({ commit, rootState }) {
       const syncDate = localStorage.getItem('syncDate');
       const allLogs = rootState.farm.logs;
       return farm().log.get(rootState.shell.settings.logImportFilters)
@@ -188,12 +171,11 @@ export default {
             }
           });
         })
-        // The index param is used only in formulating error messages
-        // Using null as a placeholder for now.
-        // Does payload need to contain anything but the router??
-        .catch(err => handleSyncError(err, null, rootState, router, commit));
-      // Errors previously handled in index.js
-      // .catch(err => err);
+        .catch((err) => {
+          throw new SyncError({
+            http: err,
+          });
+        });
     },
   },
 };
