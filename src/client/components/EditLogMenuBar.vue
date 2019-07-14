@@ -10,7 +10,7 @@
     </ul>
     <ul class="right-menu">
       <a
-        v-if="logs[currentLogIndex].remoteUri !==''"
+        v-if="logs[currentLogIndex] && logs[currentLogIndex].remoteUri"
         :href="logs[currentLogIndex].remoteUri">
         <li>
           <icon-open-in-new/>
