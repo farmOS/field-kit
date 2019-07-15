@@ -49,8 +49,19 @@
         </div>
       </div>
 
+      <div class="form-item form-item-name form-group">
+        <label for="notes" class="control-label ">Notes</label>
+        <textarea
+          :value="logs[currentLogIndex].notes.data"
+          @input="updateCurrentLog('notes', $event.target.value)"
+          placeholder="Enter notes"
+          type="text"
+          class="form-control">
+        </textarea>
+      </div>
+
+      <h4>Log Categories</h4>
       <div id="categories" class="form-item form-group">
-        <label for="log-categories" id="categories-label">Log Categories</label>
         <p v-if="!showAllCategories && logs[currentLogIndex].log_category.data.length < 1">No categories selected</p>
         <select-box
           small
@@ -73,17 +84,6 @@
             <p><icon-expand-less/>Show Less</p>
           </div>
         </div>
-      </div>
-
-      <div class="form-item form-item-name form-group">
-        <label for="notes" class="control-label ">Notes</label>
-        <textarea
-          :value="logs[currentLogIndex].notes.data"
-          @input="updateCurrentLog('notes', $event.target.value)"
-          placeholder="Enter notes"
-          type="text"
-          class="form-control">
-        </textarea>
       </div>
 
       <h4>Quantities</h4>
