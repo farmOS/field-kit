@@ -1,14 +1,25 @@
 <template>
 <div>
   <div class="tab-bar">
-    <div class="tab">
+    <div 
+      class="tab" 
+      :class="{ selected: tabSelected === 'FIRST' }"
+      @click="tabSelected = 'FIRST'">
       <h5>GENERAL</h5>
     </div>
-    <div class="tab">
+    <div
+      class="tab"
+      :class="{ selected: tabSelected === 'SECOND' }"
+      @click="tabSelected = 'SECOND'">
       <h5>MOVEMENT</h5>
     </div>
   </div>
-  <div class="tab-indicator"></div>
+  <div
+    class="tab-indicator"
+    :class="[
+      {first: tabSelected === 'FIRST' },
+      {second: tabSelected === 'SECOND' },
+    ]"/>
 
   <div class="container-fluid tab-content">
 
@@ -410,6 +421,7 @@ export default {
 
   data() {
     return {
+      tabSelected: 'FIRST',
       imageUrls: [],
       attachGeo: false,
       useLocalAreas: false,
@@ -802,19 +814,34 @@ export default {
     font-size: 1rem;
     line-height: 1.5rem;
     color: white;
+    transition: color .5s;
     flex: 1 0 50%;
     text-align: center;
     padding-top: 1rem;
   }
 
+  .tab:not(.selected) {
+    color: rgba(255, 255, 255, .5);
+    transition: color .5s;
+  }
+
   .tab-indicator {
     position: fixed;
-    left: calc(25% - 25%);
     top: calc(6rem - 2px);
     z-index: 1001;
     height: 2px;
     width: 50%;
     background-color: white;
+  }
+
+  .tab-indicator.first {
+    transition: left .5s;
+    left: calc(25% - 25%);
+  }
+
+  .tab-indicator.second {
+    transition: left .5s;
+    left: calc(75% - 25%);
   }
 
   .tab-content {
