@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="tab-container">
   <div class="tab-bar">
     <div 
       class="tab" 
@@ -21,7 +21,9 @@
       {second: tabSelected === 'SECOND' },
     ]"/>
 
-  <div class="container-fluid tab-content">
+  <div 
+    class="container-fluid tab-content first"
+    :class="{ selected: tabSelected === 'FIRST' }">
 
     <br>
     <div class="form-item form-group">
@@ -396,6 +398,12 @@
         class="preview" />
     </div>
 
+  </div>
+
+  <div 
+    class="container-fluid tab-content second"
+    :class="{ selected: tabSelected === 'SECOND' }">
+    Movement Content
   </div>
 </div>
 </template>
@@ -798,6 +806,13 @@ export default {
 </script>
 
 <style scoped>
+  .tab-container {
+    position: relative;
+    height: calc(100vh - 3rem);
+    width: 100vw;
+    overflow-x: hidden;
+  }
+
   .tab-bar {
     display: flex;
     flex-flow: row nowrap;
@@ -845,7 +860,24 @@ export default {
   }
 
   .tab-content {
-    margin-top: 6rem;
+    position: absolute;
+    width: 100vw;
+    top: 3rem;
+  }
+
+  .tab-content.selected {
+    transition: left .5s;
+    left: 0;
+  }
+
+  .tab-content.first:not(.selected) {
+    transition: left .5s;
+    left: -100vw;
+  }
+
+  .tab-content.second:not(.selected) {
+    transition: left .5s;
+    left: 100vw;
   }
 
   .reset-margin {
