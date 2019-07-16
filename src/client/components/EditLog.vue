@@ -1,5 +1,16 @@
 <template>
-  <div class="container-fluid">
+<div>
+  <div class="tab-bar">
+    <div class="tab">
+      <h5>GENERAL</h5>
+    </div>
+    <div class="tab">
+      <h5>MOVEMENT</h5>
+    </div>
+  </div>
+  <div class="tab-indicator"></div>
+
+  <div class="container-fluid tab-content">
 
     <br>
     <div class="form-item form-group">
@@ -375,6 +386,7 @@
     </div>
 
   </div>
+</div>
 </template>
 
 <script>
@@ -774,6 +786,41 @@ export default {
 </script>
 
 <style scoped>
+  .tab-bar {
+    display: flex;
+    flex-flow: row nowrap;
+    position: fixed;
+    top: 3rem;
+    height: 3rem;
+    width: 100%;
+    z-index: 1000;
+    background-color: var(--farmos-green-dark);
+    box-shadow: -2px 0px 15px rgba(0, 0, 0, .5);
+  }
+
+  .tab {
+    font-size: 1rem;
+    line-height: 1.5rem;
+    color: white;
+    flex: 1 0 50%;
+    text-align: center;
+    padding-top: 1rem;
+  }
+
+  .tab-indicator {
+    position: fixed;
+    left: calc(25% - 25%);
+    top: calc(6rem - 2px);
+    z-index: 1001;
+    height: 2px;
+    width: 50%;
+    background-color: white;
+  }
+
+  .tab-content {
+    margin-top: 6rem;
+  }
+
   .reset-margin {
     margin: 0 0;
   }

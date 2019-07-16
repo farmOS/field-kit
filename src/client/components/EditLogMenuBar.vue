@@ -74,6 +74,7 @@ export default {
     background-color: var(--farmos-green-dark);
     color: white;
     border: none;
+    height: 3rem;
   }
 
   header svg {
