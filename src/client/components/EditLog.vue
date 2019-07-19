@@ -43,8 +43,8 @@
         type="text"
         class="form-control"
         autofocus>
-
     </div>
+
     <div class="form-item form-item-name form-group">
       <label for="Date" class="control-label">Date</label>
       <input
@@ -403,7 +403,45 @@
   <div 
     class="container-fluid tab-content second"
     :class="{ selected: tabSelected === 'SECOND' }">
-    Movement Content
+
+    <br>
+    <h4>Assets</h4>
+    <Autocomplete
+      :objects="filteredAssets"
+      searchKey="name"
+      searchId="id"
+      :label="assetsRequired() ? 'Seedings must include assets!' : 'Add assets to be moved'"
+      :class="{ invalid: assetsRequired() }"
+      v-on:results="addAsset($event)">
+      <template slot="empty">
+        <div class="empty-slot">
+          <em>No assets found.</em>
+          <br>
+          <button
+            type="button"
+            class="btn btn-light"
+            @click="forceSync"
+            name="button">
+            Sync Now
+          </button>
+        </div>
+      </template>
+    </Autocomplete>
+
+    <div class="form-item form-item-name form-group">
+      <ul class="list-group">
+        <li
+          v-for="(asset, i) in selectedAssets"
+          v-bind:key="`asset-${i}-${Math.floor(Math.random() * 1000000)}`"
+          class="list-group-item">
+          {{ asset.name }}
+          <span class="remove-list-item" @click="removeAsset(asset)">
+            &#x2715;
+          </span>
+        </li>
+      </ul>
+    </div>
+
   </div>
 </div>
 </template>
