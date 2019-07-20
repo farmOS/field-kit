@@ -7,17 +7,79 @@ const SERVER = 'FARMOS_SERVER';
 const STORE = 'VUEX_STORE';
 const IDB = 'INDEXEDDB';
 const nowStamp = (Date.now() / 1000).toFixed(0);
-/*
-  MAKELOG
-  A utility function for structuring logs within the app. It can be applied
-  to an existing log before storing it in the database, posting it to the
-  server, or for otherwise rendering logs in a standard format. It can also
-  be used to generate a new log for the Vuex store by passing in no parameters.
-  Provide an optional `dest` parameter to ensure the proper formatting for its
-  destination.
 
-  A CodeSandbox for experimenting with it can be found here:
-  https://codesandbox.io/s/github/jgaehring/farmos-logfactory
+/*
+  parseImages and parseObjects are used both in src: store and src: SQL
+  For now, I will retain them in their original form, and use only on the data: property
+
+  This utility function, along with the use of `JSON.parse()` above,
+  provide a quick hacky solution, but we need something better
+  for parsing data when it goes between Vuex and WebSQL. See:
+  https://github.com/farmOS/farmOS-native/issues/27#issuecomment-412093491
+  https://github.com/farmOS/farmOS-native/issues/40#issuecomment-419131892
+  https://github.com/farmOS/farmOS-native/issues/45
+*/
+function parseImages(x) {
+  // Image references obtained from the server are objects
+  if (typeof x === 'object') {
+    const imageArray = [];
+    if (Array.isArray(x)) {
+      x.forEach((img) => {
+        if (typeof img === 'string') {
+          imageArray.push(img);
+        } else {
+          Object.keys(img).forEach((key) => {
+            if (img[key].id) {
+              imageArray.push(`${img[key].id}`);
+            } else {
+              imageArray.push(img[key]);
+            }
+          });
+        }
+      });
+    } else {
+      Object.keys(x).forEach((key) => {
+        imageArray.push(x[key]);
+      });
+    }
+    return imageArray;
+  }
+  if (typeof x === 'string') {
+    return (x === '') ? [] : [].concat(x);
+  }
+  throw new Error(`${x} cannot be parsed as an image array`);
+}
+
+// TODO: can this be used in place of parseImages?
+function parseObjects(x) {
+  if (typeof x === 'object') {
+    return x;
+  }
+  if (typeof x === 'string') {
+    return JSON.parse(x);
+  }
+  throw new Error(`${x} cannot be parsed as an object array`);
+}
+
+// Pull value from SERVER notes and remove html tags
+function parseNotes(notes) {
+  if (notes.value !== undefined) {
+    if (notes.value !== '' && notes.value !== null) {
+      return notes.value.slice(3, -5);
+    }
+  }
+  return '';
+}
+
+/*
+  MAKELOGFACTORY
+  This factory function yields several utility functions for structuring logs
+  within the app. It can be applied to an existing log before storing it in the
+  database, posting it to the server, or for otherwise rendering logs in a
+  standard format. It can also be used to generate a new log for the Vuex store
+  by passing in no parameters. Provide a `dest` parameter to ensure the proper
+  formatting for its destination. Provide a `src` parameter so it knows what
+  formatting to expect from its source.
 */
 
 const makeLogFactory = (src, dest) => {
@@ -40,10 +102,11 @@ const makeLogFactory = (src, dest) => {
       isReadyToSync = false,
       wasPushedToServer = false,
       remoteUri = '',
-      asset = { changed: null, data: [] }, // eslint-disable-line camelcase
-      area = { changed: null, data: [] }, // eslint-disable-line camelcase
-      geofield = { changed: null, data: [] }, // eslint-disable-line camelcase
-      notes = { changed: null, data: '' }, // eslint-disable-line camelcase
+      asset = { changed: null, data: [] },
+      area = { changed: null, data: [] },
+      geofield = { changed: null, data: [] },
+      notes = { changed: null, data: '' },
+      movement = { changed: null, data: {} },
     } = {}) => {
       let log;
       /*
@@ -54,29 +117,48 @@ const makeLogFactory = (src, dest) => {
         log = {
           log_owner,
           notes,
-          quantity: { data: parseObjects(quantity.data), changed: quantity.changed }, // eslint-disable-line no-use-before-define, max-len
-          log_category: { data: parseObjects(log_category.data), changed: log_category.changed }, // eslint-disable-line no-use-before-define, max-len
-          equipment: { data: parseObjects(equipment.data), changed: equipment.changed }, // eslint-disable-line no-use-before-define, max-len
-          id,
+          quantity: {
+            data: parseObjects(quantity.data),
+            changed: quantity.changed,
+          },
+          log_category: {
+            data: parseObjects(log_category.data),
+            changed: log_category.changed,
+          },
+          equipment: {
+            data: parseObjects(equipment.data),
+            changed: equipment.changed,
+          },
           local_id,
           name,
           type,
           timestamp,
-          // Use Array.concat() to make sure this is an array
-          images: { data: parseImages(images.data), changed: images.changed }, // eslint-disable-line no-use-before-define, max-len
+          images: {
+            data: parseImages(images.data),
+            changed: images.changed,
+          },
           // Use JSON.parse() to convert strings back to booleans
           done: { data: JSON.parse(done.data), changed: done.changed },
-          isCachedLocally: JSON.parse(isCachedLocally), // eslint-disable-line max-len
-          isReadyToSync: JSON.parse(isReadyToSync), // eslint-disable-line max-len
-          wasPushedToServer: JSON.parse(wasPushedToServer), // eslint-disable-line max-len
+          isCachedLocally: JSON.parse(isCachedLocally),
+          isReadyToSync: JSON.parse(isReadyToSync),
+          wasPushedToServer: JSON.parse(wasPushedToServer),
           remoteUri,
-          asset: { data: parseObjects(asset.data), changed: asset.changed }, // eslint-disable-line no-use-before-define, max-len
+          asset: {
+            data: parseObjects(asset.data),
+            changed: asset.changed,
+          },
         };
         if (type.data !== 'farm_seeding' && area) {
-          log.area = { data: parseObjects(area.data), changed: area.changed }; // eslint-disable-line no-use-before-define, max-len
+          log.area = {
+            data: parseObjects(area.data),
+            changed: area.changed,
+          };
         }
-        if (type.data !== 'farm_seeding' && geofield) { // eslint-disable-line no-use-before-define, max-len
-          log.geofield = { data: parseObjects(geofield.data), changed: geofield.changed }; // eslint-disable-line no-use-before-define, max-len
+        if (type.data !== 'farm_seeding' && geofield) {
+          log.geofield = {
+            data: parseObjects(geofield.data),
+            changed: geofield.changed,
+          };
         }
       }
       // The format for sending logs to the farmOS REST Server.
@@ -170,7 +252,7 @@ const makeLogFactory = (src, dest) => {
       } = deserializedLogFromServer;
       const log = {
         log_owner: { data: log_owner, changed: nowStamp },
-        notes: { data: parseNotes(notes), changed: nowStamp }, // eslint-disable-line no-use-before-define, max-len
+        notes: { data: parseNotes(notes), changed: nowStamp },
         quantity: { data: quantity, changed: nowStamp },
         log_category: { data: log_category, changed: nowStamp },
         equipment: { data: equipment, changed: nowStamp },
@@ -208,67 +290,3 @@ export default {
   toServer: makeLogFactory(STORE, SERVER),
   fromServer: makeLogFactory(SERVER, STORE),
 };
-/*
-  parseImages and parseObjects are used both in src: store and src: SQL
-  For now, I will retain them in their original form, and use only on the data: property
-
-  This utility function, along with the use of `JSON.parse()` above,
-  provide a quick hacky solution, but we need something better
-  for parsing data when it goes between Vuex and WebSQL. See:
-  https://github.com/farmOS/farmOS-native/issues/27#issuecomment-412093491
-  https://github.com/farmOS/farmOS-native/issues/40#issuecomment-419131892
-  https://github.com/farmOS/farmOS-native/issues/45
-*/
-function parseImages(x) {
-  if (typeof x === 'object') {
-    // Image references obtained from the server are objects
-    const imageArray = [];
-    if (Array.isArray(x)) {
-      x.forEach((img) => {
-        if (typeof img === 'string') {
-          // imageArray.push(checkJSON(img));
-          imageArray.push(img);
-        } else {
-          Object.keys(img).forEach((key) => {
-            if (img[key].id) {
-              imageArray.push(`${img[key].id}`);
-            } else {
-              imageArray.push(img[key]);
-            }
-          });
-        }
-      });
-    } else {
-      Object.keys(x).forEach((key) => {
-        imageArray.push(x[key]);
-      });
-    }
-    return imageArray;
-  }
-  if (typeof x === 'string') {
-    // return (x === '') ? [] : [].concat(checkJSON(x));
-    return (x === '') ? [] : [].concat(x);
-  }
-  throw new Error(`${x} cannot be parsed as an image array`);
-}
-
-// TODO: can this be used in place of parseImages?
-function parseObjects(x) {
-  if (typeof x === 'object') {
-    return x;
-  }
-  if (typeof x === 'string') {
-    return JSON.parse(x);
-  }
-  throw new Error(`${x} cannot be parsed as an object array`);
-}
-
-// Pull value from SERVER notes and remove html tags
-function parseNotes(notes) {
-  if (notes.value !== undefined) {
-    if (notes.value !== '' && notes.value !== null) {
-      return notes.value.slice(3, -5);
-    }
-  }
-  return '';
-}
