@@ -94,29 +94,10 @@ export default {
         });
       }
 
-      // format images for the payload
-      function processImages(image) {
-        if (Array.isArray(image)) {
-          const imgArray = [];
-          image.forEach((img) => {
-            // Files begin with 'data:'.  Retain file strings, turn ref strings into objects
-            if (img.charAt(0) === 'd') {
-              imgArray.push(img);
-            } else {
-              imgArray.push({ fid: img });
-            }
-          });
-          return imgArray;
-        }
-        return image;
-      }
-
       indices.forEach((index) => { // eslint-disable-line array-callback-return, max-len
         // Either send or post logs, depending on whether they originated on the server
         // Logs originating on the server possess an ID field; others do not.
         const newLog = makeLog.toServer(rootState.farm.logs[index]);
-        newLog.images = processImages(newLog.images);
-        newLog.done = newLog.done ? 1 : 0;
         farm().log.send(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
           .then(res => handleSyncResponse(res, index))
           // .catch(err => handleSyncError(err, index, rootState, payload.router, commit));

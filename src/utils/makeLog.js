@@ -9,7 +9,7 @@ const IDB = 'INDEXEDDB';
 const nowStamp = (Date.now() / 1000).toFixed(0);
 
 /*
-  parseImages and parseObjects are used both in src: store and src: SQL
+  parseImagesFromServer and parseObjects are used both in src: store and src: SQL
   For now, I will retain them in their original form, and use only on the data: property
 
   This utility function, along with the use of `JSON.parse()` above,
@@ -19,7 +19,7 @@ const nowStamp = (Date.now() / 1000).toFixed(0);
   https://github.com/farmOS/farmOS-native/issues/40#issuecomment-419131892
   https://github.com/farmOS/farmOS-native/issues/45
 */
-function parseImages(x) {
+function parseImagesFromServer(x) {
   // Image references obtained from the server are objects
   if (typeof x === 'object') {
     const imageArray = [];
@@ -50,7 +50,7 @@ function parseImages(x) {
   throw new Error(`${x} cannot be parsed as an image array`);
 }
 
-// TODO: can this be used in place of parseImages?
+// TODO: can this be used in place of parseImagesFromServer?
 function parseObjects(x) {
   if (typeof x === 'object') {
     return x;
@@ -59,6 +59,20 @@ function parseObjects(x) {
     return JSON.parse(x);
   }
   throw new Error(`${x} cannot be parsed as an object array`);
+}
+
+// format images for the payload
+function prepareImagesForServer(images) {
+  if (Array.isArray(images)) {
+    return images.map((img) => {
+      // Files begin with 'data:'.  Retain file strings, turn ref strings into objects
+      if (img.charAt(0) === 'd') {
+        return img;
+      }
+      return { fid: img };
+    });
+  }
+  return images;
 }
 
 // Pull value from SERVER notes and remove html tags
@@ -106,7 +120,6 @@ const makeLogFactory = (src, dest) => {
       area = { changed: null, data: [] },
       geofield = { changed: null, data: [] },
       notes = { changed: null, data: '' },
-      movement = { changed: null, data: {} },
     } = {}) => {
       let log;
       /*
@@ -129,12 +142,13 @@ const makeLogFactory = (src, dest) => {
             data: parseObjects(equipment.data),
             changed: equipment.changed,
           },
+          id,
           local_id,
           name,
           type,
           timestamp,
           images: {
-            data: parseImages(images.data),
+            data: parseImagesFromServer(images.data),
             changed: images.changed,
           },
           // Use JSON.parse() to convert strings back to booleans
@@ -169,10 +183,10 @@ const makeLogFactory = (src, dest) => {
             value: notes.data,
           },
           name: name.data,
-          done: done.data,
+          done: done.data ? 1 : 0,
           type: type.data,
           timestamp: timestamp.data,
-          images: images.data,
+          images: prepareImagesForServer(images.data),
           asset: asset.data,
           quantity: quantity.data,
           log_category: log_category.data,
