@@ -120,6 +120,7 @@ const makeLogFactory = (src, dest) => {
       area = { changed: null, data: [] },
       geofield = { changed: null, data: [] },
       notes = { changed: null, data: '' },
+      movement = { changed: null, data: { area: [], geometry: '' } },
     } = {}) => {
       let log;
       /*
@@ -161,6 +162,10 @@ const makeLogFactory = (src, dest) => {
             data: parseObjects(asset.data),
             changed: asset.changed,
           },
+          movement: {
+            data: parseObjects(movement.data),
+            changed: movement.changed,
+          },
         };
         if (type.data !== 'farm_seeding' && area) {
           log.area = {
@@ -191,6 +196,7 @@ const makeLogFactory = (src, dest) => {
           quantity: quantity.data,
           log_category: log_category.data,
           equipment: equipment.data,
+          movement: movement.data,
         };
         /*
           Only return id property if one has already been assigned by the server,
@@ -224,6 +230,7 @@ const makeLogFactory = (src, dest) => {
           wasPushedToServer,
           remoteUri,
           asset,
+          movement,
         };
         /*
           Only return local_id property if one has already been assigned by WebSQL,
@@ -263,6 +270,7 @@ const makeLogFactory = (src, dest) => {
         area,
         geofield,
         notes,
+        movement,
       } = deserializedLogFromServer;
       const log = {
         log_owner: { data: log_owner, changed: nowStamp },
@@ -280,6 +288,7 @@ const makeLogFactory = (src, dest) => {
         wasPushedToServer: true,
         remoteUri: url,
         asset: { data: asset, changed: nowStamp },
+        movement: { data: movement, changed: nowStamp },
       };
       // Seedings do not have areas and geofields
       if (type !== 'farm_seeding' && area) {

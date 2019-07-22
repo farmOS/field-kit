@@ -405,7 +405,6 @@
     :class="{ selected: tabSelected === 'SECOND' }">
 
     <br>
-    <h4>Assets</h4>
     <Autocomplete
       :objects="filteredAssets"
       searchKey="name"
@@ -436,6 +435,41 @@
           class="list-group-item">
           {{ asset.name }}
           <span class="remove-list-item" @click="removeAsset(asset)">
+            &#x2715;
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <Autocomplete
+      :objects="filteredMovementAreas"
+      searchKey="name"
+      searchId="tid"
+      label="Movement to"
+      v-on:results="addMovementArea($event)">
+      <template slot="empty">
+        <div class="empty-slot">
+          <em>No areas found.</em>
+          <br>
+          <button
+            type="button"
+            class="btn btn-light"
+            @click="forceSync"
+            name="button">
+            Sync Now
+          </button>
+        </div>
+      </template>
+    </Autocomplete>
+
+    <div class="form-item form-item-name form-group">
+      <ul class="list-group">
+        <li
+          v-for="(area, i) in selectedMovementAreas"
+          v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
+          class="list-group-item">
+          {{ area.name }}
+          <span class="remove-list-item" @click="removeMovementArea(area)">
             &#x2715;
           </span>
         </li>
@@ -553,7 +587,7 @@ export default {
       const nowStamp = (Date.now() / 1000).toFixed(0);
       let valueString = (typeof val === 'string') ? val : JSON.stringify(val);
       const newProps = {
-        [key]: { data: valueString, changed: nowStamp},
+        [key]: { data: valueString, changed: nowStamp },
         isCachedLocally: false,
         wasPushedToServer: false,
       };
@@ -583,24 +617,32 @@ export default {
     },
 
     addCategory(id) {
-      const catReference = { id: id, resource: 'taxonomy_term'};
+      const catReference = { id, resource: 'taxonomy_term'};
       const newCategories = this.logs[this.currentLogIndex].log_category.data.concat(catReference);
       this.updateCurrentLog('log_category', newCategories);
     },
 
     addEquipment(id) {
-      console.log('Equipment id: ', id);
       if (id !== '') {
-        const equipReference = { id: id, resource: 'farm_asset'};
+        const equipReference = { id, resource: 'farm_asset'};
         const newEquipment = this.logs[this.currentLogIndex].equipment.data.concat(equipReference);
         this.updateCurrentLog('equipment', newEquipment);
       }
     },
 
     addAsset(id) {
-      const assetReference = { id: id, resource: 'farm_asset'};
+      const assetReference = { id, resource: 'farm_asset'};
       const newAssets = this.logs[this.currentLogIndex].asset.data.concat(assetReference);
       this.updateCurrentLog('asset', newAssets);
+    },
+
+    addMovementArea(id) {
+      const areaReference = { id, resource: 'farm_area'};
+      const newMovement = {
+        area: this.logs[this.currentLogIndex].movement.data.area.concat(areaReference),
+        geometry: this.logs[this.currentLogIndex].movement.data.geometry,
+        };
+      this.updateCurrentLog('movement', newMovement);
     },
 
     addArea(id) {
@@ -633,6 +675,16 @@ export default {
       const newAreas = this.logs[this.currentLogIndex].area.data
         .filter(_area => _area.id !== area.tid);
       this.updateCurrentLog('area', newAreas);
+    },
+
+    removeMovementArea(area) {
+      const newAreas = this.logs[this.currentLogIndex].movement.data.area
+        .filter(_area => _area.id !== area.tid);
+      const newMovement = {
+        geometry: this.logs[this.currentLogIndex].movement.data.geometry,
+        area: newAreas,
+      }
+      this.updateCurrentLog('movement', newMovement);
     },
 
     removeQuant(index) {
@@ -720,19 +772,33 @@ export default {
       added to the current log.
     */
     filteredAssets() {
-      const selectAssetRefs = this.logs[this.currentLogIndex].asset.data;
-      return this.assets.filter(asset =>
-        !selectAssetRefs.some(selAsset => asset.id === selAsset.id),
-      );
+      if (this.logs[this.currentLogIndex].asset){
+        const selectAssetRefs = this.logs[this.currentLogIndex].asset.data;
+        return this.assets.filter(asset =>
+          !selectAssetRefs.some(selAsset => asset.id === selAsset.id),
+        );
+      } else {
+        return this.assets;
+      }
     },
     filteredAreas() {
       if (this.logs[this.currentLogIndex].area) {
         const selectAreaRefs = this.logs[this.currentLogIndex].area.data;
         return this.areas.filter(area =>
-          !selectAreaRefs.some(selArea => area.tid === selArea.tid),
+          !selectAreaRefs.some(selArea => area.tid === selArea.id),
         );
       } else {
-        return []
+        return this.areas;
+      }
+    },
+    filteredMovementAreas() {
+      if (this.logs[this.currentLogIndex].movement.data.area) {
+        const selectAreaRefs = this.logs[this.currentLogIndex].movement.data.area;
+        return this.areas.filter(area =>
+          !selectAreaRefs.some(selArea => area.tid === selArea.id),
+        );
+      } else {
+        return this.areas;
       }
     },
     selectedAssets() {
@@ -743,6 +809,15 @@ export default {
     selectedAreas() {
       if (this.logs[this.currentLogIndex].area) {
         return this.getAttached(this.logs[this.currentLogIndex].area.data, this.areas, 'tid');
+      }
+    },
+    selectedMovementAreas() {
+      if (this.logs[this.currentLogIndex].movement.data.area) {
+        return this.getAttached(
+          this.logs[this.currentLogIndex].movement.data.area,
+          this.areas,
+          'tid',
+          );
       }
     },
     quantUnitNames() {
