@@ -52,6 +52,7 @@
               :checked="useGeolocation"
               @input="setUseGeolocation($event.target.checked)"/>
           </li>
+          <li class="list-group-item">Version: {{version}}</li>
           <router-link to="/login" v-if="!isLoggedIn">
             <li class="list-group-item" @click="showDrawer = !showDrawer">Login</li>
           </router-link>
@@ -101,6 +102,7 @@
 
 <script>
 import { mapState } from 'vuex';
+import { version } from '../../package.json';
 import IconMenu from '../icons/icon-menu.vue'; // eslint-disable-line import/extensions
 import IconArrowBack from '../icons/icon-arrow-back.vue'; // eslint-disable-line import/extensions
 
@@ -110,6 +112,7 @@ export default {
   data() {
     return {
       showDrawer: false,
+      version,
     };
   },
   computed: mapState({
