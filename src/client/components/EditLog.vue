@@ -476,6 +476,8 @@
       </ul>
     </div>
 
+    <Map id="map" :style="{ height: '90vw' }"/>
+
   </div>
 </div>
 </template>
@@ -485,6 +487,7 @@ import Autocomplete from './Autocomplete';
 import IconExpandLess from '../../icons/icon-expand-less.vue'; // eslint-disable-line import/extensions
 import IconExpandMore from '../../icons/icon-expand-more.vue'; // eslint-disable-line import/extensions
 import IconSpinner from '../../icons/icon-spinner.vue'; // eslint-disable-line import/extensions
+import Map from './Map';
 import ToggleCheck from './ToggleCheck.vue';
 import SelectBox from './SelectBox.vue';
 
@@ -495,6 +498,7 @@ export default {
     IconExpandLess,
     IconExpandMore,
     IconSpinner,
+    Map,
     ToggleCheck,
     SelectBox,
   },
