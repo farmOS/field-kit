@@ -1,3 +1,4 @@
+import 'farmOS-map/src/main';
 import app from '@/client/app';
 import camera from '@/vue-plugins/camera-cordova';
 import idb from '@/vue-plugins/idb';

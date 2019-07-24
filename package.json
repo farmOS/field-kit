@@ -25,6 +25,7 @@
     "cordova-plugin-splashscreen": "^5.0.3",
     "cordova-plugin-whitelist": "^1.3.4",
     "farmos": "0.0.5",
+    "farmOS-map": "farmOS/farmOS-map",
     "moment": "^2.22.2",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
