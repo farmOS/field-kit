@@ -10,6 +10,7 @@ export default {
   name: 'Map',
   data() {
     return {
+      map: {},
       // these can be overridden by the 'overrideStyles' prop
       defaultStyles: {
         height: '100vw',
@@ -21,7 +22,20 @@ export default {
     'overrideStyles',
   ],
   mounted() {
-    window.farmOS.map.create(this.id);
+    const options = {
+      interactions: {
+        mouseWheelZoom: false,
+        dragPan: false,
+      },
+      controls: {
+        zoom: false,
+        fullScreen: false,
+        // 'o' === 'geocoder' 🙄
+        o: false,
+        layerSwitcher: false,
+      },
+    };
+    this.map = window.farmOS.map.create(this.id, options);
   }
 }
 </script>
