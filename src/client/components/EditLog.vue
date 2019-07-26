@@ -476,7 +476,7 @@
       </ul>
     </div>
 
-    <Map id="map" :style="{ height: '90vw' }"/>
+    <Map id="map" :overrideStyles="{ height: '90vw' }"/>
 
   </div>
 </div>

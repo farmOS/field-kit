@@ -1,7 +1,7 @@
 <template>
   <div 
     :id="id"
-    :style="[defaultStyles, style]">
+    :style="[defaultStyles, overrideStyles]">
   </div>
 </template>
 
@@ -10,7 +10,7 @@ export default {
   name: 'Map',
   data() {
     return {
-      // these can be overridden by the 'style' prop
+      // these can be overridden by the 'overrideStyles' prop
       defaultStyles: {
         height: '100vw',
       }
@@ -18,7 +18,7 @@ export default {
   },
   props: [
     'id',
-    'style',
+    'overrideStyles',
   ],
   mounted() {
     window.farmOS.map.create(this.id);
