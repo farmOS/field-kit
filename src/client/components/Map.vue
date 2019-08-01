@@ -23,18 +23,9 @@ export default {
   ],
   mounted() {
     const options = {
-      interactions: {
-        mouseWheelZoom: false,
-        dragPan: false,
-      },
-      controls: {
-        zoom: false,
-        fullScreen: false,
-        // 'o' === 'geocoder' 🙄
-        o: false,
-        layerSwitcher: false,
-      },
-    };
+      controls: (defaults) => defaults.filter(def => def.constructor.name === 'Attribution'),
+      interactions: false,
+    }
     this.map = window.farmOS.map.create(this.id, options);
   }
 }
