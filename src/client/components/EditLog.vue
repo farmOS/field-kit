@@ -476,7 +476,10 @@
       </ul>
     </div>
 
-    <Map id="map" :overrideStyles="{ height: '90vw' }"/>
+    <Map
+      id="map"
+      :overrideStyles="{ height: '90vw' }"
+      :wkt="logs[currentLogIndex].movement.data.geometry"/>
 
   </div>
 </div>

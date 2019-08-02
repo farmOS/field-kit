@@ -20,6 +20,7 @@ export default {
   props: [
     'id',
     'overrideStyles',
+    'wkt',
   ],
   mounted() {
     const options = {
@@ -27,7 +28,17 @@ export default {
       interactions: false,
     }
     this.map = window.farmOS.map.create(this.id, options);
-  }
+    if (this.wkt) {
+      this.map.addWKTLayer("movement", this.wkt, "orange");
+    }
+    this.map.zoomToVectors();
+  },
+  updated(){
+    if (this.wkt) {
+      this.map.addWKTLayer("movement", this.wkt, "orange");
+    }
+    this.map.zoomToVectors();
+  },
 }
 </script>
 
