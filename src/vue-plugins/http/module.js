@@ -158,6 +158,18 @@ export default {
           });
         });
     },
+    // Stop spinner on aborted sync attempts by setting isReadyToSync false
+    unreadyLog({ commit }, index) {
+      commit('updateLogs', {
+        indices: [index],
+        mapper(log) {
+          return makeLog.create({
+            ...log,
+            isReadyToSync: false,
+          });
+        },
+      });
+    },
   },
 };
 

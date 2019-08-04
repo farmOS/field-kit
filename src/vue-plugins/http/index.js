@@ -1,21 +1,51 @@
 import module from './module';
 
-/*
-  A reducer function that filters for logs ready to sync,
-  and returns an array of only those logs' indices.
-*/
-function syncReducer(indices, curLog, curIndex) {
-  // Sync all logs to the server; those originally from server will have id fields
-  if (curLog.isReadyToSync !== undefined
-    && JSON.parse(curLog.isReadyToSync)
-    && !JSON.parse(curLog.wasPushedToServer)) {
-    return indices.concat(curIndex);
-  }
-  return indices;
-}
-
 export default {
   install(Vue, { store, router }) {
+
+    /*
+      A reducer function that filters for logs ready to sync,
+      and returns an array of only those logs' indices.
+
+      This function also enforces the following criteria for specific log types:
+        - Seedings must be associated with an asset
+
+      TODO:
+        - Ensure seedings are associated with a single planting asset
+        - Enforce other criteria?
+    */
+    function syncReducer(indices, curLog, curIndex) {
+      // Check if criteria for specific log types are met
+      function criteriaMet(log, index) {
+        const errorPayload = {
+          message: '',
+          level: 'warning',
+          show: true,
+        };
+
+        // Criteria enforcement for seedings:
+        if (log.type.data === 'farm_seeding') {
+          if (log.asset.data.length < 1) {
+            errorPayload.message = `Could not sync ${log.name.data} because seedings must be assigned to plantings.`;
+            store.commit('logError', errorPayload);
+            store.dispatch('unreadyLog', index);
+            return false;
+          }
+        }
+
+        return true;
+      }
+
+      // Sync all logs to the server; those originally from server will have id fields
+      if (curLog.isReadyToSync !== undefined
+        && JSON.parse(curLog.isReadyToSync)
+        && !JSON.parse(curLog.wasPushedToServer)
+        && criteriaMet(curLog, curIndex)) {
+        return indices.concat(curIndex);
+      }
+      return indices;
+    }
+
     // This handles the custom error type defined in ./module.js
     function handleSyncError(syncError) {
       // First set all logs to not ready to sync so their spinners stops spinning
