@@ -119,6 +119,23 @@ export default {
     IconEdit,
     IconSync,
   },
+  beforeRouteLeave(to, from, next) {
+    console.log(to.name);
+    // Before navigating to the "Edit" screen, if a log index is provided in 
+    // the query params, set it as the current log
+    if (to.name === 'edit-log' && typeof to.params.index === 'number') {
+      this.$store.commit('setCurrentLogIndex', to.params.index);
+      next();
+    // If no index is given, create a new log. The 'type' prop is set based on
+    // the 'type' param in the local route
+    } else if (to.name === 'edit-log') {
+      this.$store.dispatch('initializeLog', to.params.type);
+      next();
+    // Otherwise just continue to the next route
+    } else {
+      next();
+    }
+  },
   methods: {
     showDate(unixTimestamp) {
       return moment.unix(unixTimestamp).format('MMM DD YYYY');
