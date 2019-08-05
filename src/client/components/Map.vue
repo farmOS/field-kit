@@ -39,6 +39,10 @@ export default {
     }
     this.map.zoomToVectors();
   },
+  beforeDestroy() {
+    window.farmOS.map.destroy(this.id);
+    this.map = null;
+  },
 }
 </script>
 
