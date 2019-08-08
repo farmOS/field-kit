@@ -4,8 +4,7 @@ function compare(geojson1, geojson2) {
   return JSON.stringify(geojson1.coordinates) === JSON.stringify(geojson2.coordinates);
 }
 
-// Takes an array of WKT strings and returns a single WKT string
-// eslint-disable-next-line import/prefer-default-export
+// Takes an array of WKT strings and returns a single WKT string.
 export function mergeGeometries(wkts) {
   // First, filter out empty strings and return a value if there are less than
   // two values to merge.
@@ -49,4 +48,49 @@ export function mergeGeometries(wkts) {
   // Finally, convert the GeoJSON back to WKT and return it.
   const mergedWKT = stringify(mergedGeoJSON);
   return mergedWKT;
+}
+
+// Takes 2 strings of WKT and removes the second from the first.
+export function removeGeometry(minuend, subtrahend) {
+  // First handle case that either string is empty.
+  if (minuend === '') {
+    return '';
+  }
+  if (subtrahend === '') {
+    return minuend;
+  }
+
+  // Next convert strings to GeoJSON for comparison.
+  const minGeoJSON = parse(minuend);
+  const subGeoJSON = parse(subtrahend);
+
+  // Check whether each is a GeometryCollection, compare them accordingly, and
+  // finally return the difference of the two, converted back to WKT.
+  if (minGeoJSON.type !== 'GeometryCollection' && subGeoJSON.type !== 'GeometryCollection') {
+    return compare(minGeoJSON, subGeoJSON) ? '' : minuend;
+  }
+  if (minGeoJSON.type === 'GeometryCollection' && subGeoJSON.type !== 'GeometryCollection') {
+    const difGeoJSON = {
+      type: 'GeometryCollection',
+      geometries: minGeoJSON.geometries.filter(minGeom => !compare(minGeom, subGeoJSON)),
+    };
+    const difference = difGeoJSON.geometries.length > 0 ? stringify(difGeoJSON) : '';
+    return difference;
+  }
+  if (minGeoJSON.type === 'GeometryCollection' && subGeoJSON.type === 'GeometryCollection') {
+    const difGeoJSON = {
+      type: 'GeometryCollection',
+      geometries: minGeoJSON.geometries.filter((minGeom) => {
+        const isMatch = subGeoJSON.geometries.some(subGeom => compare(minGeom, subGeom));
+        return !isMatch;
+      }),
+    };
+    const difference = difGeoJSON.geometries.length > 0 ? stringify(difGeoJSON) : '';
+    return difference;
+  }
+  if (minGeoJSON.type !== 'GeometryCollection' && subGeoJSON.type === 'GeometryCollection') {
+    const isMatch = subGeoJSON.geometries.some(subGeom => compare(minGeoJSON, subGeom));
+    return isMatch ? '' : minuend;
+  }
+  throw new Error('Format(s) not recognized as valid WKT.');
 }
