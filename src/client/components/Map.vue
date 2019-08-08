@@ -11,6 +11,9 @@ export default {
   data() {
     return {
       map: {},
+      layers: {
+        wkt: null,
+      },
       // these can be overridden by the 'overrideStyles' prop
       defaultStyles: {
         height: '100vw',
@@ -29,13 +32,17 @@ export default {
     }
     this.map = window.farmOS.map.create(this.id, options);
     if (this.wkt) {
-      this.map.addWKTLayer("movement", this.wkt, "orange");
+      this.layers.wkt = this.map.addWKTLayer("wkt", this.wkt, "orange");
     }
     this.map.zoomToVectors();
   },
   updated(){
+    if (this.layers.wkt) {
+      this.map.map.removeLayer(this.layers.wkt);
+      this.layers.wkt = null;
+    }
     if (this.wkt) {
-      this.map.addWKTLayer("movement", this.wkt, "orange");
+      this.layers.wkt = this.map.addWKTLayer("wkt", this.wkt, "orange");
     }
     this.map.zoomToVectors();
   },

@@ -493,6 +493,7 @@ import IconSpinner from '../../icons/icon-spinner.vue'; // eslint-disable-line i
 import Map from './Map';
 import ToggleCheck from './ToggleCheck.vue';
 import SelectBox from './SelectBox.vue';
+import { mergeGeometries } from '../../utils/geometry.js';
 
 export default {
   name: 'EditLog',
@@ -632,9 +633,12 @@ export default {
 
     addMovementArea(id) {
       const areaReference = { id, resource: 'farm_area'};
+      const areaGeometry = this.areas.find(area => area.tid === id).geofield[0].geom;
+      const prevGeometry = this.logs[this.currentLogIndex].movement.data.geometry;
+      const newGeometry = mergeGeometries([areaGeometry, prevGeometry]);
       const newMovement = {
         area: this.logs[this.currentLogIndex].movement.data.area.concat(areaReference),
-        geometry: this.logs[this.currentLogIndex].movement.data.geometry,
+        geometry: newGeometry,
         };
       this.updateCurrentLog('movement', newMovement);
     },
