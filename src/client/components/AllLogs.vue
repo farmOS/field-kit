@@ -120,7 +120,6 @@ export default {
     IconSync,
   },
   beforeRouteLeave(to, from, next) {
-    console.log(to.name);
     // Before navigating to the "Edit" screen, if a log index is provided in 
     // the query params, set it as the current log
     if (to.name === 'edit-log' && typeof to.params.index === 'number') {
