@@ -13,6 +13,7 @@ export default {
       map: {},
       layers: {
         wkt: null,
+        geojson: null,
       },
       // these can be overridden by the 'overrideStyles' prop
       defaultStyles: {
@@ -24,6 +25,7 @@ export default {
     'id',
     'overrideStyles',
     'wkt',
+    'geojson',
   ],
   mounted() {
     const options = {
@@ -31,24 +33,45 @@ export default {
       interactions: false,
     }
     this.map = window.farmOS.map.create(this.id, options);
-    if (this.wkt) {
-      this.layers.wkt = this.map.addWKTLayer("wkt", this.wkt, "orange");
-    }
-    this.map.zoomToVectors();
-  },
-  updated(){
-    if (this.layers.wkt) {
-      this.map.map.removeLayer(this.layers.wkt);
-      this.layers.wkt = null;
+    if (this.geojson) {
+      this.layers.geojson = this.map.addLayer('geojson', {
+        title: 'areas',
+        url: this.geojson,
+        color: 'grey',
+      });
     }
     if (this.wkt) {
-      this.layers.wkt = this.map.addWKTLayer("wkt", this.wkt, "orange");
+      this.layers.wkt = this.map.addLayer('wkt', {
+        title: 'movement',
+        wkt: this.wkt,
+        color: 'orange',
+      });
+      this.map.zoomToLayer(this.layers.wkt);
+    } else {
+      this.map.zoomToVectors();
     }
-    this.map.zoomToVectors();
   },
   beforeDestroy() {
     window.farmOS.map.destroy(this.id);
     this.map = null;
+  },
+  watch: {
+    wkt() {
+      if (this.layers.wkt) {
+        this.map.map.removeLayer(this.layers.wkt);
+        this.layers.wkt = null;
+      }
+      if (this.wkt) {
+        this.layers.wkt = this.map.addLayer('wkt', {
+          title: 'movement',
+          wkt: this.wkt,
+          color: 'orange',
+        });
+        this.map.zoomToLayer(this.layers.wkt);
+      } else {
+        this.map.zoomToVectors();
+      }
+    },
   },
 }
 </script>

@@ -479,7 +479,8 @@
     <Map
       id="map"
       :overrideStyles="{ height: '90vw' }"
-      :wkt="logs[currentLogIndex].movement.data.geometry"/>
+      :wkt="logs[currentLogIndex].movement.data.geometry"
+      geojson="/farm/areas/geojson/all"/>
 
   </div>
 </div>
