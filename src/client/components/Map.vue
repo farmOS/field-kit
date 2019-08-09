@@ -21,31 +21,37 @@ export default {
       }
     }
   },
-  props: [
-    'id',
-    'overrideStyles',
-    'wkt',
-    'geojson',
-  ],
+  props: {
+    id: String,
+    overrideStyles: Object,
+    options: {
+      controls: [Boolean, Array, Function],
+      interactions: [Boolean, Array, Function],
+    },
+    wkt: {
+      title: String,
+      wkt: String,
+      color: String,
+      visible: Boolean,
+    },
+    geojson: {
+      title: String,
+      url: String,
+      color: String,
+      visible: Boolean,
+    },
+  },
   mounted() {
     const options = {
       controls: (defaults) => defaults.filter(def => def.constructor.name === 'Attribution'),
       interactions: false,
     }
     this.map = window.farmOS.map.create(this.id, options);
-    if (this.geojson) {
-      this.layers.geojson = this.map.addLayer('geojson', {
-        title: 'areas',
-        url: this.geojson,
-        color: 'grey',
-      });
+    if (this.geojson.url) {
+      this.layers.geojson = this.map.addLayer('geojson', this.geojson);
     }
-    if (this.wkt) {
-      this.layers.wkt = this.map.addLayer('wkt', {
-        title: 'movement',
-        wkt: this.wkt,
-        color: 'orange',
-      });
+    if (this.wkt.wkt) {
+      this.layers.wkt = this.map.addLayer('wkt', this.wkt);
       this.map.zoomToLayer(this.layers.wkt);
     } else {
       this.map.zoomToVectors();
@@ -61,12 +67,8 @@ export default {
         this.map.map.removeLayer(this.layers.wkt);
         this.layers.wkt = null;
       }
-      if (this.wkt) {
-        this.layers.wkt = this.map.addLayer('wkt', {
-          title: 'movement',
-          wkt: this.wkt,
-          color: 'orange',
-        });
+      if (this.wkt.wkt) {
+        this.layers.wkt = this.map.addLayer('wkt', this.wkt);
         this.map.zoomToLayer(this.layers.wkt);
       } else {
         this.map.zoomToVectors();

@@ -479,8 +479,20 @@
     <Map
       id="map"
       :overrideStyles="{ height: '90vw' }"
-      :wkt="logs[currentLogIndex].movement.data.geometry"
-      geojson="/farm/areas/geojson/all"/>
+      :options="{
+        controls: (defaults) => defaults.filter(def => def.constructor.name === 'Attribution'),
+        interactions: false,
+      }"
+      :wkt="{
+        title: 'movement',
+        wkt: logs[currentLogIndex].movement.data.geometry,
+        color: 'orange',
+      }"
+      :geojson="{
+        title: 'areas',
+        url: '/farm/areas/geojson/all',
+        color: 'grey',
+      }"/>
 
   </div>
 </div>
