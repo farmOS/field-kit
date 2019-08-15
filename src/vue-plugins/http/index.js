@@ -23,27 +23,26 @@ export default {
       const logNames = syncError.indices.length > 0
         ? syncError.indices.reduce((acc, cur) => `${acc}, "${store.state.farm.logs[cur]}"`, '')
         : '';
-      // Do something with a TypeError object (mostly likely no connection)
-      if (typeof syncError.http === 'object' && syncError.http.status === undefined) {
+      // Do something if there's no response object (mostly likely no connection)
+      if (syncError.http.response === undefined) {
         const errorPayload = {
           message: `Unable to sync ${logNames} because the network is currently unavailable. Please try syncing again later.`,
-          errorCode: syncError.http.statusText,
           level: 'warning',
           show: true,
         };
         store.commit('logError', errorPayload);
-      } else if (syncError.http.status === 401
-        || syncError.http.status === 403
-        || syncError.http.status === 404) {
+      } else if (syncError.http.response.status === 401
+        || syncError.http.response.status === 403
+        || syncError.http.response.status === 404) {
         // Reroute authentication or authorization errors to login page
         router.push('/login');
       } else {
         // Handle some other type of runtime error (if possible)
-        const errMsg = `${syncError.http.status} error while syncing "${logNames}": ${syncError.http.statusText}`;
+        const errMsg = `${syncError.http.response.status} error while syncing "${logNames}": ${syncError.http.response.statusText}`;
 
         const errorPayload = {
           message: errMsg,
-          errorCode: syncError.http.statusText,
+          errorCode: syncError.http.response.statusText,
           level: 'warning',
           show: true,
         };
