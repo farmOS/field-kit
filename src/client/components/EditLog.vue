@@ -490,7 +490,7 @@
       }"
       :geojson="{
         title: 'areas',
-        url: '/farm/areas/geojson/all',
+        url: areaGeoJSON,
         color: 'grey',
       }"/>
 
@@ -877,6 +877,11 @@ export default {
         return equipNames;
       }
       return [];
+    },
+    areaGeoJSON() {
+      return (process.env.NODE_ENV === 'development') 
+        ? '/farm/areas/geojson/all'
+        : `${localStorage.getItem('host')}/farm/areas/geojson/all`
     },
   },
 
