@@ -1,6 +1,6 @@
 {
   "name": "farmos-client",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "description": "Client app for farmOS!",
   "author": "farmOS team",
   "license": "GPLv3",
@@ -24,8 +24,8 @@
     "cordova-plugin-network-information": "^2.0.2",
     "cordova-plugin-splashscreen": "^5.0.3",
     "cordova-plugin-whitelist": "^1.3.4",
-    "farmOS-map": "farmOS/farmOS-map",
-    "farmos": "0.0.5",
+    "farmOS-map": "farmOS/farmOS-map#v0.2.0",
+    "farmos": "0.0.6",
     "moment": "^2.22.2",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
