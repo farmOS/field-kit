@@ -880,7 +880,7 @@ export default {
     },
     areaGeoJSON() {
       return (process.env.NODE_ENV === 'development') 
-        ? '/farm/areas/geojson/all'
+        ? 'http://localhost/farm/areas/geojson/all'
         : `${localStorage.getItem('host')}/farm/areas/geojson/all`
     },
   },
