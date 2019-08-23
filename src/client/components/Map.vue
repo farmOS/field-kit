@@ -42,11 +42,7 @@ export default {
     },
   },
   mounted() {
-    const options = {
-      controls: (defaults) => defaults.filter(def => def.constructor.name === 'Attribution'),
-      interactions: false,
-    }
-    this.map = window.farmOS.map.create(this.id, options);
+    this.map = window.farmOS.map.create(this.id, this.options);
     if (this.geojson.url) {
       this.layers.geojson = this.map.addLayer('geojson', this.geojson);
     }
