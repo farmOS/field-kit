@@ -5,6 +5,8 @@ import AllLogs from '../components/AllLogs';
 import AllLogsMenuBar from '../components/AllLogsMenuBar';
 import EditLogMenuBar from '../components/EditLogMenuBar';
 import EditLog from '../components/EditLog';
+import EditMapMenuBar from '../components/EditMapMenuBar';
+import EditMap from '../components/EditMap';
 import FilterLogsMenuBar from '../components/FilterLogsMenuBar';
 import FilterLogs from '../components/FilterLogs';
 
@@ -35,6 +37,17 @@ export default new Router({
           components: {
             default: EditLog,
             menubar: EditLogMenuBar,
+          },
+          props: { default: true, menubar: true },
+          children: [
+          ],
+        },
+        {
+          path: 'map',
+          name: 'edit-map',
+          components: {
+            default: EditMap,
+            menubar: EditMapMenuBar,
           },
           props: { default: true, menubar: true },
         },

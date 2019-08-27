@@ -476,23 +476,25 @@
       </ul>
     </div>
 
-    <Map
-      id="map"
-      :overrideStyles="{ height: '90vw' }"
-      :options="{
-        controls: (defaults) => defaults.filter(def => def.constructor.name === 'Attribution'),
-        interactions: false,
-      }"
-      :wkt="{
-        title: 'movement',
-        wkt: logs[currentLogIndex].movement.data.geometry,
-        color: 'orange',
-      }"
-      :geojson="{
-        title: 'areas',
-        url: areaGeoJSON,
-        color: 'grey',
-      }"/>
+    <router-link :to="{ name: 'edit-map' }">
+      <Map
+        id="map"
+        :overrideStyles="{ height: '90vw' }"
+        :options="{
+          controls: (defaults) => defaults.filter(def => def.constructor.name === 'Attribution'),
+          interactions: false,
+        }"
+        :wkt="{
+          title: 'movement',
+          wkt: logs[currentLogIndex].movement.data.geometry,
+          color: 'orange',
+        }"
+        :geojson="{
+          title: 'areas',
+          url: areaGeoJSON,
+          color: 'grey',
+        }"/>
+    </router-link>
 
   </div>
 </div>
