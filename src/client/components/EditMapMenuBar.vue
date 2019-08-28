@@ -24,9 +24,10 @@ export default {
         params: {
           index: this.currentLogIndex,
           type: this.logs[this.currentLogIndex].type.data,
-        }
-      }
-    }
-  }
+          tab: 'SECOND',
+        },
+      };
+    },
+  },
 }
 </script>

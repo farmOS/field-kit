@@ -573,6 +573,12 @@ export default {
     'type',
   ],
 
+  beforeMount() {
+    if (this.$router.currentRoute.params.tab) {
+      this.tabSelected = this.$router.currentRoute.params.tab;
+    }
+  },
+
   methods: {
     convertOutOfUnix(unixTimestamp) {
       const date = new Date(unixTimestamp * 1000);
