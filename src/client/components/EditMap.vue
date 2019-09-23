@@ -3,12 +3,9 @@
     id="map"
     :overrideStyles="{ height: 'calc(100vh - 3rem)' }"
     @update-wkt="updateMovement"
-    :edit="{
-      active: true,
-      draw: true,
-      drawType: 'Polygon',
-      modify: true,
-      snap: true,
+    :options="{
+      controls: (defs) => defs.filter(def => def.constructor.name !== 'FullScreen'),
+      drawing: true,
     }"
     :wkt="{
       title: 'movement',

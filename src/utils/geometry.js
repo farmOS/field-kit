@@ -23,7 +23,11 @@ export function mergeGeometries(wkts) {
     geometries: [],
   };
   const mergedGeoJSON = geojsons.reduce((acc, cur) => {
-    // Handle non-GeometryCollections first.
+    // Handle nulls first.
+    if (!cur) {
+      return acc;
+    }
+    // Handle non-GeometryCollections.
     if (cur.type !== 'GeometryCollection') {
       const isDuplicate = acc.geometries.some(prev => compare(prev, cur));
       if (isDuplicate) {
