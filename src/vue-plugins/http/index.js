@@ -8,11 +8,10 @@ export default {
       and returns an array of only those logs' indices.
 
       This function also enforces the following criteria for specific log types:
-        - Seedings must be associated with an asset
+        - Seedings must be associated with at least one planting asset
 
       TODO:
-        - Ensure seedings are associated with a single planting asset
-        - Enforce other criteria?
+        - Seedings cannot be associated with an area
     */
     function syncReducer(indices, curLog, curIndex) {
       // Check if criteria for specific log types are met
@@ -25,14 +24,25 @@ export default {
 
         // Criteria enforcement for seedings:
         if (log.type.data === 'farm_seeding') {
-          if (log.asset.data.length < 1) {
-            errorPayload.message = `Could not sync ${log.name.data} because seedings must be assigned to plantings.`;
+          // If a seeding log does not have at least one planting asset, don't sync it
+          const allAssets = store.state.farm.assets;
+          const plantingAssets = [];
+          log.asset.data.forEach((logAsset) => {
+            allAssets.forEach((asset) => {
+              if (asset.id === logAsset.id && asset.type === 'planting') {
+                plantingAssets.push(asset.id);
+              }
+            });
+          });
+          if (plantingAssets.length < 1) {
+            errorPayload.message = `Could not sync ${log.name.data} because seeding logs must have at least one planting asset.`;
             store.commit('logError', errorPayload);
             store.dispatch('unreadyLog', index);
             return false;
           }
         }
 
+        // Sync any other type of log
         return true;
       }
 
