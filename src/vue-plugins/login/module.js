@@ -7,6 +7,14 @@ const lazyFarm = () => {
   return farmOS(host, user, password);
 };
 
+const safeSetLS = (key, value) => {
+  if (key) {
+    localStorage.setItem(key, value);
+  } else {
+    localStorage.removeItem(key);
+  }
+};
+
 export default {
   actions: {
 
@@ -102,11 +110,13 @@ export default {
           commit('changeUsername', res.user.name);
           commit('changeEmail', res.user.mail);
           commit('changeUid', res.user.uid);
+          commit('changeMapboxAPIKey', res.mapbox_api_key);
           commit('setLoginStatus', true);
           localStorage.setItem('farmName', res.name);
           localStorage.setItem('username', res.user.name);
           localStorage.setItem('email', res.user.mail);
           localStorage.setItem('uid', res.user.uid);
+          safeSetLS('mapboxAPIKey', res.mapbox_api_key);
           localStorage.setItem('isLoggedIn', true);
         });
       }
@@ -115,8 +125,8 @@ export default {
     loadCachedUserAndSiteInfo({ commit }) {
       commit('changeUsername', localStorage.getItem('username'));
       commit('changeEmail', localStorage.getItem('email'));
-      // Fixed this - was previously getting username on changeUid
       commit('changeUid', localStorage.getItem('uid'));
+      commit('changeMapboxAPIKey', localStorage.getItem('mapboxAPIKey'));
       commit('setLoginStatus', localStorage.getItem('isLoggedIn'));
       commit('changeFarmName', localStorage.getItem('farmName'));
       commit('changeFarmUrl', localStorage.getItem('host'));

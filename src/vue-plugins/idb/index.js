@@ -7,6 +7,7 @@ export default {
       // Load logs, areas, assets & user info when the Logs component is created
       if (action.type === 'onLogsComponentCreated') {
         store.dispatch('loadCachedUserAndSiteInfo');
+        store.dispatch('updateUserAndSiteInfo');
         store.commit('clearLogs');
         store.commit('clearAssets');
         store.commit('clearAreas');

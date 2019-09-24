@@ -496,6 +496,8 @@
         }"/>
     </router-link>
 
+    <br>
+
   </div>
 </div>
 </template>

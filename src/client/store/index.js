@@ -14,6 +14,7 @@ const shellModule = {
       uid: null,
       isLoggedIn: false,
     },
+    mapboxAPIKey: '',
     settings: {
       useGeolocation: true,
       // search parameters for getting logs from the server.  Log_owner set when user.uid is set
@@ -51,6 +52,9 @@ const shellModule = {
     changeUid(state, uid) {
       state.user.uid = uid;
       state.settings.logImportFilters.log_owner = uid;
+    },
+    changeMapboxAPIKey(state, key) {
+      state.mapboxAPIKey = key;
     },
     setLoginStatus(state, bool) {
       state.user.isLoggedIn = bool;

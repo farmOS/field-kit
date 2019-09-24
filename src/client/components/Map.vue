@@ -6,6 +6,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 export default {
   name: 'Map',
   data() {
@@ -14,6 +16,7 @@ export default {
       layers: {
         wkt: null,
         geojson: null,
+        mapbox: null,
       },
       // these can be overridden by the 'overrideStyles' prop
       defaultStyles: {
@@ -50,6 +53,9 @@ export default {
       visible: Boolean,
     },
   },
+  computed: mapState({
+    mapboxAPIKey: state => state.shell.mapboxAPIKey,
+  }),
   mounted() {
     this.map = window.farmOS.map.create(this.id, this.options);
     if (this.geojson.url) {
@@ -77,6 +83,16 @@ export default {
       this.map.edit.wktOn('delete', (wkt) => {
         this.$emit('update-wkt', wkt);
       });
+    }
+    if (this.mapboxAPIKey) {
+      const mapboxOpts = {
+        title: 'MapBox Satellite',
+        url: `https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.png?access_token=${this.mapboxAPIKey}`,
+        group: 'Base layers',
+        base: true,
+        visible: true,
+      };
+      this.layers.mapbox = this.map.addLayer('xyz', mapboxOpts);
     }
   },
   beforeDestroy() {
