@@ -1,8 +1,8 @@
 <template>
 <div class="tab-container">
   <div class="tab-bar">
-    <div 
-      class="tab" 
+    <div
+      class="tab"
       :class="{ selected: tabSelected === 'FIRST' }"
       @click="tabSelected = 'FIRST'">
       <h5>GENERAL</h5>
@@ -21,7 +21,7 @@
       {second: tabSelected === 'SECOND' },
     ]"/>
 
-  <div 
+  <div
     class="container-fluid tab-content first"
     :class="{ selected: tabSelected === 'FIRST' }">
 
@@ -53,10 +53,11 @@
         type="date"
         class="form-control">
     </div>
-
+    <!-- Allow users to change type for logs that have not yet been sent to the server
+    For logs currently on the server, display type as text -->
     <div class="form-item form-item-name form-group">
       <label for="type" class="control-label ">Log Type</label>
-      <div class="input-group">
+      <div class="input-group" v-if="(logs[currentLogIndex].id === undefined)">
         <select
           :value="logs[currentLogIndex].type.data"
           @input="updateCurrentLog('type', $event.target.value)"
@@ -70,7 +71,11 @@
             </option>
         </select>
       </div>
+      <div class="form-item" v-if="!(logs[currentLogIndex].id === undefined)">
+        <p> {{ logTypes[logs[currentLogIndex].type.data] }} </p>
+      </div>
     </div>
+
 
     <div class="form-item form-item-name form-group">
       <label for="notes" class="control-label ">Notes</label>
@@ -400,7 +405,7 @@
 
   </div>
 
-  <div 
+  <div
     class="container-fluid tab-content second"
     :class="{ selected: tabSelected === 'SECOND' }">
 
