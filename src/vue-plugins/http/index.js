@@ -113,9 +113,13 @@ export default {
                 localStorage.setItem('syncDate', (Date.now() / 1000).toFixed(0));
                 // After getServerLogs finishes, we send logs with isReadyToSync true to the server
                 const indices = store.state.farm.logs.reduce(syncReducer, []);
-                store.dispatch('sendLogs', indices);
+                return store.dispatch('sendLogs', indices);
               })
+              // Jamie suggested:
+              // .catch(errs => errs.forEach(handleSyncError));
+              // This doesn't seem to work
               .catch(handleSyncError);
+              // This works for errors from getServerLogs, but not from sendLogs
           } else {
             router.push('/login');
           }

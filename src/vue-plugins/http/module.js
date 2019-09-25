@@ -93,21 +93,22 @@ export default {
           },
         });
       }
-
-      indices.forEach((index) => { // eslint-disable-line array-callback-return, max-len
+      return Promise.all(indices.map((index) => { // eslint-disable-line array-callback-return
+      // indices.forEach((index) => { // eslint-disable-line array-callback-return, max-len
         // Either send or post logs, depending on whether they originated on the server
         // Logs originating on the server possess an ID field; others do not.
         const newLog = makeLog.toServer(rootState.farm.logs[index]);
-        farm().log.send(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
+        return farm().log.send(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
           .then(res => handleSyncResponse(res, index))
           // .catch(err => handleSyncError(err, index, rootState, payload.router, commit));
           .catch((err) => {
+            console.log('CAUGHT AN ERROR FROM THE SERVER: ', '\n', err)
             throw new SyncError({
               indices: [index],
               http: err,
             });
           });
-      });
+      }));
     },
 
     // GET LOGS FROM SERVER (step 1 of sync)
