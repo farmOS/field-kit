@@ -58,10 +58,13 @@ export default {
 
     // This handles the custom error type defined in ./module.js
     function handleSyncError(syncError) {
+      console.log('HTTP/INDEX RECEIVED A SYNCERROR AT INDEX: ', syncError.indices, '\n', syncError);
+      console.log('SYNCERROR LOGS: ', '\n', syncError.indices.reduce((acc, cur) => store.state.farm.logs[cur], ''))
       // First set all logs to not ready to sync so their spinners stops spinning
       store.commit('updateAllLogs', log => ({ ...log, isReadyToSync: false }));
       const logNames = syncError.indices.length > 0
-        ? syncError.indices.reduce((acc, cur) => `${acc}, "${store.state.farm.logs[cur]}"`, '')
+        ? syncError.indices.reduce((acc, cur) => `${store.state.farm.logs[cur].name.data}`, '')
+        //? `${store.state.farm.logs[syncError.indices[0]].name.data}`
         : '';
       // Do something if there's no response object (mostly likely no connection)
       if (syncError.http.response === undefined) {

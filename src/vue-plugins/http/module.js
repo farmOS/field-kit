@@ -100,15 +100,23 @@ export default {
         const newLog = makeLog.toServer(rootState.farm.logs[index]);
         return farm().log.send(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
           .then(res => handleSyncResponse(res, index))
-          // .catch(err => handleSyncError(err, index, rootState, payload.router, commit));
           .catch((err) => {
-            console.log('CAUGHT AN ERROR FROM THE SERVER: ', '\n', err)
+            console.log('CAUGHT AN ERROR FROM THE SERVER AT INDEX: ', `${index}`, '\n', err)
             throw new SyncError({
               indices: [index],
               http: err,
             });
+          })
+          // .catch(err => handleSyncError(err, index, rootState, payload.router, commit));
+      }))
+        .catch((err) => {
+          // Re-throw the error as a higher-level error.
+          console.log('HIGHER LEVEL ERROR INDICES: ', '\n', err.indices);
+          throw new SyncError({
+            indices: err.indices,
+            http: err.http,
           });
-      }));
+        });
     },
 
     // GET LOGS FROM SERVER (step 1 of sync)
