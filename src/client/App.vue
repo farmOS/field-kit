@@ -88,6 +88,11 @@
           <div class="block block-system">
 
             <router-view
+              name="menubar"
+              @toggleDrawer="showDrawer = !showDrawer"
+            />
+
+            <router-view
               :useGeolocation="useGeolocation"
               @toggleDrawer="showDrawer = !showDrawer"
             />
