@@ -2,7 +2,6 @@ import module from './module';
 
 export default {
   install(Vue, { store, router }) {
-
     /*
       A reducer function that filters for logs ready to sync,
       and returns an array of only those logs' indices.
@@ -56,41 +55,43 @@ export default {
       return indices;
     }
 
-    // This handles the custom error type defined in ./module.js
-    function handleSyncError(syncError) {
-      console.log('HTTP/INDEX RECEIVED A SYNCERROR AT INDEX: ', syncError.indices, '\n', syncError);
-      console.log('SYNCERROR LOGS: ', '\n', syncError.indices.reduce((acc, cur) => store.state.farm.logs[cur], ''))
-      // First set all logs to not ready to sync so their spinners stops spinning
-      store.commit('updateAllLogs', log => ({ ...log, isReadyToSync: false }));
-      const logNames = syncError.indices.length > 0
-        ? syncError.indices.reduce((acc, cur) => `${store.state.farm.logs[cur].name.data}`, '')
-        //? `${store.state.farm.logs[syncError.indices[0]].name.data}`
-        : '';
-      // Do something if there's no response object (mostly likely no connection)
-      if (syncError.http.response === undefined) {
-        const errorPayload = {
-          message: `Unable to sync ${logNames} because the network is currently unavailable. Please try syncing again later.`,
-          level: 'warning',
-          show: true,
-        };
-        store.commit('logError', errorPayload);
-      } else if (syncError.http.response.status === 401
-        || syncError.http.response.status === 403
-        || syncError.http.response.status === 404) {
-        // Reroute authentication or authorization errors to login page
-        router.push('/login');
-      } else {
-        // Handle some other type of runtime error (if possible)
-        const errMsg = `${syncError.http.response.status} error while syncing "${logNames}": ${syncError.http.response.statusText}`;
+    /*
+    This handles the custom error type defined in ./module.js, thrown by getServerLogs and sendLogs
+    1 second timeout gives time for all errors to resolve
+    Necessary because Promise.all rejects after the FIRST error is thrown
+    it does not wait for subsequent errors, which are still caught internally by indices.map
 
+    TODO:
+    Implement a polyfill for the new promise.allSettled method, which can catch an array of errors
+    but isn't yet implemented by most browsers https://javascript.info/promise-api
+    */
+    function handleSyncError(syncError) {
+      setTimeout(() => {
+        // First set all logs to not ready to sync so their spinners stops spinning
+        store.commit('updateAllLogs', log => ({ ...log, isReadyToSync: false }));
+        // Create a message string that we will build out as we go.
+        let errMsg = '';
+        syncError.indices.forEach((logIndex, errIndex) => {
+          const logName = store.state.farm.logs[logIndex].name.data;
+          if (syncError.http[errIndex].response === undefined) {
+            errMsg += 'Unable to sync because the network is currently unavailable. Please try syncing again later.';
+          } else if (syncError.http[errIndex].response.status === 401
+            || syncError.http[errIndex].response.status === 403
+            || syncError.http[errIndex].response.status === 404) {
+            // Reroute authentication or authorization errors to login page
+            router.push('/login');
+          } else {
+            errMsg += `${syncError.http[errIndex].response.status} error while syncing "${logName}": ${syncError.http[errIndex].response.statusText} <br>`;
+          }
+        });
         const errorPayload = {
           message: errMsg,
-          errorCode: syncError.http.response.statusText,
+          errorCode: '',
           level: 'warning',
           show: true,
         };
         store.commit('logError', errorPayload);
-      }
+      }, 1000);
     }
 
     store.registerModule('http', module);
@@ -118,11 +119,8 @@ export default {
                 const indices = store.state.farm.logs.reduce(syncReducer, []);
                 return store.dispatch('sendLogs', indices);
               })
-              // Jamie suggested:
-              // .catch(errs => errs.forEach(handleSyncError));
-              // This doesn't seem to work
+              // Handle syncErrors thrown by getServerLogs
               .catch(handleSyncError);
-              // This works for errors from getServerLogs, but not from sendLogs
           } else {
             router.push('/login');
           }

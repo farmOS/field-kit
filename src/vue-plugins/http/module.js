@@ -12,11 +12,10 @@ const farm = () => {
 class SyncError extends Error {
   constructor({
     indices = [],
-    http,
+    http = [],
   } = {}, ...params) {
     // Pass remaining arguments (including vendor specific ones) to parent constructor
     super(...params);
-
     this.name = 'SyncError';
     // Custom debugging information
     this.indices = indices;
@@ -79,6 +78,9 @@ export default {
     // SEND LOGS TO SERVER (step 2 of sync)
     sendLogs({ commit, rootState }, indices) {
       // Update logs in the database and local store after send completes
+      // const sendErrors = { indices: [], http: [] };
+      const errorIndices = [];
+      const errorHttp = [];
       function handleSyncResponse(response, index) {
         commit('updateLogs', {
           indices: [index],
@@ -93,28 +95,27 @@ export default {
           },
         });
       }
-      return Promise.all(indices.map((index) => { // eslint-disable-line array-callback-return
-      // indices.forEach((index) => { // eslint-disable-line array-callback-return, max-len
+
+      return Promise.all(
+        indices.map((index) => { // eslint-disable-line array-callback-return
         // Either send or post logs, depending on whether they originated on the server
         // Logs originating on the server possess an ID field; others do not.
-        const newLog = makeLog.toServer(rootState.farm.logs[index]);
-        return farm().log.send(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
-          .then(res => handleSyncResponse(res, index))
-          .catch((err) => {
-            console.log('CAUGHT AN ERROR FROM THE SERVER AT INDEX: ', `${index}`, '\n', err)
-            throw new SyncError({
-              indices: [index],
-              http: err,
+          const newLog = makeLog.toServer(rootState.farm.logs[index]);
+          return farm().log.send(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
+            .then(res => handleSyncResponse(res, index))
+            .catch((err) => {
+              // If the API call returns an error, add the index and http to sendErrors
+              errorIndices.push(index);
+              errorHttp.push(err);
+              // Throw an error up to the next level
+              throw new Error(err);
             });
-          })
-          // .catch(err => handleSyncError(err, index, rootState, payload.router, commit));
-      }))
-        .catch((err) => {
-          // Re-throw the error as a higher-level error.
-          console.log('HIGHER LEVEL ERROR INDICES: ', '\n', err.indices);
+        }),
+      )
+        .catch(() => {
           throw new SyncError({
-            indices: err.indices,
-            http: err.http,
+            indices: errorIndices,
+            http: errorHttp,
           });
         });
     },
