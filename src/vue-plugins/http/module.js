@@ -1,5 +1,6 @@
 import farmOS from 'farmos';
 import makeLog from '@/utils/makeLog';
+import Promise from 'core-js-pure/features/promise';
 
 const farm = () => {
   const host = localStorage.getItem('host');
@@ -12,14 +13,16 @@ const farm = () => {
 class SyncError extends Error {
   constructor({
     indices = [],
-    http = [],
+    message = [],
+    status = [],
   } = {}, ...params) {
     // Pass remaining arguments (including vendor specific ones) to parent constructor
     super(...params);
     this.name = 'SyncError';
     // Custom debugging information
     this.indices = indices;
-    this.http = http;
+    this.message = message;
+    this.status = status;
   }
 }
 
@@ -78,9 +81,6 @@ export default {
     // SEND LOGS TO SERVER (step 2 of sync)
     sendLogs({ commit, rootState }, indices) {
       // Update logs in the database and local store after send completes
-      // const sendErrors = { indices: [], http: [] };
-      const errorIndices = [];
-      const errorHttp = [];
       function handleSyncResponse(response, index) {
         commit('updateLogs', {
           indices: [index],
@@ -95,8 +95,7 @@ export default {
           },
         });
       }
-
-      return Promise.all(
+      return Promise.allSettled(
         indices.map((index) => { // eslint-disable-line array-callback-return
         // Either send or post logs, depending on whether they originated on the server
         // Logs originating on the server possess an ID field; others do not.
@@ -104,19 +103,28 @@ export default {
           return farm().log.send(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
             .then(res => handleSyncResponse(res, index))
             .catch((err) => {
-              // If the API call returns an error, add the index and http to sendErrors
-              errorIndices.push(index);
-              errorHttp.push(err);
-              // Throw an error up to the next level
+              // If the API call returns an error, throw it up to the next level
               throw new Error(err);
             });
         }),
       )
-        .catch(() => {
-          throw new SyncError({
-            indices: errorIndices,
-            http: errorHttp,
+        .then((promises) => {
+          const errorIndices = [];
+          const errorStatus = [];
+          promises.forEach((promise, arrayIndex) => {
+            if (promise.status === 'rejected') {
+              // If the API call returns an error, add the index and http to sendErrors
+              errorIndices.push(indices[arrayIndex]);
+              const statusCode = parseInt(String(promise.reason).substr(-3), 10);
+              errorStatus.push(statusCode);
+            }
           });
+          if (errorIndices.length > 0) {
+            throw new SyncError({
+              indices: errorIndices,
+              status: errorStatus,
+            });
+          }
         });
     },
 
@@ -163,9 +171,14 @@ export default {
           });
         })
         .catch((err) => {
-          throw new SyncError({
-            http: err,
-          });
+          if (err.response.status) {
+            throw new SyncError({
+              message: [err.response.statusText],
+              status: [err.response.status],
+            });
+          } else {
+            throw new SyncError({});
+          }
         });
     },
     // Stop spinner on aborted sync attempts by setting isReadyToSync false

@@ -894,7 +894,7 @@ export default {
       return [];
     },
     areaGeoJSON() {
-      return (process.env.NODE_ENV === 'development') 
+      return (process.env.NODE_ENV === 'development')
         ? 'http://localhost/farm/areas/geojson/all'
         : `${localStorage.getItem('host')}/farm/areas/geojson/all`
     },

@@ -8,7 +8,7 @@ function compare(geojson1, geojson2) {
 export function mergeGeometries(wkts) {
   // First, filter out empty strings and return a value if there are less than
   // two values to merge.
-  const validWKTs = wkts.filter(wkt => wkt !== '');
+  const validWKTs = wkts.filter(wkt => !!wkt);
   if (validWKTs.length === 0) {
     return '';
   }
