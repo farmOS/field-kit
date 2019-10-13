@@ -101,11 +101,7 @@ export default {
         // Logs originating on the server possess an ID field; others do not.
           const newLog = makeLog.toServer(rootState.farm.logs[index]);
           return farm().log.send(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
-            .then(res => handleSyncResponse(res, index))
-            .catch((err) => {
-              // If the API call returns an error, throw it up to the next level
-              throw new Error(err);
-            });
+            .then(res => handleSyncResponse(res, index));
         }),
       )
         .then((promises) => {
@@ -115,8 +111,7 @@ export default {
             if (promise.status === 'rejected') {
               // If the API call returns an error, add the index and http to sendErrors
               errorIndices.push(indices[arrayIndex]);
-              const statusCode = parseInt(String(promise.reason).substr(-3), 10);
-              errorStatus.push(statusCode);
+              errorStatus.push(parseInt(promise.reason.message.substr(-3), 10));
             }
           });
           if (errorIndices.length > 0) {
