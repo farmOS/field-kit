@@ -12,17 +12,13 @@ const farm = () => {
 // Extend Error so we can propagate more info to the error handler
 class SyncError extends Error {
   constructor({
-    indices = [],
-    message = [],
-    status = [],
+    responses = [],
   } = {}, ...params) {
     // Pass remaining arguments (including vendor specific ones) to parent constructor
     super(...params);
     this.name = 'SyncError';
     // Custom debugging information
-    this.indices = indices;
-    this.message = message;
-    this.status = status;
+    this.responses = responses;
   }
 }
 
@@ -100,24 +96,25 @@ export default {
         // Either send or post logs, depending on whether they originated on the server
         // Logs originating on the server possess an ID field; others do not.
           const newLog = makeLog.toServer(rootState.farm.logs[index]);
-          return farm().log.send(newLog, localStorage.getItem('token')) // eslint-disable-line no-use-before-define, max-len
-            .then(res => handleSyncResponse(res, index));
+          return farm().log.send(newLog, localStorage.getItem('token')); // eslint-disable-line no-use-before-define, max-len
         }),
       )
         .then((promises) => {
-          const errorIndices = [];
-          const errorStatus = [];
-          promises.forEach((promise, arrayIndex) => {
+          const errResponses = promises.reduce((errors, promise, arrayIndex) => { // eslint-disable-line consistent-return, array-callback-return, max-len
             if (promise.status === 'rejected') {
-              // If the API call returns an error, add the index and http to sendErrors
-              errorIndices.push(indices[arrayIndex]);
-              errorStatus.push(parseInt(promise.reason.message.substr(-3), 10));
+              // If the API call returns an error, add the index and status to errResponses
+              return errors.push({
+                index: indices[arrayIndex],
+                status: parseInt(promise.reason.message.substr(-3), 10),
+              });
+            } if (promise.status === 'fulfilled') {
+              handleSyncResponse(promise.value, indices[arrayIndex]);
+              return errors;
             }
           });
-          if (errorIndices.length > 0) {
+          if (errResponses.length > 0) {
             throw new SyncError({
-              indices: errorIndices,
-              status: errorStatus,
+              responses: errResponses,
             });
           }
         });
@@ -166,10 +163,12 @@ export default {
           });
         })
         .catch((err) => {
-          if (err.response.status) {
+          if (err.response) {
             throw new SyncError({
-              message: [err.response.statusText],
-              status: [err.response.status],
+              responses: [{
+                status: err.response.status,
+                message: err.response.statusText,
+              }],
             });
           } else {
             throw new SyncError({});

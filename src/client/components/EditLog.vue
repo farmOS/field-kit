@@ -57,7 +57,8 @@
     For logs currently on the server, display type as text -->
     <div class="form-item form-item-name form-group">
       <label for="type" class="control-label ">Log Type</label>
-      <div class="input-group" v-if="(logs[currentLogIndex].id === undefined)">
+      <!--<div class="input-group" v-if="(logs[currentLogIndex].id === undefined)">-->
+      <div class="input-group">
         <select
           :value="logs[currentLogIndex].type.data"
           @input="updateCurrentLog('type', $event.target.value)"

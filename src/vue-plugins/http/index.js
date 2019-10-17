@@ -54,32 +54,36 @@ export default {
 
     /*
     This handles the custom error type defined in ./module.js, thrown by getServerLogs and sendLogs
+    - SyncError contains a responses attribute, which is an array of response objects
+    - Each response always contains a status attribute
+    - Responses thrown by sendLogs contain an index attribute
+    - Responses thrown by getServerLogs no index but do contain a message attribute
     */
     function handleSyncError(syncError) {
       // First set all logs to not ready to sync so their spinners stops spinning
       store.commit('updateAllLogs', log => ({ ...log, isReadyToSync: false }));
       // Create a message string that we will build out as we go.
       let errMsg = '';
-      if (syncError.status.includes(401)
-        || syncError.status.includes(403)
-        || syncError.status.includes(404)) {
-        // Reroute authentication or authorization errors to login page
-        router.push('/login');
-      } else if (syncError.indices.length > 0) {
+      if (syncError.responses.length === 0) {
+        // If we receive no response whatsoever, the device is offline
+        errMsg += 'Unable to sync because the network is currently unavailable.';
+      } else {
         // Build a message from sendLogs errors, which have an index
-        syncError.indices.forEach((logIndex, errIndex) => {
-          const logName = store.state.farm.logs[logIndex].name.data;
-          if (syncError.message.length > 0) {
-            errMsg += `${syncError.status[errIndex]} error while syncing "${logName}": ${syncError.message[errIndex]} <br>`;
+        syncError.responses.forEach((response) => {
+          if (response.status === 401
+            || response.status === 403
+            || response.status === 404) {
+            // 401, 403 and 404 errors indicate bad credentials - push to login
+            router.push('/login');
+          } else if (response.index === undefined) {
+            // If response.index is undefined, the error was thrown by a getServerLogs request
+            errMsg += `${response.status} error: ${response.message}`;
           } else {
-            errMsg += `${syncError.status[errIndex]} error while syncing "${logName}" <br>`;
+            // Otherwise, the error was thrown by a sendLogs request
+            const logName = store.state.farm.logs[response.index].name.data;
+            errMsg += `${response.status} error while syncing "${logName}" <br>`;
           }
         });
-      } else if (syncError.status.length > 0) {
-        // Build a message from getServerLogs errors, which have no index
-        errMsg += `${syncError.status[0]} error: ${syncError.message[0]} <br>`;
-      } else {
-        errMsg += 'Unable to sync because the network is currently unavailable.';
       }
       if (errMsg !== '') {
         // Display an error if there is message text
