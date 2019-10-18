@@ -213,7 +213,7 @@ export default {
               handleSyncResponse(promise.value, indices[arrayIndex]);
             }
             return errors;
-          });
+          }, []);
           if (errResponses.length > 0) {
             throw new SyncError({
               responses: errResponses,
