@@ -180,16 +180,13 @@ export default {
     sendLogs({ commit, rootState }, indices) {
       // Update logs in the database and local store after send completes
       function handleSyncResponse(response, index) {
-        commit('updateLogs', {
-          indices: [index],
-          mapper(log) {
-            return makeLog.create({
-              ...log,
-              id: response.id,
-              wasPushedToServer: true,
-              isReadyToSync: false,
-              remoteUri: response.uri,
-            });
+        commit('updateLog', {
+          index,
+          props: {
+            id: response.id,
+            wasPushedToServer: true,
+            isReadyToSync: false,
+            remoteUri: response.uri,
           },
         });
       }
@@ -233,9 +230,9 @@ export default {
             const checkStatus = checkLog(log, allLogs, syncDate);
             if (checkStatus.serverChange) {
               const mergedLog = processLog(log, checkStatus, syncDate);
-              commit('updateLogFromServer', {
+              commit('updateLog', {
                 index: checkStatus.storeIndex,
-                log: mergedLog,
+                props: mergedLog,
               });
             }
             if (checkStatus.localId === null) {
@@ -257,9 +254,9 @@ export default {
             const checkStatus = checkLog(log, allLogs, syncDate);
             if (checkStatus.serverChange) {
               const mergedLog = processLog(log, checkStatus, syncDate);
-              commit('updateLogFromServer', {
+              commit('updateLog', {
                 index: checkStatus.storeIndex,
-                log: mergedLog,
+                props: mergedLog,
               });
             }
           });
@@ -279,13 +276,10 @@ export default {
     },
     // Stop spinner on aborted sync attempts by setting isReadyToSync false
     unreadyLog({ commit }, index) {
-      commit('updateLogs', {
-        indices: [index],
-        mapper(log) {
-          return makeLog.create({
-            ...log,
-            isReadyToSync: false,
-          });
+      commit('updateLog', {
+        index,
+        props: {
+          isReadyToSync: false,
         },
       });
     },

@@ -22,72 +22,67 @@ export default {
         store.dispatch('loadCachedEquipment');
       }
     });
-    store.subscribe((mutation) => {
-      if (mutation.type === 'addLogAndMakeCurrent') {
-        store.dispatch('createCachedLog', mutation.payload);
+    store.subscribe(({ type, payload }) => {
+      if (type === 'addLogAndMakeCurrent') {
+        store.dispatch('createCachedLog', payload);
       }
-      if (mutation.type === 'updateCurrentLog' && !JSON.parse(mutation.payload.isCachedLocally)) {
-        store.dispatch('updateCachedLog', mutation.payload);
+      if (type === 'updateCurrentLog' && !JSON.parse(payload.isCachedLocally)) {
+        store.dispatch('updateCachedLog', payload);
       }
-      if (mutation.type === 'updateLogFromServer' && !JSON.parse(mutation.payload.log.isCachedLocally)) {
-        store.dispatch('updateCachedLogAtIndex', mutation.payload);
+      if (type === 'updateLog' && !payload.props.isCachedLocally) {
+        store.dispatch('updateCachedLogAtIndex', payload);
       }
-      if (mutation.type === 'updateLogs') {
-        mutation.payload.indices.forEach((i) => {
-          store.dispatch('updateCachedLog', store.state.farm.logs[i]);
-        });
+      if (type === 'deleteLog') {
+        store.dispatch('deleteCachedLog', payload);
       }
-      if (mutation.type === 'deleteLog') {
-        store.dispatch('deleteCachedLog', mutation.payload);
-      }
-      if (mutation.type === 'addAssets') {
-        mutation.payload.forEach((asset) => {
+      if (type === 'addAssets') {
+        payload.forEach((asset) => {
           store.dispatch('createCachedAsset', asset);
         });
       }
-      if (mutation.type === 'updateAsset') {
-        store.dispatch('updateCachedAsset', mutation.payload);
+      if (type === 'updateAsset') {
+        store.dispatch('updateCachedAsset', payload);
       }
-      if (mutation.type === 'deleteAllAssets') {
+      if (type === 'deleteAllAssets') {
         store.dispatch('deleteAllCachedAssets');
       }
-      if (mutation.type === 'addAreas') {
-        mutation.payload.forEach((area) => {
+      if (type === 'addAreas') {
+        payload.forEach((area) => {
           store.dispatch('createCachedArea', area);
         });
       }
-      if (mutation.type === 'updateArea') {
-        store.dispatch('updateCachedArea', mutation.payload);
+      if (type === 'updateArea') {
+        store.dispatch('updateCachedArea', payload);
       }
-      if (mutation.type === 'deleteAllAreas') {
+      if (type === 'deleteAllAreas') {
         store.dispatch('deleteAllCachedAreas');
       }
-      if (mutation.type === 'addUnits') {
-        mutation.payload.forEach((unit) => {
+      if (type === 'addUnits') {
+        payload.forEach((unit) => {
           store.dispatch('createCachedUnit', unit);
         });
       }
-      if (mutation.type === 'deleteAllUnits') {
+      if (type === 'deleteAllUnits') {
         store.dispatch('deleteAllCachedUnits');
       }
-      if (mutation.type === 'addCategories') {
-        mutation.payload.forEach((cat) => {
+      if (type === 'addCategories') {
+        payload.forEach((cat) => {
           store.dispatch('createCachedCategory', cat);
         });
       }
-      if (mutation.type === 'deleteAllCategories') {
+      if (type === 'deleteAllCategories') {
         store.dispatch('deleteAllCachedCategories');
       }
-      if (mutation.type === 'addEquipment') {
-        mutation.payload.forEach((equip) => {
+      if (type === 'addEquipment') {
+        payload.forEach((equip) => {
           store.dispatch('createCachedEquipment', equip);
         });
       }
-      if (mutation.type === 'deleteAllEquipment') {
+      if (type === 'deleteAllEquipment') {
         store.dispatch('deleteAllCachedEquipment');
       }
-      if (mutation.type === 'setUseGeolocation') {
-        localStorage.setItem('useGeolocation', mutation.payload);
+      if (type === 'setUseGeolocation') {
+        localStorage.setItem('useGeolocation', payload);
       }
     });
   },

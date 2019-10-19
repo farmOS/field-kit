@@ -202,24 +202,16 @@ const farmModule = {
       });
       state.logs.splice(state.currentLogIndex, 1, updatedLog);
     },
-    updateLogFromServer(state, params) {
-      state.logs.splice(params.index, 1, params.log);
+    updateLog(state, { index, props }) {
+      const updatedLog = makeLog.create({
+        ...state.logs[index],
+        ...props,
+      });
+      state.logs.splice(index, 1, updatedLog);
     },
     // Takes a function as payload and applies it to each log object
     updateAllLogs(state, fn) {
       state.logs = state.logs.map(log => fn(log));
-    },
-    /*
-      Takes a payload with 2 properties: `indices`, which is an array of
-      the indices of all the logs to be updated; and `mapper`, a function to be
-      applied to each log, mapping the desired update onto the logs' state.
-    */
-    updateLogs(state, payload) {
-      payload.indices.map(i => state.logs.splice(
-        i,
-        1,
-        payload.mapper(state.logs[i]),
-      ));
     },
     // updateAsset and updateArea replace the entire record if a change occurs
     updateAsset(state, newAsset) {

@@ -43,13 +43,12 @@ export default {
       openDatabase()
         .then(db => saveRecord(db, logStore.name, newRecord))
         .then((key) => {
-          commit('updateLogFromServer', {
+          commit('updateLog', {
             index,
-            log: makeLog.create({
-              ...log,
+            props: {
               local_id: key,
               isCachedLocally: true,
-            }),
+            },
           });
         });
     },
@@ -92,13 +91,12 @@ export default {
       });
       openDatabase()
         .then(db => saveRecord(db, logStore.name, newLog))
-        .then(key => commit('updateLogFromServer', {
+        .then(key => commit('updateLog', {
           index,
-          log: makeLog.create({
-            ...log,
+          props: {
             isCachedLocally: true,
             local_id: key,
-          }),
+          },
         }));
     },
 
