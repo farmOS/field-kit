@@ -609,12 +609,12 @@ export default {
     updateCurrentLog(key, val) {
       const nowStamp = (Date.now() / 1000).toFixed(0);
       let valueString = (typeof val === 'string') ? val : JSON.stringify(val);
-      const newProps = {
+      const props = {
         [key]: { data: valueString, changed: nowStamp },
         isCachedLocally: false,
         wasPushedToServer: false,
       };
-      this.$store.commit('updateCurrentLog', newProps);
+      this.$store.commit('updateLog', { index: this.currentLogIndex, props});
     },
 
     updateNewQuant(key, value) {
@@ -631,12 +631,12 @@ export default {
         this.logs[this.currentLogIndex].quantity.data[quantLength - 1][key] = value;
       }
       // now update the log in the store
-      const newProps = {
+      const props = {
         quantity: this.logs[this.currentLogIndex].quantity,
         isCachedLocally: false,
         wasPushedToServer: false,
       };
-      this.$store.commit('updateCurrentLog', newProps);
+      this.$store.commit('updateLog', { index: this.currentLogIndex, props });
     },
 
     addCategory(id) {

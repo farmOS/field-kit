@@ -26,9 +26,6 @@ export default {
       if (type === 'addLogAndMakeCurrent') {
         store.dispatch('createCachedLog', payload);
       }
-      if (type === 'updateCurrentLog' && !JSON.parse(payload.isCachedLocally)) {
-        store.dispatch('updateCachedLog', payload);
-      }
       if (type === 'updateLog' && !payload.props.isCachedLocally) {
         store.dispatch('updateCachedLogAtIndex', payload);
       }

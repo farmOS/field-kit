@@ -35,7 +35,7 @@ export default {
   },
   methods: {
     updateMovement(wkt) {
-      const newProps = {
+      const props = {
         movement: {
           data: {
             area: this.logs[this.currentLogIndex].movement.data.area,
@@ -46,7 +46,7 @@ export default {
         isCachedLocally: false,
         wasPushedToServer: false,
       };
-      this.$store.commit('updateCurrentLog', newProps);
+      this.$store.commit('updateLog', { index: this.currentLogIndex, props });
     },
   },
 }

@@ -11,12 +11,12 @@ export default {
         const prevLog = rootState.farm.logs[rootState.farm.currentLogIndex];
         const dataURL = `data:image/jpeg;base64,${photoLoc}`;
         const nowStamp = (Date.now() / 1000).toFixed(0);
-        const newProps = {
+        const props = {
           images: { data: prevLog.images.data.concat(dataURL), changed: nowStamp },
           isCachedLocally: false,
           wasPushedToServer: false,
         };
-        commit('updateCurrentLog', newProps);
+        commit('updateLog', { index: rootState.farm.currentLogIndex, props });
       }
       function handleError(error) { // eslint-disable-line no-unused-vars
       }
@@ -27,12 +27,12 @@ export default {
       const prevLog = rootState.farm.logs[rootState.farm.currentLogIndex];
       const nowStamp = (Date.now() / 1000).toFixed(0);
       readFileData(file).then((data) => { // eslint-disable-line no-use-before-define
-        const newProps = {
+        const props = {
           images: { data: prevLog.images.data.concat(data), changed: nowStamp },
           isCachedLocally: false,
           wasPushedToServer: false,
         };
-        commit('updateCurrentLog', newProps);
+        commit('updateLog', { index: rootState.farm.currentLogIndex, props });
       });
     },
   },

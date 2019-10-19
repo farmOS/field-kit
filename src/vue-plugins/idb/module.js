@@ -22,16 +22,19 @@ export default {
 
   actions: {
 
-    createCachedLog({ commit }, newLog) {
+    createCachedLog({ commit, rootState }, newLog) {
       const newRecord = makeLog.toIdb(newLog);
       openDatabase()
         .then(db => saveRecord(db, logStore.name, newRecord))
         .then(key => (
           // Can we be sure this will always be the CURRENT log?
           // Not if we use this action to add new records received from the server
-          commit('updateCurrentLog', {
-            local_id: key,
-            isCachedLocally: true,
+          commit('updateLog', {
+            index: rootState.farm.currentLogIndex,
+            props: {
+              local_id: key,
+              isCachedLocally: true,
+            },
           })
         ));
     },
@@ -76,9 +79,12 @@ export default {
       openDatabase()
         .then(db => saveRecord(db, logStore.name, newLog))
         // Can we be sure this will always be the CURRENT log?
-        .then(key => commit('updateCurrentLog', {
-          isCachedLocally: true,
-          local_id: key,
+        .then(key => commit('updateLog', {
+          index: rootState.farm.currentLogIndex,
+          props: {
+            isCachedLocally: true,
+            local_id: key,
+          },
         }));
     },
 

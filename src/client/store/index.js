@@ -195,13 +195,6 @@ const farmModule = {
     setCurrentLogIndex(state, index) {
       state.currentLogIndex = index;
     },
-    updateCurrentLog(state, newProps) {
-      const updatedLog = makeLog.create({
-        ...state.logs[state.currentLogIndex],
-        ...newProps,
-      });
-      state.logs.splice(state.currentLogIndex, 1, updatedLog);
-    },
     updateLog(state, { index, props }) {
       const updatedLog = makeLog.create({
         ...state.logs[index],
