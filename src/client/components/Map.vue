@@ -68,9 +68,11 @@ export default {
     if (this.geojson.url && (!this.wkt.wkt || this.wkt.wkt === 'GEOMETRYCOLLECTION EMPTY')) {
       this.layers.geojson.getSource().once('change', () => { this.map.zoomToVectors(); });
     }
-    if (this.options.drawing && this.wkt.wkt && this.wkt.wkt !== 'GEOMETRYCOLLECTION EMPTY') {
-      this.map.edit.setWKT(this.wkt.wkt);
-      this.map.zoomToLayer(this.map.edit.layer);
+    if (this.options.drawing) {
+      if (this.wkt.wkt && this.wkt.wkt !== 'GEOMETRYCOLLECTION EMPTY') {
+        this.map.edit.setWKT(this.wkt.wkt);
+        this.map.zoomToLayer(this.map.edit.layer);
+      }
       this.map.edit.wktOn('drawend', (wkt) => {
         this.$emit('update-wkt', wkt);
       });
