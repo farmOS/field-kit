@@ -58,32 +58,18 @@ export default {
         .then(db => getStoreCount(db, logStore.name));
     },
 
-    updateCachedLog({ commit, rootState }, newProps) {
+    updateCachedLog({ commit, rootState }, payload) {
+      const { props } = payload;
+      const index = payload.index
+        ? payload.index
+        : rootState.logs.findIndex(log => log.local_id === props.local_id);
       const newLog = makeLog.toIdb({
-        ...rootState.farm.logs[rootState.farm.currentLogIndex],
-        ...newProps,
+        ...rootState.farm.logs[index],
+        ...props,
       });
       openDatabase()
         .then(db => saveRecord(db, logStore.name, newLog))
         // Can we be sure this will always be the CURRENT log?
-        .then(key => commit('updateLog', {
-          index: rootState.farm.currentLogIndex,
-          props: {
-            isCachedLocally: true,
-            local_id: key,
-          },
-        }));
-    },
-
-    // TODO: This is unnecessary duplication and should be removed.
-    // This works like updateCachedLog, but accepts params {log: , index: }
-    updateCachedLogAtIndex({ commit, rootState }, { log, index }) {
-      const newLog = makeLog.toIdb({
-        ...rootState.farm.logs[index],
-        ...log,
-      });
-      openDatabase()
-        .then(db => saveRecord(db, logStore.name, newLog))
         .then(key => commit('updateLog', {
           index,
           props: {

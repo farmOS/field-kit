@@ -26,8 +26,8 @@ export default {
       if (type === 'addLogs' && payload.isCachedLocally === false) {
         store.dispatch('createCachedLog', payload);
       }
-      if (type === 'updateLog' && !payload.props.isCachedLocally) {
-        store.dispatch('updateCachedLogAtIndex', payload);
+      if (type === 'updateLog' && payload.props.isCachedLocally === false) {
+        store.dispatch('updateCachedLog', payload);
       }
       if (type === 'deleteLog') {
         store.dispatch('deleteCachedLog', payload);
