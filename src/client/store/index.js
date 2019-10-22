@@ -179,13 +179,6 @@ const farmModule = {
     updateEquipmentFromCache(state, equip) {
       state.equipment = state.equipment.concat(equip);
     },
-    /*
-      This pushes the new log onto the `logs` array, and b/c `.push()` returns
-      the length of the new array, it resets the index to the new item too
-    */
-    addLogAndMakeCurrent(state, newLog) {
-      state.currentLogIndex = state.logs.push(newLog) - 1;
-    },
     // This is called when new logs from the server are added
     // FIXME: Leaky abstraction; shouldn't have server/db details here
     addLogFromServer(state, newLog) {
@@ -269,21 +262,15 @@ const farmModule = {
     },
   },
   actions: {
-    // TODO: Should this logic be moved to the 'addLogAndMakeCurrent' mutation?
-    //    Or perhaps just the logFactory, and pass in the date and logType as
-    //    a `newProps` object from a component method.
-    initializeLog({ commit }, logType) {
-      const curDate = new Date();
-      const timestamp = Math.floor(curDate / 1000).toString();
-      const curTimeString = curDate.toLocaleTimeString('en-US');
-      const curDateString = curDate.toLocaleDateString('en-US');
-      const newLog = makeLog.create({
-        type: { data: logType, changed: timestamp },
-        name: { data: `${curDateString} - ${curTimeString}`, changed: timestamp },
-        // TODO: Try to decouple this further from the login plugin
-        timestamp: { data: timestamp, changed: timestamp },
+    initializeLog({ commit, dispatch }, initProps) {
+      return new Promise((resolve, reject) => {
+        dispatch('getLogCount').then((count) => {
+          const local_id = count + 1; // eslint-disable-line camelcase
+          const newLog = makeLog.create({ ...initProps, local_id });
+          commit('addLogs', newLog);
+          resolve(local_id);
+        }).catch(reject);
       });
-      commit('addLogAndMakeCurrent', newLog);
     },
     forceSyncAssetsAndAreas() {
       // this is just a hook for synchronizing via the httpModule

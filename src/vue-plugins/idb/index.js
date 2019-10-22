@@ -23,7 +23,7 @@ export default {
       }
     });
     store.subscribe(({ type, payload }) => {
-      if (type === 'addLogAndMakeCurrent') {
+      if (type === 'addLogs' && payload.isCachedLocally === false) {
         store.dispatch('createCachedLog', payload);
       }
       if (type === 'updateLog' && !payload.props.isCachedLocally) {

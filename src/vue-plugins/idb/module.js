@@ -2,6 +2,7 @@ import makeLog from '@/utils/makeLog';
 import {
   openDatabase,
   getRecords,
+  getStoreCount,
   saveRecord,
   deleteRecord,
   clearStore,
@@ -69,6 +70,11 @@ export default {
           commit('addLogs', cachedLogs);
         })
         .catch(console.error); // eslint-disable-line no-console
+    },
+
+    getLogCount() {
+      return openDatabase()
+        .then(db => getStoreCount(db, logStore.name));
     },
 
     updateCachedLog({ commit, rootState }, newProps) {

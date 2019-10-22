@@ -23,6 +23,21 @@ function getRecords(db, storeName) {
   });
 }
 
+function getStoreCount(db, storeName) {
+  return new Promise((resolve, reject) => {
+    const store = db.transaction(storeName, 'readonly').objectStore(storeName);
+    const request = store.openCursor(null, 'prevunique');
+    request.onerror = event => reject(new Error(event.target.errorcode));
+    request.onsuccess = (event) => {
+      const cursor = event.target.result;
+      if (cursor) {
+        cursor.continue();
+        resolve(cursor.value.local_id);
+      }
+    };
+  });
+}
+
 function saveRecord(db, storeName, record) {
   return new Promise((resolve, reject) => {
     const store = db.transaction(storeName, 'readwrite').objectStore(storeName);
@@ -56,4 +71,5 @@ export {
   saveRecord,
   deleteRecord,
   clearStore,
+  getStoreCount,
 };

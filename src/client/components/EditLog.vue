@@ -944,7 +944,19 @@ export default {
         this.$store.commit('setCurrentLogIndex', this.$route.params.index);
       } else {
         // Create a new log.  The 'type' prop is set based on the 'type' param in the local route
-        this.$store.dispatch('initializeLog', this.type);
+        const curDate = new Date();
+        const timestamp = Math.floor(curDate / 1000).toString();
+        const curTimeString = curDate.toLocaleTimeString('en-US');
+        const curDateString = curDate.toLocaleDateString('en-US');
+        this.$store.dispatch('initializeLog', {
+          type: { data: this.type, changed: timestamp },
+          name: { data: `${curDateString} - ${curTimeString}`, changed: timestamp },
+          timestamp: { data: timestamp, changed: timestamp },
+          isCachedLocally: false,
+        }).then(id => {
+          // TODO: this is kind of a hack; set current local_id instead
+          this.$store.commit('setCurrentLogIndex', this.logs.length);
+        });
       }
     },
   },
