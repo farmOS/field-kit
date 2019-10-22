@@ -23,38 +23,19 @@ export default {
 
   actions: {
 
-    createCachedLog({ commit, rootState }, newLog) {
+    createCachedLog({ commit }, newLog) {
       const newRecord = makeLog.toIdb(newLog);
       openDatabase()
         .then(db => saveRecord(db, logStore.name, newRecord))
-        .then(key => (
-          // Can we be sure this will always be the CURRENT log?
-          // Not if we use this action to add new records received from the server
+        .then(() => (
           commit('updateLog', {
-            index: rootState.farm.currentLogIndex,
             props: {
-              local_id: key,
+              local_id: newLog.local_id,
               isCachedLocally: true,
             },
           })
-        ));
-    },
-
-    // TODO: This is unnecessary duplication and should be removed.
-    // This works like createCachedLog, but accepts params {log: , index: }
-    createLogFromServer({ commit }, { index, log }) {
-      const newRecord = makeLog.toIdb(log);
-      openDatabase()
-        .then(db => saveRecord(db, logStore.name, newRecord))
-        .then((key) => {
-          commit('updateLog', {
-            index,
-            props: {
-              local_id: key,
-              isCachedLocally: true,
-            },
-          });
-        });
+        ))
+        .catch(console.error); // eslint-disable-line no-console
     },
 
     loadCachedLogs({ commit }) {

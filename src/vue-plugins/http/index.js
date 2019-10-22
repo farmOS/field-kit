@@ -128,9 +128,6 @@ export default {
             router.push('/login');
           }
         }
-        if (action.type === 'serverLogToDb') {
-          store.dispatch('createLogFromServer', action.payload);
-        }
         // When assets or areas are retrieved from the store, ALSO retrieve from the server
         // This means a call to the server on app load.
         // *** I think it would be better to retrieve only when the sync button is tapped

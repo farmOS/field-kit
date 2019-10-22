@@ -179,16 +179,14 @@ const farmModule = {
     updateEquipmentFromCache(state, equip) {
       state.equipment = state.equipment.concat(equip);
     },
-    // This is called when new logs from the server are added
-    // FIXME: Leaky abstraction; shouldn't have server/db details here
-    addLogFromServer(state, newLog) {
-      const newIndex = state.logs.push(newLog) - 1;
-      this.dispatch('serverLogToDb', { index: newIndex, log: newLog });
-    },
     setCurrentLogIndex(state, index) {
       state.currentLogIndex = index;
     },
-    updateLog(state, { index, props }) {
+    updateLog(state, payload) {
+      const { props } = payload;
+      const index = payload.index
+        ? payload.index
+        : state.logs.findIndex(log => log.local_id === props.local_id);
       const updatedLog = makeLog.create({
         ...state.logs[index],
         ...props,
@@ -277,9 +275,6 @@ const farmModule = {
     },
     getLogs() {
       // Right now, this is just a hook to call getServerLogs in the httpModule
-    },
-    serverLogToDb() {
-      // Right now, this is just a hook to call createLogFromServer in the dbModule
     },
     onLogsComponentCreated() {
       // A hook for initializng other actions when Logs.vue is created

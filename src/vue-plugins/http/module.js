@@ -220,7 +220,7 @@ export default {
     },
 
     // GET LOGS FROM SERVER (step 1 of sync)
-    getServerLogs({ commit, rootState }) {
+    getServerLogs({ commit, dispatch, rootState }) {
       const syncDate = localStorage.getItem('syncDate');
       const allLogs = rootState.farm.logs;
       return farm().log.get(rootState.shell.settings.logImportFilters)
@@ -237,7 +237,7 @@ export default {
             }
             if (checkStatus.localId === null) {
               const mergedLog = processLog(log, checkStatus, syncDate);
-              commit('addLogFromServer', mergedLog);
+              dispatch('initializeLog', mergedLog);
             }
             return log.id;
           })
