@@ -37,9 +37,6 @@ export default {
           store.dispatch('createCachedAsset', asset);
         });
       }
-      if (type === 'updateAsset') {
-        store.dispatch('updateCachedAsset', payload);
-      }
       if (type === 'deleteAllAssets') {
         store.dispatch('deleteAllCachedAssets');
       }
@@ -47,9 +44,6 @@ export default {
         payload.forEach((area) => {
           store.dispatch('createCachedArea', area);
         });
-      }
-      if (type === 'updateArea') {
-        store.dispatch('updateCachedArea', payload);
       }
       if (type === 'deleteAllAreas') {
         store.dispatch('deleteAllCachedAreas');

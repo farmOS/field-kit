@@ -177,15 +177,6 @@ const farmModule = {
     updateAllLogs(state, fn) {
       state.logs = state.logs.map(log => fn(log));
     },
-    // updateAsset and updateArea replace the entire record if a change occurs
-    updateAsset(state, newAsset) {
-      const index = state.assets.findIndex(a => a.id === newAsset.id);
-      state.assets.splice(index, 1, newAsset);
-    },
-    updateArea(state, newArea) {
-      const index = state.areas.findIndex(a => a.id === newArea.id);
-      state.areas.splice(index, 1, newArea);
-    },
     deleteLog(state, { index }) {
       state.logs.splice(index, 1);
     },
