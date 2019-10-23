@@ -734,13 +734,16 @@ export default {
 
     getPhoto() {
       // Obtains an image location from the camera!
-      return this.$store.dispatch('getPhotoLoc');
+      return this.$store.dispatch('getPhotoLoc', this.currentLogIndex);
     },
 
     loadPhoto(files) {
       for (let i = 0; i < files.length; i += 1) {
         this.imageUrls.push(window.URL.createObjectURL(files[i]));
-        this.$store.dispatch('loadPhotoBlob', files[i]);
+        this.$store.dispatch('loadPhotoBlob', {
+          file: files[i],
+          index: this.currentLogIndex,
+          });
       }
     },
 

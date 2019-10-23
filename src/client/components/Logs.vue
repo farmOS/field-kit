@@ -3,17 +3,15 @@
     <router-view
       name="menubar"
       @toggleDrawer="$emit('toggleDrawer')"
-      @deleteCurrentLog="openDeleteDialog(currentLogIndex)"
+      @deleteCurrentLog="openDeleteDialog($event)"
       @syncAll="syncAll"
       :logs='logs'
-      :currentLogIndex='currentLogIndex'
     />
     <router-view
       @deleteLog="openDeleteDialog($event)"
       :logs='logs'
       :areas='areas'
       :assets='assets'
-      :currentLogIndex='currentLogIndex'
       :photoLoc='photoLoc'
       :geolocation='geolocation'
       :localArea='localArea'
@@ -91,7 +89,6 @@ export default {
     logs: state => state.farm.logs,
     areas: state => state.farm.areas,
     assets: state => state.farm.assets,
-    currentLogIndex: state => state.farm.currentLogIndex,
     statusText: state => state.farm.statusText,
     photoLoc: state => state.farm.photoLoc,
     geolocation: state => state.farm.geolocation,

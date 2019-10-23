@@ -40,7 +40,7 @@ export default new Router({
           props: { default: true, menubar: true },
         },
         {
-          path: 'map',
+          path: ':id/map',
           name: 'edit-map',
           components: {
             default: EditMap,

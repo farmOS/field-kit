@@ -25,12 +25,16 @@ import Map from './Map';
 export default {
   name: 'EditMap',
   components: { Map },
-  props: [ 'logs', 'currentLogIndex'],
+  props: [ 'logs', 'id'],
   computed: {
     areaGeoJSON() {
       return (process.env.NODE_ENV === 'development') 
         ? 'http://localhost:8080/farm/areas/geojson/all'
         : `${localStorage.getItem('host')}/farm/areas/geojson/all`
+    },
+    currentLogIndex() {
+      const index = this.logs.findIndex(log => log.local_id === +this.id);
+      return index >= 0 ? index : 0;
     },
   },
   methods: {

@@ -16,14 +16,13 @@ import IconArrowBack from '../../icons/icon-arrow-back.vue'; // eslint-disable-l
 export default {
   name: 'EditMapMenuBar',
   components: { MenuBar, IconArrowBack },
-  props: ['logs', 'currentLogIndex'],
+  props: ['logs', 'id'],
   computed: {
     logLink() {
       return {
         name: 'edit-log',
         params: {
-          index: this.currentLogIndex,
-          type: this.logs[this.currentLogIndex].type.data,
+          id: this.id,
           tab: 'SECOND',
         },
       };

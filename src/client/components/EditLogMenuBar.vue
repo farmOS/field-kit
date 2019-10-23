@@ -14,7 +14,7 @@
           <icon-open-in-new/>
         </li>
       </a>
-      <li @click="$emit('deleteCurrentLog')">
+      <li @click="$emit('deleteCurrentLog', currentLogIndex)">
         <icon-delete/>
       </li>
     </template>
@@ -40,6 +40,12 @@ import IconOpenInNew from '../../icons/icon-open-in-new.vue'; // eslint-disable-
 export default {
   name: 'EditLogsMenuBar',
   components: { MenuBar, IconArrowBack, IconDelete, IconOpenInNew },
-  props: [ 'logs', 'currentLogIndex' ],
+  props: [ 'logs', 'id' ],
+  computed: {
+    currentLogIndex() {
+      const index = this.logs.findIndex(log => log.local_id === +this.id);
+      return index >= 0 ? index : 0;
+    },
+  }
 };
 </script>

@@ -5,10 +5,10 @@ export default {
     called when the get photo button is tapped; setPhotoLoc sets the captured
     image URI to a variable in the store called photo_loc
     */
-    getPhotoLoc({ commit, rootState }) {
+    getPhotoLoc({ commit, rootState }, index) {
       function handleResponse(photoLoc) {
         // commit('setPhotoLoc', photoLoc);
-        const prevLog = rootState.farm.logs[rootState.farm.currentLogIndex];
+        const prevLog = rootState.farm.logs[index];
         const dataURL = `data:image/jpeg;base64,${photoLoc}`;
         const nowStamp = (Date.now() / 1000).toFixed(0);
         const props = {
@@ -16,15 +16,15 @@ export default {
           isCachedLocally: false,
           wasPushedToServer: false,
         };
-        commit('updateLog', { index: rootState.farm.currentLogIndex, props });
+        commit('updateLog', { index, props });
       }
       function handleError(error) { // eslint-disable-line no-unused-vars
       }
       getPhotoFromCamera() // eslint-disable-line no-use-before-define
         .then(handleResponse, handleError);
     },
-    loadPhotoBlob({ commit, rootState }, file) {
-      const prevLog = rootState.farm.logs[rootState.farm.currentLogIndex];
+    loadPhotoBlob({ commit, rootState }, { file, index }) {
+      const prevLog = rootState.farm.logs[index];
       const nowStamp = (Date.now() / 1000).toFixed(0);
       readFileData(file).then((data) => { // eslint-disable-line no-use-before-define
         const props = {
@@ -32,7 +32,7 @@ export default {
           isCachedLocally: false,
           wasPushedToServer: false,
         };
-        commit('updateLog', { index: rootState.farm.currentLogIndex, props });
+        commit('updateLog', { index, props });
       });
     },
   },

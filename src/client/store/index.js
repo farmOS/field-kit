@@ -130,7 +130,6 @@ const farmModule = {
     logs: [],
     assets: [],
     areas: [],
-    currentLogIndex: 0,
     photoLoc: '',
     geolocation: {},
     localArea: [],
@@ -178,9 +177,6 @@ const farmModule = {
     },
     updateEquipmentFromCache(state, equip) {
       state.equipment = state.equipment.concat(equip);
-    },
-    setCurrentLogIndex(state, index) {
-      state.currentLogIndex = index;
     },
     updateLog(state, payload) {
       const { props } = payload;
