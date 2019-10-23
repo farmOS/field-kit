@@ -170,7 +170,7 @@ export default {
       openDatabase()
         .then(db => getRecords(db, unitStore.name))
         .then((results) => {
-          commit('updateUnitsFromCache', results);
+          commit('addUnits', results);
         })
         .catch(console.error); // eslint-disable-line no-console
     },
@@ -198,7 +198,7 @@ export default {
       openDatabase()
         .then(db => getRecords(db, catStore.name))
         .then((results) => {
-          commit('updateCategoriesFromCache', results);
+          commit('addCategories', results);
         })
         .catch(console.error); // eslint-disable-line no-console
     },

@@ -145,7 +145,6 @@ const farmModule = {
       state.url = url;
     },
     addLogs(state, logs) {
-      // TODO: Should logs pass through logFactory() to make sure props are valid?
       state.logs = state.logs.concat(logs);
     },
     addAssets(state, assets) {
@@ -161,21 +160,6 @@ const farmModule = {
       state.categories = state.categories.concat(cats);
     },
     addEquipment(state, equip) {
-      state.equipment = state.equipment.concat(equip);
-    },
-    /*
-    updateUnitsFromCache. updateCategoriesFromCache and updateEquipmentFromCache are distinct from
-    addUnits because they are NOT hooks for updating units/ cats in the database.  They ONLY add
-    units/ cats to the local store.  updateUnitsFromCache is called by websql/module/loadCachedUnits
-    addUnits is called by http/module/updateUnits
-    */
-    updateUnitsFromCache(state, units) {
-      state.units = state.units.concat(units);
-    },
-    updateCategoriesFromCache(state, cats) {
-      state.categories = state.categories.concat(cats);
-    },
-    updateEquipmentFromCache(state, equip) {
       state.equipment = state.equipment.concat(equip);
     },
     updateLog(state, payload) {
