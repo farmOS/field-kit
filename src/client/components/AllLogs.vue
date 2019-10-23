@@ -20,7 +20,7 @@
         v-for="(log, i) in logs"
         :key="`card-${logs.indexOf(log)}`"
       >
-        <router-link :to="{ name: 'edit-log', params: { index: i, type: log.type.data } }">
+        <router-link :to="{ path: `/logs/${log.local_id}` }">
           <div class="card-body">
 
             <div class="card-row-1">
@@ -74,14 +74,11 @@
       </div>
     </div>
 
-    <!-- Initialize the new log as an observation -->
-    <router-link :to="{ name: 'edit-log', params: { type: 'farm_observation' } }">
-      <div class="add-circle" @click="">
-        <div class="background-circle">
-        </div>
-        <icon-add-circle/>
+    <div class="add-circle" @click="startNewLog">
+      <div class="background-circle">
       </div>
-    </router-link>
+      <icon-add-circle/>
+    </div>
 
   </div>
 
@@ -119,33 +116,6 @@ export default {
     IconEdit,
     IconSync,
   },
-  beforeRouteLeave(to, from, next) {
-    // Before navigating to the "Edit" screen, if a log index is provided in 
-    // the query params, set it as the current log
-    if (to.name === 'edit-log' && typeof to.params.index === 'number') {
-      this.$store.commit('setCurrentLogIndex', to.params.index);
-      next();
-    // If no index is given, create a new log. The 'type' prop is set based on
-    // the 'type' param in the local route
-    } else if (to.name === 'edit-log') {
-      const curDate = new Date();
-      const timestamp = Math.floor(curDate / 1000).toString();
-      const curTimeString = curDate.toLocaleTimeString('en-US');
-      const curDateString = curDate.toLocaleDateString('en-US');
-      this.$store.dispatch('initializeLog', {
-        type: { data: to.params.type, changed: timestamp },
-        name: { data: `${curDateString} - ${curTimeString}`, changed: timestamp },
-        timestamp: { data: timestamp, changed: timestamp },
-      }).then(id => {
-        // TODO: this is kind of a hack; set current local_id instead
-        this.$store.commit('setCurrentLogIndex', this.logs.length);
-      });
-      next();
-    // Otherwise just continue to the next route
-    } else {
-      next();
-    }
-  },
   methods: {
     showDate(unixTimestamp) {
       return moment.unix(unixTimestamp).format('MMM DD YYYY');
@@ -165,7 +135,12 @@ export default {
       return [];
     },
     getLogType(type) {
-      return getLogType(type);
+      try {
+        return getLogType(type);
+      } catch (error) {
+        console.error(error);
+        return '';
+      }
     },
     passesFilters(log) {
       const passesTypeFilter = !this.logDisplayFilters.excludeTypes.includes(log.type.data);
@@ -207,6 +182,13 @@ export default {
         return true;
       }
       return false;
+    },
+    startNewLog() {
+      const timestamp = Math.floor(new Date() / 1000).toString();
+      this.$store.dispatch('initializeLog', {
+        type: { data: 'farm_activity', changed: timestamp },
+        timestamp: { data: timestamp, changed: timestamp },
+      }).then(id => this.$router.push({ path: `/logs/${id}`}));
     },
   },
 };

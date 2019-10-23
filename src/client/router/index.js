@@ -31,16 +31,13 @@ export default new Router({
           },
         },
         {
-          // Bringing params into the path (:type) allows them to be set as props
-          path: 'edit/:type',
+          path: ':id',
           name: 'edit-log',
           components: {
             default: EditLog,
             menubar: EditLogMenuBar,
           },
           props: { default: true, menubar: true },
-          children: [
-          ],
         },
         {
           path: 'map',

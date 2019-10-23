@@ -564,10 +564,10 @@ export default {
   },
 
   props: [
+    'id',
     'logs',
     'areas',
     'assets',
-    'currentLogIndex',
     'statusText',
     'photoLoc',
     'geolocation',
@@ -576,8 +576,6 @@ export default {
     'units',
     'categories',
     'equipment',
-    // Set by router via edit/:type props=true
-    'type',
   ],
 
   beforeMount() {
@@ -795,6 +793,10 @@ export default {
   },
 
   computed: {
+    currentLogIndex() {
+      const index = this.logs.findIndex(log => log.local_id === +this.id);
+      return index >= 0 ? index : 0;
+    },
     /*
       In order to avoid duplicates, filteredAssets & filteredAreas remove
       assets/areas from the array of searchable objects if they've already been
@@ -936,29 +938,6 @@ export default {
       }
     },
 
-    // This catches route changes from `/log/edit` to `/log/edit` and creates
-    // a new log by the same procedure as in the `created()` hook.
-    $route(to) {
-      if (typeof to.params.index === 'number') {
-        // If a log index is provided in query params, set it as current log
-        this.$store.commit('setCurrentLogIndex', this.$route.params.index);
-      } else {
-        // Create a new log.  The 'type' prop is set based on the 'type' param in the local route
-        const curDate = new Date();
-        const timestamp = Math.floor(curDate / 1000).toString();
-        const curTimeString = curDate.toLocaleTimeString('en-US');
-        const curDateString = curDate.toLocaleDateString('en-US');
-        this.$store.dispatch('initializeLog', {
-          type: { data: this.type, changed: timestamp },
-          name: { data: `${curDateString} - ${curTimeString}`, changed: timestamp },
-          timestamp: { data: timestamp, changed: timestamp },
-          isCachedLocally: false,
-        }).then(id => {
-          // TODO: this is kind of a hack; set current local_id instead
-          this.$store.commit('setCurrentLogIndex', this.logs.length);
-        });
-      }
-    },
   },
 };
 

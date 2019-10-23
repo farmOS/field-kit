@@ -26,21 +26,11 @@
           <router-link :to="{ name: 'logs' }">
             <li class="list-group-item">My Logs</li>
           </router-link>
-          <router-link :to="{ name: 'edit-log', params: { type: 'farm_activity' } }">
-            <li class="list-group-item">New Activity</li>
-          </router-link>
-          <router-link :to="{ name: 'edit-log', params: { type: 'farm_harvest' } }">
-            <li class="list-group-item">New Harvest</li>
-          </router-link>
-          <router-link :to="{ name: 'edit-log', params: { type: 'farm_input' } }">
-            <li class="list-group-item">New Input</li>
-          </router-link>
-          <router-link :to="{ name: 'edit-log', params: { type: 'farm_observation' } }">
-            <li class="list-group-item">New Observation</li>
-          </router-link>
-          <router-link :to="{ name: 'edit-log', params: { type: 'farm_seeding' } }">
-            <li class="list-group-item">New Seeding</li>
-          </router-link>
+          <li @click="openNewLog('farm_activity')" class="list-group-item">New Activity</li>
+          <li @click="openNewLog('farm_harvest')" class="list-group-item">New Harvest</li>
+          <li @click="openNewLog('farm_input')" class="list-group-item">New Input</li>
+          <li @click="openNewLog('farm_observation')" class="list-group-item">New Observation</li>
+          <li @click="openNewLog('farm_seeding')" class="list-group-item">New Seeding</li>
         </ul>
         <ul class="row list-group">
           <li class="list-group-item">
@@ -139,6 +129,13 @@ export default {
     },
   },
   methods: {
+    openNewLog(type) {
+      const timestamp = Math.floor(new Date() / 1000).toString();
+      this.$store.dispatch('initializeLog', {
+        type: { data: type, changed: timestamp },
+        timestamp: { data: timestamp, changed: timestamp },
+      }).then(id => this.$router.push({ path: `/logs/${id}`}));
+    },
     closeError(index) {
       this.$store.commit('dismissError', index);
     },
