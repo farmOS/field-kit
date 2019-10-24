@@ -1,6 +1,8 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import makeLog from '../../utils/makeLog';
+import makeIDBSubscriber from './idb/subscriber';
+import idbModule from './idb/module';
 import geoModule from './geoModule';
 
 Vue.use(Vuex);
@@ -253,10 +255,16 @@ const farmModule = {
   },
 };
 
-export default new Vuex.Store({
+const store = new Vuex.Store({
   modules: {
     shell: shellModule,
     farm: farmModule,
     geo: geoModule,
+    idb: idbModule,
   },
 });
+
+const idbSubscriber = makeIDBSubscriber(store);
+store.subscribe(idbSubscriber);
+
+export default store;
