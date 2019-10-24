@@ -265,14 +265,5 @@ export default {
           }
         });
     },
-    // Stop spinner on aborted sync attempts by setting isReadyToSync false
-    unreadyLog({ commit }, index) {
-      commit('updateLog', {
-        index,
-        props: {
-          isReadyToSync: false,
-        },
-      });
-    },
   },
 };

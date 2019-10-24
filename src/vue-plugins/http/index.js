@@ -33,7 +33,13 @@ export default {
           if (plantingAssets.length < 1) {
             errorPayload.message = `Could not sync ${log.name.data} because seeding logs must have at least one planting asset.`;
             store.commit('logError', errorPayload);
-            store.dispatch('unreadyLog', index);
+            // Stop spinner on aborted sync attempts by setting isReadyToSync false
+            store.commit('updateLog', {
+              index,
+              props: {
+                isReadyToSync: false,
+              },
+            });
             return false;
           }
         }
