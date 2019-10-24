@@ -100,8 +100,21 @@ export default {
     logDisplayFilters: state => state.shell.settings.logDisplayFilters,
   }),
   created() {
-    this.$store.dispatch('onLogsComponentCreated');
+    this.$store.dispatch('loadCachedUserAndSiteInfo');
+    this.$store.dispatch('updateUserAndSiteInfo');
+    this.$store.commit('clearLogs');
+    this.$store.commit('clearAssets');
+    this.$store.commit('clearAreas');
+    this.$store.commit('clearUnits');
+    this.$store.commit('clearCategories');
+    this.$store.commit('clearEquipment');
     this.$store.commit('clearDisplayFilters');
+    this.$store.dispatch('loadCachedLogs');
+    this.$store.dispatch('loadCachedAssets');
+    this.$store.dispatch('loadCachedAreas');
+    this.$store.dispatch('loadCachedUnits');
+    this.$store.dispatch('loadCachedCategories');
+    this.$store.dispatch('loadCachedEquipment');
     this.$store.dispatch('loadCachedDisplayFilters');
   },
   beforeDestroy() {

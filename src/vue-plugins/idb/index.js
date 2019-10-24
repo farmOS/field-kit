@@ -3,25 +3,6 @@ import module from './module';
 export default {
   install(Vue, { store }) {
     store.registerModule('idb', module);
-    store.subscribeAction((action) => {
-      // Load logs, areas, assets & user info when the Logs component is created
-      if (action.type === 'onLogsComponentCreated') {
-        store.dispatch('loadCachedUserAndSiteInfo');
-        store.dispatch('updateUserAndSiteInfo');
-        store.commit('clearLogs');
-        store.commit('clearAssets');
-        store.commit('clearAreas');
-        store.commit('clearUnits');
-        store.commit('clearCategories');
-        store.commit('clearEquipment');
-        store.dispatch('loadCachedLogs');
-        store.dispatch('loadCachedAssets');
-        store.dispatch('loadCachedAreas');
-        store.dispatch('loadCachedUnits');
-        store.dispatch('loadCachedCategories');
-        store.dispatch('loadCachedEquipment');
-      }
-    });
     store.subscribe(({ type, payload }) => {
       if (type === 'addLogs' && payload.isCachedLocally === false) {
         store.dispatch('createCachedLog', payload);
