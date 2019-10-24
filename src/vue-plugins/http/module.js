@@ -159,19 +159,10 @@ export default {
       });
     },
     updateEquipment({ commit }) {
-      function getEquip(assets) {
-        const equip = [];
-        assets.forEach((asset) => {
-          if (asset.type === 'equipment') {
-            equip.push(asset);
-          }
-        });
-        return equip;
-      }
       return farm().asset.get().then((res) => {
         commit('deleteAllEquipment');
         const assets = res.list.map(({ id, name, type }) => ({ id, name, type }));
-        const equipment = getEquip(assets);
+        const equipment = assets.filter(a => a.type === 'equipment');
         commit('addEquipment', equipment);
       });
     },
