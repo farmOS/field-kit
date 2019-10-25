@@ -245,12 +245,6 @@ const farmModule = {
     forceSyncAssetsAndAreas() {
       // this is just a hook for synchronizing via the httpModule
     },
-    getLogs() {
-      // Right now, this is just a hook to call getServerLogs in the httpModule
-    },
-    onLogsComponentCreated() {
-      // A hook for initializng other actions when Logs.vue is created
-    },
   },
 };
 

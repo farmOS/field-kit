@@ -145,8 +145,7 @@ export default {
       }
     },
     syncAll() {
-      // Calling getLogs first.  On return, it will call a check action in httpModule.
-      this.$store.dispatch('getLogs');
+      this.$store.dispatch('syncAllLogs');
     },
   }
 };
