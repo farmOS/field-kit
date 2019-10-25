@@ -146,6 +146,11 @@ export default {
     },
     syncAll() {
       this.$store.dispatch('syncAllLogs');
+      this.$store.dispatch('updateAssets');
+      this.$store.dispatch('updateAreas');
+      this.$store.dispatch('updateUnits');
+      this.$store.dispatch('updateCategories');
+      this.$store.dispatch('updateEquipment');
     },
   }
 };
