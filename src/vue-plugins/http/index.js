@@ -70,27 +70,25 @@ export default {
       store.commit('updateAllLogs', log => ({ ...log, isReadyToSync: false }));
       // Create a message string that we will build out as we go.
       let errMsg = '';
-      if (syncError.responses.length === 0) {
-        // If we receive no response whatsoever, the device is offline
-        errMsg += 'Unable to sync because the network is currently unavailable.';
-      } else {
-        // Build a message from sendLogs errors, which have an index
-        syncError.responses.forEach((response) => {
-          if (response.status === 401
-            || response.status === 403
-            || response.status === 404) {
-            // 401, 403 and 404 errors indicate bad credentials - push to login
-            router.push('/login');
-          } else if (response.index === undefined) {
-            // If response.index is undefined, the error was thrown by a getServerLogs request
-            errMsg += `${response.status} error: ${response.message}`;
-          } else {
-            // Otherwise, the error was thrown by a sendLogs request
-            const logName = store.state.farm.logs[response.index].name.data;
-            errMsg += `${response.status} error while syncing "${logName}" <br>`;
-          }
-        });
-      }
+      // Build a message from sendLogs errors, which have an index
+      syncError.responses.forEach((response) => {
+        if (response.status === 401
+          || response.status === 403
+          || response.status === 404) {
+          // 401, 403 and 404 errors indicate bad credentials - push to login
+          router.push('/login');
+        } else if (response.status === undefined) {
+          // If there's no status code, it's probably a Network Error; print as is.
+          errMsg += response.message;
+        } else if (response.index === undefined) {
+          // If response.index is undefined, the error was thrown by a getServerLogs request
+          errMsg += `${response.status} error: ${response.message}`;
+        } else {
+          // Otherwise, the error was thrown by a sendLogs request
+          const logName = store.state.farm.logs[response.index].name.data;
+          errMsg += `${response.status} error while syncing "${logName}" <br>`;
+        }
+      });
       if (errMsg !== '') {
         // Display an error if there is message text
         const errorPayload = {

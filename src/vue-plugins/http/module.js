@@ -261,7 +261,9 @@ export default {
               }],
             });
           } else {
-            throw new SyncError({});
+            throw new SyncError({
+              responses: [{ message: err }],
+            });
           }
         });
     },
