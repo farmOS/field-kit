@@ -1,5 +1,16 @@
 import config from './idb.config';
 
+/**
+ * Initialize a global counter for each store, eg:
+ * const counter = {
+ *  logs: 0,
+ *  assets: 0,
+ *  areas: 0,
+ *  ...etc
+ * }
+ */
+const counter = config.stores.reduce((countObj, store) => ({ ...countObj, [store.name]: 0 }), {});
+
 function openDatabase() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(config.name, config.version);
@@ -23,17 +34,31 @@ function getRecords(db, storeName) {
   });
 }
 
-function getStoreCount(db, storeName) {
+function generateLocalID(db, storeName) {
+  // Set a local counter so we don't increment the store counter more than once.
+  let i = 1;
   return new Promise((resolve, reject) => {
     const store = db.transaction(storeName, 'readonly').objectStore(storeName);
     const request = store.openCursor(null, 'prevunique');
     request.onerror = event => reject(new Error(event.target.errorcode));
     request.onsuccess = (event) => {
+      // Return if the cursor has already moved back more than once.
+      if (i > 1) { return; }
+      let newID;
       const cursor = event.target.result;
       if (cursor) {
         cursor.continue();
-        resolve(cursor.value.local_id);
+        if (counter[storeName] > cursor.value.local_id) {
+          newID = counter[storeName] + 1;
+        } else {
+          newID = cursor.value.local_id + 1;
+        }
+      } else {
+        newID = counter[storeName] + 1;
       }
+      counter[storeName] = newID;
+      i += 1;
+      resolve(newID);
     };
   });
 }
@@ -71,5 +96,5 @@ export {
   saveRecord,
   deleteRecord,
   clearStore,
-  getStoreCount,
+  generateLocalID,
 };

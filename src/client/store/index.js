@@ -166,7 +166,7 @@ const farmModule = {
     },
     updateLog(state, payload) {
       const { props } = payload;
-      const index = payload.index
+      const index = payload.index !== undefined
         ? payload.index
         : state.logs.findIndex(log => log.local_id === props.local_id);
       const updatedLog = makeLog.create({
@@ -235,8 +235,7 @@ const farmModule = {
   actions: {
     initializeLog({ commit, dispatch }, initProps) {
       return new Promise((resolve, reject) => {
-        dispatch('getLogCount').then((count) => {
-          const local_id = count + 1; // eslint-disable-line camelcase
+        dispatch('generateLogID').then((local_id) => { // eslint-disable-line camelcase
           const newLog = makeLog.create({ ...initProps, local_id });
           commit('addLogs', newLog);
           resolve(local_id);

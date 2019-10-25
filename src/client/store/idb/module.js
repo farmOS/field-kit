@@ -2,7 +2,7 @@ import makeLog from '@/utils/makeLog';
 import {
   openDatabase,
   getRecords,
-  getStoreCount,
+  generateLocalID,
   saveRecord,
   deleteRecord,
   clearStore,
@@ -53,23 +53,23 @@ export default {
         .catch(console.error); // eslint-disable-line no-console
     },
 
-    getLogCount() {
+    generateLogID() {
       return openDatabase()
-        .then(db => getStoreCount(db, logStore.name));
+        .then(db => generateLocalID(db, logStore.name))
+        .catch(console.error);
     },
 
     updateCachedLog({ commit, rootState }, payload) {
       const { props } = payload;
-      const index = payload.index
+      const index = payload.index !== undefined
         ? payload.index
-        : rootState.logs.findIndex(log => log.local_id === props.local_id);
+        : rootState.farm.logs.findIndex(log => log.local_id === props.local_id);
       const newLog = makeLog.toIdb({
         ...rootState.farm.logs[index],
         ...props,
       });
       openDatabase()
         .then(db => saveRecord(db, logStore.name, newLog))
-        // Can we be sure this will always be the CURRENT log?
         .then(key => commit('updateLog', {
           index,
           props: {
