@@ -601,7 +601,12 @@ export default {
     },
 
     forceSync() {
-      this.$store.dispatch('forceSyncAssetsAndAreas');
+      if (localStorage.getItem('host') !== null) {
+        this.$store.dispatch('updateAssets');
+        this.$store.dispatch('updateAreas');
+        return;
+      }
+      this.$router.push('/login');
     },
 
     updateCurrentLog(key, val) {

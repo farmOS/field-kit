@@ -242,9 +242,6 @@ const farmModule = {
         }).catch(reject);
       });
     },
-    forceSyncAssetsAndAreas() {
-      // this is just a hook for synchronizing via the httpModule
-    },
   },
 };
 

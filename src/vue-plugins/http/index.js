@@ -1,18 +1,10 @@
 import module from './module';
 
 export default {
-  install(Vue, { store, router }) {
+  install(Vue, { store }) {
     store.registerModule('http', module);
     store.subscribeAction({
       after: (action) => {
-        if (action.type === 'forceSyncAssetsAndAreas') {
-          if (localStorage.getItem('host') !== null) {
-            store.dispatch('updateAssets');
-            store.dispatch('updateAreas');
-            return;
-          }
-          router.push('/login');
-        }
         // When assets or areas are retrieved from the store, ALSO retrieve from the server
         // This means a call to the server on app load.
         // *** I think it would be better to retrieve only when the sync button is tapped
