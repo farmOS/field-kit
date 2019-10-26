@@ -4,6 +4,7 @@ import makeLog from '../../utils/makeLog';
 import makeIDBSubscriber from './idb/subscriber';
 import idbModule from './idb/module';
 import httpModule from './http/module';
+import camModule from './camModule';
 import geoModule from './geoModule';
 
 Vue.use(Vuex);
@@ -246,6 +247,7 @@ const store = new Vuex.Store({
     shell: shellModule,
     farm: farmModule,
     geo: geoModule,
+    cam: camModule,
     idb: idbModule,
     http: httpModule,
   },
