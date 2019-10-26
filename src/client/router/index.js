@@ -9,10 +9,12 @@ import EditMapMenuBar from '../components/EditMapMenuBar';
 import EditMap from '../components/EditMap';
 import FilterLogsMenuBar from '../components/FilterLogsMenuBar';
 import FilterLogs from '../components/FilterLogs';
+import Login from '../login/Login';
+import Logout from '../login/Logout';
 
 Vue.use(Router);
 
-export default new Router({
+const router = new Router({
   routes: [
     {
       path: '/',
@@ -58,5 +60,26 @@ export default new Router({
         },
       ],
     },
+    {
+      path: '/login',
+      name: 'Login',
+      component: Login,
+    },
+    {
+      path: '/logout',
+      name: 'Logout',
+      component: Logout,
+    },
   ],
 });
+
+router.beforeEach((to, from, next) => {
+  // If user logged out then logged back in, don't route them back to logout,
+  // but send them to root instead.
+  if (from.path === '/login' && to.path === '/logout') {
+    next('/');
+  }
+  next();
+});
+
+export default router;
