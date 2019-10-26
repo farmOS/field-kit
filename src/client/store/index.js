@@ -133,7 +133,6 @@ const farmModule = {
     logs: [],
     assets: [],
     areas: [],
-    photoLoc: '',
     geolocation: {},
     localArea: [],
     units: [],
@@ -218,10 +217,6 @@ const farmModule = {
     },
     clearEquipment(state) {
       state.equipment.splice(0, state.equipment.length);
-    },
-
-    setPhotoLoc(state, loc) {
-      state.photoLoc = loc;
     },
     setGeoloc(state, geoloc) {
       state.geolocation = geoloc;

@@ -2,12 +2,10 @@
 export default {
   actions: {
     /*
-    called when the get photo button is tapped; setPhotoLoc sets the captured
-    image URI to a variable in the store called photo_loc
+    called when the get photo button is tapped
     */
-    getPhotoLoc({ commit, rootState }, index) {
+    getPhotoFromCamera({ commit, rootState }, index) {
       function handleResponse(photoLoc) {
-        // commit('setPhotoLoc', photoLoc);
         const prevLog = rootState.farm.logs[index];
         const dataURL = `data:image/jpeg;base64,${photoLoc}`;
         const nowStamp = (Date.now() / 1000).toFixed(0);
@@ -56,36 +54,6 @@ function getPhotoFromCamera() {
     };
     navigator.camera.getPicture(onSuccess, onFail, options);
   });
-}
-
-/*
-Turns an image URI into a base64 encoded file
-Thanks to ourCodeWorld https://ourcodeworld.com/articles/read/80/how-to-convert-a-image-from-the-device-to-base64-with-javascript-in-cordova
-*/
-/*
-TODO: This might need to be moved to logFactory.js when the time comes, or deleted.
-It was only being used by formatState, which I removed after replacing it with logfactory
-for formatting logs prior to sending them to the server. This may need to be replaced
-too, since I don't think Alex ever got it to work, but it could be useful for reference
-and could even gain new life if it turns out the problem was on the server-end, not here.
-*/
-function getFileContentAsBase64(path, callback) { // eslint-disable-line no-unused-vars
-  function fail() {
-  }
-
-  function gotFile(fileEntry) {
-    fileEntry.file((file) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const content = this.result;
-        callback(content);
-      };
-      // The most important point, use the readAsDatURL Method from the file plugin
-      reader.readAsDataURL(file);
-    });
-  }
-
-  window.resolveLocalFileSystemURL(path, gotFile, fail);
 }
 
 function readFileData(file) {

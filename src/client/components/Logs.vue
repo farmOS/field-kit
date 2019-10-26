@@ -12,7 +12,6 @@
       :logs='logs'
       :areas='areas'
       :assets='assets'
-      :photoLoc='photoLoc'
       :geolocation='geolocation'
       :localArea='localArea'
       :useGeolocation='useGeolocation'
@@ -90,7 +89,6 @@ export default {
     areas: state => state.farm.areas,
     assets: state => state.farm.assets,
     statusText: state => state.farm.statusText,
-    photoLoc: state => state.farm.photoLoc,
     geolocation: state => state.farm.geolocation,
     localArea: state => state.farm.localArea,
     units: state => state.farm.units,

@@ -569,7 +569,6 @@ export default {
     'areas',
     'assets',
     'statusText',
-    'photoLoc',
     'geolocation',
     'localArea',
     'useGeolocation',
@@ -739,7 +738,7 @@ export default {
 
     getPhoto() {
       // Obtains an image location from the camera!
-      return this.$store.dispatch('getPhotoLoc', this.currentLogIndex);
+      return this.$store.dispatch('getPhotoFromCamera', this.currentLogIndex);
     },
 
     loadPhoto(files) {
@@ -911,10 +910,6 @@ export default {
   },
 
   watch: {
-    // When photoLoc changes, this updates the images property of the current log
-    photoLoc() {
-      this.updateCurrentLog('images', this.photoLoc);
-    },
     geolocation() {
       // When geolocation is set, EITHER set geofield OR select areas based on location
       if (this.attachGeo && this.geolocation.Longitude !== undefined) {
