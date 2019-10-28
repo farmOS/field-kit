@@ -29,7 +29,7 @@ export default {
   },
   methods: {
     resetDisplayFilters() {
-      this.$store.dispatch('resetDisplayFilters');
+      this.$emit('resetDisplayFilters');
     },
   },
 

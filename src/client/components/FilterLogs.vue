@@ -84,12 +84,12 @@
           type="checkbox"
           id="type-farm-activity"
           name="log-types"
-          :checked="!logDisplayFilters.excludeTypes.includes('farm_activity')"
-          @input="updateExcludeLogType('farm_activity', $event.target.checked)">
+          :checked="!logDisplayFilters.excludedTypes.includes('farm_activity')"
+          @input="updateExcludedLogType('farm_activity', $event.target.checked)">
         <label
           for="log-types"
-          @click="updateExcludeLogType('farm_activity', checkChecked('type-farm-activity'))"
-          :class="{selected: !logDisplayFilters.excludeTypes.includes('farm_activity')}">
+          @click="updateExcludedLogType('farm_activity', checkChecked('type-farm-activity'))"
+          :class="{selected: !logDisplayFilters.excludedTypes.includes('farm_activity')}">
           Activity
         </label>
       </div>
@@ -98,12 +98,12 @@
           type="checkbox"
           id="type-farm-harvest"
           name="log-types"
-          :checked="!logDisplayFilters.excludeTypes.includes('farm_harvest')"
-          @input="updateExcludeLogType('farm_harvest', $event.target.checked)">
+          :checked="!logDisplayFilters.excludedTypes.includes('farm_harvest')"
+          @input="updateExcludedLogType('farm_harvest', $event.target.checked)">
         <label
           for="log-types"
-          @click="updateExcludeLogType('farm_harvest', checkChecked('type-farm-harvest'))"
-          :class="{selected: !logDisplayFilters.excludeTypes.includes('farm_harvest')}">
+          @click="updateExcludedLogType('farm_harvest', checkChecked('type-farm-harvest'))"
+          :class="{selected: !logDisplayFilters.excludedTypes.includes('farm_harvest')}">
           Harvest
         </label>
       </div>
@@ -112,12 +112,12 @@
           type="checkbox"
           id="type-farm-input"
           name="log-types"
-          :checked="!logDisplayFilters.excludeTypes.includes('farm_input')"
-          @input="updateExcludeLogType('farm_input', $event.target.checked)">
+          :checked="!logDisplayFilters.excludedTypes.includes('farm_input')"
+          @input="updateExcludedLogType('farm_input', $event.target.checked)">
         <label
           for="log-types"
-          @click="updateExcludeLogType('farm_input', checkChecked('type-farm-input'))"
-          :class="{selected: !logDisplayFilters.excludeTypes.includes('farm_input')}">
+          @click="updateExcludedLogType('farm_input', checkChecked('type-farm-input'))"
+          :class="{selected: !logDisplayFilters.excludedTypes.includes('farm_input')}">
           Input
         </label>
       </div>
@@ -126,12 +126,12 @@
           type="checkbox"
           id="type-farm-observation"
           name="log-types"
-          :checked="!logDisplayFilters.excludeTypes.includes('farm_observation')"
-          @input="updateExcludeLogType('farm_observation', $event.target.checked)">
+          :checked="!logDisplayFilters.excludedTypes.includes('farm_observation')"
+          @input="updateExcludedLogType('farm_observation', $event.target.checked)">
         <label
           for="log-types"
-          @click="updateExcludeLogType('farm_observation', checkChecked('type-farm-observation'))"
-          :class="{selected: !logDisplayFilters.excludeTypes.includes('farm_observation')}">
+          @click="updateExcludedLogType('farm_observation', checkChecked('type-farm-observation'))"
+          :class="{selected: !logDisplayFilters.excludedTypes.includes('farm_observation')}">
           Observation
         </label>
       </div>
@@ -140,12 +140,12 @@
           type="checkbox"
           id="type-farm-seeding"
           name="log-types"
-          :checked="!logDisplayFilters.excludeTypes.includes('farm_seeding')"
-          @input="updateExcludeLogType('farm_seeding', $event.target.checked)">
+          :checked="!logDisplayFilters.excludedTypes.includes('farm_seeding')"
+          @input="updateExcludedLogType('farm_seeding', $event.target.checked)">
         <label
           for="log-types"
-          @click="updateExcludeLogType('farm_seeding', checkChecked('type-farm-seeding'))"
-          :class="{selected: !logDisplayFilters.excludeTypes.includes('farm_seeding')}">
+          @click="updateExcludedLogType('farm_seeding', checkChecked('type-farm-seeding'))"
+          :class="{selected: !logDisplayFilters.excludedTypes.includes('farm_seeding')}">
           Seeding
         </label>
       </div>
@@ -158,12 +158,12 @@
           type="checkbox"
           id="category-none"
           name="log-categories"
-          :checked="!logDisplayFilters.excludeCategories.includes(-1)"
-          @input="updateExcludeLogCategory(-1, $event.target.checked)">
+          :checked="!logDisplayFilters.excludedCategories.includes(-1)"
+          @input="updateExcludedLogCategory(-1, $event.target.checked)">
         <label
           for="log-categories"
-          @click="updateExcludeLogCategory(-1, checkChecked('category-none'))"
-          :class="{selected: !logDisplayFilters.excludeCategories.includes(-1)}">
+          @click="updateExcludedLogCategory(-1, checkChecked('category-none'))"
+          :class="{selected: !logDisplayFilters.excludedCategories.includes(-1)}">
           No Category
         </label>
       </div>
@@ -172,12 +172,12 @@
           type="checkbox"
           :id="`category-${category.tid}`"
           name="log-categories"
-          :checked="!logDisplayFilters.excludeCategories.includes(category.tid)"
-          @input="updateExcludeLogCategory(category.tid, $event.target.checked)">
+          :checked="!logDisplayFilters.excludedCategories.includes(category.tid)"
+          @input="updateExcludedLogCategory(category.tid, $event.target.checked)">
         <label
           for="log-categories"
-          @click="updateExcludeLogCategory(category.tid, checkChecked(`category-${category.tid}`))"
-          :class="{selected: !logDisplayFilters.excludeCategories.includes(category.tid)}">
+          @click="updateExcludedLogCategory(category.tid, checkChecked(`category-${category.tid}`))"
+          :class="{selected: !logDisplayFilters.excludedCategories.includes(category.tid)}">
           {{category.name}}
         </label>
       </div>
@@ -192,24 +192,24 @@ export default {
   props: [ 'categories', 'logDisplayFilters' ],
   methods: {
     // NOTE: We're tracking which types/categiries to EXCLUDE from My Logs
-    updateExcludeLogType(type, checked) {
+    updateExcludedLogType(type, checked) {
       if (!checked) {
-        this.$store.commit('addToExcludeTypes', type);
+        this.$emit('addToExcludedTypes', type);
         return;
       }
-      this.$store.commit('removeFromExcludeTypes', type);
+      this.$emit('removeFromExcludedTypes', type);
       return;
     },
-    updateExcludeLogCategory(type, checked) {
+    updateExcludedLogCategory(cat, checked) {
       if (!checked) {
-        this.$store.commit('addToExcludeCategories', type);
+        this.$emit('addToExcludedCategories', cat);
         return;
       }
-      this.$store.commit('removeFromExcludeCategories', type);
+      this.$emit('removeFromExcludedCategories', cat);
       return;
     },
     setDateFilter(value) {
-      this.$store.commit('setDateFilter', value);
+      this.$emit('setDateFilter', value);
     },
     checkChecked(id) {
       return !document.getElementById(id).checked;

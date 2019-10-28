@@ -5,10 +5,16 @@
       @toggleDrawer="$emit('toggleDrawer')"
       @deleteCurrentLog="openDeleteDialog($event)"
       @syncAll="syncAll"
+      @resetDisplayFilters="clearDisplayFilters"
       :logs='logs'
     />
     <router-view
       @deleteLog="openDeleteDialog($event)"
+      @addToExcludedTypes="addToExcludedTypes($event)"
+      @removeFromExcludedTypes="removeFromExcludedTypes($event)"
+      @addToExcludedCategories="addToExcludedCategories($event)"
+      @removeFromExcludedCategories="removeFromExcludedCategories($event)"
+      @setDateFilter="setDateFilter($event)"
       :logs='logs'
       :areas='areas'
       :assets='assets'
@@ -79,6 +85,13 @@ export default {
     return {
       showDeleteDialog: false,
       logIndexToDelete: null,
+      logDisplayFilters: {
+        date: 'ALL_TIME',
+        // NOTE: We're tracking which types/categories to EXCLUDE, so we can manage
+        // defaults more easily w/o having to poll the server for the list
+        excludedTypes: [],
+        excludedCategories: [],
+      },
     };
   },
   props: ['useGeolocation'],
@@ -90,7 +103,6 @@ export default {
     userId: state => state.shell.user.uid,
     categories: state => state.farm.categories,
     equipment: state => state.farm.equipment,
-    logDisplayFilters: state => state.shell.settings.logDisplayFilters,
   }),
   created() {
     this.$store.dispatch('loadCachedUserAndSiteInfo');
@@ -101,19 +113,22 @@ export default {
     this.$store.commit('clearUnits');
     this.$store.commit('clearCategories');
     this.$store.commit('clearEquipment');
-    this.$store.commit('clearDisplayFilters');
     this.$store.dispatch('loadCachedLogs');
     this.$store.dispatch('loadCachedAssets');
     this.$store.dispatch('loadCachedAreas');
     this.$store.dispatch('loadCachedUnits');
     this.$store.dispatch('loadCachedCategories');
     this.$store.dispatch('loadCachedEquipment');
-    this.$store.dispatch('loadCachedDisplayFilters');
+    this.clearDisplayFilters();
+    this.loadCachedDisplayFilters();
   },
   beforeDestroy() {
     this.$store.commit('clearLogs');
   },
   methods: {
+    /**
+     * DELETION METHODS
+     */
     openDeleteDialog(index) {
       this.showDeleteDialog = true;
       this.logIndexToDelete = index;
@@ -137,6 +152,10 @@ export default {
         this.$router.push({ path: '/logs' });
       }
     },
+
+    /**
+     * SYNCING
+     */
     syncAll() {
       this.$store.dispatch('syncAllLogs');
       this.$store.dispatch('updateAssets');
@@ -144,6 +163,66 @@ export default {
       this.$store.dispatch('updateUnits');
       this.$store.dispatch('updateCategories');
       this.$store.dispatch('updateEquipment');
+    },
+
+    /**
+     * FILTER METHODS
+     */
+    addToExcludedTypes(type) {
+      const newArr = this.logDisplayFilters.excludedTypes.concat(type);
+      this.logDisplayFilters.excludedTypes = newArr;
+      localStorage.setItem('excludedTypes', JSON.stringify(newArr));
+    },
+    removeFromExcludedTypes(type) {
+      const newArr = this.logDisplayFilters.excludedTypes.filter(_type => (
+        type !== _type
+      ));
+      this.logDisplayFilters.excludedTypes = newArr;
+      localStorage.setItem('excludedTypes', JSON.stringify(newArr));
+    },
+    addToExcludedCategories(cat) {
+      const newArr = this.logDisplayFilters.excludedCategories.concat(cat);
+      this.logDisplayFilters.excludedCategories = newArr;
+      localStorage.setItem('excludedCategories', JSON.stringify(newArr));
+    },
+    removeFromExcludedCategories(cat) {
+      const newArr = this.logDisplayFilters.excludedCategories.filter(_cat => (
+        cat !== _cat
+      ));
+      this.logDisplayFilters.excludedCategories = newArr;
+      localStorage.setItem('excludedCategories', JSON.stringify(newArr));
+    },
+    setDateFilter(value) {
+      this.logDisplayFilters.date = value;
+      localStorage.setItem('dateFilter', value);
+    },
+    clearDisplayFilters() {
+      this.logDisplayFilters = {
+        date: 'ALL_TIME',
+        excludedTypes: [],
+        excludedCategories: [],
+      };
+    },
+    loadCachedDisplayFilters() {
+      const exTypes = JSON.parse(localStorage.getItem('excludedTypes'));
+      const exCats = JSON.parse(localStorage.getItem('excludedCategories'));
+      const date = localStorage.getItem('dateFilter');
+
+      if (exTypes !== null) {
+        exTypes.forEach(type => this.addToExcludedTypes(type));
+      }
+      if (exCats !== null) {
+        exCats.forEach(cat => this.addToExcludedCategories(cat));
+      }
+      if (date !== null) {
+        this.setDateFilter(date);
+      }
+    },
+    resetDisplayFilters() {
+      this.clearDisplayFilters();
+      localStorage.setItem('excludedTypes', '[]');
+      localStorage.setItem('excludedCategories', '[]');
+      localStorage.setItem('dateFilter', 'ALL_TIME');
     },
   }
 };

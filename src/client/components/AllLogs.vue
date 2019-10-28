@@ -143,13 +143,13 @@ export default {
       }
     },
     passesFilters(log) {
-      const passesTypeFilter = !this.logDisplayFilters.excludeTypes.includes(log.type.data);
+      const passesTypeFilter = !this.logDisplayFilters.excludedTypes.includes(log.type.data);
       const passesCategoryFilter = () => {
-        if (log.log_category.data.length === 0 && this.logDisplayFilters.excludeCategories.includes(-1)) {
+        if (log.log_category.data.length === 0 && this.logDisplayFilters.excludedCategories.includes(-1)) {
           return false;
         }
         return !log.log_category.data.some(cat => (
-          this.logDisplayFilters.excludeCategories.some(exCat => +exCat === +cat.id)
+          this.logDisplayFilters.excludedCategories.some(exCat => +exCat === +cat.id)
         )
       )};
       const passesDateFilter = () => {

@@ -22,13 +22,6 @@ export default {
         done: '0',
         type: ['farm_activity', 'farm_observation', 'farm_harvest', 'farm_input', 'farm_seeding'],
       },
-      logDisplayFilters: {
-        date: 'ALL_TIME',
-        // NOTE: We're tracking which types/categories to EXCLUDE, so we can manage
-        // defaults more easily w/o having to poll the server for the list
-        excludeTypes: [],
-        excludeCategories: [],
-      },
     },
   },
   mutations: {
@@ -66,64 +59,6 @@ export default {
     },
     setUseGeolocation(state, bool) {
       state.settings.useGeolocation = bool;
-    },
-    addToExcludeTypes(state, type) {
-      const newArr = state.settings.logDisplayFilters.excludeTypes.concat(type);
-      state.settings.logDisplayFilters.excludeTypes = newArr;
-      localStorage.setItem('excludeTypes', JSON.stringify(newArr));
-    },
-    removeFromExcludeTypes(state, type) {
-      const newArr = state.settings.logDisplayFilters.excludeTypes.filter(_type => (
-        type !== _type
-      ));
-      state.settings.logDisplayFilters.excludeTypes = newArr;
-      localStorage.setItem('excludeTypes', JSON.stringify(newArr));
-    },
-    addToExcludeCategories(state, cat) {
-      const newArr = state.settings.logDisplayFilters.excludeCategories.concat(cat);
-      state.settings.logDisplayFilters.excludeCategories = newArr;
-      localStorage.setItem('excludeCategories', JSON.stringify(newArr));
-    },
-    removeFromExcludeCategories(state, cat) {
-      const newArr = state.settings.logDisplayFilters.excludeCategories.filter(_cat => (
-        cat !== _cat
-      ));
-      state.settings.logDisplayFilters.excludeCategories = newArr;
-      localStorage.setItem('excludeCategories', JSON.stringify(newArr));
-    },
-    setDateFilter(state, value) {
-      state.settings.logDisplayFilters.date = value;
-      localStorage.setItem('dateFilter', value);
-    },
-    clearDisplayFilters(state) {
-      state.settings.logDisplayFilters = {
-        date: 'ALL_TIME',
-        excludeTypes: [],
-        excludeCategories: [],
-      };
-    },
-  },
-  actions: {
-    loadCachedDisplayFilters({ commit }) {
-      const exTypes = JSON.parse(localStorage.getItem('excludeTypes'));
-      const exCats = JSON.parse(localStorage.getItem('excludeCategories'));
-      const date = localStorage.getItem('dateFilter');
-
-      if (exTypes !== null) {
-        exTypes.forEach(type => commit('addToExcludeTypes', type));
-      }
-      if (exCats !== null) {
-        exCats.forEach(cat => commit('addToExcludeCategories', cat));
-      }
-      if (date !== null) {
-        commit('setDateFilter', date);
-      }
-    },
-    resetDisplayFilters({ commit }) {
-      commit('clearDisplayFilters');
-      localStorage.setItem('excludeTypes', '[]');
-      localStorage.setItem('excludeCategories', '[]');
-      localStorage.setItem('dateFilter', 'ALL_TIME');
     },
   },
 };
