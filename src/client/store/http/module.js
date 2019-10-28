@@ -62,9 +62,10 @@ export default {
           index,
           props: {
             id: response.id,
+            remoteUri: response.uri,
             wasPushedToServer: true,
             isReadyToSync: false,
-            remoteUri: response.uri,
+            isCachedLocally: false,
           },
         });
       }
