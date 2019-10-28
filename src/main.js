@@ -1,5 +1,5 @@
 import 'farmOS-map/src/main';
-import app from '@/client/app';
+import app from '@/core/app';
 import weather from '@/field-modules/weather';
 import logs from '@/field-modules/my-logs';
 

@@ -24,10 +24,10 @@
 </template>
 
 <script>
-import MenuBar from '@/client/components/MenuBar';
-import IconCloudUpload from '@/icons/icon-cloud-upload';
-import IconFilter from '@/icons/icon-filter';
-import IconMenu from '@/icons/icon-menu';
+import MenuBar from '@/components/MenuBar';
+import IconCloudUpload from '@/components/icons/icon-cloud-upload';
+import IconFilter from '@/components/icons/icon-filter';
+import IconMenu from '@/components/icons/icon-menu';
 
 export default {
   name: 'AllLogsMenuBar',

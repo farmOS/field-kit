@@ -32,10 +32,10 @@
 </template>
 
 <script>
-import MenuBar from '@/client/components/MenuBar';
-import IconArrowBack from '@/icons/icon-arrow-back';
-import IconDelete from '@/icons/icon-delete';
-import IconOpenInNew from '@/icons/icon-open-in-new';
+import MenuBar from '@/components/MenuBar';
+import IconArrowBack from '@/components/icons/icon-arrow-back';
+import IconDelete from '@/components/icons/icon-delete';
+import IconOpenInNew from '@/components/icons/icon-open-in-new';
 
 export default {
   name: 'EditLogsMenuBar',

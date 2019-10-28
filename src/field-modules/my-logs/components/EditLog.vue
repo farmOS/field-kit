@@ -508,13 +508,13 @@
 </template>
 
 <script>
-import Autocomplete from '@/client/components/Autocomplete';
-import IconExpandLess from '@/icons/icon-expand-less';
-import IconExpandMore from '@/icons/icon-expand-more';
-import IconSpinner from '@/icons/icon-spinner';
-import Map from '@/client/components/Map';
-import ToggleCheck from '@/client/components/ToggleCheck';
-import SelectBox from '@/client/components/SelectBox';
+import Autocomplete from '@/components/Autocomplete';
+import IconExpandLess from '@/components/icons/icon-expand-less';
+import IconExpandMore from '@/components/icons/icon-expand-more';
+import IconSpinner from '@/components/icons/icon-spinner';
+import Map from '@/components/Map';
+import ToggleCheck from '@/components/ToggleCheck';
+import SelectBox from '@/components/SelectBox';
 import { mergeGeometries, removeGeometry, isNearby } from '@/utils/geometry';
 
 export default {

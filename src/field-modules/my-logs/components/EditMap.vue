@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import Map from '@/client/components/Map';
+import Map from '@/components/Map';
 
 export default {
   name: 'EditMap',

@@ -87,15 +87,15 @@
 <script>
 import moment from 'moment';
 import getLogType from '@/utils/getLogType';
-import IconAddCircle from '@/icons/icon-add-circle';
-import IconAssignment from '@/icons/icon-assignment';
-import IconAssignmentDone from '@/icons/icon-assignment-done';
-import IconAssignmentLate from '@/icons/icon-assignment-late';
-import IconCloudDone from '@/icons/icon-cloud-done';
-import IconCloudUpload from '@/icons/icon-cloud-upload';
-import IconDelete from '@/icons/icon-delete';
-import IconEdit from '@/icons/icon-edit';
-import IconSync from '@/icons/icon-sync';
+import IconAddCircle from '@/components/icons/icon-add-circle';
+import IconAssignment from '@/components/icons/icon-assignment';
+import IconAssignmentDone from '@/components/icons/icon-assignment-done';
+import IconAssignmentLate from '@/components/icons/icon-assignment-late';
+import IconCloudDone from '@/components/icons/icon-cloud-done';
+import IconCloudUpload from '@/components/icons/icon-cloud-upload';
+import IconDelete from '@/components/icons/icon-delete';
+import IconEdit from '@/components/icons/icon-edit';
+import IconSync from '@/components/icons/icon-sync';
 
 export default {
   name: 'AllLogs',

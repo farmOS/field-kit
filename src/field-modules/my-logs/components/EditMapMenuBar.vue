@@ -10,8 +10,8 @@
 </template>
 
 <script>
-import MenuBar from '@/client/components/MenuBar';
-import IconArrowBack from '@/icons/icon-arrow-back';
+import MenuBar from '@/components/MenuBar';
+import IconArrowBack from '@/components/icons/icon-arrow-back';
 
 export default {
   name: 'EditMapMenuBar',

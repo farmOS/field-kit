@@ -1,6 +1,6 @@
 import farmOS from 'farmos';
 import Promise from 'core-js-pure/features/promise';
-import router from '@/client/router';
+import router from '@/core/router';
 import makeLog from '@/utils/makeLog';
 import { SyncError, checkLog, processLog } from './sync';
 

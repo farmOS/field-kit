@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import IconMoreVert from '../../icons/icon-more-vert.vue'; // eslint-disable-line import/extensions
+import IconMoreVert from './icons/icon-more-vert';
 
 export default {
   name: 'MenuBar',
