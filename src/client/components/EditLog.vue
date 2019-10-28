@@ -569,7 +569,6 @@ export default {
     'areas',
     'assets',
     'statusText',
-    'geolocation',
     'localArea',
     'useGeolocation',
     'units',
@@ -752,17 +751,29 @@ export default {
     },
 
     addLocation() {
-      // Get geolocation if necessary; otherwise add geolocation
-      if (this.geolocation.Longitude === undefined) {
-        this.$store.dispatch('getGeolocation');
-        this.attachGeo = true;
-        this.isWorking = true;
+      function addGeofield(position) {
+        const props = this.logs[this.currentLogIndex].geofield.data.concat({
+          geom: `POINT (${position.coords.longitude} ${position.coords.latitude})`
+        });
+        this.updateCurrentLog('geofield', props);
+        this.isWorking = false;
       }
-      if (this.geolocation.Longitude !== undefined) {
-        this.attachGeo = true;
-        const location = JSON.parse(`[{"geom":"POINT (${this.geolocation.Longitude} ${this.geolocation.Latitude})"}]`);
-        this.updateCurrentLog('geofield', location);
+      function onError({ message }) {
+        const errorPayload = { message, level: 'warning', show: false, };
+        this.$store.commit('logError', errorPayload);
+        this.isWorking = false;
       }
+      const options = {
+        enableHighAccuracy: true,
+        timeout: 5000,
+      };
+
+      this.isWorking = true;
+      navigator.geolocation.getCurrentPosition(
+        addGeofield.bind(this),
+        onError.bind(this),
+        options,
+      );
     },
 
     checkAreas() {
@@ -910,19 +921,6 @@ export default {
   },
 
   watch: {
-    geolocation() {
-      // When geolocation is set, EITHER set geofield OR select areas based on location
-      if (this.attachGeo && this.geolocation.Longitude !== undefined) {
-        const location = JSON.parse(`[{"geom":"POINT (${this.geolocation.Longitude} ${this.geolocation.Latitude})"}]`);
-        this.updateCurrentLog('geofield', location);
-        this.isWorking = false;
-        // If we are getting local areas
-      }
-      if (this.useLocalAreas && this.geolocation.Longitude !== undefined) {
-        this.checkAreas();
-        this.isWorking = false;
-      }
-    },
     useLocalAreas() {
       // If useLocalAreas is set to true, get geolocation and checkAreas
       if (this.useLocalAreas) {

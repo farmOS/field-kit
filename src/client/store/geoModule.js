@@ -4,26 +4,6 @@ import * as turf from '@turf/turf';
 
 export default {
   actions: {
-    getGeolocation({ commit }) {
-      const currentLoc = {};
-      function onSuccess(position) {
-        currentLoc.Latitude = position.coords.latitude;
-        currentLoc.Longitude = position.coords.longitude;
-        currentLoc.Altitude = position.coords.altitude;
-        currentLoc.Accuracy = position.coords.accuracy;
-        currentLoc.AltitudeAccuracy = position.coords.altitudeAccuracy;
-        currentLoc.Heading = position.coords.heading;
-        currentLoc.Speed = position.coords.speed;
-        currentLoc.Timestamp = position.timestamp;
-        // Set 'geolocation' variable in the app store
-        commit('setGeoloc', currentLoc);
-      }
-      function onError(error) { // eslint-disable-line no-unused-vars
-      }
-      // Use the Cordova geolocation plugin to get current location from the device OR browser
-      navigator.geolocation.getCurrentPosition(onSuccess, onError);
-    },
-
     checkInNear({ commit }, params) {
       // For each polygon I need lon,lat pairs in a nested numeric array, as in [[o,a],[o,a]]
       function parsePoly(poly) {

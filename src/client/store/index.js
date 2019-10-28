@@ -220,9 +220,6 @@ const farmModule = {
     clearEquipment(state) {
       state.equipment.splice(0, state.equipment.length);
     },
-    setGeoloc(state, geoloc) {
-      state.geolocation = geoloc;
-    },
     addLocalArea(state, area) {
       state.localArea.push(area);
     },
