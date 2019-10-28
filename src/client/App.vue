@@ -115,9 +115,11 @@ export default {
     username: state => state.shell.user.name,
     isLoggedIn: state => state.shell.user.isLoggedIn,
     useGeolocation: state => state.shell.settings.useGeolocation,
-    farmName: state => state.farm.name,
+    farmName: state => state.shell.farmInfo.name,
     // Provide an example url for the dev server environment
-    farmUrl: state => ((state.farm.url === '') ? 'example.farmos.net' : state.farm.url),
+    farmUrl: state => ((state.shell.farmInfo.url === '')
+      ? 'example.farmos.net'
+      : state.shell.farmInfo.url),
   }),
   watch: {
     showDrawer(currentShowDrawer) {

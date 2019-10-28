@@ -18,6 +18,10 @@ const shellModule = {
       uid: null,
       isLoggedIn: false,
     },
+    farmInfo: {
+      name: '',
+      url: '',
+    },
     mapboxAPIKey: '',
     settings: {
       useGeolocation: true,
@@ -56,6 +60,12 @@ const shellModule = {
     changeUid(state, uid) {
       state.user.uid = uid;
       state.settings.logImportFilters.log_owner = uid;
+    },
+    changeFarmName(state, name) {
+      state.farmInfo.name = name;
+    },
+    changeFarmUrl(state, url) {
+      state.farmInfo.url = url;
     },
     changeMapboxAPIKey(state, key) {
       state.mapboxAPIKey = key;
@@ -129,8 +139,6 @@ const shellModule = {
 
 const farmModule = {
   state: {
-    name: '',
-    url: '',
     logs: [],
     assets: [],
     areas: [],
@@ -139,12 +147,6 @@ const farmModule = {
     equipment: [],
   },
   mutations: {
-    changeFarmName(state, name) {
-      state.name = name;
-    },
-    changeFarmUrl(state, url) {
-      state.url = url;
-    },
     addLogs(state, logs) {
       state.logs = state.logs.concat(logs);
     },
