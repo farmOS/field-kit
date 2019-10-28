@@ -6,7 +6,6 @@ import idbModule from './idb/module';
 import httpModule from './http/module';
 import authModule from './authModule';
 import camModule from './camModule';
-import geoModule from './geoModule';
 
 Vue.use(Vuex);
 
@@ -135,8 +134,6 @@ const farmModule = {
     logs: [],
     assets: [],
     areas: [],
-    geolocation: {},
-    localArea: [],
     units: [],
     categories: [],
     equipment: [],
@@ -220,12 +217,6 @@ const farmModule = {
     clearEquipment(state) {
       state.equipment.splice(0, state.equipment.length);
     },
-    addLocalArea(state, area) {
-      state.localArea.push(area);
-    },
-    clearLocalArea(state) {
-      state.localArea = [];
-    },
   },
   actions: {
     initializeLog({ commit, dispatch }, initProps) {
@@ -247,7 +238,6 @@ const store = new Vuex.Store({
     idb: idbModule,
     http: httpModule,
     auth: authModule,
-    geo: geoModule,
     cam: camModule,
   },
 });

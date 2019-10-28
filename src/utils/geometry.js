@@ -1,4 +1,5 @@
 import { parse, stringify } from 'wellknown';
+import { circle, polygon, intersect } from '@turf/turf';
 
 function compare(geojson1, geojson2) {
   return JSON.stringify(geojson1.coordinates) === JSON.stringify(geojson2.coordinates);
@@ -97,4 +98,12 @@ export function removeGeometry(minuend, subtrahend) {
     return isMatch ? '' : minuend;
   }
   throw new Error('Format(s) not recognized as valid WKT.');
+}
+
+export function isNearby(location, wkt, radius) {
+  const geoJSON = parse(wkt);
+  const radiusAroundLocation = circle(location, radius, { units: 'kilometers' });
+  const feature = polygon(geoJSON.coordinates);
+  const intersection = intersect(radiusAroundLocation, feature);
+  return intersection !== null;
 }

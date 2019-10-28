@@ -284,11 +284,11 @@
           @input="addArea($event.target.value)"
           class="form-control"
           name="areas">
-          <option v-if="localArea.length < 1" value="">No other areas nearby</option>
-          <option v-if="localArea.length > 0" value="" selected>-- Select an Area --</option>
+          <option v-if="localAreas.length < 1" value="">No other areas nearby</option>
+          <option v-if="localAreas.length > 0" value="" selected>-- Select an Area --</option>
           <option
-            v-if="localArea.length > 0"
-            v-for="area in localArea"
+            v-if="localAreas.length > 0"
+            v-for="area in localAreas"
             :value="area.tid"
             v-bind:key="`area-${area.tid}`">
             {{area.name}}
@@ -361,7 +361,7 @@
               &#x2715;
             </span>
           </li>
-          <li class="list-item-group" v-if="attachGeo && isWorking">
+          <li class="list-item-group" v-if="isWorking">
             <icon-spinner/>
           </li>
         </ul>
@@ -515,7 +515,7 @@ import IconSpinner from '../../icons/icon-spinner.vue'; // eslint-disable-line i
 import Map from './Map';
 import ToggleCheck from './ToggleCheck.vue';
 import SelectBox from './SelectBox.vue';
-import { mergeGeometries, removeGeometry } from '../../utils/geometry.js';
+import { mergeGeometries, removeGeometry, isNearby } from '../../utils/geometry.js';
 
 export default {
   name: 'EditLog',
@@ -533,10 +533,9 @@ export default {
     return {
       tabSelected: 'FIRST',
       imageUrls: [],
-      attachGeo: false,
       useLocalAreas: false,
-      addedArea: false,
       isWorking: false,
+      localAreas: [],
       showAllCategories: false,
       // All types available to the log, with system_name:display name as key:value
       logTypes: {
@@ -568,8 +567,6 @@ export default {
     'logs',
     'areas',
     'assets',
-    'statusText',
-    'localArea',
     'useGeolocation',
     'units',
     'categories',
@@ -677,9 +674,7 @@ export default {
         const areaReference = { id: id, resource: 'farm_area'};
         const newAreas = this.logs[this.currentLogIndex].area.data.concat(areaReference);
         this.updateCurrentLog('area', newAreas);
-        this.checkAreas();
       }
-      this.checkAreas();
     },
 
     addQuant() {
@@ -774,20 +769,6 @@ export default {
         onError.bind(this),
         options,
       );
-    },
-
-    checkAreas() {
-      // Use checkInside with each area to see if the current location is inside an area
-      this.filteredAreas.forEach((area) => {
-        if (area.geofield[0] !== undefined && this.geolocation.Longitude !== undefined) {
-          // If the current location is inside an area, add the area to the log
-          const lonlat = [this.geolocation.Longitude, this.geolocation.Latitude];
-          // checkInNear requires a point, an area, and a radius around the point in kilometers
-          const areaProps = { point: lonlat, area, radius: 0.02 };
-          // This is the problem!  Dispatch isn't working...
-          this.$store.dispatch('checkInNear', areaProps);
-        }
-      });
     },
 
     getAttached(attribute, resources, resId) {
@@ -922,20 +903,29 @@ export default {
 
   watch: {
     useLocalAreas() {
-      // If useLocalAreas is set to true, get geolocation and checkAreas
+      // If useLocalAreas is set to true, get geolocation and nearby areas
       if (this.useLocalAreas) {
-        // If necessary get geolocation; otherwise run checkAreas
-        if (this.geolocation.Longitude === undefined) {
-          // Clear local areas before populating
-          this.$store.commit('clearLocalArea');
-          this.$store.dispatch('getGeolocation');
-          // Set 'is working' until results are retrieved
-          this.isWorking = true;
+        function filterAreasByProximity(position) {
+          this.localAreas = this.filteredAreas.filter(area => isNearby(
+            [position.coords.longitude, position.coords.latitude],
+            area.geofield[0].geom,
+            (position.coords.accuracy / 1000),
+          ));
         }
-        if (this.geolocation.Longitude !== undefined) {
-          this.$store.commit('clearLocalArea');
-          this.checkAreas();
+        function onError({ message }) {
+          const errorPayload = { message, level: 'warning', show: false, };
+          this.$store.commit('logError', errorPayload);
         }
+        const options = {
+          enableHighAccuracy: true,
+          timeout: 5000,
+        };
+
+        navigator.geolocation.getCurrentPosition(
+          filterAreasByProximity.bind(this),
+          onError.bind(this),
+          options,
+        )
       }
     },
 

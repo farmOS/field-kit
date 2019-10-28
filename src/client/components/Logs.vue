@@ -12,8 +12,6 @@
       :logs='logs'
       :areas='areas'
       :assets='assets'
-      :geolocation='geolocation'
-      :localArea='localArea'
       :useGeolocation='useGeolocation'
       :units='units'
       :categories='categories'
@@ -88,7 +86,6 @@ export default {
     logs: state => state.farm.logs,
     areas: state => state.farm.areas,
     assets: state => state.farm.assets,
-    localArea: state => state.farm.localArea,
     units: state => state.farm.units,
     userId: state => state.shell.user.uid,
     categories: state => state.farm.categories,
