@@ -508,14 +508,14 @@
 </template>
 
 <script>
-import Autocomplete from './Autocomplete';
-import IconExpandLess from '../../icons/icon-expand-less.vue'; // eslint-disable-line import/extensions
-import IconExpandMore from '../../icons/icon-expand-more.vue'; // eslint-disable-line import/extensions
-import IconSpinner from '../../icons/icon-spinner.vue'; // eslint-disable-line import/extensions
-import Map from './Map';
-import ToggleCheck from './ToggleCheck.vue';
-import SelectBox from './SelectBox.vue';
-import { mergeGeometries, removeGeometry, isNearby } from '../../utils/geometry.js';
+import Autocomplete from '@/client/components/Autocomplete';
+import IconExpandLess from '@/icons/icon-expand-less';
+import IconExpandMore from '@/icons/icon-expand-more';
+import IconSpinner from '@/icons/icon-spinner';
+import Map from '@/client/components/Map';
+import ToggleCheck from '@/client/components/ToggleCheck';
+import SelectBox from '@/client/components/SelectBox';
+import { mergeGeometries, removeGeometry, isNearby } from '@/utils/geometry';
 
 export default {
   name: 'EditLog',

@@ -32,10 +32,10 @@
 </template>
 
 <script>
-import MenuBar from './MenuBar.vue'; // eslint-disable-line import/extensions
-import IconArrowBack from '../../icons/icon-arrow-back.vue'; // eslint-disable-line import/extensions
-import IconDelete from '../../icons/icon-delete.vue'; // eslint-disable-line import/extensions
-import IconOpenInNew from '../../icons/icon-open-in-new.vue'; // eslint-disable-line import/extensions
+import MenuBar from '@/client/components/MenuBar';
+import IconArrowBack from '@/icons/icon-arrow-back';
+import IconDelete from '@/icons/icon-delete';
+import IconOpenInNew from '@/icons/icon-open-in-new';
 
 export default {
   name: 'EditLogsMenuBar',

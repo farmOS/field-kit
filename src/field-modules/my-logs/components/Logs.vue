@@ -5,7 +5,7 @@
       @toggleDrawer="$emit('toggleDrawer')"
       @deleteCurrentLog="openDeleteDialog($event)"
       @syncAll="syncAll"
-      @resetDisplayFilters="clearDisplayFilters"
+      @resetDisplayFilters="resetDisplayFilters"
       :logs='logs'
     />
     <router-view

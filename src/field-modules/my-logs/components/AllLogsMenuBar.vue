@@ -24,10 +24,10 @@
 </template>
 
 <script>
-import MenuBar from './MenuBar.vue' // eslint-disable-line import/extensions
-import IconCloudUpload from '../../icons/icon-cloud-upload.vue'; // eslint-disable-line import/extensions
-import IconFilter from '../../icons/icon-filter.vue'; // eslint-disable-line import/extensions
-import IconMenu from '../../icons/icon-menu.vue'; // eslint-disable-line import/extensions
+import MenuBar from '@/client/components/MenuBar';
+import IconCloudUpload from '@/icons/icon-cloud-upload';
+import IconFilter from '@/icons/icon-filter';
+import IconMenu from '@/icons/icon-menu';
 
 export default {
   name: 'AllLogsMenuBar',

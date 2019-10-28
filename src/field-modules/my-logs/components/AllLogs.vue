@@ -86,18 +86,19 @@
 
 <script>
 import moment from 'moment';
-import getLogType from '@/utils/getLogType'
-import IconAddCircle from '../../icons/icon-add-circle.vue'; // eslint-disable-line import/extensions
-import IconAssignment from '../../icons/icon-assignment.vue'; // eslint-disable-line import/extensions
-import IconAssignmentDone from '../../icons/icon-assignment-done.vue'; // eslint-disable-line import/extensions
-import IconAssignmentLate from '../../icons/icon-assignment-late.vue'; // eslint-disable-line import/extensions
-import IconCloudDone from '../../icons/icon-cloud-done.vue'; // eslint-disable-line import/extensions
-import IconCloudUpload from '../../icons/icon-cloud-upload.vue'; // eslint-disable-line import/extensions
-import IconDelete from '../../icons/icon-delete.vue'; // eslint-disable-line import/extensions
-import IconEdit from '../../icons/icon-edit.vue'; // eslint-disable-line import/extensions
-import IconSync from '../../icons/icon-sync.vue'; // eslint-disable-line import/extensions
+import getLogType from '@/utils/getLogType';
+import IconAddCircle from '@/icons/icon-add-circle';
+import IconAssignment from '@/icons/icon-assignment';
+import IconAssignmentDone from '@/icons/icon-assignment-done';
+import IconAssignmentLate from '@/icons/icon-assignment-late';
+import IconCloudDone from '@/icons/icon-cloud-done';
+import IconCloudUpload from '@/icons/icon-cloud-upload';
+import IconDelete from '@/icons/icon-delete';
+import IconEdit from '@/icons/icon-edit';
+import IconSync from '@/icons/icon-sync';
 
 export default {
+  name: 'AllLogs',
   props: [
     'logs',
     'userId',

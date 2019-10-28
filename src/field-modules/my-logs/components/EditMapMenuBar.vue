@@ -10,8 +10,8 @@
 </template>
 
 <script>
-import MenuBar from './MenuBar.vue'; // eslint-disable-line import/extensions
-import IconArrowBack from '../../icons/icon-arrow-back.vue'; // eslint-disable-line import/extensions
+import MenuBar from '@/client/components/MenuBar';
+import IconArrowBack from '@/icons/icon-arrow-back';
 
 export default {
   name: 'EditMapMenuBar',

@@ -1,8 +1,10 @@
 import 'farmOS-map/src/main';
 import app from '@/client/app';
-import weather from '@/vue-plugins/weather';
+import weather from '@/field-modules/weather';
+import logs from '@/field-modules/my-logs';
 
 app('#app', [
+  logs,
   weather,
 ]);
 

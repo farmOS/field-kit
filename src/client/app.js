@@ -4,7 +4,7 @@ import store from './store';
 import App from './App.vue'; // eslint-disable-line import/extensions
 import './bootstrap-simplex.min.css';
 import './vars.css';
-import manifest from '../vue-plugins/test-plugin/manifest.json';
+import manifest from '../field-modules/test-plugin/manifest.json';
 
 Vue.config.productionTip = false;
 
