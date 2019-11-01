@@ -13,15 +13,10 @@ export default {
       name: '',
       url: '',
     },
+    currentModule: 'my-logs',
     mapboxAPIKey: '',
     settings: {
       useGeolocation: true,
-      // search parameters for getting logs from the server.  Log_owner set when user.uid is set
-      logImportFilters: {
-        log_owner: null,
-        done: '0',
-        type: ['farm_activity', 'farm_observation', 'farm_harvest', 'farm_input', 'farm_seeding'],
-      },
     },
   },
   mutations: {
@@ -43,7 +38,6 @@ export default {
     },
     changeUid(state, uid) {
       state.user.uid = uid;
-      state.settings.logImportFilters.log_owner = uid;
     },
     changeFarmName(state, name) {
       state.farmInfo.name = name;

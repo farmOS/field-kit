@@ -12,6 +12,48 @@ const farm = () => {
 };
 
 export default {
+  state: {
+    importFilters: {
+      logs: [],
+    },
+  },
+  mutations: {
+    updateLogImportFilters(state, filterObject) {
+      const matchIndex = state.importFilters.logs
+        .findIndex(obj => obj.module === filterObject.module);
+      if (matchIndex > -1) {
+        state.importFilters.logs.splice(matchIndex, 1, filterObject);
+      } else {
+        state.importFilters.logs.push(filterObject);
+      }
+    },
+  },
+  getters: {
+    logImportFilters: (state, getters, rootState) => state.importFilters.logs
+      .filter(obj => obj.module === rootState.shell.currentModule)
+      .reduce((_, cur) => {
+        const { type } = Array.isArray(cur.type) ? cur : undefined;
+        let logOwner; let done;
+
+        if (cur.log_owner === 'SELF') {
+          logOwner = rootState.shell.user.uid;
+        } else if (typeof cur.log_owner === 'number') {
+          logOwner = cur.log_owner;
+        } else {
+          logOwner = undefined;
+        }
+
+        if (cur.done === 0 || cur.done === false) {
+          done = 0;
+        } else if (cur.done === 1 || cur.done === true) {
+          done = 1;
+        } else {
+          done = undefined;
+        }
+
+        return { log_owner: logOwner, done, type };
+      }, {}),
+  },
   actions: {
     updateAreas({ commit }) {
       return farm().area.get().then((res) => {
@@ -100,10 +142,12 @@ export default {
     },
 
     // GET LOGS FROM SERVER (step 1 of sync)
-    getServerLogs({ commit, dispatch, rootState }) {
+    getServerLogs({
+      commit, getters, dispatch, rootState,
+    }) {
       const syncDate = localStorage.getItem('syncDate');
       const allLogs = rootState.farm.logs;
-      return farm().log.get(rootState.shell.settings.logImportFilters)
+      return farm().log.get(getters.logImportFilters)
         .then(res => (
           // Returns an array of ids which have already been checked & merged
           res.list.map((log) => {

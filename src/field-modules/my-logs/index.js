@@ -8,8 +8,10 @@ import EditMapMenuBar from './components/EditMapMenuBar';
 import FilterLogs from './components/FilterLogs';
 import FilterLogsMenuBar from './components/FilterLogsMenuBar';
 
+const modName = 'my-logs';
+
 export default {
-  install(Vue, { router }) {
+  install(Vue, { router, store }) {
     const LogsComponent = Vue.component(Logs.name, Logs);
     const AllLogsComponent = Vue.component(AllLogs.name, AllLogs);
     const AllLogsMenuBarComponent = Vue.component(AllLogsMenuBar.name, AllLogsMenuBar);
@@ -61,5 +63,11 @@ export default {
         ],
       },
     ]);
+    store.commit('updateLogImportFilters', {
+      module: modName,
+      log_owner: 'SELF',
+      type: ['farm_activity', 'farm_observation', 'farm_harvest', 'farm_input', 'farm_seeding'],
+      done: false,
+    });
   },
 };
