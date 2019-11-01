@@ -12,40 +12,26 @@ const farm = () => {
 };
 
 export default {
-  state: {
-    importFilters: {
-      logs: [],
-    },
-  },
-  mutations: {
-    updateLogImportFilters(state, filterObject) {
-      const matchIndex = state.importFilters.logs
-        .findIndex(obj => obj.module === filterObject.module);
-      if (matchIndex > -1) {
-        state.importFilters.logs.splice(matchIndex, 1, filterObject);
-      } else {
-        state.importFilters.logs.push(filterObject);
-      }
-    },
-  },
   getters: {
-    logImportFilters: (state, getters, rootState) => state.importFilters.logs
-      .filter(obj => obj.module === rootState.shell.currentModule)
+    logFilters: (state, getters, rootState) => rootState.shell.modules
+      .filter(mod => mod.name === rootState.shell.currentModule)
       .reduce((_, cur) => {
-        const { type } = Array.isArray(cur.type) ? cur : undefined;
+        const { filters: { log: { type } } } = Array.isArray(cur.filters.log.type)
+          ? cur
+          : undefined;
         let logOwner; let done;
 
-        if (cur.log_owner === 'SELF') {
+        if (cur.filters.log.log_owner === 'SELF') {
           logOwner = rootState.shell.user.uid;
-        } else if (typeof cur.log_owner === 'number') {
-          logOwner = cur.log_owner;
+        } else if (typeof cur.filters.log.log_owner === 'number') {
+          logOwner = cur.filters.log.log_owner;
         } else {
           logOwner = undefined;
         }
 
-        if (cur.done === 0 || cur.done === false) {
+        if (cur.filters.log.done === 0 || cur.filters.log.done === false) {
           done = 0;
-        } else if (cur.done === 1 || cur.done === true) {
+        } else if (cur.filters.log.done === 1 || cur.filters.log.done === true) {
           done = 1;
         } else {
           done = undefined;
@@ -147,7 +133,7 @@ export default {
     }) {
       const syncDate = localStorage.getItem('syncDate');
       const allLogs = rootState.farm.logs;
-      return farm().log.get(getters.logImportFilters)
+      return farm().log.get(getters.logFilters)
         .then(res => (
           // Returns an array of ids which have already been checked & merged
           res.list.map((log) => {

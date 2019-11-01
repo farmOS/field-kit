@@ -14,6 +14,7 @@ export default {
       url: '',
     },
     currentModule: 'my-logs',
+    modules: [],
     mapboxAPIKey: '',
     settings: {
       useGeolocation: true,
@@ -53,6 +54,14 @@ export default {
     },
     setUseGeolocation(state, bool) {
       state.settings.useGeolocation = bool;
+    },
+    updateModule(state, module) {
+      const matchIndex = state.modules.findIndex(mod => mod.name === module.name);
+      if (matchIndex > -1) {
+        state.modules.splice(matchIndex, 1, module);
+      } else {
+        state.modules.push(module);
+      }
     },
   },
 };
