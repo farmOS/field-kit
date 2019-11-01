@@ -81,9 +81,10 @@ export default {
           const errResponses = promises.reduce((errors, promise, arrayIndex) => {
             if (promise.status === 'rejected') {
               // If the API call returns an error, add the index and status to errResponses
-              return errors.push({
+              return errors.concat({
                 index: indices[arrayIndex],
                 status: parseInt(promise.reason.message.substr(-3), 10),
+                message: promise.reason.response.data,
               });
             } if (promise.status === 'fulfilled') {
               handleSyncResponse(promise.value, indices[arrayIndex]);
@@ -236,7 +237,7 @@ export default {
           } else {
             // Otherwise, the error was thrown by a sendLogs request
             const logName = rootState.farm.logs[response.index].name.data;
-            errMsg += `${response.status} error while syncing "${logName}" <br>`;
+            errMsg += `Error while syncing "${logName}": ${response.message} <br>`;
           }
         });
         if (errMsg !== '') {
