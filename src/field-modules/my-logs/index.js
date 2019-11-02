@@ -8,6 +8,7 @@ import EditMap from './components/EditMap';
 import EditMapMenuBar from './components/EditMapMenuBar';
 import FilterLogs from './components/FilterLogs';
 import FilterLogsMenuBar from './components/FilterLogsMenuBar';
+import DrawerItems from './components/DrawerItems';
 
 export default {
   install(Vue, { router, store }) {
@@ -21,6 +22,7 @@ export default {
     const EditMapMenuBarComponent = Vue.component(EditMapMenuBar.name, EditMapMenuBar);
     const FilterLogsComponent = Vue.component(FilterLogs.name, FilterLogs);
     const FilterLogsMenuBarComponent = Vue.component(FilterLogsMenuBar.name, FilterLogsMenuBar);
+    Vue.component(DrawerItems.name, DrawerItems);
     router.addRoutes([
       {
         path: '/logs',

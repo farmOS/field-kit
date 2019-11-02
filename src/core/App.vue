@@ -22,16 +22,7 @@
             </div>
           </div>
         </header>
-        <ul class="row list-group" @click="showDrawer = !showDrawer">
-          <router-link :to="{ name: 'logs' }">
-            <li class="list-group-item">My Logs</li>
-          </router-link>
-          <li @click="openNewLog('farm_activity')" class="list-group-item">New Activity</li>
-          <li @click="openNewLog('farm_harvest')" class="list-group-item">New Harvest</li>
-          <li @click="openNewLog('farm_input')" class="list-group-item">New Input</li>
-          <li @click="openNewLog('farm_observation')" class="list-group-item">New Observation</li>
-          <li @click="openNewLog('farm_seeding')" class="list-group-item">New Seeding</li>
-        </ul>
+        <module-menu-items :modules="modules" @click.native="showDrawer = !showDrawer"/>
         <ul class="row list-group">
           <li class="list-group-item">
             <label for="location-switch">Share My Location&nbsp;</label>
@@ -96,14 +87,29 @@
 </template>
 
 <script>
+import Vue from 'vue';
 import { mapState } from 'vuex';
 import { version } from '../../package.json';
 import IconMenu from '@/components/icons/icon-menu';
 import IconArrowBack from '@/components/icons/icon-arrow-back';
 
+const ModuleMenuItems = Vue.component('module-menu-items', {
+  render(createElement) {
+    return createElement('div', this.modules.map(module => createElement(
+      `${module.name}-drawer-items`,
+    )));
+  },
+  props: {
+    modules: {
+      type: Array,
+      required: true,
+    },
+  },
+});
+
 export default {
   name: 'App',
-  components: { IconMenu, IconArrowBack },
+  components: { ModuleMenuItems, IconMenu, IconArrowBack },
   data() {
     return {
       showDrawer: false,
@@ -120,6 +126,7 @@ export default {
     farmUrl: state => ((state.shell.farmInfo.url === '')
       ? 'example.farmos.net'
       : state.shell.farmInfo.url),
+    modules: state => state.shell.modules,
   }),
   watch: {
     showDrawer(currentShowDrawer) {
