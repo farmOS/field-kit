@@ -95,8 +95,17 @@ import IconArrowBack from '@/components/icons/icon-arrow-back';
 
 const ModuleMenuItems = Vue.component('module-menu-items', {
   render(createElement) {
+    const self = this;
     return createElement('div', this.modules.map(module => createElement(
       `${module.name}-drawer-items`,
+      {
+        props: { currentModule: this.currentModule },
+        nativeOn: {
+          click() {
+            self.$store.commit('setCurrentModule', module.name);
+          },
+        }
+      }
     )));
   },
   props: {

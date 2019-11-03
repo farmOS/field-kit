@@ -63,5 +63,8 @@ export default {
         state.modules.push(module);
       }
     },
+    setCurrentModule(state, module) {
+      state.currentModule = module;
+    },
   },
 };
