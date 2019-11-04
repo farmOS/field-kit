@@ -16,11 +16,14 @@ export default {
     logFilters: (state, getters, rootState) => rootState.shell.modules
       .filter(mod => mod.name === rootState.shell.currentModule)
       .reduce((_, cur) => {
-        const { filters: { log: { type } } } = Array.isArray(cur.filters.log.type)
-          ? cur
-          : undefined;
-        let logOwner; let done;
+        // Null represents the case where no request should be made.
+        if (cur.filters.log === null) { return null; }
 
+        // If any of these var's gets set to undefined, its corresponding query
+        // parameter will be ommitted in the ultimate GET request to the server.
+        let logOwner; let type; let done;
+
+        // LOG_OWNER
         if (cur.filters.log.log_owner === 'SELF') {
           logOwner = rootState.shell.user.uid;
         } else if (typeof cur.filters.log.log_owner === 'number') {
@@ -29,6 +32,14 @@ export default {
           logOwner = undefined;
         }
 
+        // TYPE
+        if (cur.filters && cur.filters.log && Array.isArray(cur.filters.log.type)) {
+          type = cur.filters.log.type; // eslint-disable-line prefer-destructuring
+        } else {
+          type = undefined;
+        }
+
+        // DONE
         if (cur.filters.log.done === 0 || cur.filters.log.done === false) {
           done = 0;
         } else if (cur.filters.log.done === 1 || cur.filters.log.done === true) {
