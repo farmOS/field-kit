@@ -108,9 +108,6 @@ export default {
     this.clearDisplayFilters();
     this.loadCachedDisplayFilters();
   },
-  beforeDestroy() {
-    this.$store.commit('clearLogs');
-  },
   methods: {
     /**
      * DELETION METHODS

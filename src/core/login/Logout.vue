@@ -54,17 +54,7 @@
         // Call logout function from farmos.js
         this.$store.dispatch('logout');
 
-        // Remove logs, assets, areas, user info & site info from store
-        this.$store.commit('clearLogs');
-        this.$store.commit('clearAssets');
-        this.$store.commit('clearAreas');
-        this.$store.commit('changeUsername', '');
-        this.$store.commit('changeEmail', '');
-        this.$store.commit('changeUid', '');
-        this.$store.commit('changeFarmName', '');
-        this.$store.commit('changeFarmUrl', '');
-
-        // Remove logs, assets, areas, user info & site info from local persistance
+        // Remove logs, assets, areas, user info & site info from store & local persistance
         this.$store.dispatch('deleteAllCachedLogs');
         this.$store.dispatch('deleteAllCachedAssets');
         this.$store.dispatch('deleteAllCachedAreas');

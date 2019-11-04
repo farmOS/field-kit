@@ -61,27 +61,6 @@ export default {
     deleteAllEquipment(state) {
       state.equipment = [];
     },
-    // ClearX followed by loadCachedX are called when the app loads
-    // clearX is NOT a hook, and do not trigger deletion in the DB
-    // in contrast, deleteAllX is a hook which calls deleteAllCachedX in the db
-    clearLogs(state) {
-      state.logs.splice(0, state.logs.length);
-    },
-    clearAssets(state) {
-      state.assets.splice(0, state.assets.length);
-    },
-    clearAreas(state) {
-      state.areas.splice(0, state.areas.length);
-    },
-    clearUnits(state) {
-      state.units.splice(0, state.units.length);
-    },
-    clearCategories(state) {
-      state.categories.splice(0, state.categories.length);
-    },
-    clearEquipment(state) {
-      state.equipment.splice(0, state.equipment.length);
-    },
     filterLogs(state, predicate) {
       const filteredLogs = state.logs.filter(predicate);
       state.logs = filteredLogs;

@@ -141,7 +141,14 @@ export default {
       }
     },
 
-    deleteCachedUserAndSiteInfo() {
+    deleteCachedUserAndSiteInfo({ commit }) {
+      commit('changeFarmName', '');
+      commit('changeFarmUrl', '');
+      commit('changeUsername', '');
+      commit('changeEmail', '');
+      commit('changeUid', '');
+      commit('changeMapboxAPIKey', '');
+      commit('setLoginStatus', false);
       localStorage.clear();
     },
   },
