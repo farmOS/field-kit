@@ -96,10 +96,11 @@ export default {
     },
   },
   actions: {
-    initializeLog({ commit, dispatch }, initProps) {
+    initializeLog({ commit, dispatch, rootState }, initProps) {
+      const modules = initProps.modules ? initProps.modules : [rootState.shell.currentModule];
       return new Promise((resolve, reject) => {
         dispatch('generateLogID').then((local_id) => { // eslint-disable-line camelcase
-          const newLog = makeLog.create({ ...initProps, local_id });
+          const newLog = makeLog.create({ ...initProps, local_id, modules });
           commit('addLogs', newLog);
           resolve(local_id);
         }).catch(reject);

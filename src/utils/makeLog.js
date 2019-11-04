@@ -100,7 +100,7 @@ const makeLogFactory = (src, dest) => {
   if (src === STORE || src === undefined) {
     return ({
       // Assign default properties or leave them as optional
-      log_owner = { changed: null, data: '' }, // eslint-disable-line camelcase
+      log_owner = { changed: null, data: [] }, // eslint-disable-line camelcase
       // Quantity will be an array of objects, similar to area or asset
       quantity = { changed: null, data: [] },
       log_category = { changed: null, data: [] }, // eslint-disable-line camelcase
@@ -121,6 +121,7 @@ const makeLogFactory = (src, dest) => {
       geofield = { changed: null, data: [] },
       notes = { changed: null, data: '' },
       movement = { changed: null, data: { area: [], geometry: '' } },
+      modules = [],
     } = {}) => {
       let log;
       /*
@@ -166,6 +167,7 @@ const makeLogFactory = (src, dest) => {
             data: parseObjects(movement.data),
             changed: movement.changed,
           },
+          modules,
         };
         if (type.data !== 'farm_seeding' && area) {
           log.area = {
@@ -231,6 +233,7 @@ const makeLogFactory = (src, dest) => {
           remoteUri,
           asset,
           movement,
+          modules,
         };
         /*
           Only return local_id property if one has already been assigned by WebSQL,
