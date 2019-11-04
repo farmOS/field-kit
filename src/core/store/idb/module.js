@@ -38,9 +38,28 @@ export default {
         .catch(console.error); // eslint-disable-line no-console
     },
 
-    loadCachedLogs({ commit }) {
+    loadCachedLogs({ commit, getters, rootState }) {
+      const filters = getters.logFilters;
+      const { type, done } = filters;
+      const query = (log) => {
+        let passesAllFilters;
+        if (filters === null) {
+          passesAllFilters = false;
+        } else {
+          const passesOwnerFilter = filters.log_owner === undefined
+            || log.log_owner.data.length === 0
+            || log.log_owner.data.some(owner => +owner.id === +filters.log_owner);
+          const passesTypeFilter = type === undefined || type.includes(log.type.data);
+          const passesDoneFilter = done === undefined || log.done.data === !!done;
+          passesAllFilters = passesOwnerFilter && passesTypeFilter && passesDoneFilter;
+        }
+        const isMatchingModule = !log.modules
+          ? false
+          : log.modules.includes(rootState.shell.currentModule);
+        return isMatchingModule || passesAllFilters;
+      };
       openDatabase()
-        .then(db => getRecords(db, logStore.name))
+        .then(db => getRecords(db, logStore.name, query))
         .then((results) => {
           const cachedLogs = results.map(log => (
             makeLog.create({
@@ -56,7 +75,7 @@ export default {
     generateLogID() {
       return openDatabase()
         .then(db => generateLocalID(db, logStore.name))
-        .catch(console.error);
+        .catch(console.error); // eslint-disable-line no-console
     },
 
     updateCachedLog({ commit, rootState }, payload) {
