@@ -77,8 +77,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-
 export default {
   name: 'Logs',
   data() {
@@ -94,16 +92,16 @@ export default {
       },
     };
   },
-  props: ['useGeolocation'],
-  computed: mapState({
-    logs: state => state.farm.logs,
-    areas: state => state.farm.areas,
-    assets: state => state.farm.assets,
-    units: state => state.farm.units,
-    userId: state => state.shell.user.uid,
-    categories: state => state.farm.categories,
-    equipment: state => state.farm.equipment,
-  }),
+  props: [
+    'useGeolocation',
+    'userId',
+    'logs',
+    'areas',
+    'assets',
+    'units',
+    'categories',
+    'equipment',
+    ],
   created() {
     this.clearDisplayFilters();
     this.loadCachedDisplayFilters();

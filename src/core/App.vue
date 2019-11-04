@@ -75,6 +75,13 @@
 
             <router-view
               :useGeolocation="useGeolocation"
+              :userId='userId'
+              :logs='logs'
+              :areas='areas'
+              :assets='assets'
+              :units='units'
+              :categories='categories'
+              :equipment='equipment'
               @toggleDrawer="showDrawer = !showDrawer"
             />
 
@@ -137,8 +144,12 @@ export default {
     this.$store.dispatch('loadCachedEquipment');
   },
   computed: mapState({
+    /**
+     * SHELL STATE
+     */
     errors: state => state.shell.errors,
     username: state => state.shell.user.name,
+    userId: state => state.shell.user.uid,
     isLoggedIn: state => state.shell.user.isLoggedIn,
     useGeolocation: state => state.shell.settings.useGeolocation,
     farmName: state => state.shell.farmInfo.name,
@@ -147,6 +158,16 @@ export default {
       ? 'example.farmos.net'
       : state.shell.farmInfo.url),
     modules: state => state.shell.modules,
+
+    /**
+     * FARM STATE
+     */
+    logs: state => state.farm.logs,
+    areas: state => state.farm.areas,
+    assets: state => state.farm.assets,
+    units: state => state.farm.units,
+    categories: state => state.farm.categories,
+    equipment: state => state.farm.equipment,
   }),
   watch: {
     showDrawer(currentShowDrawer) {
