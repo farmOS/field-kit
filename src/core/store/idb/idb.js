@@ -25,12 +25,29 @@ function openDatabase() {
   });
 }
 
-function getRecords(db, storeName) {
+function getRecords(db, storeName, predicate) {
   return new Promise((resolve, reject) => {
     const store = db.transaction(storeName, 'readonly').objectStore(storeName);
-    const request = store.getAll();
-    request.onerror = event => reject(event.target);
-    request.onsuccess = event => resolve(event.target.result);
+    if (!predicate) {
+      const request = store.getAll();
+      request.onerror = event => reject(event.target);
+      request.onsuccess = event => resolve(event.target.result);
+    } else {
+      const request = store.openCursor();
+      const results = [];
+      request.onerror = event => reject(event.target);
+      request.onsuccess = (event) => {
+        const cursor = event.target.result;
+        if (cursor) {
+          if (predicate(cursor.value)) {
+            results.push(cursor.value);
+          }
+          cursor.continue();
+        } else {
+          resolve(results);
+        }
+      };
+    }
   });
 }
 
