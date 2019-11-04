@@ -90,6 +90,10 @@ export default {
     clearEquipment(state) {
       state.equipment.splice(0, state.equipment.length);
     },
+    filterLogs(state, predicate) {
+      const filteredLogs = state.logs.filter(predicate);
+      state.logs = filteredLogs;
+    },
   },
   actions: {
     initializeLog({ commit, dispatch }, initProps) {
