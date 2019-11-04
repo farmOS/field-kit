@@ -13,7 +13,13 @@ export default {
   },
   mutations: {
     addLogs(state, logs) {
-      state.logs = state.logs.concat(logs);
+      if (Array.isArray(logs)) {
+        const uniqueLogs = logs
+          .filter(log1 => !state.logs.some(log2 => log1.local_id === log2.local_id));
+        state.logs = state.logs.concat(uniqueLogs);
+      } else if (!state.logs.some(log => log.local_id === logs.local_id)) {
+        state.logs = state.logs.concat(logs);
+      }
     },
     addAssets(state, assets) {
       state.assets = state.assets.concat(assets);
