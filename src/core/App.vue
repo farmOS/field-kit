@@ -99,10 +99,11 @@ const ModuleMenuItems = Vue.component('module-menu-items', {
     return createElement('div', this.modules.map(module => createElement(
       `${module.name}-drawer-items`,
       {
-        props: { currentModule: this.currentModule },
         nativeOn: {
           click() {
             self.$store.commit('setCurrentModule', module.name);
+            self.$store.commit('filterLogs', log => log.modules.includes(module.name));
+            self.$store.dispatch('loadCachedLogs');
           },
         }
       }
@@ -124,6 +125,10 @@ export default {
       showDrawer: false,
       version,
     };
+  },
+  mounted() {
+    this.$store.dispatch('loadCachedUserAndSiteInfo');
+    this.$store.dispatch('loadCachedLogs');
   },
   computed: mapState({
     errors: state => state.shell.errors,
@@ -147,13 +152,6 @@ export default {
     },
   },
   methods: {
-    openNewLog(type) {
-      const timestamp = Math.floor(new Date() / 1000).toString();
-      this.$store.dispatch('initializeLog', {
-        type: { data: type, changed: timestamp },
-        timestamp: { data: timestamp, changed: timestamp },
-      }).then(id => this.$router.push({ path: `/logs/${id}`}));
-    },
     closeError(index) {
       this.$store.commit('dismissError', index);
     },
