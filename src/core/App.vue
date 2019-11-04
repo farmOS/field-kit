@@ -126,9 +126,15 @@ export default {
       version,
     };
   },
-  mounted() {
+  created() {
     this.$store.dispatch('loadCachedUserAndSiteInfo');
+    this.$store.dispatch('updateUserAndSiteInfo');
     this.$store.dispatch('loadCachedLogs');
+    this.$store.dispatch('loadCachedAssets');
+    this.$store.dispatch('loadCachedAreas');
+    this.$store.dispatch('loadCachedUnits');
+    this.$store.dispatch('loadCachedCategories');
+    this.$store.dispatch('loadCachedEquipment');
   },
   computed: mapState({
     errors: state => state.shell.errors,

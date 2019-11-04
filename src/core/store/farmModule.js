@@ -2,6 +2,16 @@
 
 import makeLog from '../../utils/makeLog';
 
+const makeEntityAdder = (name, identifier) => (state, entities) => {
+  if (Array.isArray(entities)) {
+    const unique = entities
+      .filter(x => !state[name].some(y => x[identifier] === y[identifier]));
+    state[name] = state[name].concat(unique);
+  } else if (!state[name].some(area => area[identifier] === entities[identifier])) {
+    state[name] = state[name].concat(entities);
+  }
+};
+
 export default {
   state: {
     logs: [],
@@ -12,30 +22,12 @@ export default {
     equipment: [],
   },
   mutations: {
-    addLogs(state, logs) {
-      if (Array.isArray(logs)) {
-        const uniqueLogs = logs
-          .filter(log1 => !state.logs.some(log2 => log1.local_id === log2.local_id));
-        state.logs = state.logs.concat(uniqueLogs);
-      } else if (!state.logs.some(log => log.local_id === logs.local_id)) {
-        state.logs = state.logs.concat(logs);
-      }
-    },
-    addAssets(state, assets) {
-      state.assets = state.assets.concat(assets);
-    },
-    addAreas(state, areas) {
-      state.areas = state.areas.concat(areas);
-    },
-    addUnits(state, units) {
-      state.units = state.units.concat(units);
-    },
-    addCategories(state, cats) {
-      state.categories = state.categories.concat(cats);
-    },
-    addEquipment(state, equip) {
-      state.equipment = state.equipment.concat(equip);
-    },
+    addLogs: makeEntityAdder('logs', 'local_id'),
+    addAssets: makeEntityAdder('assets', 'id'),
+    addAreas: makeEntityAdder('areas', 'tid'),
+    addUnits: makeEntityAdder('units', 'tid'),
+    addCategories: makeEntityAdder('categories', 'tid'),
+    addEquipment: makeEntityAdder('equipment', 'id'),
     updateLog(state, payload) {
       const { props } = payload;
       const index = payload.index !== undefined

@@ -105,18 +105,6 @@ export default {
     equipment: state => state.farm.equipment,
   }),
   created() {
-    this.$store.dispatch('loadCachedUserAndSiteInfo');
-    this.$store.dispatch('updateUserAndSiteInfo');
-    this.$store.commit('clearAssets');
-    this.$store.commit('clearAreas');
-    this.$store.commit('clearUnits');
-    this.$store.commit('clearCategories');
-    this.$store.commit('clearEquipment');
-    this.$store.dispatch('loadCachedAssets');
-    this.$store.dispatch('loadCachedAreas');
-    this.$store.dispatch('loadCachedUnits');
-    this.$store.dispatch('loadCachedCategories');
-    this.$store.dispatch('loadCachedEquipment');
     this.clearDisplayFilters();
     this.loadCachedDisplayFilters();
   },
