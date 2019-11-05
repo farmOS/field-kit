@@ -134,6 +134,7 @@ export default {
     };
   },
   created() {
+    this.$store.commit('setCurrentModule', this.$route.meta.module);
     this.$store.dispatch('loadCachedUserAndSiteInfo');
     this.$store.dispatch('updateUserAndSiteInfo');
     this.$store.dispatch('loadCachedLogs');
@@ -176,6 +177,9 @@ export default {
       } else {
         document.querySelector('body').setAttribute('style', 'overflow-y: visible');
       }
+    },
+    $route(to) {
+      this.$store.commit('setCurrentModule', to.meta.module);
     },
   },
   methods: {

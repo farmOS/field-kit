@@ -68,7 +68,7 @@ export default {
   },
   actions: {
     initializeLog({ commit, dispatch, rootState }, initProps) {
-      const modules = initProps.modules ? initProps.modules : [rootState.shell.currentModule];
+      const modules = initProps.modules || [rootState.shell.currentModule];
       return new Promise((resolve, reject) => {
         dispatch('generateLogID').then((local_id) => { // eslint-disable-line camelcase
           const newLog = makeLog.create({ ...initProps, local_id, modules });

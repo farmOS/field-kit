@@ -17,6 +17,7 @@ export default {
       this.$store.dispatch('initializeLog', {
         type: { data: 'farm_activity', changed: timestamp },
         timestamp: { data: timestamp, changed: timestamp },
+        modules: [modConfig.name],
       }).then(id => this.$router.push({ path: `/logs/${id}`}));
     },
   }

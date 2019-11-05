@@ -13,7 +13,7 @@ export default {
       name: '',
       url: '',
     },
-    currentModule: 'my-logs',
+    currentModule: '',
     modules: [],
     mapboxAPIKey: '',
     settings: {
