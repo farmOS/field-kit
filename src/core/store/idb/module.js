@@ -40,12 +40,12 @@ export default {
 
     loadCachedLogs({ commit, getters, rootState }) {
       const filters = getters.logFilters;
-      const { type, done } = filters;
       const query = (log) => {
         let passesAllFilters;
         if (filters === null) {
           passesAllFilters = false;
         } else {
+          const { type, done } = filters;
           const passesOwnerFilter = filters.log_owner === undefined
             || log.log_owner.data.length === 0
             || log.log_owner.data.some(owner => +owner.id === +filters.log_owner);
