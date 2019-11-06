@@ -16,12 +16,17 @@ export default {
     logFilters: (state, getters, rootState) => rootState.shell.modules
       .filter(mod => mod.name === rootState.shell.currentModule)
       .reduce((_, cur) => {
-        // Null represents the case where no request should be made.
-        if (cur.filters.log === null) { return null; }
+        // A nullish value represents the case where no request should be made.
+        if (!cur.filters || !cur.filters.log) { return null; }
 
         // If any of these var's gets set to undefined, its corresponding query
         // parameter will be ommitted in the ultimate GET request to the server.
         let logOwner; let type; let done;
+
+        // Return undefined for all values if the 'ALL' keyword is provided.
+        if (cur.filters.log === 'ALL') {
+          return { log_owner: logOwner, type, done };
+        }
 
         // LOG_OWNER
         if (cur.filters.log.log_owner === 'SELF') {
