@@ -8,16 +8,14 @@
 </template>
 
 <script>
-import modConfig from '../module.config'
 export default {
-  name: `${modConfig.name}-drawer-items`,
   methods: {
     openNewLog() {
       const timestamp = Math.floor(new Date() / 1000).toString();
       this.$store.dispatch('initializeLog', {
         type: { data: 'farm_activity', changed: timestamp },
         timestamp: { data: timestamp, changed: timestamp },
-        modules: [modConfig.name],
+        modules: ['my-logs'],
       }).then(id => this.$router.push({ path: `/logs/${id}`}));
     },
   }

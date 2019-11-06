@@ -7,9 +7,7 @@
 </template>
 
 <script>
-import modConfig from '../module.config'
 export default {
-  name: `${modConfig.name}-drawer-items`,
 }
 </script>
 

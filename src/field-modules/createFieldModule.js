@@ -1,6 +1,6 @@
 // A recursive function for initializing a field module's route components and
 // child components, as well as adding the proper module meta tags.
-const createRoutes = (Vue, modConfig, routes) => (
+const createRoutes = (Vue, modName, routes) => (
   !Array.isArray(routes) ? undefined : routes.map(({
     path,
     name,
@@ -23,12 +23,25 @@ const createRoutes = (Vue, modConfig, routes) => (
         ...acc,
         [key]: Vue.component(val.name, val),
       }), {}),
-    children: createRoutes(Vue, modConfig, children),
-    meta: { ...meta, module: modConfig.name },
+    children: createRoutes(Vue, modName, children),
+    meta: { ...meta, module: modName },
     params,
     props,
     query,
   }))
 );
 
-export default createRoutes;
+// Factory function that returns an object which complies with the Vue plugin
+// spec: https://vuejs.org/v2/guide/plugins.html#Writing-a-Plugin.
+const createFieldModule = modConfig => ({
+  install(Vue, { store, router }) {
+    store.commit('updateModule', modConfig);
+    Vue.component(
+      `${modConfig.name}-drawer-items`,
+      { ...modConfig.drawer, name: `${modConfig.name}-drawer-items` },
+    );
+    router.addRoutes(createRoutes(Vue, modConfig.name, modConfig.routes));
+  },
+});
+
+export default createFieldModule;
