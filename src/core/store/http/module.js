@@ -154,16 +154,25 @@ export default {
           // Returns an array of ids which have already been checked & merged
           res.list.map((log) => {
             const checkStatus = checkLog(log, allLogs, syncDate);
+            const modules = checkStatus.log
+              ? Array.from(new Set(checkStatus.log.modules.concat(rootState.shell.currentModule)))
+              : [rootState.shell.currentModule];
+            if (!checkStatus.serverChange) {
+              commit('updateLog', {
+                index: checkStatus.storeIndex,
+                props: { modules, isCachedLocally: false },
+              });
+            }
             if (checkStatus.serverChange) {
               const mergedLog = processLog(log, checkStatus, syncDate);
               commit('updateLog', {
                 index: checkStatus.storeIndex,
-                props: mergedLog,
+                props: { ...mergedLog, modules },
               });
             }
             if (checkStatus.localId === null) {
               const mergedLog = processLog(log, checkStatus, syncDate);
-              dispatch('initializeLog', mergedLog);
+              dispatch('initializeLog', { ...mergedLog, modules });
             }
             return log.id;
           })
