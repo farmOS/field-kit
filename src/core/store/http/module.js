@@ -157,13 +157,13 @@ export default {
             const modules = checkStatus.log
               ? Array.from(new Set(checkStatus.log.modules.concat(rootState.shell.currentModule)))
               : [rootState.shell.currentModule];
-            if (!checkStatus.serverChange) {
+            if (!checkStatus.serverChange && checkStatus.localId) {
               commit('updateLog', {
                 index: checkStatus.storeIndex,
                 props: { modules, isCachedLocally: false },
               });
             }
-            if (checkStatus.serverChange) {
+            if (checkStatus.serverChange && checkStatus.localId) {
               const mergedLog = processLog(log, checkStatus, syncDate);
               commit('updateLog', {
                 index: checkStatus.storeIndex,
