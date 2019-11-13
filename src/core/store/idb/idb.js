@@ -15,7 +15,7 @@ const counter = config.stores.reduce((countObj, store) => ({ ...countObj, [store
 function openDatabase() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(config.name, config.version);
-    request.onerror = event => reject(event.target.errorcode);
+    request.onerror = event => reject(event.target.error);
     request.onsuccess = () => resolve(request.result);
     request.onupgradeneeded = event => config.stores
       .map(store => store.upgrades.reduce(filterAndSort(event.oldVersion), []))
@@ -28,12 +28,12 @@ function getRecords(db, storeName, predicate) {
     const store = db.transaction(storeName, 'readonly').objectStore(storeName);
     if (!predicate) {
       const request = store.getAll();
-      request.onerror = event => reject(event.target);
+      request.onerror = event => reject(event.target.error);
       request.onsuccess = event => resolve(event.target.result);
     } else {
       const request = store.openCursor();
       const results = [];
-      request.onerror = event => reject(event.target);
+      request.onerror = event => reject(event);
       request.onsuccess = (event) => {
         const cursor = event.target.result;
         if (cursor) {
@@ -55,7 +55,7 @@ function generateLocalID(db, storeName) {
   return new Promise((resolve, reject) => {
     const store = db.transaction(storeName, 'readonly').objectStore(storeName);
     const request = store.openCursor(null, 'prevunique');
-    request.onerror = event => reject(new Error(event.target.errorcode));
+    request.onerror = event => reject(new Error(event.target.erorr));
     request.onsuccess = (event) => {
       // Return if the cursor has already moved back more than once.
       if (i > 1) { return; }
@@ -82,7 +82,7 @@ function saveRecord(db, storeName, record) {
   return new Promise((resolve, reject) => {
     const store = db.transaction(storeName, 'readwrite').objectStore(storeName);
     const request = store.put(record);
-    request.onerror = event => reject(new Error(event.target.errorcode));
+    request.onerror = event => reject(new Error(event.target.error));
     request.onsuccess = event => resolve(event.target.result);
   });
 }
@@ -92,7 +92,7 @@ function deleteRecord(db, storeName, key) {
     const store = db.transaction(storeName, 'readwrite').objectStore(storeName);
     const request = store.delete(key);
     request.onsuccess = event => resolve(event.target.result);
-    request.onerror = event => reject(event.error);
+    request.onerror = event => reject(event.target.error);
   });
 }
 
@@ -101,7 +101,7 @@ function clearStore(db, storeName) {
     const store = db.transaction(storeName, 'readwrite').objectStore(storeName);
     const request = store.clear();
     request.onsuccess = event => resolve(event.target.result);
-    request.onerror = event => reject(event.error);
+    request.onerror = event => reject(event.target.error);
   });
 }
 
