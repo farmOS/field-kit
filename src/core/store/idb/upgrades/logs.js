@@ -4,12 +4,15 @@ export default [
     onUpgrade(event) {
       return new Promise((resolve, reject) => {
         const db = event.target.result;
-        const store = db.createObjectStore('logs', {
-          keyPath: 'local_id',
-          autoIncrement: true,
-        });
-        store.transaction.oncomplete = resolve;
-        store.transaction.onerror = reject;
+        try {
+          db.createObjectStore('logs', {
+            keyPath: 'local_id',
+            autoIncrement: true,
+          });
+          resolve();
+        } catch (error) {
+          reject(error);
+        }
       });
     },
   },
