@@ -1,4 +1,5 @@
 import config from './idb.config';
+import { filterAndSort, runUpgrades } from '@/utils/runUpgrades';
 
 /**
  * Initialize a global counter for each store, eg:
@@ -16,12 +17,9 @@ function openDatabase() {
     const request = indexedDB.open(config.name, config.version);
     request.onerror = event => reject(event.target.errorcode);
     request.onsuccess = () => resolve(request.result);
-    request.onupgradeneeded = (event) => {
-      const db = event.currentTarget.result;
-      config.stores.forEach(({ name, keyPath, autoIncrement }) => {
-        db.createObjectStore(name, { keyPath, autoIncrement });
-      });
-    };
+    request.onupgradeneeded = event => config.stores
+      .map(store => store.upgrades.reduce(filterAndSort(event.oldVersion), []))
+      .forEach(upgrades => runUpgrades(event)(upgrades));
   });
 }
 

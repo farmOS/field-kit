@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import { sortByVersion, filterAndSort, runUpgrades } from './createFieldModule';
+import { sortByVersion, filterAndSort, runUpgrades } from './runUpgrades';
 
 describe('sortByVersion', () => {
   it('inserts an object into an array in ascending order', () => {
