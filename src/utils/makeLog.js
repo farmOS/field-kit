@@ -106,7 +106,7 @@ const makeLogFactory = (src, dest) => {
       log_category = { changed: null, data: [] }, // eslint-disable-line camelcase
       equipment = { changed: null, data: [] },
       id,
-      local_id, // eslint-disable-line camelcase
+      localID,
       name = { changed: null, data: '' },
       type = { changed: null, data: '' },
       timestamp = { changed: null, data: '' },
@@ -145,7 +145,7 @@ const makeLogFactory = (src, dest) => {
             changed: equipment.changed,
           },
           id,
-          local_id,
+          localID,
           name,
           type,
           timestamp,
@@ -236,11 +236,11 @@ const makeLogFactory = (src, dest) => {
           modules,
         };
         /*
-          Only return local_id property if one has already been assigned by WebSQL,
+          Only return localID property if one has already been assigned by WebSQL,
           otherwise let WebSQL assign a new one.
         */
-        if (local_id) { // eslint-disable-line camelcase
-          log.local_id = local_id; // eslint-disable-line camelcase
+        if (localID) {
+          log.localID = localID;
         }
         // Seedings do not have areas and geofields
         if (type.data !== 'farm_seeding' && area) {
@@ -262,7 +262,7 @@ const makeLogFactory = (src, dest) => {
         log_category, // eslint-disable-line camelcase
         equipment,
         id,
-        local_id, // eslint-disable-line camelcase
+        localID,
         name,
         type,
         timestamp,
@@ -281,7 +281,7 @@ const makeLogFactory = (src, dest) => {
         quantity: { data: quantity, changed: nowStamp },
         log_category: { data: log_category, changed: nowStamp },
         equipment: { data: equipment, changed: nowStamp },
-        local_id,
+        localID,
         name: { data: name, changed: nowStamp },
         type: { data: type, changed: nowStamp },
         timestamp: { data: timestamp, changed: nowStamp },

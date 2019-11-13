@@ -30,7 +30,7 @@ export default {
         .then(() => (
           commit('updateLog', {
             props: {
-              local_id: newLog.local_id,
+              localID: newLog.localID,
               isCachedLocally: true,
             },
           })
@@ -82,7 +82,7 @@ export default {
       const { props } = payload;
       const index = payload.index !== undefined
         ? payload.index
-        : rootState.farm.logs.findIndex(log => log.local_id === props.local_id);
+        : rootState.farm.logs.findIndex(log => log.localID === props.localID);
       const newLog = makeLog.toIdb({
         ...rootState.farm.logs[index],
         ...props,
@@ -93,14 +93,14 @@ export default {
           index,
           props: {
             isCachedLocally: true,
-            local_id: key,
+            localID: key,
           },
         }));
     },
 
-    deleteCachedLog(_, { local_id }) { // eslint-disable-line camelcase
+    deleteCachedLog(_, { localID }) { // eslint-disable-line camelcase
       openDatabase()
-        .then(db => deleteRecord(db, logStore.name, local_id))
+        .then(db => deleteRecord(db, logStore.name, localID))
         .catch(console.error); // eslint-disable-line no-console
     },
 

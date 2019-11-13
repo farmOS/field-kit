@@ -121,7 +121,7 @@ export default {
       const log = this.logs[this.logIndexToDelete];
       const payload = {
         index: this.logIndexToDelete,
-        local_id: log.local_id,
+        localID: log.localID,
         id: log.id,
         remoteUri: log.remoteUri,
         name: log.name.data,

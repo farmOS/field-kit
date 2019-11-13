@@ -43,7 +43,7 @@ export default {
   props: [ 'logs', 'id' ],
   computed: {
     currentLogIndex() {
-      const index = this.logs.findIndex(log => log.local_id === +this.id);
+      const index = this.logs.findIndex(log => log.localID === +this.id);
       return index >= 0 ? index : 0;
     },
   }

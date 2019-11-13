@@ -30,7 +30,7 @@ export function checkLog(serverLog, allLogs, syncDate) {
         Also check whethe the log is unsynced (wasPushedToServer true)
       */
       if (localLog.id === serverLog.id) {
-        logStatus.localId = localLog.local_id;
+        logStatus.localId = localLog.localID;
         logStatus.storeIndex = index;
         if (JSON.parse(localLog.wasPushedToServer) === true) {
           logStatus.localChange = false;
@@ -51,7 +51,7 @@ export function processLog(log, checkStatus, syncDate) {
   /*
   If the log is not present locally, return the server version.
   If the log is present locally, but has not been changed since the last sync,
-  return the new version from the server (with local_id)
+  return the new version from the server (with localID)
   If the log is present locally and has been changed, check log.changed from the server
   against the changed property of each log attribute
    - If any attribute has been changed more recently than the server log, keep it
@@ -72,7 +72,7 @@ export function processLog(log, checkStatus, syncDate) {
       ...log,
       wasPushedToServer: true,
       isReadyToSync: false,
-      local_id: checkStatus.localId,
+      localID: checkStatus.localId,
       done: (parseInt(log.done, 10) === 1),
     });
   }
@@ -105,7 +105,7 @@ export function processLog(log, checkStatus, syncDate) {
     ...locLogBuilder,
     ...servLogBuilder,
     wasPushedToServer: false,
-    local_id: checkStatus.localId,
+    localID: checkStatus.localId,
     id: log.id,
     done: {
       changed: Math.floor(Date.now() / 1000),

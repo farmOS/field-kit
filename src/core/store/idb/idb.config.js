@@ -1,11 +1,11 @@
 export default {
-  version: 1,
+  version: 2,
   name: 'farmos',
   stores: [
     {
       name: 'logs',
-      keyPath: 'local_id',
-      autoIncrement: true,
+      keyPath: 'localID',
+      autoIncrement: false,
       upgrades: [
         {
           version: 1,
@@ -20,6 +20,43 @@ export default {
               store.transaction.onerror = reject;
             });
           },
+        },
+        {
+          version: 2,
+          onUpgrade(event) {
+            const db = event.target.result;
+            const oldStore = event.target.transaction.objectStore('logs');
+            const newStore = db.createObjectStore('logs-temp', {
+              keyPath: 'localID',
+              autoIncrement: false,
+            });
+            return new Promise((resolve, reject) => {
+              const requestGetAll = oldStore.getAll();
+              requestGetAll.onsuccess = (eventGetAll) => {
+                const logs = eventGetAll.target.result.map((log) => {
+                  const newLog = {
+                    ...log,
+                    localID: log.local_id,
+                    modules: ['my-logs'],
+                  };
+                  delete newLog.local_id;
+                  return newLog;
+                });
+                resolve(logs);
+              };
+              requestGetAll.onerror = reject;
+            }).then(logs => Promise.all(logs.map(log => new Promise((resolve, reject) => {
+              const requestAdd = newStore.put(log);
+              requestAdd.onsuccess = resolve;
+              requestAdd.onerror = reject;
+            })))).then(() => {
+              db.deleteObjectStore('logs');
+              newStore.name = 'logs';
+            });
+          },
+        },
+      ],
+    },
     {
       name: 'assets',
       keyPath: 'id',

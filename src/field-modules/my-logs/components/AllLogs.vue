@@ -20,7 +20,7 @@
         v-for="(log, i) in logs"
         :key="`card-${logs.indexOf(log)}`"
       >
-        <router-link :to="{ path: `/logs/${log.local_id}` }">
+        <router-link :to="{ path: `/logs/${log.localID}` }">
           <div class="card-body">
 
             <div class="card-row-1">

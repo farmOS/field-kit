@@ -63,10 +63,10 @@ function generateLocalID(db, storeName) {
       const cursor = event.target.result;
       if (cursor) {
         cursor.continue();
-        if (counter[storeName] > cursor.value.local_id) {
+        if (counter[storeName] > cursor.value.localID) {
           newID = counter[storeName] + 1;
         } else {
-          newID = cursor.value.local_id + 1;
+          newID = cursor.value.localID + 1;
         }
       } else {
         newID = counter[storeName] + 1;

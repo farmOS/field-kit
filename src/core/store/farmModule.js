@@ -22,7 +22,7 @@ export default {
     equipment: [],
   },
   mutations: {
-    addLogs: makeEntityAdder('logs', 'local_id'),
+    addLogs: makeEntityAdder('logs', 'localID'),
     addAssets: makeEntityAdder('assets', 'id'),
     addAreas: makeEntityAdder('areas', 'tid'),
     addUnits: makeEntityAdder('units', 'tid'),
@@ -32,7 +32,7 @@ export default {
       const { props } = payload;
       const index = payload.index !== undefined
         ? payload.index
-        : state.logs.findIndex(log => log.local_id === props.local_id);
+        : state.logs.findIndex(log => log.localID === props.localID);
       const updatedLog = makeLog.create({
         ...state.logs[index],
         ...props,
@@ -70,10 +70,10 @@ export default {
     initializeLog({ commit, dispatch, rootState }, initProps) {
       const modules = initProps.modules || [rootState.shell.currentModule];
       return new Promise((resolve, reject) => {
-        dispatch('generateLogID').then((local_id) => { // eslint-disable-line camelcase
-          const newLog = makeLog.create({ ...initProps, local_id, modules });
+        dispatch('generateLogID').then((localID) => {
+          const newLog = makeLog.create({ ...initProps, localID, modules });
           commit('addLogs', newLog);
-          resolve(local_id);
+          resolve(localID);
         }).catch(reject);
       });
     },
