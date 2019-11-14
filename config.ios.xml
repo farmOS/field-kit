@@ -27,6 +27,10 @@
         <key>NSPhotoLibraryUsageDescription</key>
         <string>farmOS would like access to the photo library</string>
     </config-file>
+    <config-file mode="replace" parent="NSLocationAlwaysUsageDescription" platform="ios">
+        <key>NSLocationAlwaysUsageDescription</key>
+        <string>farmOS would like access your GPS location</string>
+    </config-file>
     <plugin name="cordova-plugin-whitelist" spec="^1.3.3" />
     <plugin name="cordova-plugin-camera" spec="&lt;=2.4.1">
         <variable name="CAMERA_USAGE_DESCRIPTION" value="farmOS would like access to the camera" />
