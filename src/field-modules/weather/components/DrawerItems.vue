@@ -1,18 +1,25 @@
 <template>
-  <ul class="row list-group">
+  <drawer-list>
     <router-link :to="{ name: 'weather-form' }">
-      <li class="list-group-item">Record Weather Event</li>
+      <drawer-list-item>Record Weather Event</drawer-list-item>
     </router-link>
-  </ul>
+  </drawer-list>
 </template>
 
 <script>
+import DrawerList from '@/components/DrawerList';
+import DrawerListItem from '@/components/DrawerListItem';
+
 export default {
+  components: {
+    DrawerList,
+    DrawerListItem,
+  },
 }
 </script>
 
 <style >
-  a {
+  a, a:hover {
     text-decoration: none;
     color: inherit;
   }

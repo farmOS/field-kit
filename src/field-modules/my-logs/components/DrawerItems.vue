@@ -1,14 +1,21 @@
 <template>
-  <ul class="row list-group drawer">
+  <drawer-list>
     <router-link :to="{ name: 'logs' }">
-      <li class="list-group-item">My Logs</li>
+      <drawer-list-item>My Logs</drawer-list-item>
     </router-link>
-    <li class="list-group-item" @click="openNewLog">New Log</li>
-  </ul>
+    <drawer-list-item @click="openNewLog">New Log</drawer-list-item>
+  </drawer-list>
 </template>
 
 <script>
+import DrawerList from '@/components/DrawerList';
+import DrawerListItem from '@/components/DrawerListItem';
+
 export default {
+  components: {
+    DrawerList,
+    DrawerListItem,
+  },
   methods: {
     openNewLog() {
       const timestamp = Math.floor(new Date() / 1000).toString();
@@ -23,7 +30,7 @@ export default {
 </script>
 
 <style scoped>
-  a {
+  a, a:hover {
     text-decoration: none;
     color: inherit;
   }

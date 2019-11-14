@@ -23,8 +23,8 @@
           </div>
         </header>
         <module-menu-items :modules="modules" @click.native="showDrawer = !showDrawer"/>
-        <ul class="row list-group">
-          <li class="list-group-item">
+        <drawer-list>
+          <drawer-list-item :clickable="false">
             <label for="location-switch">Share My Location&nbsp;</label>
             <input
               id="location-switch"
@@ -32,15 +32,15 @@
               type="checkbox"
               :checked="useGeolocation"
               @input="setUseGeolocation($event.target.checked)"/>
-          </li>
-          <li class="list-group-item">Version: {{version}}</li>
+          </drawer-list-item>
+          <drawer-list-item :clickable="false">Version: {{version}}</drawer-list-item>
           <router-link to="/login" v-if="!isLoggedIn">
-            <li class="list-group-item" @click="showDrawer = !showDrawer">Login</li>
+            <drawer-list-item @click="showDrawer = !showDrawer">Login</drawer-list-item>
           </router-link>
           <router-link to="/logout" v-if="isLoggedIn">
-            <li class="list-group-item" @click="showDrawer = !showDrawer">Logout</li>
+            <drawer-list-item @click="showDrawer = !showDrawer">Logout</drawer-list-item>
           </router-link>
-        </ul>
+        </drawer-list>
 
       </div>
     </transition>
@@ -99,6 +99,8 @@ import { mapState } from 'vuex';
 import { version } from '../../package.json';
 import IconMenu from '@/components/icons/icon-menu';
 import IconArrowBack from '@/components/icons/icon-arrow-back';
+import DrawerList from '@/components/DrawerList';
+import DrawerListItem from '@/components/DrawerListItem';
 
 const ModuleMenuItems = Vue.component('module-menu-items', {
   render(createElement) {
@@ -126,7 +128,13 @@ const ModuleMenuItems = Vue.component('module-menu-items', {
 
 export default {
   name: 'App',
-  components: { ModuleMenuItems, IconMenu, IconArrowBack },
+  components: {
+    ModuleMenuItems,
+    IconMenu,
+    IconArrowBack,
+    DrawerList,
+    DrawerListItem,
+  },
   data() {
     return {
       showDrawer: false,
@@ -200,10 +208,6 @@ export default {
     right: 5px;
   }
 
-  .logo {
-    max-height: 1.5rem;
-  }
-
   .drawer {
     position: fixed;
     top: 0;
@@ -256,7 +260,7 @@ export default {
     margin-top: 3rem;
   }
 
-  .drawer a {
+  .drawer a, .drawer a:hover {
     text-decoration: none;
     color: inherit;
   }
