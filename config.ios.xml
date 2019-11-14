@@ -7,6 +7,7 @@
     <author email="mike@farmier.com" href="http://www.farmOS.org">
 				farmOS Team
 		</author>
+    <preference name="phonegap-version" value="cli-9.0.0" />
     <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
@@ -80,6 +81,7 @@
     	<icon height="29" platform="ios" src="res/icons/ios/icon-small.png" width="29" />
     	<icon height="58" platform="ios" src="res/icons/ios/icon-small@2x.png" width="58" />
     	<icon height="87" platform="ios" src="res/icons/ios/icon-small@3x.png" width="87" />
+    	<icon height="1024" platform="ios" src="res/icons/ios/ItunesArtwork@2x.png" width="1024" />
     	<splash height="1136" platform="ios" src="res/screens/ios/Default-568h@2x~iphone.png" width="640" />
     	<splash height="1334" platform="ios" src="res/screens/ios/Default-667h.png" width="750" />
     	<splash height="2208" platform="ios" src="res/screens/ios/Default-736h.png" width="1242" />
