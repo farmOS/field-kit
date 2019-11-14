@@ -29,7 +29,7 @@ export default {
   computed: {
     areaGeoJSON() {
       return (process.env.NODE_ENV === 'development') 
-        ? 'http://localhost/farm/areas/geojson/all'
+        ? 'http://localhost:8080/farm/areas/geojson/all'
         : `${localStorage.getItem('host')}/farm/areas/geojson/all`
     },
   },
