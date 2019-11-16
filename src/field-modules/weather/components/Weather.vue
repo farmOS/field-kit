@@ -88,6 +88,12 @@
         <table class="table">
           <tbody>
             <tr>
+              <td colspan="4">
+                <div class="add-wrapper"><icon-add-circle/></div>
+                <em>&nbsp;Add a new weather event.</em>
+              </td>
+            </tr>
+            <tr>
               <th scope="row">11/15/2019</th>
               <td>1:24 PM</td>
               <td>0.7 in</td>
@@ -114,15 +120,28 @@
 </template>
 
 <script>
+import IconAddCircle from '@/components/icons/icon-add-circle';
 import IconRaindrops from '@/components/icons/icon-raindrops';
 import IconSnowflake from '@/components/icons/icon-snowflake';
 
 export default {
   name: 'Weather',
-  components: { IconRaindrops, IconSnowflake },
+  components: { IconAddCircle, IconRaindrops, IconSnowflake },
 }
 </script>
 
 <style>
+  table svg {
+    height: 1.25rem;
+  }
+
+  .add-wrapper {
+    display: inline-block;
+    vertical-align: bottom;
+  }
+
+  .add-wrapper svg {
+    display: block;
+  }
 
 </style>
