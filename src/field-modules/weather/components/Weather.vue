@@ -79,12 +79,47 @@
 
       </div>
     </div>
+
+    <br>
+
+    <div class="card">
+      <div class="card-header">Past weather events</div>
+      <div class="card-body">
+        <table class="table">
+          <tbody>
+            <tr>
+              <th scope="row">11/15/2019</th>
+              <td>1:24 PM</td>
+              <td>0.7 in</td>
+              <td><icon-raindrops/></td>
+            </tr>
+            <tr>
+              <th scope="row">11/12/2019</th>
+              <td>7:08 AM</td>
+              <td>3 in</td>
+              <td><icon-snowflake/></td>
+            </tr>
+            <tr>
+              <th scope="row">11/5/2019</th>
+              <td>10:15 AM</td>
+              <td>0.2 in</td>
+              <td><icon-raindrops/></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
   </div>
 </template>
 
 <script>
+import IconRaindrops from '@/components/icons/icon-raindrops';
+import IconSnowflake from '@/components/icons/icon-snowflake';
+
 export default {
   name: 'Weather',
+  components: { IconRaindrops, IconSnowflake },
 }
 </script>
 
