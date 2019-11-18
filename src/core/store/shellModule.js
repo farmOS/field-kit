@@ -13,6 +13,7 @@ export default {
       name: '',
       url: '',
     },
+    systemOfMeasurement: 'metric',
     currentModule: '',
     modules: [],
     mapboxAPIKey: '',
@@ -48,6 +49,9 @@ export default {
     },
     changeMapboxAPIKey(state, key) {
       state.mapboxAPIKey = key;
+    },
+    changeSystemOfMeasurement(state, name) {
+      state.systemOfMeasurement = name;
     },
     setLoginStatus(state, bool) {
       state.user.isLoggedIn = bool;

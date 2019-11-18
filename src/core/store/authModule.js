@@ -111,12 +111,14 @@ export default {
           commit('changeEmail', res.user.mail);
           commit('changeUid', res.user.uid);
           commit('changeMapboxAPIKey', res.mapbox_api_key);
+          commit('changeSystemOfMeasurement', res.system_of_measurement);
           commit('setLoginStatus', true);
           localStorage.setItem('farmName', res.name);
           localStorage.setItem('username', res.user.name);
           localStorage.setItem('email', res.user.mail);
           localStorage.setItem('uid', res.user.uid);
           safeSetLS('mapboxAPIKey', res.mapbox_api_key);
+          localStorage.setItem('systemOfMeasurement', res.system_of_measurement);
           localStorage.setItem('isLoggedIn', true);
         });
       }
@@ -127,6 +129,7 @@ export default {
       commit('changeEmail', localStorage.getItem('email'));
       commit('changeUid', localStorage.getItem('uid'));
       commit('changeMapboxAPIKey', localStorage.getItem('mapboxAPIKey'));
+      commit('changeSystemOfMeasurement', localStorage.getItem('systemOfMeasurement'));
       commit('setLoginStatus', localStorage.getItem('isLoggedIn'));
       commit('changeFarmName', localStorage.getItem('farmName'));
       commit('changeFarmUrl', localStorage.getItem('host'));
@@ -148,6 +151,7 @@ export default {
       commit('changeEmail', '');
       commit('changeUid', '');
       commit('changeMapboxAPIKey', '');
+      commit('changeSystemOfMeasurement', 'metric');
       commit('setLoginStatus', false);
       localStorage.clear();
     },
