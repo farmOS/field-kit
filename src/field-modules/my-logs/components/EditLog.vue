@@ -45,14 +45,10 @@
         autofocus>
     </div>
 
-    <div class="form-item form-item-name form-group">
-      <label for="Date" class="control-label">Date</label>
-      <input
-        :value="convertOutOfUnix(logs[currentLogIndex].timestamp.data)"
-        @input="updateCurrentLog('timestamp', convertIntoUnix($event.target.value))"
-        type="date"
-        class="form-control">
-    </div>
+    <date-and-time-form
+      :timestamp="logs[currentLogIndex].timestamp.data"
+      @input="updateCurrentLog('timestamp', $event)"/>
+
     <!-- Allow users to change type for logs that have not yet been sent to the server
     For logs currently on the server, display type as text -->
     <div class="form-item form-item-name form-group">
@@ -515,6 +511,7 @@ import IconSpinner from '@/components/icons/icon-spinner';
 import Map from '@/components/Map';
 import ToggleCheck from '@/components/ToggleCheck';
 import SelectBox from '@/components/SelectBox';
+import DateAndTimeForm from '@/components/DateAndTimeForm';
 import { mergeGeometries, removeGeometry, isNearby } from '@/utils/geometry';
 
 export default {
@@ -527,6 +524,7 @@ export default {
     Map,
     ToggleCheck,
     SelectBox,
+    DateAndTimeForm,
   },
 
   data() {
@@ -580,21 +578,6 @@ export default {
   },
 
   methods: {
-    convertOutOfUnix(unixTimestamp) {
-      const date = new Date(unixTimestamp * 1000);
-      const dateFix = d => ((d < 10) ? `0${d}` : d);
-      const mm = dateFix(date.getMonth() + 1);
-      const dd = dateFix(date.getDate());
-      return `${date.getFullYear()}-${mm}-${dd}`;
-    },
-
-    convertIntoUnix(nonUnixTimestamp) {
-      const year = +nonUnixTimestamp.split('-')[0];
-      const monthIndex = +nonUnixTimestamp.split('-')[1] - 1;
-      const date = +nonUnixTimestamp.split('-')[2];
-      return Math.floor(new Date(year, monthIndex, date).getTime() / 1000).toString();
-    },
-
     forceSync() {
       if (localStorage.getItem('host') !== null) {
         this.$store.dispatch('updateAssets');
