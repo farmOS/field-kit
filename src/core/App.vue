@@ -76,6 +76,7 @@
             <router-view
               :useGeolocation="useGeolocation"
               :userId='userId'
+              :systemOfMeasurement='systemOfMeasurement'
               :logs='logs'
               :areas='areas'
               :assets='assets'
@@ -161,6 +162,7 @@ export default {
     userId: state => state.shell.user.uid,
     isLoggedIn: state => state.shell.user.isLoggedIn,
     useGeolocation: state => state.shell.settings.useGeolocation,
+    systemOfMeasurement: state => state.shell.systemOfMeasurement,
     farmName: state => state.shell.farmInfo.name,
     // Provide an example url for the dev server environment
     farmUrl: state => ((state.shell.farmInfo.url === '')
