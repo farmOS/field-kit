@@ -641,7 +641,7 @@ export default {
     },
 
     addMovementArea(id) {
-      const areaReference = { id, resource: 'farm_area'};
+      const areaReference = { id, resource: 'taxonomy_term'};
       const areaGeometry = this.areas.find(area => area.tid === id).geofield[0].geom;
       const prevGeometry = this.logs[this.currentLogIndex].movement.data.geometry;
       const newGeometry = mergeGeometries([areaGeometry, prevGeometry]);
@@ -654,7 +654,7 @@ export default {
 
     addArea(id) {
       if (id !== '') {
-        const areaReference = { id: id, resource: 'farm_area'};
+        const areaReference = { id: id, resource: 'taxonomy_term'};
         const newAreas = this.logs[this.currentLogIndex].area.data.concat(areaReference);
         this.updateCurrentLog('area', newAreas);
       }
