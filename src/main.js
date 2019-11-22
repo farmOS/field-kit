@@ -1,8 +1,10 @@
-import app from './core/app';
-import logs from './field-modules/my-logs';
+import app from '@/core/app';
+import weather from '@/field-modules/weather';
+import logs from '@/field-modules/my-logs';
 
 app('#app', [
   logs,
+  weather,
 ]);
 
 // Check that service workers are registered (for production environment only)
