@@ -1,3 +1,4 @@
+import rules from './rules';
 import makeLog from '@/utils/makeLog';
 
 // Extend Error so we can propagate more info to the error handler
@@ -12,6 +13,35 @@ export class SyncError extends Error {
     this.responses = responses;
   }
 }
+
+/*
+  A factory that takes dependencies supplied by the caller and returns a reducer
+  function that separates logs into those that can and cannot be synced,
+  returning a tuple. It gets its rules from ./rules.js.
+*/
+export const createSyncReducer = deps => ([syncables, unsyncables], log, index) => {
+  // Sync all logs to the server; those originally from server will have id fields
+  if (log.isReadyToSync && !log.wasPushedToServer) {
+    let syncable = true;
+    const reasons = [];
+    rules.forEach((rule) => {
+      const result = rule(log, deps);
+      if (!result.syncable) {
+        syncable = false;
+        reasons.push(result.reason);
+      }
+    });
+    if (!syncable) {
+      const message = reasons.length > 0
+        ? reasons.reduce((_message, reason) => (
+          `${_message}<br>- ${reason}`
+        ), `Could not sync ${log.name.data}:`)
+        : undefined;
+      return [syncables, unsyncables.concat({ index, message })];
+    }
+  }
+  return [syncables.concat(index), unsyncables];
+};
 
 export function checkLog(serverLog, allLogs, syncDate) {
   // The localLog will be passed as logStatus.log if localChange checks true

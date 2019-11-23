@@ -2,7 +2,9 @@ import farmOS from 'farmos';
 import Promise from 'core-js-pure/features/promise';
 import router from '@/core/router';
 import makeLog from '@/utils/makeLog';
-import { SyncError, checkLog, processLog } from './sync';
+import {
+  SyncError, createSyncReducer, checkLog, processLog,
+} from './sync';
 
 const farm = () => {
   const host = localStorage.getItem('host');
@@ -213,61 +215,6 @@ export default {
     },
     syncAllLogs({ rootState, commit, dispatch }) {
       /*
-        A reducer function that filters for logs ready to sync,
-        and returns an array of only those logs' indices.
-
-        This function also enforces the following criteria for specific log types:
-          - Seedings must be associated with at least one planting asset
-      */
-      function syncReducer(indices, curLog, curIndex) {
-        // Check if criteria for specific log types are met
-        function criteriaMet(log, index) {
-          const errorPayload = {
-            message: '',
-            level: 'warning',
-            show: true,
-          };
-
-          // Criteria enforcement for seedings:
-          if (log.type.data === 'farm_seeding') {
-            // If a seeding log does not have at least one planting asset, don't sync it
-            const allAssets = rootState.farm.assets;
-            const plantingAssets = [];
-            log.asset.data.forEach((logAsset) => {
-              allAssets.forEach((asset) => {
-                if (asset.id === logAsset.id && asset.type === 'planting') {
-                  plantingAssets.push(asset.id);
-                }
-              });
-            });
-            if (plantingAssets.length < 1) {
-              errorPayload.message = `Could not sync ${log.name.data} because seeding logs must have at least one planting asset.`;
-              commit('logError', errorPayload);
-              // Stop spinner on aborted sync attempts by setting isReadyToSync false
-              commit('updateLog', {
-                index,
-                props: {
-                  isReadyToSync: false,
-                },
-              });
-              return false;
-            }
-          }
-          // Sync any other type of log
-          return true;
-        }
-
-        // Sync all logs to the server; those originally from server will have id fields
-        if (curLog.isReadyToSync !== undefined
-          && JSON.parse(curLog.isReadyToSync)
-          && !JSON.parse(curLog.wasPushedToServer)
-          && criteriaMet(curLog, curIndex)) {
-          return indices.concat(curIndex);
-        }
-        return indices;
-      }
-
-      /*
         This handles the custom error type defined in ./sync.js,
         thrown by getServerLogs and sendLogs
       */
@@ -316,9 +263,26 @@ export default {
           .then(() => {
             // Save the current time as the most recent syncDate
             localStorage.setItem('syncDate', (Date.now() / 1000).toFixed(0));
-            // After getServerLogs finishes, we send logs with isReadyToSync true to the server
-            const indices = rootState.farm.logs.reduce(syncReducer, []);
-            return dispatch('sendLogs', indices);
+            const syncReducer = createSyncReducer({
+              assets: rootState.farm.assets,
+            });
+            const [syncables, unsyncables] = rootState.farm.logs.reduce(syncReducer, [[], []]);
+            unsyncables.forEach(({ message, index }) => {
+              if (message) {
+                commit('logError', {
+                  message,
+                  level: 'warning',
+                  show: true,
+                });
+              }
+              commit('updateLog', {
+                index,
+                props: {
+                  isReadyToSync: false,
+                },
+              });
+            });
+            return dispatch('sendLogs', syncables);
           })
           // Handle syncErrors thrown by getServerLogs
           .catch(handleSyncError);
