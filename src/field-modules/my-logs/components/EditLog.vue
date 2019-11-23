@@ -11,6 +11,12 @@
       class="tab"
       :class="{ selected: tabSelected === 'SECOND' }"
       @click="tabSelected = 'SECOND'">
+      <h5>MEASUREMENT</h5>
+    </div>
+    <div
+      class="tab"
+      :class="{ selected: tabSelected === 'THIRD' }"
+      @click="tabSelected = 'THIRD'">
       <h5>MOVEMENT</h5>
     </div>
   </div>
@@ -19,6 +25,7 @@
     :class="[
       {first: tabSelected === 'FIRST' },
       {second: tabSelected === 'SECOND' },
+      {third: tabSelected === 'THIRD' },
     ]"/>
 
   <div
@@ -113,74 +120,6 @@
               <p><icon-expand-less/>Show Less</p>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-body">
-        <h4>Quantities</h4>
-        <label for="quantity" class="control-label ">Add new or edit existing quantity</label>
-        <div class="form-item form-item-name form-group">
-          <select
-            :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].measure : ''"
-            @input="updateNewQuant('measure', $event.target.value)"
-            placeholder="Quantity measure"
-            class="custom-select col-sm-3 ">
-              <option
-                v-for="measure in quantMeasures"
-                :value="measure">
-                {{ measure }}
-              </option>
-          </select>
-          <input
-            :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].value : 0"
-            @input="updateNewQuant('value', $event.target.value)"
-            placeholder="Quantity value"
-            type="number"
-            class="form-control">
-          </input>
-          <select
-            @input="updateNewQuant('unit', $event.target.value)"
-            placeholder="Quantity unit"
-            class="custom-select col-sm-3 ">
-              <option
-                v-for="unit in units"
-                :value="unit.tid">
-                {{ (units) ? unit.name : '' }}
-              </option>
-          </select>
-          <input
-            :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].label : ''"
-            @input="updateNewQuant('label', $event.target.value)"
-            placeholder="Quantity label"
-            type="text"
-            class="form-control">
-          </input>
-        </div>
-
-        <div class="form-item form-group">
-          <ul v-if="logs[currentLogIndex].quantity.data.length > 0" class="list-group">
-            <li
-              v-for="(quant, i) in logs[currentLogIndex].quantity.data"
-              v-bind:key="`quantity-${i}-${Math.floor(Math.random() * 1000000)}`"
-              class="list-group-item">
-              {{ quant.value }} {{ (quantUnitNames.length > 0) ? quantUnitNames[i] : '' }} {{ quant.label }}
-              <span class="remove-list-item" @click="removeQuant(i)">
-                &#x2715;
-              </span>
-            </li>
-          </ul>
-        </div>
-
-        <div class="form-item form-group">
-          <button
-            type="button"
-            class="btn btn-success"
-            @click="addQuant"
-            name="addNewQuantity">
-            Add another quantity
-          </button>
         </div>
       </div>
     </div>
@@ -425,6 +364,79 @@
   <div
     class="container-fluid tab-content second"
     :class="{ selected: tabSelected === 'SECOND' }">
+
+    <div class="card">
+      <div class="card-body">
+        <label for="quantity" class="control-label ">Add new or edit existing quantity measurement</label>
+        <div class="form-item form-item-name form-group">
+          <select
+            :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].measure : ''"
+            @input="updateNewQuant('measure', $event.target.value)"
+            placeholder="Quantity measure"
+            class="custom-select col-sm-3 ">
+              <option
+                v-for="measure in quantMeasures"
+                :value="measure">
+                {{ measure }}
+              </option>
+          </select>
+          <input
+            :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].value : 0"
+            @input="updateNewQuant('value', $event.target.value)"
+            placeholder="Quantity value"
+            type="number"
+            class="form-control">
+          </input>
+          <select
+            @input="updateNewQuant('unit', $event.target.value)"
+            placeholder="Quantity unit"
+            class="custom-select col-sm-3 ">
+              <option
+                v-for="unit in units"
+                :value="unit.tid">
+                {{ (units) ? unit.name : '' }}
+              </option>
+          </select>
+          <input
+            :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].label : ''"
+            @input="updateNewQuant('label', $event.target.value)"
+            placeholder="Quantity label"
+            type="text"
+            class="form-control">
+          </input>
+        </div>
+
+        <div class="form-item form-group">
+          <ul v-if="logs[currentLogIndex].quantity.data.length > 0" class="list-group">
+            <li
+              v-for="(quant, i) in logs[currentLogIndex].quantity.data"
+              v-bind:key="`quantity-${i}-${Math.floor(Math.random() * 1000000)}`"
+              class="list-group-item">
+              {{ quant.value }} {{ (quantUnitNames.length > 0) ? quantUnitNames[i] : '' }} {{ quant.label }}
+              <span class="remove-list-item" @click="removeQuant(i)">
+                &#x2715;
+              </span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="form-item form-group">
+          <button
+            type="button"
+            class="btn btn-success"
+            @click="addQuant"
+            name="addNewQuantity">
+            Add another quantity
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div
+    class="container-fluid tab-content third"
+    :class="{ selected: tabSelected === 'THIRD' }">
 
     <br>
     <Autocomplete
@@ -963,7 +975,7 @@ export default {
     line-height: 1.5rem;
     color: white;
     transition: color .5s;
-    flex: 1 0 50%;
+    flex: 1 0 33%;
     text-align: center;
     padding-top: 1rem;
   }
@@ -978,18 +990,23 @@ export default {
     top: calc(6rem - 2px);
     z-index: 1001;
     height: 2px;
-    width: 50%;
+    width: 33%;
     background-color: white;
   }
 
   .tab-indicator.first {
     transition: left .5s;
-    left: calc(25% - 25%);
+    left: calc(0%);
   }
 
   .tab-indicator.second {
     transition: left .5s;
-    left: calc(75% - 25%);
+    left: calc(33%);
+  }
+
+  .tab-indicator.third {
+    transition: left .5s;
+    left: calc(66%);
   }
 
   .tab-content {
@@ -1005,10 +1022,15 @@ export default {
 
   .tab-content.first:not(.selected) {
     transition: left .5s;
-    left: -100vw;
+    left: 100vw;
   }
 
   .tab-content.second:not(.selected) {
+    transition: left .5s;
+    left: 100vw;
+  }
+
+  .tab-content.third:not(.selected) {
     transition: left .5s;
     left: 100vw;
   }
