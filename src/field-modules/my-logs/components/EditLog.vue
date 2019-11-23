@@ -88,8 +88,8 @@
     </div>
 
     <div class="card">
-      <div class="card-header">Log Categories</div>
       <div class="card-body">
+        <h4>Log Categories</h4>
         <div id="categories" class="form-item form-group">
           <p v-if="!showAllCategories && logs[currentLogIndex].log_category.data.length < 1">No categories selected</p>
           <select-box
@@ -118,8 +118,8 @@
     </div>
 
     <div class="card">
-      <div class="card-header">Quantities</div>
       <div class="card-body">
+        <h4>Quantities</h4>
         <label for="quantity" class="control-label ">Add new or edit existing quantity</label>
         <div class="form-item form-item-name form-group">
           <select
@@ -186,8 +186,8 @@
     </div>
 
     <div class="card">
-      <div class="card-header">Assets</div>
       <div class="card-body">
+        <h4>Assets</h4>
         <Autocomplete
           :objects="filteredAssets"
           searchKey="name"
@@ -259,8 +259,8 @@
       class="card"
       v-if="!(logs[currentLogIndex].type.data === 'farm_seeding')"
       id="areas-and-location">
-      <div class="card-header">Areas &amp; Location</div>
       <div class="card-body">
+        <h4>Areas &amp; Location</h4>
 
         <!-- We're using a radio button to choose whether areas are selected
         automatically based on device location, or using an Autocomplete.
@@ -383,8 +383,8 @@
     </div>
 
     <div class="card">
-      <div class="card-header">Images</div>
       <div class="card-body">
+        <h4>Images</h4>
         <div class="form-item form-item-name form-group">
           <button
             :disabled='false'
