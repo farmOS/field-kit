@@ -52,7 +52,7 @@
 
             <div class="card-row-3">
               <div class="date-and-type">
-                <span class="log-type">{{getLogType(log.type.data).toUpperCase()}}</span>
+                <span class="log-type">{{logTypes[log.type.data].label.toUpperCase()}}</span>
                 <span>{{showDate(log.timestamp.data)}}</span>
               </div>
               <div class="tags">
@@ -86,7 +86,6 @@
 
 <script>
 import moment from 'moment';
-import getLogType from '@/utils/getLogType';
 import IconAddCircle from '@/components/icons/icon-add-circle';
 import IconAssignment from '@/components/icons/icon-assignment';
 import IconAssignmentDone from '@/components/icons/icon-assignment-done';
@@ -100,6 +99,7 @@ import IconSync from '@/components/icons/icon-sync';
 export default {
   name: 'AllLogs',
   props: [
+    'logTypes',
     'logs',
     'userId',
     'assets',
@@ -134,14 +134,6 @@ export default {
         return log.asset.data.map(a1 => this.assets.find(a2 => +a2.id === +a1.id));
       }
       return [];
-    },
-    getLogType(type) {
-      try {
-        return getLogType(type);
-      } catch (error) {
-        console.error(error);
-        return '';
-      }
     },
     passesFilters(log) {
       const passesTypeFilter = !this.logDisplayFilters.excludedTypes.includes(log.type.data);

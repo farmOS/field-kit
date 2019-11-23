@@ -14,6 +14,7 @@ export default {
       url: '',
     },
     systemOfMeasurement: 'metric',
+    logTypes: {},
     currentModule: '',
     modules: [],
     mapboxAPIKey: '',
@@ -52,6 +53,9 @@ export default {
     },
     changeSystemOfMeasurement(state, name) {
       state.systemOfMeasurement = name;
+    },
+    changeLogTypes(state, types) {
+      state.logTypes = types;
     },
     setLoginStatus(state, bool) {
       state.user.isLoggedIn = bool;

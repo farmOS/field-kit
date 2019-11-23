@@ -60,15 +60,15 @@
           class="custom-select col-sm-3 ">
             <!-- options are defined in the local logTypes variable -->
             <option
-              v-for="(typeName, typeKey) in logTypes"
+              v-for="(type, typeKey) in logTypes"
               :value="typeKey"
-              v-bind:key="`${typeName}-${typeKey}`">
-              {{ typeName }}
+              :key="`${type.label}-${typeKey}`">
+              {{ type.label }}
             </option>
         </select>
       </div>
       <div class="form-item" v-if="!(logs[currentLogIndex].id === undefined)">
-        <p> {{ logTypes[logs[currentLogIndex].type.data] }} </p>
+        <p> {{ logTypes[logs[currentLogIndex].type.data].label }} </p>
       </div>
     </div>
 
@@ -553,14 +553,6 @@ export default {
       isWorking: false,
       localAreas: [],
       showAllCategories: false,
-      // All types available to the log, with system_name:display name as key:value
-      logTypes: {
-        farm_observation: 'Observation',
-        farm_activity: 'Activity',
-        farm_input: 'Input',
-        farm_harvest: 'Harvest',
-        farm_seeding: 'Seeding',
-      },
       quantMeasures: [
         'count',
         'length',
@@ -581,6 +573,7 @@ export default {
   props: [
     'id',
     'logs',
+    'logTypes',
     'areas',
     'assets',
     'useGeolocation',

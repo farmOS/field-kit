@@ -77,6 +77,7 @@
               :useGeolocation="useGeolocation"
               :userId='userId'
               :systemOfMeasurement='systemOfMeasurement'
+              :logTypes='logTypes'
               :logs='logs'
               :areas='areas'
               :assets='assets'
@@ -163,6 +164,7 @@ export default {
     isLoggedIn: state => state.shell.user.isLoggedIn,
     useGeolocation: state => state.shell.settings.useGeolocation,
     systemOfMeasurement: state => state.shell.systemOfMeasurement,
+    logTypes: state => state.shell.logTypes,
     farmName: state => state.shell.farmInfo.name,
     // Provide an example url for the dev server environment
     farmUrl: state => ((state.shell.farmInfo.url === '')

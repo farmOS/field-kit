@@ -112,6 +112,7 @@ export default {
           commit('changeUid', res.user.uid);
           commit('changeMapboxAPIKey', res.mapbox_api_key);
           commit('changeSystemOfMeasurement', res.system_of_measurement);
+          commit('changeLogTypes', res.resources.log);
           commit('setLoginStatus', true);
           localStorage.setItem('farmName', res.name);
           localStorage.setItem('username', res.user.name);
@@ -119,6 +120,7 @@ export default {
           localStorage.setItem('uid', res.user.uid);
           safeSetLS('mapboxAPIKey', res.mapbox_api_key);
           localStorage.setItem('systemOfMeasurement', res.system_of_measurement);
+          localStorage.setItem('logTypes', JSON.stringify(res.resources.log));
           localStorage.setItem('isLoggedIn', true);
         });
       }
@@ -130,18 +132,11 @@ export default {
       commit('changeUid', localStorage.getItem('uid'));
       commit('changeMapboxAPIKey', localStorage.getItem('mapboxAPIKey'));
       commit('changeSystemOfMeasurement', localStorage.getItem('systemOfMeasurement'));
-      commit('setLoginStatus', localStorage.getItem('isLoggedIn'));
+      commit('setLoginStatus', JSON.parse(localStorage.getItem('isLoggedIn')));
       commit('changeFarmName', localStorage.getItem('farmName'));
       commit('changeFarmUrl', localStorage.getItem('host'));
-      if (localStorage.getItem('useGeolocation')) {
-        // LocalStorage saves only strings, not booleans.
-        // We need to save to the app store as a boolean
-        if (localStorage.getItem('useGeolocation') === 'true') {
-          commit('setUseGeolocation', true);
-        } else {
-          commit('setUseGeolocation', false);
-        }
-      }
+      commit('changeLogTypes', JSON.parse(localStorage.getItem('logTypes')));
+      commit('setUseGeolocation', JSON.parse(localStorage.getItem('useGeolocation')));
     },
 
     deleteCachedUserAndSiteInfo({ commit }) {

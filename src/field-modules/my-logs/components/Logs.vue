@@ -15,6 +15,7 @@
       @addToExcludedCategories="addToExcludedCategories($event)"
       @removeFromExcludedCategories="removeFromExcludedCategories($event)"
       @setDateFilter="setDateFilter($event)"
+      :logTypes='logTypes'
       :logs='logs'
       :areas='areas'
       :assets='assets'
@@ -97,6 +98,7 @@ export default {
     'useGeolocation',
     'userId',
     'systemOfMeasurement',
+    'logTypes',
     'logs',
     'areas',
     'assets',
