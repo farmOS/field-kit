@@ -11,6 +11,18 @@
  * action.
  */
 
+// Every log must have a valid date.
+const dateRule = (log) => {
+  // Test if the timestamp is a number or can be coerced into one.
+  if (Number.isNaN(Number(log.timestamp.data))) {
+    return {
+      syncable: false,
+      reason: 'Every log must have a valid date field.',
+    };
+  }
+  return { syncable: true };
+};
+
 // If a seeding log does not have at least one planting asset, don't sync it
 const seedingRule = (log, { assets }) => {
   if (log.type.data === 'farm_seeding') {
@@ -29,4 +41,4 @@ const seedingRule = (log, { assets }) => {
   return { syncable: true };
 };
 
-export default [seedingRule];
+export default [dateRule, seedingRule];

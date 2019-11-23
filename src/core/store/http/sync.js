@@ -35,7 +35,7 @@ export const createSyncReducer = deps => ([syncables, unsyncables], log, index) 
       const message = reasons.length > 0
         ? reasons.reduce((_message, reason) => (
           `${_message}<br>- ${reason}`
-        ), `Could not sync ${log.name.data}:`)
+        ), `Could not sync "${log.name.data}":`)
         : undefined;
       return [syncables, unsyncables.concat({ index, message })];
     }

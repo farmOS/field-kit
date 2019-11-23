@@ -119,6 +119,9 @@ export default {
   },
   methods: {
     showDate(unixTimestamp) {
+      if (Number.isNaN(Number(unixTimestamp))) {
+        return 'No Date Provided';
+      }
       return moment.unix(unixTimestamp).format('MMM DD YYYY');
     },
     // Pass in a log and get back an array of the areas attached to that log
@@ -146,6 +149,9 @@ export default {
         )
       )};
       const passesDateFilter = () => {
+        if (Number.isNaN(Number(log.timestamp.data))) {
+          return true;
+        }
         const filter = this.logDisplayFilters.date;
         const d = new Date();
         let dateLimit;
