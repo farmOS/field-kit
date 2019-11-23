@@ -14,7 +14,24 @@ export default {
       url: '',
     },
     systemOfMeasurement: 'metric',
-    logTypes: {},
+    logTypes: {
+      farm_activity: {
+        label: 'Activity',
+        label_plural: 'Activities',
+      },
+      farm_harvest: {
+        label: 'Harvest',
+        label_plural: 'Harvests',
+      },
+      farm_input: {
+        label: 'Input',
+        label_plural: 'Inputs',
+      },
+      farm_observation: {
+        label: 'Observation',
+        label_plural: 'Observations',
+      },
+    },
     currentModule: '',
     modules: [],
     mapboxAPIKey: '',
