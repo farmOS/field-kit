@@ -25,378 +25,399 @@
     class="container-fluid tab-content first"
     :class="{ selected: tabSelected === 'FIRST' }">
 
-    <br>
-    <div class="form-item form-group">
-      <toggle-check
-        label="Done"
-        labelPosition="after"
-        :checked="logs[currentLogIndex].done.data"
-        @input="updateCurrentLog('done', $event)"/>
-    </div>
-
-    <div class="form-item form-item-name form-group">
-      <label for="name" class="control-label">Name</label>
-      <input
-        :value="logs[currentLogIndex].name.data"
-        @input="updateCurrentLog('name', $event.target.value)"
-        placeholder="Enter name"
-        type="text"
-        class="form-control"
-        autofocus>
-    </div>
-
-    <date-and-time-form
-      :timestamp="logs[currentLogIndex].timestamp.data"
-      @input="updateCurrentLog('timestamp', $event)"/>
-
-    <!-- Allow users to change type for logs that have not yet been sent to the server
-    For logs currently on the server, display type as text -->
-    <div class="form-item form-item-name form-group">
-      <label for="type" class="control-label ">Log Type</label>
-      <div class="input-group" v-if="(logs[currentLogIndex].id === undefined)">
-        <select
-          :value="logs[currentLogIndex].type.data"
-          @input="updateCurrentLog('type', $event.target.value)"
-          class="custom-select col-sm-3 ">
-            <!-- options are defined in the local logTypes variable -->
-            <option
-              v-for="(typeName, typeKey) in logTypes"
-              :value="typeKey"
-              v-bind:key="`${typeName}-${typeKey}`">
-              {{ typeName }}
-            </option>
-        </select>
-      </div>
-      <div class="form-item" v-if="!(logs[currentLogIndex].id === undefined)">
-        <p> {{ logTypes[logs[currentLogIndex].type.data] }} </p>
-      </div>
-    </div>
-
-
-    <div class="form-item form-item-name form-group">
-      <label for="notes" class="control-label ">Notes</label>
-      <textarea
-        :value="logs[currentLogIndex].notes.data"
-        @input="updateCurrentLog('notes', $event.target.value)"
-        placeholder="Enter notes"
-        type="text"
-        class="form-control">
-      </textarea>
-    </div>
-
-    <h4>Log Categories</h4>
-    <div id="categories" class="form-item form-group">
-      <p v-if="!showAllCategories && logs[currentLogIndex].log_category.data.length < 1">No categories selected</p>
-      <select-box
-        small
-        v-for="cat in categories"
-        v-if="showAllCategories || logs[currentLogIndex].log_category.data.some(_cat => cat.tid === _cat.id)"
-        :id="`category-${cat.tid}-${cat.name}`"
-        :selected="logs[currentLogIndex].log_category.data.some(_cat => cat.tid === _cat.id)"
-        :label="cat.name"
-        :key="`category-${cat.tid}-${cat.name}`"
-        @input="
-          $event
-          ? addCategory(cat.tid)
-          : removeCategory(logs[currentLogIndex].log_category.data.findIndex(_cat => cat.tid === _cat.id))"
-        />
-      <div class="show-hide">
-        <div v-if="!showAllCategories" @click="showAllCategories = !showAllCategories">
-          <p><icon-expand-more/>Show More</p>
+    <div class="card">
+      <div class="card-body">
+        <div class="form-item form-group">
+          <toggle-check
+            label="Done"
+            labelPosition="after"
+            :checked="logs[currentLogIndex].done.data"
+            @input="updateCurrentLog('done', $event)"/>
         </div>
-        <div v-if="showAllCategories" @click="showAllCategories = !showAllCategories">
-          <p><icon-expand-less/>Show Less</p>
+
+        <div class="form-item form-item-name form-group">
+          <label for="name" class="control-label">Name</label>
+          <input
+            :value="logs[currentLogIndex].name.data"
+            @input="updateCurrentLog('name', $event.target.value)"
+            placeholder="Enter name"
+            type="text"
+            class="form-control"
+            autofocus>
+        </div>
+
+        <date-and-time-form
+          :timestamp="logs[currentLogIndex].timestamp.data"
+          @input="updateCurrentLog('timestamp', $event)"/>
+
+        <!-- Allow users to change type for logs that have not yet been sent to the server
+        For logs currently on the server, display type as text -->
+        <div class="form-item form-item-name form-group">
+          <label for="type" class="control-label ">Log Type</label>
+          <div class="input-group" v-if="(logs[currentLogIndex].id === undefined)">
+            <select
+              :value="logs[currentLogIndex].type.data"
+              @input="updateCurrentLog('type', $event.target.value)"
+              class="custom-select col-sm-3 ">
+                <!-- options are defined in the local logTypes variable -->
+                <option
+                  v-for="(typeName, typeKey) in logTypes"
+                  :value="typeKey"
+                  v-bind:key="`${typeName}-${typeKey}`">
+                  {{ typeName }}
+                </option>
+            </select>
+          </div>
+          <div class="form-item" v-if="!(logs[currentLogIndex].id === undefined)">
+            <p> {{ logTypes[logs[currentLogIndex].type.data] }} </p>
+          </div>
+        </div>
+
+
+        <div class="form-item form-item-name form-group">
+          <label for="notes" class="control-label ">Notes</label>
+          <textarea
+            :value="logs[currentLogIndex].notes.data"
+            @input="updateCurrentLog('notes', $event.target.value)"
+            placeholder="Enter notes"
+            type="text"
+            class="form-control">
+          </textarea>
         </div>
       </div>
     </div>
 
-    <h4>Quantities</h4>
-    <label for="quantity" class="control-label ">Add new or edit existing quantity</label>
-    <div class="form-item form-item-name form-group">
-      <select
-        :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].measure : ''"
-        @input="updateNewQuant('measure', $event.target.value)"
-        placeholder="Quantity measure"
-        class="custom-select col-sm-3 ">
-          <option
-            v-for="measure in quantMeasures"
-            :value="measure">
-            {{ measure }}
-          </option>
-      </select>
-      <input
-        :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].value : 0"
-        @input="updateNewQuant('value', $event.target.value)"
-        placeholder="Quantity value"
-        type="number"
-        class="form-control">
-      </input>
-      <select
-        @input="updateNewQuant('unit', $event.target.value)"
-        placeholder="Quantity unit"
-        class="custom-select col-sm-3 ">
-          <option
-            v-for="unit in units"
-            :value="unit.tid">
-            {{ (units) ? unit.name : '' }}
-          </option>
-      </select>
-      <input
-        :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].label : ''"
-        @input="updateNewQuant('label', $event.target.value)"
-        placeholder="Quantity label"
-        type="text"
-        class="form-control">
-      </input>
+    <div class="card">
+      <div class="card-header">Log Categories</div>
+      <div class="card-body">
+        <div id="categories" class="form-item form-group">
+          <p v-if="!showAllCategories && logs[currentLogIndex].log_category.data.length < 1">No categories selected</p>
+          <select-box
+            small
+            v-for="cat in categories"
+            v-if="showAllCategories || logs[currentLogIndex].log_category.data.some(_cat => cat.tid === _cat.id)"
+            :id="`category-${cat.tid}-${cat.name}`"
+            :selected="logs[currentLogIndex].log_category.data.some(_cat => cat.tid === _cat.id)"
+            :label="cat.name"
+            :key="`category-${cat.tid}-${cat.name}`"
+            @input="
+              $event
+              ? addCategory(cat.tid)
+              : removeCategory(logs[currentLogIndex].log_category.data.findIndex(_cat => cat.tid === _cat.id))"
+            />
+          <div class="show-hide">
+            <div v-if="!showAllCategories" @click="showAllCategories = !showAllCategories">
+              <p><icon-expand-more/>Show More</p>
+            </div>
+            <div v-if="showAllCategories" @click="showAllCategories = !showAllCategories">
+              <p><icon-expand-less/>Show Less</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="form-item form-group">
-      <ul v-if="logs[currentLogIndex].quantity.data.length > 0" class="list-group">
-        <li
-          v-for="(quant, i) in logs[currentLogIndex].quantity.data"
-          v-bind:key="`quantity-${i}-${Math.floor(Math.random() * 1000000)}`"
-          class="list-group-item">
-          {{ quant.value }} {{ (quantUnitNames.length > 0) ? quantUnitNames[i] : '' }} {{ quant.label }}
-          <span class="remove-list-item" @click="removeQuant(i)">
-            &#x2715;
-          </span>
-        </li>
-      </ul>
-    </div>
+    <div class="card">
+      <div class="card-header">Quantities</div>
+      <div class="card-body">
+        <label for="quantity" class="control-label ">Add new or edit existing quantity</label>
+        <div class="form-item form-item-name form-group">
+          <select
+            :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].measure : ''"
+            @input="updateNewQuant('measure', $event.target.value)"
+            placeholder="Quantity measure"
+            class="custom-select col-sm-3 ">
+              <option
+                v-for="measure in quantMeasures"
+                :value="measure">
+                {{ measure }}
+              </option>
+          </select>
+          <input
+            :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].value : 0"
+            @input="updateNewQuant('value', $event.target.value)"
+            placeholder="Quantity value"
+            type="number"
+            class="form-control">
+          </input>
+          <select
+            @input="updateNewQuant('unit', $event.target.value)"
+            placeholder="Quantity unit"
+            class="custom-select col-sm-3 ">
+              <option
+                v-for="unit in units"
+                :value="unit.tid">
+                {{ (units) ? unit.name : '' }}
+              </option>
+          </select>
+          <input
+            :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].label : ''"
+            @input="updateNewQuant('label', $event.target.value)"
+            placeholder="Quantity label"
+            type="text"
+            class="form-control">
+          </input>
+        </div>
 
-    <div class="form-item form-group">
-      <button
-        type="button"
-        class="btn btn-success"
-        @click="addQuant"
-        name="addNewQuantity">
-        Add another quantity
-      </button>
-    </div>
+        <div class="form-item form-group">
+          <ul v-if="logs[currentLogIndex].quantity.data.length > 0" class="list-group">
+            <li
+              v-for="(quant, i) in logs[currentLogIndex].quantity.data"
+              v-bind:key="`quantity-${i}-${Math.floor(Math.random() * 1000000)}`"
+              class="list-group-item">
+              {{ quant.value }} {{ (quantUnitNames.length > 0) ? quantUnitNames[i] : '' }} {{ quant.label }}
+              <span class="remove-list-item" @click="removeQuant(i)">
+                &#x2715;
+              </span>
+            </li>
+          </ul>
+        </div>
 
-    <h4>Assets</h4>
-    <Autocomplete
-      :objects="filteredAssets"
-      searchKey="name"
-      searchId="id"
-      :label="assetsRequired() ? 'Seedings must include assets!' : 'Add assets to the log'"
-      :class="{ invalid: assetsRequired() }"
-      v-on:results="addAsset($event)">
-      <template slot="empty">
-        <div class="empty-slot">
-          <em>No assets found.</em>
-          <br>
+        <div class="form-item form-group">
           <button
             type="button"
-            class="btn btn-light"
-            @click="forceSync"
-            name="button">
-            Sync Now
+            class="btn btn-success"
+            @click="addQuant"
+            name="addNewQuantity">
+            Add another quantity
           </button>
         </div>
-      </template>
-    </Autocomplete>
-
-    <div class="form-item form-item-name form-group">
-      <ul class="list-group">
-        <li
-          v-for="(asset, i) in selectedAssets"
-          v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
-          class="list-group-item">
-          {{ asset.name }}
-          <span class="remove-list-item" @click="removeAsset(asset)">
-            &#x2715;
-          </span>
-        </li>
-      </ul>
-    </div>
-
-    <div class="form-item form-item-name form-group">
-      <label for="type" class="control-label ">Equipment</label>
-      <div class="input-group">
-        <select
-          @input="addEquipment($event.target.value)"
-          class="custom-select col-sm-3 ">
-          <option value=""></option>
-          <option
-            v-for="equip in equipment"
-            :value="equip.id">
-            {{ (equip) ? equip.name : '' }}
-          </option>
-        </select>
       </div>
     </div>
-    <div class="form-item form-group">
-      <ul v-if="logs[currentLogIndex].equipment" class="list-group">
-        <li
-          v-for="(equip, i) in logs[currentLogIndex].equipment.data"
-          v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
-          class="list-group-item">
-          {{ (equipmentNames.length > 0) ? equipmentNames[i] : '' }}
-          <span class="remove-list-item" @click="removeEquipment(i)">
-            &#x2715;
-          </span>
-        </li>
-      </ul>
+
+    <div class="card">
+      <div class="card-header">Assets</div>
+      <div class="card-body">
+        <Autocomplete
+          :objects="filteredAssets"
+          searchKey="name"
+          searchId="id"
+          :label="assetsRequired() ? 'Seedings must include assets!' : 'Add assets to the log'"
+          :class="{ invalid: assetsRequired() }"
+          v-on:results="addAsset($event)">
+          <template slot="empty">
+            <div class="empty-slot">
+              <em>No assets found.</em>
+              <br>
+              <button
+                type="button"
+                class="btn btn-light"
+                @click="forceSync"
+                name="button">
+                Sync Now
+              </button>
+            </div>
+          </template>
+        </Autocomplete>
+
+        <div class="form-item form-item-name form-group">
+          <ul class="list-group">
+            <li
+              v-for="(asset, i) in selectedAssets"
+              v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
+              class="list-group-item">
+              {{ asset.name }}
+              <span class="remove-list-item" @click="removeAsset(asset)">
+                &#x2715;
+              </span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="form-item form-item-name form-group">
+          <label for="type" class="control-label ">Equipment</label>
+          <div class="input-group">
+            <select
+              @input="addEquipment($event.target.value)"
+              class="custom-select col-sm-3 ">
+              <option value=""></option>
+              <option
+                v-for="equip in equipment"
+                :value="equip.id">
+                {{ (equip) ? equip.name : '' }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="form-item form-group">
+          <ul v-if="logs[currentLogIndex].equipment" class="list-group">
+            <li
+              v-for="(equip, i) in logs[currentLogIndex].equipment.data"
+              v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
+              class="list-group-item">
+              {{ (equipmentNames.length > 0) ? equipmentNames[i] : '' }}
+              <span class="remove-list-item" @click="removeEquipment(i)">
+                &#x2715;
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
 
     <div
+      class="card"
       v-if="!(logs[currentLogIndex].type.data === 'farm_seeding')"
       id="areas-and-location">
-      <h4>Areas &amp; Location</h4>
+      <div class="card-header">Areas &amp; Location</div>
+      <div class="card-body">
 
-      <!-- We're using a radio button to choose whether areas are selected
-      automatically based on device location, or using an Autocomplete.
-      This will use the useLocalAreas conditional var -->
-      <div  v-if="useGeolocation" class="form-item form-item-name form-group">
-        <div class="form-check">
-          <input
-          v-model="useLocalAreas"
-          type="radio"
-          class="form-check-input"
-          id="dontUseGeo"
-          name="geoRadioGroup"
-          v-bind:value="false"
-          checked>
-          <label class="form-check-label" for="dontUseGeo">Search areas</label>
-        </div>
-        <div class="form-check">
-          <input
-          v-model="useLocalAreas"
-          type="radio"
-          class="form-check-input"
-          id="doUseGeo"
-          name="geoRadioGroup"
-          v-bind:value="true"
-          >
-          <label class="form-check-label" for="doUseGeo">Use my location</label>
-        </div>
-      </div>
-
-      <!-- If using the user's, show a select menu of nearby locations -->
-      <div v-if="useLocalAreas" class="form-group">
-        <label for="areaSelector">Farm areas near your current location</label>
-        <select
-          @input="addArea($event.target.value)"
-          class="form-control"
-          name="areas">
-          <option v-if="localAreas.length < 1" value="">No other areas nearby</option>
-          <option v-if="localAreas.length > 0" value="" selected>-- Select an Area --</option>
-          <option
-            v-if="localAreas.length > 0"
-            v-for="area in localAreas"
-            :value="area.tid"
-            v-bind:key="`area-${area.tid}`">
-            {{area.name}}
-          </option>
-        </select>
-      </div>
-
-      <!-- If not using the user's location, show a search bar -->
-      <Autocomplete
-        v-if="!useLocalAreas"
-        :objects="filteredAreas"
-        searchKey="name"
-        searchId="tid"
-        label="Add areas to the log"
-        v-on:results="addArea($event)">
-        <template slot="empty">
-          <div class="empty-slot">
-            <em>No areas found.</em>
-            <br>
-            <button
-              type="button"
-              class="btn btn-light"
-              @click="forceSync"
-              name="button">
-              Sync Now
-            </button>
+        <!-- We're using a radio button to choose whether areas are selected
+        automatically based on device location, or using an Autocomplete.
+        This will use the useLocalAreas conditional var -->
+        <div  v-if="useGeolocation" class="form-item form-item-name form-group">
+          <div class="form-check">
+            <input
+            v-model="useLocalAreas"
+            type="radio"
+            class="form-check-input"
+            id="dontUseGeo"
+            name="geoRadioGroup"
+            v-bind:value="false"
+            checked>
+            <label class="form-check-label" for="dontUseGeo">Search areas</label>
           </div>
-        </template>
-      </Autocomplete>
+          <div class="form-check">
+            <input
+            v-model="useLocalAreas"
+            type="radio"
+            class="form-check-input"
+            id="doUseGeo"
+            name="geoRadioGroup"
+            v-bind:value="true"
+            >
+            <label class="form-check-label" for="doUseGeo">Use my location</label>
+          </div>
+        </div>
 
-      <!-- Display the areas attached to each log -->
-      <div class="form-item form-item-name form-group">
-        <ul class="list-group">
-          <li
-            v-for="(area, i) in selectedAreas"
-            v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
-            class="list-group-item">
-            {{ area.name }}
-            <span class="remove-list-item" @click="removeArea(area)">
-              &#x2715;
-            </span>
-          </li>
-        </ul>
-      </div>
+        <!-- If using the user's, show a select menu of nearby locations -->
+        <div v-if="useLocalAreas" class="form-group">
+          <label for="areaSelector">Farm areas near your current location</label>
+          <select
+            @input="addArea($event.target.value)"
+            class="form-control"
+            name="areas">
+            <option v-if="localAreas.length < 1" value="">No other areas nearby</option>
+            <option v-if="localAreas.length > 0" value="" selected>-- Select an Area --</option>
+            <option
+              v-if="localAreas.length > 0"
+              v-for="area in localAreas"
+              :value="area.tid"
+              v-bind:key="`area-${area.tid}`">
+              {{area.name}}
+            </option>
+          </select>
+        </div>
+
+        <!-- If not using the user's location, show a search bar -->
+        <Autocomplete
+          v-if="!useLocalAreas"
+          :objects="filteredAreas"
+          searchKey="name"
+          searchId="tid"
+          label="Add areas to the log"
+          v-on:results="addArea($event)">
+          <template slot="empty">
+            <div class="empty-slot">
+              <em>No areas found.</em>
+              <br>
+              <button
+                type="button"
+                class="btn btn-light"
+                @click="forceSync"
+                name="button">
+                Sync Now
+              </button>
+            </div>
+          </template>
+        </Autocomplete>
+
+        <!-- Display the areas attached to each log -->
+        <div class="form-item form-item-name form-group">
+          <ul class="list-group">
+            <li
+              v-for="(area, i) in selectedAreas"
+              v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
+              class="list-group-item">
+              {{ area.name }}
+              <span class="remove-list-item" @click="removeArea(area)">
+                &#x2715;
+              </span>
+            </li>
+          </ul>
+        </div>
 
 
-      <!-- We're using a button to attach the current location to the log
-      as a geofield -->
+        <!-- We're using a button to attach the current location to the log
+        as a geofield -->
 
-      <div v-if="useGeolocation" class="form-item form-item-name form-group">
-        <button
-          :disabled='false'
-          title="Add my GPS location to the log"
-          @click="addLocation"
-          type="button"
-          class="btn btn-success btn-navbar">
-          Add my GPS location to the log
-        </button>
-      </div>
+        <div v-if="useGeolocation" class="form-item form-item-name form-group">
+          <button
+            :disabled='false'
+            title="Add my GPS location to the log"
+            @click="addLocation"
+            type="button"
+            class="btn btn-success btn-navbar">
+            Add my GPS location to the log
+          </button>
+        </div>
 
-      <!-- Display a spinner while getting geolocation, then display the location -->
-      <div class="form-item form-item-name form-group">
-        <ul class="list-group">
-          <li
-            class="list-group-item"
-            v-for="geofield in logs[currentLogIndex].geofield.data"
-            v-if="showGeofieldData(geofield)">
-            {{ geofield.geom }}
-            <span class="remove-list-item" @click="updateCurrentLog('geofield', [])">
-              &#x2715;
-            </span>
-          </li>
-          <li class="list-item-group" v-if="isWorking">
-            <icon-spinner/>
-          </li>
-        </ul>
+        <!-- Display a spinner while getting geolocation, then display the location -->
+        <div class="form-item form-item-name form-group">
+          <ul class="list-group">
+            <li
+              class="list-group-item"
+              v-for="geofield in logs[currentLogIndex].geofield.data"
+              v-if="showGeofieldData(geofield)">
+              {{ geofield.geom }}
+              <span class="remove-list-item" @click="updateCurrentLog('geofield', [])">
+                &#x2715;
+              </span>
+            </li>
+            <li class="list-item-group" v-if="isWorking">
+              <icon-spinner/>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
 
-    <h4>Images</h4>
+    <div class="card">
+      <div class="card-header">Images</div>
+      <div class="card-body">
+        <div class="form-item form-item-name form-group">
+          <button
+            :disabled='false'
+            title="Take picture with camera"
+            @click="getPhoto"
+            class="btn btn-info btn-navbar navbar-right"
+            type="button">
+            Take picture with camera
+          </button>
+        </div>
 
-    <div class="form-item form-item-name form-group">
-      <button
-        :disabled='false'
-        title="Take picture with camera"
-        @click="getPhoto"
-        class="btn btn-info btn-navbar navbar-right"
-        type="button">
-        Take picture with camera
-      </button>
-    </div>
-
-    <div class="form-item form-item-name form-group">
-      <div class="input-group ">
-        <label
-          class="custom-file-label"
-          for="customFile">
-          Select photo from file
-        </label>
-        <input
-          type="file"
-          class="custom-file-input"
-          ref="photo"
-          @change="loadPhoto($event.target.files)">
+        <div class="form-item form-item-name form-group">
+          <div class="input-group ">
+            <label
+              class="custom-file-label"
+              for="customFile">
+              Select photo from file
+            </label>
+            <input
+              type="file"
+              class="custom-file-input"
+              ref="photo"
+              @change="loadPhoto($event.target.files)">
+          </div>
+        </div>
+        <div class="form-item form-item-name form-group">
+          <img
+            v-for="url in imageUrls"
+            :src="url"
+            :key="`preview-${imageUrls.indexOf(url)}`"
+            class="preview" />
+        </div>
       </div>
-    </div>
-    <div class="form-item form-item-name form-group">
-      <img
-        v-for="url in imageUrls"
-        :src="url"
-        :key="`preview-${imageUrls.indexOf(url)}`"
-        class="preview" />
     </div>
 
   </div>
@@ -990,6 +1011,10 @@ export default {
   .tab-content.second:not(.selected) {
     transition: left .5s;
     left: 100vw;
+  }
+
+  .card {
+    margin-bottom: 1rem;
   }
 
   .reset-margin {
