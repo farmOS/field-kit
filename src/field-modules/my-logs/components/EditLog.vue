@@ -743,7 +743,7 @@ export default {
       }
       const options = {
         enableHighAccuracy: true,
-        timeout: 5000,
+        timeout: 10000,
       };
 
       this.isWorking = true;
@@ -901,7 +901,7 @@ export default {
         }
         const options = {
           enableHighAccuracy: true,
-          timeout: 5000,
+          timeout: 10000,
         };
 
         navigator.geolocation.getCurrentPosition(
