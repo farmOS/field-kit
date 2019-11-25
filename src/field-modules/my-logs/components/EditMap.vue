@@ -6,6 +6,7 @@
     :options="{
       controls: (defs) => defs.filter(def => def.constructor.name !== 'FullScreen'),
       drawing: true,
+      units: systemOfMeasurement,
     }"
     :wkt="{
       title: 'movement',
@@ -25,7 +26,7 @@ import Map from '@/components/Map';
 export default {
   name: 'EditMap',
   components: { Map },
-  props: [ 'logs', 'id'],
+  props: [ 'logs', 'id', 'systemOfMeasurement'],
   computed: {
     areaGeoJSON() {
       return (process.env.NODE_ENV === 'development') 

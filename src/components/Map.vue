@@ -32,11 +32,13 @@ export default {
       controls: [Boolean, Array, Function],
       interactions: [Boolean, Array, Function],
       drawing: Boolean,
+      units: String,
       default() {
         return {
           controls: true,
           interactions: true,
           drawing: false,
+          units: 'us',
         };
       },
     },

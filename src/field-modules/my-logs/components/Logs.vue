@@ -24,6 +24,7 @@
       :equipment='equipment'
       :userId='userId'
       :logDisplayFilters='logDisplayFilters'
+      :systemOfMeasurement='systemOfMeasurement'
     />
 
     <div
@@ -95,6 +96,7 @@ export default {
   props: [
     'useGeolocation',
     'userId',
+    'systemOfMeasurement',
     'logs',
     'areas',
     'assets',
