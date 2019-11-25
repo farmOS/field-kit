@@ -750,12 +750,11 @@ export default {
     },
 
     addLocation() {
+      let props;
       function addGeofield(position) {
-        const props = this.logs[this.currentLogIndex].geofield.data.concat({
+        props = this.logs[this.currentLogIndex].geofield.data.concat({
           geom: `POINT (${position.coords.longitude} ${position.coords.latitude})`
         });
-        this.updateCurrentLog('geofield', props);
-        this.isWorking = false;
       }
       function onError({ message }) {
         const errorPayload = { message, level: 'warning', show: false, };
@@ -769,11 +768,16 @@ export default {
       };
 
       this.isWorking = true;
-      navigator.geolocation.getCurrentPosition(
+      const watch = navigator.geolocation.watchPosition(
         addGeofield.bind(this),
         onError.bind(this),
         options,
       );
+      setTimeout(() => {
+        navigator.geolocation.clearWatch(watch);
+        this.updateCurrentLog('geofield', props);
+        this.isWorking = false;
+      }, 5000);
     },
 
     getAttached(attribute, resources, resId) {
@@ -940,11 +944,14 @@ export default {
           maximumAge: 0,
         };
 
-        navigator.geolocation.getCurrentPosition(
+        const watch = navigator.geolocation.watchPosition(
           filterAreasByProximity.bind(this),
           onError.bind(this),
           options,
-        )
+        );
+        setTimeout(() => {
+          navigator.geolocation.clearWatch(watch);
+        }, 5000);
       }
     },
 
