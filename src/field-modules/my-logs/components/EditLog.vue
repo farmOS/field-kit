@@ -765,6 +765,7 @@ export default {
       const options = {
         enableHighAccuracy: true,
         timeout: 10000,
+        maximumAge: 0,
       };
 
       this.isWorking = true;
@@ -936,6 +937,7 @@ export default {
         const options = {
           enableHighAccuracy: true,
           timeout: 10000,
+          maximumAge: 0,
         };
 
         navigator.geolocation.getCurrentPosition(
