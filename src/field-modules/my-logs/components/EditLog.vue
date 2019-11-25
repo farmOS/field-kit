@@ -379,7 +379,7 @@
 
     <h4>Images</h4>
 
-    <div 
+    <div
       v-if="isNative"
       class="form-item form-item-name form-group">
       <button
@@ -772,6 +772,7 @@ export default {
       const options = {
         enableHighAccuracy: true,
         timeout: 5000,
+        maximumAge: 0,
       };
 
       this.isWorking = true;
@@ -915,7 +916,7 @@ export default {
     },
     isNative() {
       if (process.env.PLATFORM === 'native' || process.env.PLATFORM === 'dev') {
-        return true; 
+        return true;
       }
       return false;
     },
@@ -943,6 +944,7 @@ export default {
         const options = {
           enableHighAccuracy: true,
           timeout: 5000,
+          maximumAge: 0,
         };
 
         navigator.geolocation.getCurrentPosition(
