@@ -74,6 +74,7 @@ export default {
       if (this.wkt.wkt && this.wkt.wkt !== 'GEOMETRYCOLLECTION EMPTY') {
         this.map.edit.setWKT(this.wkt.wkt);
         this.map.zoomToLayer(this.map.edit.layer);
+        this.map.edit.layer.setZIndex(1);
       }
       this.map.edit.wktOn('drawend', (wkt) => {
         this.$emit('update-wkt', wkt);
