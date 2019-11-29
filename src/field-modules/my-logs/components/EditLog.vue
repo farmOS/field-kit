@@ -481,6 +481,7 @@
       <Map
         id="map"
         :overrideStyles="{ height: '90vw' }"
+        :drawing="false"
         :options="{
           controls: (defaults) => defaults.filter(def => def.constructor.name === 'Attribution'),
           interactions: false,

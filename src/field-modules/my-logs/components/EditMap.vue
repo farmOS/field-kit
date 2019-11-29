@@ -3,9 +3,9 @@
     id="map"
     :overrideStyles="{ height: 'calc(100vh - 3rem)' }"
     @update-wkt="updateMovement"
+    :drawing="true"
     :options="{
       controls: (defs) => defs.filter(def => def.constructor.name !== 'FullScreen'),
-      drawing: true,
       units: systemOfMeasurement,
     }"
     :wkt="{

@@ -27,17 +27,16 @@ export default {
   props: {
     id: String,
     overrideStyles: Object,
+    drawing: Boolean,
     options: {
       type: Object,
       controls: [Boolean, Array, Function],
       interactions: [Boolean, Array, Function],
-      drawing: Boolean,
       units: String,
       default() {
         return {
           controls: true,
           interactions: true,
-          drawing: false,
           units: 'us',
         };
       },
@@ -63,14 +62,15 @@ export default {
     if (this.geojson.url) {
       this.layers.geojson = this.map.addLayer('geojson', this.geojson);
     }
-    if (!this.options.drawing && this.wkt.wkt && this.wkt.wkt !== 'GEOMETRYCOLLECTION EMPTY') {
+    if (!this.drawing && this.wkt.wkt && this.wkt.wkt !== 'GEOMETRYCOLLECTION EMPTY') {
       this.layers.wkt = this.map.addLayer('wkt', this.wkt);
       this.map.zoomToLayer(this.layers.wkt);
     }
     if (this.geojson.url && (!this.wkt.wkt || this.wkt.wkt === 'GEOMETRYCOLLECTION EMPTY')) {
       this.layers.geojson.getSource().once('change', () => { this.map.zoomToVectors(); });
     }
-    if (this.options.drawing) {
+    if (this.drawing) {
+      this.map.enableDraw();
       if (this.wkt.wkt && this.wkt.wkt !== 'GEOMETRYCOLLECTION EMPTY') {
         this.map.edit.setWKT(this.wkt.wkt);
         this.map.zoomToLayer(this.map.edit.layer);
@@ -105,7 +105,7 @@ export default {
   },
   watch: {
     wkt(newWKT) {
-      if (!this.options.drawing) {
+      if (!this.drawing) {
         if (this.layers.wkt) {
           this.map.map.removeLayer(this.layers.wkt);
           this.layers.wkt = null;
