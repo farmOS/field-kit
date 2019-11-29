@@ -1,5 +1,5 @@
 <template>
-  <div 
+  <div
     :id="id"
     :style="[defaultStyles, overrideStyles]">
   </div>
@@ -66,7 +66,7 @@ export default {
     if (!this.options.drawing && this.wkt.wkt && this.wkt.wkt !== 'GEOMETRYCOLLECTION EMPTY') {
       this.layers.wkt = this.map.addLayer('wkt', this.wkt);
       this.map.zoomToLayer(this.layers.wkt);
-    } 
+    }
     if (this.geojson.url && (!this.wkt.wkt || this.wkt.wkt === 'GEOMETRYCOLLECTION EMPTY')) {
       this.layers.geojson.getSource().once('change', () => { this.map.zoomToVectors(); });
     }

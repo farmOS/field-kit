@@ -29,7 +29,7 @@ export default {
   props: [ 'logs', 'id', 'systemOfMeasurement'],
   computed: {
     areaGeoJSON() {
-      return (process.env.NODE_ENV === 'development') 
+      return (process.env.NODE_ENV === 'development')
         ? 'http://localhost:8080/farm/areas/geojson/all'
         : `${localStorage.getItem('host')}/farm/areas/geojson/all`
     },
