@@ -113,8 +113,9 @@
     <h4>Quantities</h4>
     <label for="quantity" class="control-label ">Add new or edit existing quantity</label>
     <div class="form-item form-item-name form-group">
+      <!-- In the select tag, value was set with if:else '' .  I have replaced this conditional with if:else null -->
       <select
-        :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].measure : ''"
+        :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].measure : null"
         @input="updateNewQuant('measure', $event.target.value)"
         placeholder="Quantity measure"
         class="custom-select col-sm-3 ">
@@ -124,13 +125,16 @@
             {{ measure }}
           </option>
       </select>
+      <!-- In the input tag, value was set with if:else 0 .  I have replaced this conditional with if:else null -->
       <input
-        :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].value : 0"
+        :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].value : null"
         @input="updateNewQuant('value', $event.target.value)"
         placeholder="Quantity value"
         type="number"
         class="form-control">
       </input>
+      <!-- I have to eventually insert a value tag following the measure input -->
+      <!-- :value="(logs[currentLogIndex].quantity.data.length > 0) ? units[logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].unit.id].name : null" -->
       <select
         @input="updateNewQuant('unit', $event.target.value)"
         placeholder="Quantity unit"
@@ -141,8 +145,9 @@
             {{ (units) ? unit.name : '' }}
           </option>
       </select>
+      <!-- In the input tag, value was set with if:else '' .  I have replaced this conditional with if:else null -->
       <input
-        :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].label : ''"
+        :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].label : null"
         @input="updateNewQuant('label', $event.target.value)"
         placeholder="Quantity label"
         type="text"
@@ -600,19 +605,25 @@ export default {
     },
 
     updateNewQuant(key, value) {
-      const quantLength = this.logs[this.currentLogIndex].quantity.data.length;
-      // If no quantities exist at the newQuantIndex, create a new one!
-      if (quantLength === 0){
-        this.addQuant();
+      /*
+      Unit values did not show up at all in the unit selector when I tried setting a value tag
+      I still need to set a default unit label
+      */
 
+      console.log('UPDATING NEW QUANT WITH KEY: '+key+' VALUE: '+value)
+      // If no quantities exist at the newQuantIndex, create a new one!
+      if (this.logs[this.currentLogIndex].quantity.data.length === 0){
+        console.log("RUNNING ADDQUANT")
+        this.addQuant();
       }
+      const quantLength = this.logs[this.currentLogIndex].quantity.data.length;
       if (key === 'unit') {
         const unitRef = {id: value, resource: 'taxonomy_term'}
         this.logs[this.currentLogIndex].quantity.data[quantLength - 1][key] = unitRef;
       } else {
         this.logs[this.currentLogIndex].quantity.data[quantLength - 1][key] = value;
       }
-      // now update the log in the store
+      // Update the log in the store
       const props = {
         quantity: this.logs[this.currentLogIndex].quantity,
         isCachedLocally: false,
@@ -665,12 +676,19 @@ export default {
 
     addQuant() {
       const quanTemplate = {
-        measure: 'weight',
+        measure: 0,
         value: 0,
-        unit: {id: 0, resource: 'taxonomy_term'},
+        unit: 0,
         label: '',
       };
+      //this.updateCurrentLog('quantity', quanTemplate);
       this.logs[this.currentLogIndex].quantity.data.push(quanTemplate);
+      const props = {
+        quantity: this.logs[this.currentLogIndex].quantity,
+        isCachedLocally: false,
+        wasPushedToServer: false,
+      };
+      this.$store.commit('updateLog', { index: this.currentLogIndex, props });
     },
 
     removeAsset(asset) {
