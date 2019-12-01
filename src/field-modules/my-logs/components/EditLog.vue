@@ -114,31 +114,35 @@
     <label for="quantity" class="control-label ">Add new or edit existing quantity</label>
     <div class="form-item form-item-name form-group">
       <!-- In the select tag, value was set with if:else '' .  I have replaced this conditional with if:else null -->
+      <!-- Try using selected in option tag -->
+      <!-- :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].measure : 'Quantity measure'" -->
       <select
-        :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].measure : null"
+        :value="(logs[currentLogIndex].quantity.data.length > 0 && logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].measure) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].measure : 'Select measure'"
         @input="updateNewQuant('measure', $event.target.value)"
-        placeholder="Quantity measure"
         class="custom-select col-sm-3 ">
+          <option>Select measure</option>
           <option
             v-for="measure in quantMeasures"
             :value="measure">
             {{ measure }}
           </option>
       </select>
-      <!-- In the input tag, value was set with if:else 0 .  I have replaced this conditional with if:else null -->
       <input
         :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].value : null"
         @input="updateNewQuant('value', $event.target.value)"
-        placeholder="Quantity value"
+        placeholder="Enter value"
         type="number"
         class="form-control">
       </input>
-      <!-- I have to eventually insert a value tag following the measure input -->
-      <!-- :value="(logs[currentLogIndex].quantity.data.length > 0) ? units[logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].unit.id].name : null" -->
+
+      <!--
+      PROBLEM If I insert a quantity without a unit, then insert another quantity, units are placed into the next available slot
+     -->
       <select
+      :value="(logs[currentLogIndex].quantity.data.length > 0 && logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].unit.id) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].unit.id : 'Select unit'"
         @input="updateNewQuant('unit', $event.target.value)"
-        placeholder="Quantity unit"
         class="custom-select col-sm-3 ">
+          <option>Select unit</option>
           <option
             v-for="unit in units"
             :value="unit.tid">
@@ -149,7 +153,7 @@
       <input
         :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].label : null"
         @input="updateNewQuant('label', $event.target.value)"
-        placeholder="Quantity label"
+        placeholder="Enter label"
         type="text"
         class="form-control">
       </input>
@@ -161,7 +165,7 @@
           v-for="(quant, i) in logs[currentLogIndex].quantity.data"
           v-bind:key="`quantity-${i}-${Math.floor(Math.random() * 1000000)}`"
           class="list-group-item">
-          {{ quant.value }} {{ (quantUnitNames.length > 0) ? quantUnitNames[i] : '' }} {{ quant.label }}
+          {{ quant.measure }} {{ quant.value }} {{ (quantUnitNames.length > 0) ? quantUnitNames[i] : '' }} {{ quant.label }}
           <span class="remove-list-item" @click="removeQuant(i)">
             &#x2715;
           </span>
@@ -549,6 +553,7 @@ export default {
         farm_harvest: 'Harvest',
         farm_seeding: 'Seeding',
       },
+      // Could add a measure called 'Quant unit' as a placeholder, but then never add this to the log?
       quantMeasures: [
         'count',
         'length',
@@ -617,11 +622,13 @@ export default {
         this.addQuant();
       }
       const quantLength = this.logs[this.currentLogIndex].quantity.data.length;
-      if (key === 'unit') {
+      if (key === 'unit' && value !== 'Select unit') {
         const unitRef = {id: value, resource: 'taxonomy_term'}
         this.logs[this.currentLogIndex].quantity.data[quantLength - 1][key] = unitRef;
-      } else {
+        console.log("UNIT SELECTED "+unitRef)
+      } else if (value !== 'Select measure') {
         this.logs[this.currentLogIndex].quantity.data[quantLength - 1][key] = value;
+        console.log(key+" SELECTED "+value)
       }
       // Update the log in the store
       const props = {
@@ -676,10 +683,10 @@ export default {
 
     addQuant() {
       const quanTemplate = {
-        measure: 0,
-        value: 0,
-        unit: 0,
-        label: '',
+        measure: null,
+        value: null,
+        unit: {id: null, resource: null},
+        label: null,
       };
       //this.updateCurrentLog('quantity', quanTemplate);
       this.logs[this.currentLogIndex].quantity.data.push(quanTemplate);
@@ -858,6 +865,7 @@ export default {
       }
     },
     quantUnitNames() {
+      //       PROBLEM If I insert a quantity without a unit, then insert another quantity, units are placed into the next available slot
       if (this.units.length > 0 && this.logs[this.currentLogIndex].quantity.data.length > 0) {
         let unitNames = []
         this.logs[this.currentLogIndex].quantity.data.forEach((quant) => {
