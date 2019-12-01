@@ -690,7 +690,10 @@ export default {
       const newAreas = this.logs[this.currentLogIndex].movement.data.area
         .filter(_area => _area.id !== area.tid);
       const prevGeometry = this.logs[this.currentLogIndex].movement.data.geometry;
-      const areaGeometry = area.geofield[0].geom;
+      let areaGeometry = null;
+      if (area.geofield[0]) {
+        areaGeometry = area.geofield[0].geom;
+        }
       const newGeometry = removeGeometry(prevGeometry, areaGeometry);
       const newMovement = {
         geometry: newGeometry,
