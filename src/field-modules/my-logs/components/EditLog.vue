@@ -114,7 +114,6 @@
     <label for="quantity" class="control-label ">Add new or edit existing quantity</label>
     <div class="form-item form-item-name form-group">
       <!-- To display a placeholder value ONLY when there are no existing quantities, we must add the placeholder with an <option> tag and select it using the :value option -->
-      <!-- :value="(logs[currentLogIndex].quantity.data.length > 0 && logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].measure) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].measure : 'Select measure'" -->
       <select
         :value="(logs[currentLogIndex].quantity.data.length > 0 && logs[currentLogIndex].quantity.data[0].measure) ? logs[currentLogIndex].quantity.data[0].measure : 'Select measure'"
         @input="updateNewQuant('measure', $event.target.value)"
@@ -126,7 +125,6 @@
             {{ measure }}
           </option>
       </select>
-      <!-- :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].value : null" -->
       <input
         :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[0].value : null"
         @input="updateNewQuant('value', $event.target.value)"
@@ -134,7 +132,6 @@
         type="number"
         class="form-control">
       </input>
-      <!-- :value="(logs[currentLogIndex].quantity.data.length > 0 && logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].unit) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].unit.id : 'Select unit'" -->
       <select
       :value="(logs[currentLogIndex].quantity.data.length > 0 && logs[currentLogIndex].quantity.data[0].unit) ? logs[currentLogIndex].quantity.data[0].unit.id : 'Select unit'"
         @input="updateNewQuant('unit', $event.target.value)"
@@ -146,7 +143,6 @@
             {{ (units) ? unit.name : '' }}
           </option>
       </select>
-      <!-- :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[logs[currentLogIndex].quantity.data.length -1].label : null" -->
       <input
         :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[0].label : null"
         @input="updateNewQuant('label', $event.target.value)"
