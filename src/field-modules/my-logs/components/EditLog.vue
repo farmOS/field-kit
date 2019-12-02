@@ -931,7 +931,7 @@ export default {
           this.localAreas = this.filteredAreas.filter(area => isNearby(
             [position.coords.longitude, position.coords.latitude],
             area.geofield[0].geom,
-            (position.coords.accuracy / 1000),
+            (position.coords.accuracy),
           ));
         }
         function onError({ message }) {

@@ -102,7 +102,7 @@ export function removeGeometry(minuend, subtrahend) {
 
 export function isNearby(location, wkt, radius) {
   const geoJSON = parse(wkt);
-  const radiusAroundLocation = circle(location, radius, { units: 'kilometers' });
+  const radiusAroundLocation = circle(location, radius, { units: 'meters' });
   const feature = polygon(geoJSON.coordinates);
   const intersection = intersect(radiusAroundLocation, feature);
   return intersection !== null;
