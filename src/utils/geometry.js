@@ -1,5 +1,5 @@
 import { parse, stringify } from 'wellknown';
-import { circle, polygon, intersect } from '@turf/turf';
+import { circle, booleanContains, booleanCrosses } from '@turf/turf';
 
 function compare(geojson1, geojson2) {
   return JSON.stringify(geojson1.coordinates) === JSON.stringify(geojson2.coordinates);
@@ -100,10 +100,18 @@ export function removeGeometry(minuend, subtrahend) {
   throw new Error('Format(s) not recognized as valid WKT.');
 }
 
+// Takes a GPS coordinate, a shape (in WKT), and an accuracy radius, and returns
+// boolean to indicate if the coordinate is inside the shape, or if the accuracy
+// radius around the coordinate intersects it.
 export function isNearby(location, wkt, radius) {
+  // Convert the Well-Known Text to a GeoJSON geometry.
   const geoJSON = parse(wkt);
+  // If the location is inside the shape, we can return true early.
+  if (booleanContains(geoJSON, location)) {
+    return true;
+  }
+  // Otherwise, we'll create a circle around the point, using the radius
+  // provided, and check to see if that crosses the shape.
   const radiusAroundLocation = circle(location, radius, { units: 'meters' });
-  const feature = polygon(geoJSON.coordinates);
-  const intersection = intersect(radiusAroundLocation, feature);
-  return intersection !== null;
+  return booleanCrosses(radiusAroundLocation, geoJSON);
 }
