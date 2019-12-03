@@ -8,7 +8,7 @@ const lazyFarm = () => {
 };
 
 const safeSetLS = (key, value) => {
-  if (key) {
+  if (value) {
     localStorage.setItem(key, value);
   } else {
     localStorage.removeItem(key);
