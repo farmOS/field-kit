@@ -58,10 +58,10 @@ export function mergeGeometries(wkts) {
 // Takes 2 strings of WKT and removes the second from the first.
 export function removeGeometry(minuend, subtrahend) {
   // First handle case that either string is empty.
-  if (minuend === '') {
+  if (!minuend || minuend === 'GEOMETRYCOLLECTION EMPTY') {
     return '';
   }
-  if (subtrahend === '') {
+  if (!subtrahend || subtrahend === 'GEOMETRYCOLLECTION EMPTY') {
     return minuend;
   }
 
