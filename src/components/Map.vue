@@ -70,10 +70,12 @@ export default {
       this.layers.geojson.getSource().once('change', () => { this.map.zoomToVectors(); });
     }
     if (this.drawing) {
-      this.map.enableDraw();
       if (this.wkt.wkt && this.wkt.wkt !== 'GEOMETRYCOLLECTION EMPTY') {
-        this.map.edit.setWKT(this.wkt.wkt);
-        this.map.zoomToLayer(this.map.edit.layer);
+        this.layers.wkt = this.map.addLayer('wkt', this.wkt);
+        this.map.enableDraw({ layer: this.layers.wkt });
+        this.map.zoomToLayer(this.layers.wkt);
+      } else {
+        this.map.enableDraw();
       }
       this.map.edit.wktOn('drawend', (wkt) => {
         this.$emit('update-wkt', wkt);
@@ -116,8 +118,6 @@ export default {
         } else {
           this.map.zoomToVectors();
         }
-      } else {
-        this.map.edit.setWKT(newWKT.wkt);
       }
     },
   },
