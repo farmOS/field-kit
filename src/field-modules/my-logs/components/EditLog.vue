@@ -113,10 +113,14 @@
     <h4>Quantities</h4>
     <label for="quantity" class="control-label ">Add new or edit existing quantity</label>
     <div class="form-item form-item-name form-group">
-      <!-- To display a placeholder value ONLY when there are no existing quantities, we must add the placeholder with an <option> tag and select it using the :value option -->
+      <!-- To display a placeholder value ONLY when there are no existing quantities,
+      we must add the placeholder with an <option> tag and select it using the :value option -->
       <select
-        :value="(logs[currentLogIndex].quantity.data.length > 0 && logs[currentLogIndex].quantity.data[0].measure) ? logs[currentLogIndex].quantity.data[0].measure : 'Select measure'"
-        @input="updateNewQuant('measure', $event.target.value)"
+        :value="(logs[currentLogIndex].quantity.data.length > 0
+          && logs[currentLogIndex].quantity.data[0].measure)
+          ? logs[currentLogIndex].quantity.data[0].measure
+          : 'Select measure'"
+        @input="updateNewQuant('measure', $event.target.value, false)"
         class="custom-select col-sm-3 ">
           <option>Select measure</option>
           <option
@@ -126,15 +130,20 @@
           </option>
       </select>
       <input
-        :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[0].value : null"
-        @input="updateNewQuant('value', $event.target.value)"
+        :value="(logs[currentLogIndex].quantity.data.length > 0)
+          ? logs[currentLogIndex].quantity.data[0].value
+          : null"
+        @input="updateNewQuant('value', $event.target.value, false)"
         placeholder="Enter value"
         type="number"
         class="form-control">
       </input>
       <select
-      :value="(logs[currentLogIndex].quantity.data.length > 0 && logs[currentLogIndex].quantity.data[0].unit) ? logs[currentLogIndex].quantity.data[0].unit.id : 'Select unit'"
-        @input="updateNewQuant('unit', $event.target.value)"
+      :value="(logs[currentLogIndex].quantity.data.length > 0
+          && logs[currentLogIndex].quantity.data[0].unit)
+          ? logs[currentLogIndex].quantity.data[0].unit.id
+          : 'Select unit'"
+        @input="updateNewQuant('unit', $event.target.value, false)"
         class="custom-select col-sm-3 ">
           <option>Select unit</option>
           <option
@@ -144,8 +153,10 @@
           </option>
       </select>
       <input
-        :value="(logs[currentLogIndex].quantity.data.length > 0) ? logs[currentLogIndex].quantity.data[0].label : null"
-        @input="updateNewQuant('label', $event.target.value)"
+        :value="(logs[currentLogIndex].quantity.data.length > 0)
+          ? logs[currentLogIndex].quantity.data[0].label
+          : null"
+        @input="updateNewQuant('label', $event.target.value, false)"
         placeholder="Enter label"
         type="text"
         class="form-control">
@@ -170,7 +181,7 @@
       <button
         type="button"
         class="btn btn-success"
-        @click="addQuant"
+        @click="updateNewQuant(null, null, true)"
         name="addNewQuantity">
         Add another quantity
       </button>
@@ -546,7 +557,6 @@ export default {
         farm_harvest: 'Harvest',
         farm_seeding: 'Seeding',
       },
-      // Could add a measure called 'Quant unit' as a placeholder, but then never add this to the log?
       quantMeasures: [
         'count',
         'length',
@@ -593,37 +603,55 @@ export default {
 
     updateCurrentLog(key, val) {
       const nowStamp = (Date.now() / 1000).toFixed(0);
-      let valueString = (typeof val === 'string') ? val : JSON.stringify(val);
+      let value = null;
+      // Preserve quantites as objects
+      if (key === 'quantity') {
+        value = val;
+      } else {
+        value = (typeof val === 'string') ? val : JSON.stringify(val);
+      }
       const props = {
-        [key]: { data: valueString, changed: nowStamp },
+        [key]: { data: value, changed: nowStamp },
         isCachedLocally: false,
         wasPushedToServer: false,
       };
       this.$store.commit('updateLog', { index: this.currentLogIndex, props});
     },
-
-    updateNewQuant(key, value) {
-      // If no quantities exist, create a new one!
-      if (this.logs[this.currentLogIndex].quantity.data.length === 0){
-        this.addQuant();
+    /*
+    Key indicates the quantity attribute being added (measure, value, unit, label)
+    didPressNew (bool) indicates whether or not updateNewQuant was called by the 'new quantity' button
+    */
+    updateNewQuant(key, value, didPressNew) {
+      console.log("current quant is ");
+      console.log(this.logs[this.currentLogIndex].quantity.data);
+      // If no quantities exist, or if the 'add quantity button was pressed, create a quantity!
+      if (this.logs[this.currentLogIndex].quantity.data.length === 0 || didPressNew){
+        let currentQuants = []
+        if (this.logs[this.currentLogIndex].quantity) {
+          currentQuants = this.logs[this.currentLogIndex].log_category.data;
+        }
+        const quanTemplate = {
+          measure: null,
+          value: null,
+          unit: null,
+          label: null,
+        };
+        currentQuants.unshift(quanTemplate);
+        this.updateCurrentLog('quantity', currentQuants);
       }
-      // The "Select quantity" and "Select unit" are just placeholder values, so we won't update the log when they are selected
+      console.log('quant in store');
+      console.log(this.logs[this.currentLogIndex].quantity.data);
+      let updatedQuant = this.logs[this.currentLogIndex].quantity.data;
       const quantLength = this.logs[this.currentLogIndex].quantity.data.length;
-      if (key === 'unit' && value !== 'Select unit') {
+      // The "Select quantity" and "Select unit" are just placeholder values, so we won't update the log when they are selected
+      if (key === 'unit' && value !== 'Select unit' && !didPressNew) {
         const unitRef = {id: value, resource: 'taxonomy_term'}
-        //this.logs[this.currentLogIndex].quantity.data[quantLength - 1][key] = unitRef;
-        this.logs[this.currentLogIndex].quantity.data[0][key] = unitRef;
-      } else if (value !== 'Select measure' && value !== 'Select unit') {
-        //this.logs[this.currentLogIndex].quantity.data[quantLength - 1][key] = value;
-        this.logs[this.currentLogIndex].quantity.data[0][key] = value;
+        updatedQuant[0][key] = unitRef;
+        this.updateCurrentLog('quantity', updatedQuant);
+      } else if (value !== 'Select measure' && value !== 'Select unit' && !didPressNew) {
+        updatedQuant[0][key] = value;
+        this.updateCurrentLog('quantity', updatedQuant);
       }
-      // Update the log in the DB
-      const props = {
-        quantity: this.logs[this.currentLogIndex].quantity,
-        isCachedLocally: false,
-        wasPushedToServer: false,
-      };
-      this.$store.commit('updateLog', { index: this.currentLogIndex, props });
     },
 
     addCategory(id) {
@@ -666,16 +694,6 @@ export default {
         const newAreas = this.logs[this.currentLogIndex].area.data.concat(areaReference);
         this.updateCurrentLog('area', newAreas);
       }
-    },
-
-    addQuant() {
-      const quanTemplate = {
-        measure: null,
-        value: null,
-        unit: null,
-        label: null,
-      };
-      this.logs[this.currentLogIndex].quantity.data.unshift(quanTemplate);
     },
 
     removeAsset(asset) {
@@ -845,7 +863,6 @@ export default {
       }
     },
     quantUnitNames() {
-      //       PROBLEM If I insert a quantity without a unit, then insert another quantity, units are placed into the next available slot
       if (this.units.length > 0 && this.logs[this.currentLogIndex].quantity.data.length > 0) {
         let unitNames = []
         this.logs[this.currentLogIndex].quantity.data.forEach((quant) => {
