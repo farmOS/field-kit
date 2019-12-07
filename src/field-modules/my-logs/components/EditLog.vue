@@ -622,13 +622,11 @@ export default {
     didPressNew (bool) indicates whether or not updateNewQuant was called by the 'new quantity' button
     */
     updateNewQuant(key, value, didPressNew) {
-      console.log("current quant is ");
-      console.log(this.logs[this.currentLogIndex].quantity.data);
       // If no quantities exist, or if the 'add quantity button was pressed, create a quantity!
       if (this.logs[this.currentLogIndex].quantity.data.length === 0 || didPressNew){
         let currentQuants = []
         if (this.logs[this.currentLogIndex].quantity) {
-          currentQuants = this.logs[this.currentLogIndex].log_category.data;
+          currentQuants = this.logs[this.currentLogIndex].quantity.data;
         }
         const quanTemplate = {
           measure: null,
@@ -639,11 +637,9 @@ export default {
         currentQuants.unshift(quanTemplate);
         this.updateCurrentLog('quantity', currentQuants);
       }
-      console.log('quant in store');
-      console.log(this.logs[this.currentLogIndex].quantity.data);
       let updatedQuant = this.logs[this.currentLogIndex].quantity.data;
       const quantLength = this.logs[this.currentLogIndex].quantity.data.length;
-      // The "Select quantity" and "Select unit" are just placeholder values, so we won't update the log when they are selected
+      // "Select quantity" and "Select unit" are placeholder values; don't update the log when selected
       if (key === 'unit' && value !== 'Select unit' && !didPressNew) {
         const unitRef = {id: value, resource: 'taxonomy_term'}
         updatedQuant[0][key] = unitRef;
