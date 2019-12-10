@@ -79,7 +79,7 @@ export default {
     this.time.date = this.unixToDateString(this.timestamp);
     const date = new Date(this.timestamp * 1000)
     const hours = date.getHours();
-    this.time.hour = hours === 0 ? 12 : hours % 12;
+    this.time.hour = (hours === 12 || hours === 24) ? 12 : hours % 12;
     this.time.minute = date.getMinutes();
     this.time.am = hours < 12;
   },
@@ -155,7 +155,7 @@ export default {
       this.time.date = this.unixToDateString(newTimestamp);
       const date = new Date(newTimestamp * 1000)
       const hours = date.getHours();
-      this.time.hour = hours === 0 ? 12 : hours % 12;
+      this.time.hour = (hours === 12 || hours === 24) ? 12 : hours % 12;
       this.time.minute = date.getMinutes();
       this.time.am = hours < 12;
     },
