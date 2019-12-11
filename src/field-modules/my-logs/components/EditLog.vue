@@ -915,7 +915,6 @@ export default {
     },
     isNative() {
       if (process.env.PLATFORM === 'native' || process.env.PLATFORM === 'dev') {
-        console.log(process.env.PLATFORM);
         return true; 
       }
       return false;
