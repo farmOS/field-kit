@@ -379,7 +379,9 @@
 
     <h4>Images</h4>
 
-    <div class="form-item form-item-name form-group">
+    <div 
+      v-if="isNative"
+      class="form-item form-item-name form-group">
       <button
         :disabled='false'
         title="Take picture with camera"
@@ -399,6 +401,7 @@
         </label>
         <input
           type="file"
+          accept="image/*"
           class="custom-file-input"
           ref="photo"
           @change="loadPhoto($event.target.files)">
@@ -909,6 +912,13 @@ export default {
       return (process.env.NODE_ENV === 'development')
         ? 'http://localhost:8080/farm/areas/geojson/all'
         : `${localStorage.getItem('host')}/farm/areas/geojson/all`
+    },
+    isNative() {
+      if (process.env.PLATFORM === 'native' || process.env.PLATFORM === 'dev') {
+        console.log(process.env.PLATFORM);
+        return true; 
+      }
+      return false;
     },
   },
 
