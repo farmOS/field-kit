@@ -62,6 +62,8 @@
 </template>
 
 <script>
+const addLeadZero = d => ((d < 10) ? `0${d}` : d);
+
 export default {
   name: 'DateAndTimeForm',
   props: ['timestamp'],
@@ -79,16 +81,18 @@ export default {
     this.time.date = this.unixToDateString(this.timestamp);
     const date = new Date(this.timestamp * 1000)
     const hours = date.getHours();
-    this.time.hour = (hours === 12 || hours === 24) ? 12 : hours % 12;
-    this.time.minute = date.getMinutes();
+    this.time.hour = (hours === 12 || hours === 24)
+      ? 12
+      : addLeadZero(hours % 12);
+    this.time.minute = addLeadZero(date.getMinutes());
     this.time.am = hours < 12;
   },
   methods: {
     unixToDateString(unixTimestamp) {
       const date = new Date(unixTimestamp * 1000);
       const dateFix = d => ((d < 10) ? `0${d}` : d);
-      const mm = dateFix(date.getMonth() + 1);
-      const dd = dateFix(date.getDate());
+      const mm = addLeadZero(date.getMonth() + 1);
+      const dd = addLeadZero(date.getDate());
       return `${date.getFullYear()}-${mm}-${dd}`;
     },
     dateAndTimeToUnix(dateString, hourOutOf12, minute, am) {
@@ -155,8 +159,10 @@ export default {
       this.time.date = this.unixToDateString(newTimestamp);
       const date = new Date(newTimestamp * 1000)
       const hours = date.getHours();
-      this.time.hour = (hours === 12 || hours === 24) ? 12 : hours % 12;
-      this.time.minute = date.getMinutes();
+      this.time.hour = (hours === 12 || hours === 24)
+        ? 12
+        : addLeadZero(hours % 12);
+      this.time.minute = addLeadZero(date.getMinutes());
       this.time.am = hours < 12;
     },
   },
