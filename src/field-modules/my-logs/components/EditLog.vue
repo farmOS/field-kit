@@ -408,10 +408,12 @@
       </div>
     </div>
     <div class="form-item form-item-name form-group">
+      <!-- NOTE: Display is set to 'none' if the img fails to load. -->
       <img
-        v-for="url in imageUrls"
+        v-for="(url, i) in imageUrls"
         :src="url"
-        :key="`preview-${imageUrls.indexOf(url)}`"
+        :key="`preview-${i}`"
+        onerror="this.style.display='none'"
         class="preview" />
     </div>
 
@@ -547,7 +549,6 @@ export default {
   data() {
     return {
       tabSelected: 'FIRST',
-      imageUrls: [],
       useLocalAreas: false,
       isWorking: false,
       localAreas: [],
@@ -748,11 +749,10 @@ export default {
 
     loadPhoto(files) {
       for (let i = 0; i < files.length; i += 1) {
-        this.imageUrls.push(window.URL.createObjectURL(files[i]));
         this.$store.dispatch('loadPhotoBlob', {
           file: files[i],
           index: this.currentLogIndex,
-          });
+        });
       }
     },
 
@@ -918,6 +918,10 @@ export default {
         return true; 
       }
       return false;
+    },
+    imageUrls() {
+      return this.logs[this.currentLogIndex].images.data
+        .filter(img => typeof img === 'string');
     },
   },
 
