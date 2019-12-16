@@ -20,23 +20,18 @@ export class SyncError extends Error {
   returning a tuple. It gets its rules from ./rules.js.
 */
 export const createSyncReducer = deps => ([syncables, unsyncables], log, index) => {
-  // Sync all logs to the server; those originally from server will have id fields
   if (log.isReadyToSync && !log.wasPushedToServer) {
-    let syncable = true;
-    const reasons = [];
-    rules.forEach((rule) => {
+    const { syncable, message } = rules.reduce((acc, rule) => {
       const result = rule(log, deps);
       if (!result.syncable) {
-        syncable = false;
-        reasons.push(result.reason);
+        return {
+          syncable: false,
+          message: `${acc.message}<br>- ${result.reason}`,
+        };
       }
-    });
+      return acc;
+    }, { syncable: true, message: `Could not sync "${log.name.data}":` });
     if (!syncable) {
-      const message = reasons.length > 0
-        ? reasons.reduce((_message, reason) => (
-          `${_message}<br>- ${reason}`
-        ), `Could not sync "${log.name.data}":`)
-        : undefined;
       return [syncables, unsyncables.concat({ index, message })];
     }
   }
