@@ -19,7 +19,8 @@ export class SyncError extends Error {
   function that separates logs into those that can and cannot be synced,
   returning a tuple. It gets its rules from ./rules.js.
 */
-export const createSyncReducer = deps => ([syncables, unsyncables], log, index) => {
+export const createSyncReducer = deps => ([syncables, unsyncables, updates], log, index) => {
+  const newUpdates = { index, props: {} };
   if (log.isReadyToSync && !log.wasPushedToServer) {
     const { syncable, message } = rules.reduce((acc, rule) => {
       const result = rule(log, deps);
@@ -29,13 +30,25 @@ export const createSyncReducer = deps => ([syncables, unsyncables], log, index) 
           message: `${acc.message}<br>- ${result.reason}`,
         };
       }
+      if (result.updateProps) {
+        newUpdates.props = {
+          ...newUpdates.props,
+          ...result.updateProps,
+        };
+      }
       return acc;
     }, { syncable: true, message: `Could not sync "${log.name.data}":` });
     if (!syncable) {
-      return [syncables, unsyncables.concat({ index, message })];
+      return [syncables, unsyncables.concat({ index, message }), updates];
     }
   }
-  return [syncables.concat(index), unsyncables];
+  const updatesRequired = Object.values(newUpdates.props).length > 0;
+  if (updatesRequired) { newUpdates.props.isCachedLocally = false; }
+  return [
+    syncables.concat(index),
+    unsyncables,
+    updatesRequired ? updates.concat(newUpdates) : updates,
+  ];
 };
 
 export function checkLog(serverLog, allLogs, syncDate) {

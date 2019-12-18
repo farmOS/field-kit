@@ -265,8 +265,13 @@ export default {
             localStorage.setItem('syncDate', (Date.now() / 1000).toFixed(0));
             const syncReducer = createSyncReducer({
               assets: rootState.farm.assets,
+              logTypes: rootState.shell.logTypes,
             });
-            const [syncables, unsyncables] = rootState.farm.logs.reduce(syncReducer, [[], []]);
+            // Process and sort the logs into syncable and unsyncable logs,
+            // as well as updates needed before syncing.
+            const [syncables, unsyncables, updates] = rootState.farm.logs
+              .reduce(syncReducer, [[], [], []]);
+            // For all logs that are unsyncable, display an error message.
             unsyncables.forEach(({ message, index }) => {
               if (message) {
                 commit('logError', {
@@ -282,6 +287,9 @@ export default {
                 },
               });
             });
+            // Before syncing, commit all necessary updates.
+            updates.forEach(update => commit('updateLog', update));
+            // Finally, send all logs that are syncable.
             return dispatch('sendLogs', syncables);
           })
           // Handle syncErrors thrown by getServerLogs

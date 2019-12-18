@@ -3,13 +3,38 @@
  * =====
  * All rules functions, which are similar to predicate functions, take a log
  * as their first parameter, and an optional dependencies object as their
- * second parameter. They return an object with two fields: syncable, a boolean
- * that determines whether there will be an attempt to sync the log; and reason,
- * a string containing the reason why it cannot be synced. The reason is not
- * required if the log is syncable. Dependendencies should be provided in
- * http/module.js, when the syncReducer is instantiated under the syncAllLogs
- * action.
+ * second parameter. They return an object with three fields: `syncable`, a
+ * boolean that determines whether there will be an attempt to sync the log;
+ * `reason`, a string containing the reason why it cannot be synced; and
+ * `updateProps`, which is an object containing log properties that need to be
+ * updated, if it's the case that the log is syncable but we need to auto-
+ * generate some properties before sending to the server. Dependendencies should
+ * be provided in http/module.js, when the syncReducer is instantiated under the
+ * syncAllLogs action.
  */
+
+// If a log is missing a name, generate one.
+const nameRule = (log, { logTypes }) => {
+  if (!log.name.data) {
+    const date = new Date(log.timestamp.data * 1000);
+    const prettyDate = date.toLocaleDateString();
+    const prettyTime = date.toLocaleTimeString(undefined, {
+      timeStyle: 'short',
+      hour12: false,
+    });
+    const name = `${logTypes[log.type.data].label} ${prettyDate} - ${prettyTime}`;
+    return {
+      syncable: true,
+      updateProps: {
+        name: {
+          data: name,
+          changed: (Date.now() / 1000).toFixed(0),
+        },
+      },
+    };
+  }
+  return { syncable: true };
+};
 
 // Every log must have a valid date.
 const dateRule = (log) => {
@@ -41,4 +66,4 @@ const seedingRule = (log, { assets }) => {
   return { syncable: true };
 };
 
-export default [dateRule, seedingRule];
+export default [nameRule, dateRule, seedingRule];
