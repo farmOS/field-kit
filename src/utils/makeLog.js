@@ -1,3 +1,5 @@
+import stripNullsFromObject from './stripNulls';
+
 /*
   SOURCES & DESTINATIONS
   Theses constants are assigned to string values representing the possible
@@ -214,6 +216,9 @@ const makeLogFactory = (src, dest) => {
         if (type.data !== 'farm_seeding' && geofield) {
           log.geofield = geofield.data;
         }
+
+        // Make sure we're not sending empty properties over the wire.
+        return stripNullsFromObject(log);
       }
       // The format for inserting logs in IDB for local persistence.
       if (dest === IDB) {
