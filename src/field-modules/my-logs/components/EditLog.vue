@@ -925,19 +925,19 @@ export default {
 
   watch: {
     useLocalAreas() {
+      function filterAreasByProximity(position) {
+        this.localAreas = this.filteredAreas.filter(area => isNearby(
+          [position.coords.longitude, position.coords.latitude],
+          area.geofield[0].geom,
+          (position.coords.accuracy),
+        ));
+      }
+      function onError({ message }) {
+        const errorPayload = { message, level: 'warning', show: false };
+        this.$store.commit('logError', errorPayload);
+      }
       // If useLocalAreas is set to true, get geolocation and nearby areas
       if (this.useLocalAreas) {
-        function filterAreasByProximity(position) {
-          this.localAreas = this.filteredAreas.filter(area => isNearby(
-            [position.coords.longitude, position.coords.latitude],
-            area.geofield[0].geom,
-            (position.coords.accuracy),
-          ));
-        }
-        function onError({ message }) {
-          const errorPayload = { message, level: 'warning', show: false, };
-          this.$store.commit('logError', errorPayload);
-        }
         const options = {
           enableHighAccuracy: true,
           timeout: 10000,
