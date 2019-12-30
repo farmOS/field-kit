@@ -1,5 +1,12 @@
 import { parse, stringify } from 'wellknown';
-import { circle, booleanContains, booleanCrosses, booleanOverlap, bboxPolygon, bbox } from '@turf/turf';
+import {
+  circle,
+  booleanContains,
+  booleanCrosses,
+  booleanOverlap,
+  bboxPolygon,
+  bbox,
+} from '@turf/turf';
 
 function compare(geojson1, geojson2) {
   return JSON.stringify(geojson1.coordinates) === JSON.stringify(geojson2.coordinates);
@@ -106,30 +113,32 @@ export function removeGeometry(minuend, subtrahend) {
  * the accuracy radius around the coordinate intersects it.
  */
 export function isNearby(location, shape, radius) {
+  const multiTypes = ['GeometryCollection', 'MultiPoint', 'MultiLineString', 'MultiPolygon'];
   // Convert the Well-Known Text to a GeoJSON geometry, if it isn't already.
-  const geoJSON = typeof shape === 'string' ? parse(shape) : shape;
+  const geoJSON = typeof shape === 'string'
+    ? parse(shape)
+    : shape;
+  // If it's a multipart geometry, get the bounding box, converted to geoJSON,
+  // otherwise just use the geometry as is.
+  const bboxGeoJSON = multiTypes.includes(geoJSON.type)
+    ? bboxPolygon(bbox(geoJSON)).geometry
+    : geoJSON;
+
   // If the location is inside the shape, we can return true early.
-  if (booleanContains(geoJSON, { type: 'Point', coordinates: location })) {
+  if (booleanContains(bboxGeoJSON, { type: 'Point', coordinates: location })) {
     return true;
   }
   // Otherwise, we'll create a circle around the point, using the radius
   // provided, and check to see if that crosses the shape.
   const radiusAroundLocation = circle(location, radius, { units: 'meters' });
-  if (geoJSON.type === 'Polygon') {
-    return booleanOverlap(radiusAroundLocation, geoJSON);
-  }
-  if (geoJSON.type === 'LineString') {
-    return booleanCrosses(radiusAroundLocation, geoJSON);
-  }
-  if (geoJSON.type === 'Point') {
-    return booleanContains(radiusAroundLocation, geoJSON);
-  }
-  if (['MultiPoint', 'MultiLineString', 'MultiPolygon'].includes(geoJSON.type)) {
-    const bboxGeoJSON = bboxPolygon(bbox(geoJSON));
+  if (bboxGeoJSON.type === 'Polygon') {
     return booleanOverlap(radiusAroundLocation, bboxGeoJSON);
   }
-  if (geoJSON.type === 'GeometryCollection') {
-    return geoJSON.geometries.some(geom => isNearby(location, geom, radius));
+  if (bboxGeoJSON.type === 'LineString') {
+    return booleanCrosses(radiusAroundLocation, bboxGeoJSON);
+  }
+  if (bboxGeoJSON.type === 'Point') {
+    return booleanContains(radiusAroundLocation, bboxGeoJSON);
   }
   throw new TypeError('Check that the shape parameter is properly formatted WKT or GeoJSON');
 }
