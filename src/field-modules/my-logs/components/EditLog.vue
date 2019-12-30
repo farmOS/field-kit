@@ -926,7 +926,7 @@ export default {
   watch: {
     useLocalAreas() {
       function filterAreasByProximity(position) {
-        this.localAreas = this.filteredAreas.filter(area => isNearby(
+        this.localAreas = this.filteredAreas.filter(area => !!area.geofield[0] && isNearby(
           [position.coords.longitude, position.coords.latitude],
           area.geofield[0].geom,
           (position.coords.accuracy),
