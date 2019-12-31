@@ -363,10 +363,11 @@
         <ul class="list-group">
           <li
             class="list-group-item"
-            v-for="geofield in logs[currentLogIndex].geofield.data"
-            v-if="showGeofieldData(geofield)">
+            v-for="(geofield, i) in logs[currentLogIndex].geofield.data
+              .filter(g => g.geom.includes('POINT'))"
+            :key="`geofield-${i}`">
             {{ geofield.geom }}
-            <span class="remove-list-item" @click="updateCurrentLog('geofield', [])">
+            <span class="remove-list-item" @click="removeLocation(i)">
               &#x2715;
             </span>
           </li>
@@ -780,6 +781,15 @@ export default {
       }, 5000);
     },
 
+    removeLocation(index) {
+      const oldGeofield = this.logs[this.currentLogIndex].geofield.data;
+      const newGeofield = [
+        ...oldGeofield.slice(0, index),
+        ...oldGeofield.slice(index + 1),
+      ];
+      this.updateCurrentLog('geofield', newGeofield);
+    },
+
     getAttached(attribute, resources, resId) {
         const logAttached = [];
         resources.forEach((resrc) => {
@@ -793,10 +803,6 @@ export default {
     },
     assetsRequired() {
       return this.logs[this.currentLogIndex].type.data === 'farm_seeding' && this.selectedAssets < 1;
-    },
-    showGeofieldData(geofield) {
-      const log = this.logs[this.currentLogIndex]
-      return log.geofield && log.geofield.data.length > 0 && !geofield.geom.includes('POLYGON');
     },
   },
 
