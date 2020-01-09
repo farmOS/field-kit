@@ -226,9 +226,8 @@ export default {
         // Build a message from sendLogs errors, which have an index
         syncError.responses.forEach((response) => {
           if (response.status === 401
-            || response.status === 403
-            || response.status === 404) {
-            // 401, 403 and 404 errors indicate bad credentials - push to login
+            || response.status === 403) {
+            // 401 and 403 errors indicate bad credentials - push to login
             router.push('/login');
           } else if (response.status === undefined) {
             // If there's no status code, it's probably a Network Error; print as is.
@@ -236,8 +235,13 @@ export default {
           } else if (response.index === undefined) {
             // If response.index is undefined, the error was thrown by a getServerLogs request
             errMsg += `${response.status} error: ${response.message}`;
-          } else {
-            // Otherwise, the error was thrown by a sendLogs request
+          } else if (response.status !== 404) {
+            /*
+              Otherwise, either the error was thrown by a sendLogs request, or it is a 404.
+              If the error was thrown by sendLogs, display the log name and error message.
+              If the error is a 404, this means the log was deleted on the server.
+              We are keeping 404 errors silent for now.
+            */
             const logName = rootState.farm.logs[response.index].name.data;
             errMsg += `Error while syncing "${logName}": ${response.message} <br>`;
           }
