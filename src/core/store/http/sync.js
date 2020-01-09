@@ -41,14 +41,22 @@ export const createSyncReducer = deps => ([syncables, unsyncables, updates], log
     if (!syncable) {
       return [syncables, unsyncables.concat({ index, message }), updates];
     }
+    /*
+      Add log to list of syncables if wasPushedToServer is false
+      and log is ready to sync
+    */
+    const updatesRequired = Object.values(newUpdates.props).length > 0;
+    if (updatesRequired) { newUpdates.props.isCachedLocally = false; }
+    return [
+      syncables.concat(index),
+      unsyncables,
+      updatesRequired ? updates.concat(newUpdates) : updates,
+    ];
   }
-  const updatesRequired = Object.values(newUpdates.props).length > 0;
-  if (updatesRequired) { newUpdates.props.isCachedLocally = false; }
-  return [
-    syncables.concat(index),
-    unsyncables,
-    updatesRequired ? updates.concat(newUpdates) : updates,
-  ];
+  /*
+    If wasPushedToServer is true or log is not ready to sync, do nothing
+  */
+  return [syncables, unsyncables, updates];
 };
 
 export function checkLog(serverLog, allLogs, syncDate) {
