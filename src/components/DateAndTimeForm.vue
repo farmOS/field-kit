@@ -7,6 +7,7 @@
         type="date"
         :value="time.date"
         @input="updateDate($event.target.value)"
+        required
         class="form-control">
     </div>
     <div id="hour-form" class="form-item form-group col">
@@ -35,7 +36,7 @@
       <label for="am-pm" class="control-label"></label>
       <div id="am-pm" class="form-item form-group">
         <div class="form-check">
-          <input 
+          <input
             id="is-am"
             name="am-pm"
             type="radio"
@@ -46,7 +47,7 @@
           <label for="is-am" class="form-check-label">AM</label>
         </div>
         <div class="form-check">
-          <input 
+          <input
             id="is-pm"
             name="am-pm"
             type="radio"
@@ -99,7 +100,6 @@ export default {
       const year = +dateString.split('-')[0];
       const monthIndex = +dateString.split('-')[1] - 1;
       const day = +dateString.split('-')[2];
-
       let hourOutOf24;
       if (am && +hourOutOf12 === 12) {
         hourOutOf24 = 0;
@@ -109,22 +109,27 @@ export default {
         hourOutOf24 = +hourOutOf12 + 12;
       }
 
-      return Math.floor(new Date(
-        year,
-        monthIndex,
-        day,
-        hourOutOf24,
-        minute,
-      ).getTime() / 1000).toString();
+      if (year > 1970) {
+        return Math.floor(new Date(
+          year,
+          monthIndex,
+          day,
+          hourOutOf24,
+          minute,
+        ).getTime() / 1000).toString();
+      }
+      return (this.timestamp).toString();
     },
     updateDate(dateString) {
-      const timestamp = this.dateAndTimeToUnix(
-        dateString,
-        this.time.hour,
-        this.time.minute,
-        this.time.am
-      );
-      this.$emit('input', timestamp);
+      if(dateString) {
+        const timestamp = this.dateAndTimeToUnix(
+          dateString,
+          this.time.hour,
+          this.time.minute,
+          this.time.am
+        );
+        this.$emit('input', timestamp);
+      }
     },
     updateHour(hour) {
       const timestamp = this.dateAndTimeToUnix(
