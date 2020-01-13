@@ -100,6 +100,7 @@ export default {
       const year = +dateString.split('-')[0];
       const monthIndex = +dateString.split('-')[1] - 1;
       const day = +dateString.split('-')[2];
+
       let hourOutOf24;
       if (am && +hourOutOf12 === 12) {
         hourOutOf24 = 0;
@@ -121,7 +122,7 @@ export default {
       return (this.timestamp).toString();
     },
     updateDate(dateString) {
-      if(dateString) {
+      if (dateString) {
         const timestamp = this.dateAndTimeToUnix(
           dateString,
           this.time.hour,
