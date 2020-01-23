@@ -72,10 +72,10 @@ export default {
     if (this.drawing) {
       if (this.wkt.wkt && this.wkt.wkt !== 'GEOMETRYCOLLECTION EMPTY') {
         this.layers.wkt = this.map.addLayer('wkt', this.wkt);
-        this.map.enableDraw({ layer: this.layers.wkt });
+        this.map.addBehavior('edit', { layer: this.layers.wkt });
         this.map.zoomToLayer(this.layers.wkt);
       } else {
-        this.map.enableDraw();
+        this.map.addBehavior('edit');
       }
       this.map.edit.wktOn('drawend', (wkt) => {
         this.$emit('update-wkt', wkt);
