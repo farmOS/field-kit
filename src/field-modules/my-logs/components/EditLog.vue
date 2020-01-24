@@ -86,11 +86,12 @@
 
     <h4>Log Categories</h4>
     <div id="categories" class="form-item form-group">
-      <p v-if="!showAllCategories && logs[currentLogIndex].log_category.data.length < 1">No categories selected</p>
+      <p v-if="!showAllCategories && logs[currentLogIndex].log_category.data.length < 1">
+        No categories selected
+      </p>
       <select-box
         small
-        v-for="cat in categories"
-        v-if="showAllCategories || logs[currentLogIndex].log_category.data.some(_cat => cat.tid === _cat.id)"
+        v-for="cat in filteredCategories"
         :id="`category-${cat.tid}-${cat.name}`"
         :selected="logs[currentLogIndex].log_category.data.some(_cat => cat.tid === _cat.id)"
         :label="cat.name"
@@ -98,7 +99,8 @@
         @input="
           $event
           ? addCategory(cat.tid)
-          : removeCategory(logs[currentLogIndex].log_category.data.findIndex(_cat => cat.tid === _cat.id))"
+          : removeCategory(logs[currentLogIndex]
+            .log_category.data.findIndex(_cat => cat.tid === _cat.id))"
         />
       <div class="show-hide">
         <div v-if="!showAllCategories" @click="showAllCategories = !showAllCategories">
@@ -124,8 +126,9 @@
         class="custom-select col-sm-3 ">
           <option>Select measure</option>
           <option
-            v-for="measure in quantMeasures"
-            :value="measure">
+            v-for="(measure, i) in quantMeasures"
+            :value="measure"
+            :key="`measure-${i}`">
             {{ measure }}
           </option>
       </select>
@@ -136,8 +139,7 @@
         @input="updateNewQuant('value', $event.target.value, false)"
         placeholder="Enter value"
         type="number"
-        class="form-control">
-      </input>
+        class="form-control"/>
       <select
       :value="(logs[currentLogIndex].quantity.data.length > 0
           && logs[currentLogIndex].quantity.data[0].unit)
@@ -147,8 +149,9 @@
         class="custom-select col-sm-3 ">
           <option>Select unit</option>
           <option
-            v-for="unit in units"
-            :value="unit.tid">
+            v-for="(unit, i) in units"
+            :value="unit.tid"
+            :key="`unit-${i}`">
             {{ (units) ? unit.name : '' }}
           </option>
       </select>
@@ -159,8 +162,7 @@
         @input="updateNewQuant('label', $event.target.value, false)"
         placeholder="Enter label"
         type="text"
-        class="form-control">
-      </input>
+        class="form-control"/>
     </div>
 
     <div class="form-item form-group">
@@ -169,7 +171,10 @@
           v-for="(quant, i) in logs[currentLogIndex].quantity.data"
           v-bind:key="`quantity-${i}-${Math.floor(Math.random() * 1000000)}`"
           class="list-group-item">
-          {{ quant.measure }} {{ quant.value }} {{ (quantUnitNames.length > 0) ? quantUnitNames[i] : '' }} {{ quant.label }}
+          {{ quant.measure }}&nbsp;
+          {{ quant.value }}&nbsp;
+          {{ (quantUnitNames.length > 0) ? quantUnitNames[i] : '' }}&nbsp;
+          {{ quant.label }}
           <span class="remove-list-item" @click="removeQuant(i)">
             &#x2715;
           </span>
@@ -232,8 +237,9 @@
           class="custom-select col-sm-3 ">
           <option value=""></option>
           <option
-            v-for="equip in equipment"
-            :value="equip.id">
+            v-for="(equip, i) in equipment"
+            :value="equip.id"
+            :key="`equip-${i}`">
             {{ (equip) ? equip.name : '' }}
           </option>
         </select>
@@ -296,7 +302,6 @@
           <option v-if="localAreas.length < 1" value="">No other areas nearby</option>
           <option v-if="localAreas.length > 0" value="" selected>-- Select an Area --</option>
           <option
-            v-if="localAreas.length > 0"
             v-for="area in localAreas"
             :value="area.tid"
             v-bind:key="`area-${area.tid}`">
@@ -380,7 +385,7 @@
 
     <h4>Images</h4>
 
-    <div 
+    <div
       v-if="isNative"
       class="form-item form-item-name form-group">
       <button
@@ -613,16 +618,17 @@ export default {
         isCachedLocally: false,
         wasPushedToServer: false,
       };
-      this.$store.commit('updateLog', { index: this.currentLogIndex, props});
+      this.$store.commit('updateLog', { index: this.currentLogIndex, props });
     },
-    /*
-    Key indicates the quantity attribute being added (measure, value, unit, label)
-    didPressNew (bool) indicates whether or not updateNewQuant was called by the 'new quantity' button
-    */
+    /**
+     * Key indicates the quantity attribute being added (measure, value, unit,
+     * label). didPressNew (bool) indicates whether or not updateNewQuant was
+     * called by the 'new quantity' button.
+     */
     updateNewQuant(key, value, didPressNew) {
       // If no quantities exist, or if the 'add quantity button was pressed, create a quantity!
-      if (this.logs[this.currentLogIndex].quantity.data.length === 0 || didPressNew){
-        let currentQuants = []
+      if (this.logs[this.currentLogIndex].quantity.data.length === 0 || didPressNew) {
+        let currentQuants = [];
         if (this.logs[this.currentLogIndex].quantity) {
           currentQuants = this.logs[this.currentLogIndex].quantity.data;
         }
@@ -635,11 +641,11 @@ export default {
         currentQuants.unshift(quanTemplate);
         this.updateCurrentLog('quantity', currentQuants);
       }
-      let updatedQuant = this.logs[this.currentLogIndex].quantity.data;
-      const quantLength = this.logs[this.currentLogIndex].quantity.data.length;
-      // "Select quantity" and "Select unit" are placeholder values; don't update the log when selected
+      const updatedQuant = this.logs[this.currentLogIndex].quantity.data;
+      // "Select quantity" and "Select unit" are placeholder values;
+      // don't update the log when selected.
       if (key === 'unit' && value !== 'Select unit' && !didPressNew) {
-        const unitRef = {id: value, resource: 'taxonomy_term'}
+        const unitRef = { id: value, resource: 'taxonomy_term' };
         updatedQuant[0][key] = unitRef;
         this.updateCurrentLog('quantity', updatedQuant);
       } else if (value !== 'Select measure' && value !== 'Select unit' && !didPressNew) {
@@ -649,27 +655,27 @@ export default {
     },
 
     addCategory(id) {
-      const catReference = { id, resource: 'taxonomy_term'};
+      const catReference = { id, resource: 'taxonomy_term' };
       const newCategories = this.logs[this.currentLogIndex].log_category.data.concat(catReference);
       this.updateCurrentLog('log_category', newCategories);
     },
 
     addEquipment(id) {
       if (id !== '') {
-        const equipReference = { id, resource: 'farm_asset'};
+        const equipReference = { id, resource: 'farm_asset' };
         const newEquipment = this.logs[this.currentLogIndex].equipment.data.concat(equipReference);
         this.updateCurrentLog('equipment', newEquipment);
       }
     },
 
     addAsset(id) {
-      const assetReference = { id, resource: 'farm_asset'};
+      const assetReference = { id, resource: 'farm_asset' };
       const newAssets = this.logs[this.currentLogIndex].asset.data.concat(assetReference);
       this.updateCurrentLog('asset', newAssets);
     },
 
     addMovementArea(id) {
-      const areaReference = { id, resource: 'taxonomy_term'};
+      const areaReference = { id, resource: 'taxonomy_term' };
       const areaGeometry = (this.areas.find(area => area.tid === id).geofield[0])
         ? this.areas.find(area => area.tid === id).geofield[0].geom
         : null;
@@ -678,13 +684,13 @@ export default {
       const newMovement = {
         area: this.logs[this.currentLogIndex].movement.data.area.concat(areaReference),
         geometry: newGeometry,
-        };
+      };
       this.updateCurrentLog('movement', newMovement);
     },
 
     addArea(id) {
       if (id !== '') {
-        const areaReference = { id: id, resource: 'taxonomy_term'};
+        const areaReference = { id, resource: 'taxonomy_term' };
         const newAreas = this.logs[this.currentLogIndex].area.data.concat(areaReference);
         this.updateCurrentLog('area', newAreas);
       }
@@ -709,12 +715,12 @@ export default {
       let areaGeometry = null;
       if (area.geofield[0]) {
         areaGeometry = area.geofield[0].geom;
-        }
+      }
       const newGeometry = removeGeometry(prevGeometry, areaGeometry);
       const newMovement = {
         geometry: newGeometry,
         area: newAreas,
-      }
+      };
       this.updateCurrentLog('movement', newMovement);
     },
 
@@ -754,11 +760,11 @@ export default {
       let props;
       function addGeofield(position) {
         props = this.logs[this.currentLogIndex].geofield.data.concat({
-          geom: `POINT (${position.coords.longitude} ${position.coords.latitude})`
+          geom: `POINT (${position.coords.longitude} ${position.coords.latitude})`,
         });
       }
       function onError({ message }) {
-        const errorPayload = { message, level: 'warning', show: false, };
+        const errorPayload = { message, level: 'warning', show: false };
         this.$store.commit('logError', errorPayload);
         this.isWorking = false;
       }
@@ -791,15 +797,15 @@ export default {
     },
 
     getAttached(attribute, resources, resId) {
-        const logAttached = [];
-        resources.forEach((resrc) => {
-          attribute.forEach((attrib) => {
-            if (resrc[resId] === attrib.id) {
-              logAttached.push(resrc);
-            }
-          });
+      const logAttached = [];
+      resources.forEach((resrc) => {
+        attribute.forEach((attrib) => {
+          if (resrc[resId] === attrib.id) {
+            logAttached.push(resrc);
+          }
         });
-        return logAttached;
+      });
+      return logAttached;
     },
     assetsRequired() {
       return this.logs[this.currentLogIndex].type.data === 'farm_seeding' && this.selectedAssets < 1;
@@ -817,44 +823,49 @@ export default {
       added to the current log.
     */
     filteredAssets() {
-      if (this.logs[this.currentLogIndex].asset){
+      if (this.logs[this.currentLogIndex].asset) {
         const selectAssetRefs = this.logs[this.currentLogIndex].asset.data;
-        return this.assets.filter(asset =>
-          !selectAssetRefs.some(selAsset => asset.id === selAsset.id),
-        );
-      } else {
-        return this.assets;
+        return this.assets.filter(asset => (
+          !selectAssetRefs.some(selAsset => asset.id === selAsset.id)
+        ));
       }
+      return this.assets;
     },
     filteredAreas() {
       if (this.logs[this.currentLogIndex].area) {
         const selectAreaRefs = this.logs[this.currentLogIndex].area.data;
-        return this.areas.filter(area =>
-          !selectAreaRefs.some(selArea => area.tid === selArea.id),
-        );
-      } else {
-        return this.areas;
+        return this.areas.filter(area => (
+          !selectAreaRefs.some(selArea => area.tid === selArea.id)
+        ));
       }
+      return this.areas;
     },
     filteredMovementAreas() {
       if (this.logs[this.currentLogIndex].movement.data.area) {
         const selectAreaRefs = this.logs[this.currentLogIndex].movement.data.area;
-        return this.areas.filter(area =>
-          !selectAreaRefs.some(selArea => area.tid === selArea.id),
-        );
-      } else {
-        return this.areas;
+        return this.areas.filter(area => (
+          !selectAreaRefs.some(selArea => area.tid === selArea.id)
+        ));
       }
+      return this.areas;
+    },
+    filteredCategories() {
+      return this.categories.filter(cat => (
+        this.showAllCategories
+        || this.logs[this.currentLogIndex].log_category.data.some(_cat => cat.tid === _cat.id)
+      ));
     },
     selectedAssets() {
       if (this.logs[this.currentLogIndex].asset) {
         return this.getAttached(this.logs[this.currentLogIndex].asset.data, this.assets, 'id');
       }
+      return [];
     },
     selectedAreas() {
       if (this.logs[this.currentLogIndex].area) {
         return this.getAttached(this.logs[this.currentLogIndex].area.data, this.areas, 'tid');
       }
+      return [];
     },
     selectedMovementAreas() {
       if (this.logs[this.currentLogIndex].movement.data.area) {
@@ -862,12 +873,13 @@ export default {
           this.logs[this.currentLogIndex].movement.data.area,
           this.areas,
           'tid',
-          );
+        );
       }
+      return [];
     },
     quantUnitNames() {
       if (this.units.length > 0 && this.logs[this.currentLogIndex].quantity.data.length > 0) {
-        let unitNames = []
+        const unitNames = [];
         this.logs[this.currentLogIndex].quantity.data.forEach((quant) => {
           if (quant.unit) {
             this.units.forEach((unit) => {
@@ -875,8 +887,7 @@ export default {
                 unitNames.push(unit.name);
               }
             });
-          }
-          else {
+          } else {
             unitNames.push(null);
           }
         });
@@ -885,8 +896,9 @@ export default {
       return [];
     },
     categoryNames() {
-      if (this.categories.length > 0 && this.logs[this.currentLogIndex].log_category.data.length > 0) {
-        let catNames = []
+      if (this.categories.length > 0
+        && this.logs[this.currentLogIndex].log_category.data.length > 0) {
+        const catNames = [];
         this.logs[this.currentLogIndex].log_category.data.forEach((logCat) => {
           this.categories.forEach((cat) => {
             if (parseInt(cat.tid, 10) === parseInt(logCat.id, 10)) {
@@ -899,8 +911,10 @@ export default {
       return [];
     },
     equipmentNames() {
-      if (this.equipment.length > 0 && this.logs[this.currentLogIndex].equipment && this.logs[this.currentLogIndex].equipment.data.length > 0) {
-        let equipNames = []
+      if (this.equipment.length > 0
+        && this.logs[this.currentLogIndex].equipment
+        && this.logs[this.currentLogIndex].equipment.data.length > 0) {
+        const equipNames = [];
         this.logs[this.currentLogIndex].equipment.data.forEach((logEquip) => {
           this.equipment.forEach((equip) => {
             if (parseInt(equip.id, 10) === parseInt(logEquip.id, 10)) {
@@ -915,11 +929,11 @@ export default {
     areaGeoJSON() {
       return (process.env.NODE_ENV === 'development')
         ? 'http://localhost:8080/farm/areas/geojson/all'
-        : `${localStorage.getItem('host')}/farm/areas/geojson/all`
+        : `${localStorage.getItem('host')}/farm/areas/geojson/all`;
     },
     isNative() {
       if (process.env.PLATFORM === 'native' || process.env.PLATFORM === 'dev') {
-        return true; 
+        return true;
       }
       return false;
     },
