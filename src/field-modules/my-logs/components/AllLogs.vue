@@ -18,7 +18,7 @@
         class="card"
         v-if="logs.length > 0 && passesFilters(log)"
         v-for="(log, i) in logs"
-        :key="`card-${logs.indexOf(log)}`"
+        :key="`card-${i}`"
       >
         <router-link :to="{ path: `/logs/${log.localID}` }">
           <div class="card-body">
@@ -57,13 +57,15 @@
               </div>
               <div class="tags">
                 <span
-                  v-for="area in mapTidsToAreas(log)"
-                  class="tag tag-area">
+                  v-for="(area, i) in mapTidsToAreas(log)"
+                  class="tag tag-area"
+                  :key="`area-${i}`">
                   {{area.name}}
                 </span>
                 <span
-                  v-for="asset in mapIdsToAssets(log)"
-                  class="tag tag-asset">
+                  v-for="(asset, i) in mapIdsToAssets(log)"
+                  class="tag tag-asset"
+                  :key="`asset-${i}`">
                   {{asset.name}}
                 </span>
               </div>
@@ -105,7 +107,7 @@ export default {
     'assets',
     'logDisplayFilters',
     'areas',
-    ],
+  ],
   components: {
     IconAddCircle,
     IconAssignment,
@@ -141,13 +143,14 @@ export default {
     passesFilters(log) {
       const passesTypeFilter = !this.logDisplayFilters.excludedTypes.includes(log.type.data);
       const passesCategoryFilter = () => {
-        if (log.log_category.data.length === 0 && this.logDisplayFilters.excludedCategories.includes(-1)) {
+        if (log.log_category.data.length === 0
+          && this.logDisplayFilters.excludedCategories.includes(-1)) {
           return false;
         }
         return !log.log_category.data.some(cat => (
           this.logDisplayFilters.excludedCategories.some(exCat => +exCat === +cat.id)
-        )
-      )};
+        ));
+      };
       const passesDateFilter = () => {
         if (Number.isNaN(Number(log.timestamp.data))) {
           return true;
@@ -157,25 +160,25 @@ export default {
         let dateLimit;
         if (filter === 'TODAY') {
           d.setDate(d.getDate() - 1);
-          dateLimit = d.valueOf() / 1000 | 0
+          dateLimit = Math.floor(d.valueOf() / 1000);
         }
         if (filter === 'THIS_WEEK') {
           d.setDate(d.getDate() - 7);
-          dateLimit = d.valueOf() / 1000 | 0
+          dateLimit = Math.floor(d.valueOf() / 1000);
         }
         if (filter === 'THIS_MONTH') {
           d.setMonth(d.getMonth() - 1);
-          dateLimit = d.valueOf() / 1000 | 0
+          dateLimit = Math.floor(d.valueOf() / 1000);
         }
         if (filter === 'THIS_YEAR') {
           d.setYear(d.getYear() - 1);
-          dateLimit = d.valueOf() / 1000 | 0
+          dateLimit = Math.floor(d.valueOf() / 1000);
         }
         if (filter === 'ALL_TIME') {
-          dateLimit = 0
+          dateLimit = 0;
         }
         return log.timestamp.data > dateLimit;
-      }
+      };
 
       if (passesTypeFilter && passesCategoryFilter() && passesDateFilter()) {
         return true;
@@ -187,7 +190,7 @@ export default {
       this.$store.dispatch('initializeLog', {
         type: { data: 'farm_activity', changed: timestamp },
         timestamp: { data: timestamp, changed: timestamp },
-      }).then(id => this.$router.push({ path: `/logs/${id}`}));
+      }).then(id => this.$router.push({ path: `/logs/${id}` }));
     },
   },
 };
