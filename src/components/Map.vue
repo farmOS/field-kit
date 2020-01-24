@@ -73,9 +73,11 @@ export default {
       if (this.wkt.wkt && this.wkt.wkt !== 'GEOMETRYCOLLECTION EMPTY') {
         this.layers.wkt = this.map.addLayer('wkt', this.wkt);
         this.map.addBehavior('edit', { layer: this.layers.wkt });
+        this.map.addBehavior('measure', { layer: this.layers.wkt });
         this.map.zoomToLayer(this.layers.wkt);
       } else {
         this.map.addBehavior('edit');
+        this.map.addBehavior('measure', { layer: this.map.edit.layer });
       }
       this.map.edit.wktOn('drawend', (wkt) => {
         this.$emit('update-wkt', wkt);
