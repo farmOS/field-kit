@@ -1,4 +1,5 @@
 // A Vuex module for holding state for the application shell.
+import defaultLogTypes from './defaultLogTypes';
 
 export default {
   state: {
@@ -14,24 +15,7 @@ export default {
       url: '',
     },
     systemOfMeasurement: 'metric',
-    logTypes: {
-      farm_activity: {
-        label: 'Activity',
-        label_plural: 'Activities',
-      },
-      farm_harvest: {
-        label: 'Harvest',
-        label_plural: 'Harvests',
-      },
-      farm_input: {
-        label: 'Input',
-        label_plural: 'Inputs',
-      },
-      farm_observation: {
-        label: 'Observation',
-        label_plural: 'Observations',
-      },
-    },
+    logTypes: defaultLogTypes,
     currentModule: '',
     modules: [],
     mapboxAPIKey: '',
