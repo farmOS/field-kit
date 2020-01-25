@@ -37,6 +37,7 @@ const createFieldModule = modConfig => ({
   install(Vue, { store, router }) {
     const {
       drawer,
+      widget,
       filters,
       name,
       routes,
@@ -45,6 +46,10 @@ const createFieldModule = modConfig => ({
     Vue.component(
       `${name}-drawer-items`,
       { ...drawer, name: `${name}-drawer-items` },
+    );
+    Vue.component(
+      `${name}-widget`,
+      { ...widget, name: `${name}-widget` },
     );
     router.addRoutes(createRoutes(Vue, name, routes));
   },
