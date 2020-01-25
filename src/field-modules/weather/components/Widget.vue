@@ -1,6 +1,11 @@
 <template>
   <widget>
-    <p> Weather Widget </p>
+    <h4 class="card-title">Weather Widget</h4>
+    <h5
+      @click="openWeather"
+      :class="{ clickable: true }">
+      Weather
+    </h5>
   </widget>
 </template>
 
@@ -12,13 +17,18 @@ export default {
     Widget,
   },
   methods: {
+    openWeather() {
+      this.$router.push({ path: '/weather' });
+    },
   },
 };
 </script>
 
 <style scoped>
-  a, a:hover {
-    text-decoration: none;
-    color: inherit;
-  }
+
+.clickable:hover {
+  background-color: #eee;
+  cursor: pointer;
+}
+
 </style>

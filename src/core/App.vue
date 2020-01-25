@@ -24,8 +24,8 @@
         </header>
         <module-menu-items :modules="modules" @click.native="showDrawer = !showDrawer"/>
         <drawer-list>
-          <router-link to="/homescreen">
-            <drawer-list-item @click="showDrawer = !showDrawer">Home</drawer-list-item>
+          <router-link to="/homescreen" @click="showDrawer = !showDrawer">
+            <drawer-list-item>Home</drawer-list-item>
           </router-link>
           <drawer-list-item :clickable="false">
             <label for="location-switch">Share My Location&nbsp;</label>

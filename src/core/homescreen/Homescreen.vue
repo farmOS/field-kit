@@ -1,7 +1,9 @@
 <template>
   <!-- update row list-group drawer! -->
-  <div>
-    <homescreen-widgets :modules="modules"/>
+  <div class=body>
+    <div class="card-group">
+      <homescreen-widgets :modules="modules"/>
+    </div>
   </div>
 </template>
 
