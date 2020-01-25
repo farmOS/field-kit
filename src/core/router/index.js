@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Login from '../login/Login';
 import Logout from '../login/Logout';
+import Homescreen from '../homescreen/Homescreen';
 
 Vue.use(Router);
 
@@ -20,6 +21,12 @@ const router = new Router({
       path: '/logout',
       name: 'Logout',
       component: Logout,
+    },
+    {
+      path: '/homescreen',
+      name: 'Homescreen',
+      component: Homescreen
+      ,
     },
   ],
 });
