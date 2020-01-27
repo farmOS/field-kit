@@ -6,11 +6,13 @@
       @click="openMyLogs"
       :class="{ clickable: true }">
       All Logs
+      <IconAssignment class="inline-svg"/>
     </h5>
     <h5
       @click="openFilter"
       :class="{ clickable: true }">
       Filter Logs
+      <IconFilter class="inline-svg"/>
     </h5>
   </widget>
 
@@ -18,10 +20,14 @@
 
 <script>
 import Widget from '@/components/Widget';
+import IconAssignment from '@/components/icons/icon-assignment';
+import IconFilter from '@/components/icons/icon-filter';
 
 export default {
   components: {
     Widget,
+    IconAssignment,
+    IconFilter,
   },
   methods: {
     openMyLogs() {
