@@ -34,11 +34,11 @@
               @input="setUseGeolocation($event.target.checked)"/>
           </drawer-list-item>
           <drawer-list-item :clickable="false">Version: {{version}}</drawer-list-item>
-          <router-link to="/login" v-if="!isLoggedIn">
-            <drawer-list-item @click="showDrawer = !showDrawer">Login</drawer-list-item>
+          <router-link to="/login" v-if="!isLoggedIn" @click.native="showDrawer = !showDrawer">
+            <drawer-list-item >Login</drawer-list-item>
           </router-link>
-          <router-link to="/logout" v-if="isLoggedIn">
-            <drawer-list-item @click="showDrawer = !showDrawer">Logout</drawer-list-item>
+          <router-link to="/logout" v-if="isLoggedIn" @click.native="showDrawer = !showDrawer">
+            <drawer-list-item>Logout</drawer-list-item>
           </router-link>
         </drawer-list>
 
