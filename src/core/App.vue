@@ -24,7 +24,7 @@
         </header>
         <module-menu-items :modules="modules" @click.native="showDrawer = !showDrawer"/>
         <drawer-list>
-          <router-link to="/homescreen" @click="showDrawer = !showDrawer">
+          <router-link to="/homescreen" @click.native="showDrawer = !showDrawer">
             <drawer-list-item>Home</drawer-list-item>
           </router-link>
           <drawer-list-item :clickable="false">
