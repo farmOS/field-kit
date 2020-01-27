@@ -1,7 +1,6 @@
 <template>
-  <!-- update row list-group drawer! -->
   <div class=body>
-    <div class="card-group">
+    <div id="container" class="cols">
       <homescreen-widgets :modules="modules"/>
     </div>
   </div>
@@ -44,4 +43,20 @@ export default {
 </script>
 
 <style scoped>
+  #container {
+      width: 100%;
+      max-width: 700px;
+      margin: 2em auto;
+  }
+  .cols {
+      -moz-column-count:2;
+      -moz-column-gap: 2%;
+      -moz-column-width: 48%;
+      -webkit-column-count:2;
+      -webkit-column-gap: 2%;
+      -webkit-column-width: 48%;
+      column-count: 2;
+      column-gap: 2%;
+      column-width: 48%;
+  }
 </style>
