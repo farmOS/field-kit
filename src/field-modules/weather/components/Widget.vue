@@ -4,17 +4,20 @@
     <h5
       @click="openWeather"
       :class="{ clickable: true }">
-      Weather
+      Log Weather
+      <IconRaindrops class="inline-svg"/>
     </h5>
   </widget>
 </template>
 
 <script>
 import Widget from '@/components/Widget';
+import IconRaindrops from '@/components/icons/icon-raindrops';
 
 export default {
   components: {
     Widget,
+    IconRaindrops,
   },
   methods: {
     openWeather() {
