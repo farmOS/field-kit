@@ -1,4 +1,8 @@
 <template>
+  <!--
+  I need to build the wkt array in a method.
+  For now I just added [] around the single, hard-coded wkt.
+-->
   <Map
     id="map"
     :overrideStyles="{ height: 'calc(100vh - 3rem)' }"
@@ -8,13 +12,13 @@
       controls: (defs) => defs.filter(def => def.constructor.name !== 'FullScreen'),
       units: systemOfMeasurement,
     }"
-    :wkt="{
+    :wkt="[{
       title: 'movement',
       wkt: currentLog.movement
         ? currentLog.movement.geometry
         : undefined,
       color: 'orange',
-    }"
+    }]"
     :geojson="{
       title: 'areas',
       url: areaGeoJSON,

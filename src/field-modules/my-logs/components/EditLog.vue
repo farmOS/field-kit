@@ -514,6 +514,10 @@
     </div>
 
     <router-link :to="{ name: 'edit-map' }">
+      <!--
+      I need to build the wkt array in a method.
+      For now I just added [] around the single, hard-coded wkt.
+    -->
       <Map
         id="map"
         :overrideStyles="{ height: '90vw' }"
@@ -522,13 +526,13 @@
           controls: (defaults) => defaults.filter(def => def.constructor.name === 'Attribution'),
           interactions: false,
         }"
-        :wkt="{
+        :wkt="[{
           title: 'movement',
           wkt: currentLog.movement
             ? currentLog.movement.geometry
             : undefined,
           color: 'orange',
-        }"
+        }]"
         :geojson="{
           title: 'areas',
           url: areaGeoJSON,
