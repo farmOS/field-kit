@@ -101,24 +101,26 @@ export default {
       I need to add new layers, and name them wktElement.title
       */
       if (!this.drawing && wktElement.wkt && wktElement.wkt !== 'GEOMETRYCOLLECTION EMPTY') {
-        this.layers.wkt = this.map.addLayer('wkt', wktElement);
-        this.map.zoomToLayer(this.layers.wkt);
+        console.log('WKT ELEMENT TYPE:')
+        console.log(typeof wktElement.title);
+        this.layers[wktElement.title] = this.map.addLayer('wkt', wktElement);
+        this.map.zoomToLayer(this.layers[wktElement.title]);
       }
       if (this.geojson.url && (!wktElement.wkt || wktElement.wkt === 'GEOMETRYCOLLECTION EMPTY')) {
         this.layers.geojson.getSource().once('change', () => { this.map.zoomToVectors(); });
       }
       if (this.drawing) {
         if (wktElement.wkt && wktElement.wkt !== 'GEOMETRYCOLLECTION EMPTY') {
-          this.layers.wkt = this.map.addLayer('wkt', wktElement);
-          this.map.enableDraw({ layer: this.layers.wkt });
-          this.map.zoomToLayer(this.layers.wkt);
+          this.layers[wktElement.title] = this.map.addLayer('wkt', wktElement);
+          this.map.enableDraw({ layer: this.layers[wktElement.title] });
+          this.map.zoomToLayer(this.layers[wktElement.title]);
         } else {
           this.map.enableDraw();
         }
         /*
         Here, wkt is declared by the map itself, then passed on in the emit statement
         the update-wkt event triggers updateMovement in editMap.
-        I need to figure out what wkt consists of, and emit an object that denotes layers
+        I need to figure out what 'wkt' consists of
         */
         this.map.edit.wktOn('drawend', (wkt) => {
           this.$emit('update-wkt', wkt);
@@ -154,20 +156,18 @@ export default {
     wkt(newWKT) {
       // I will need to remove multiple layers when multiple have been added
       if (!this.drawing) {
-        if (this.layers.wkt) {
-          this.map.map.removeLayer(this.layers.wkt);
-          this.layers.wkt = null;
-        }
         this.wkt.forEach((newElement) => {
+          if (this.layers[newElement.title]) {
+            this.map.map.removeLayer(this.layers[newElement.title]);
+            this.layers[newElement.title] = null;
+          }
           if (newElement.wkt && newElement.wkt !== 'GEOMETRYCOLLECTION EMPTY') {
             console.log('NEWELEMENT');
             console.log(newElement);
             /*
-            This is a poor solution. It will add redundantly named layers from an array > 1
-            I can address this by naming layers newElement.title
             */
-            this.layers.wkt = this.map.addLayer('wkt', newElement);
-            this.map.zoomToLayer(this.layers.wkt);
+            this.layers[newElement.title] = this.map.addLayer('wkt', newElement);
+            this.map.zoomToLayer(this.layers[newElement.title]);
           } else {
             this.map.zoomToVectors();
           }
