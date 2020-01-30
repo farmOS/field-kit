@@ -3,7 +3,7 @@
     <h4 class="card-title">Weather Widget</h4>
     <h5
       @click="openWeather"
-      :class="{ clickable: true }">
+      class="clickable">
       Log Weather
       <IconRaindrops class="inline-svg"/>
     </h5>
