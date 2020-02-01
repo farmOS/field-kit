@@ -70,6 +70,7 @@
     "mocha": "^6.2.2",
     "mocha-webpack": "^2.0.0-beta.0",
     "node-notifier": "^5.4.3",
+    "object.fromentries": "^2.0.2",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "ora": "^1.2.0",
     "portfinder": "^1.0.25",
