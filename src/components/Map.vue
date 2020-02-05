@@ -49,28 +49,13 @@ export default {
           && (typeof e.wkt === 'string'
           || e.wkt === null)
           && typeof e.color === 'string'
-          && (typeof e.visible === 'boolean'
-          || e.visible === undefined)
+          && (!e.visible
+          || typeof e.visible === 'boolean')
         ) {
           return true;
         }
         return false;
       }),
-      /*
-      How do I validate an array?
-      Trying a validator from https://michaelnthiessen.com/unlock-full-potential-prop-types/
-
-      Alt: Do I need to use a factory function, like
-      default: function () {
-      return { message: 'hello' }
-      }
-
-      original code:
-      title: String,
-      wkt: String,
-      color: String,
-      visible: Boolean,
-      */
     },
     geojson: {
       title: String,
@@ -93,34 +78,41 @@ export default {
     if (this.geojson.url) {
       this.layers.geojson = this.map.addLayer('geojson', this.geojson);
     }
+    /*
+    Act on layers with geometry.
+    */
+    let hasLayers = false;
     this.wkt.forEach((wktElement) => {
-      console.log('WKTELEMENT');
-      console.log(wktElement);
       /*
-      Currently this writes subsequent WKTs over the old.
-      I need to add new layers, and name them wktElement.title
+      WHEN MULTIPLE LAYERS ARE PRESENT, I NEED TO ZOOM TO INCLUDE ALL OF THOSE LAYERS
       */
-      if (!this.drawing && wktElement.wkt && wktElement.wkt !== 'GEOMETRYCOLLECTION EMPTY') {
-        console.log('WKT ELEMENT TYPE:')
-        console.log(typeof wktElement.title);
+      if (!this.drawing
+        && wktElement.wkt
+        && wktElement.wkt !== 'GEOMETRYCOLLECTION EMPTY'
+        && wktElement.wkt !== null) {
+        hasLayers = true;
+        console.log('ADDING WKT LAYER OUTSIDE DRAWING: '+wktElement.title);
         this.layers[wktElement.title] = this.map.addLayer('wkt', wktElement);
         this.map.zoomToLayer(this.layers[wktElement.title]);
       }
-      if (this.geojson.url && (!wktElement.wkt || wktElement.wkt === 'GEOMETRYCOLLECTION EMPTY')) {
-        this.layers.geojson.getSource().once('change', () => { this.map.zoomToVectors(); });
-      }
       if (this.drawing) {
-        if (wktElement.wkt && wktElement.wkt !== 'GEOMETRYCOLLECTION EMPTY') {
-          this.layers[wktElement.title] = this.map.addLayer('wkt', wktElement);
-          this.map.enableDraw({ layer: this.layers[wktElement.title] });
-          this.map.zoomToLayer(this.layers[wktElement.title]);
+        if (wktElement.wkt
+          && wktElement.wkt !== 'GEOMETRYCOLLECTION EMPTY'
+          && wktElement.wkt !== null) {
+          hasLayers = true;
+          if (wktElement.title === 'movement') {
+            console.log('ADDING WKT LAYER INSIDE DRAWING: '+wktElement.title);
+            this.layers[wktElement.title] = this.map.addLayer('wkt', wktElement);
+            this.map.enableDraw({ layer: this.layers[wktElement.title] });
+          } else {
+            this.layers[wktElement.title] = this.map.addLayer('wkt', wktElement);
+            this.map.zoomToLayer(this.layers[wktElement.title]);
+          }
         } else {
           this.map.enableDraw();
         }
         /*
-        Here, wkt is declared by the map itself, then passed on in the emit statement
-        the update-wkt event triggers updateMovement in editMap.
-        I need to figure out what 'wkt' consists of
+        I may want to move these outside the for block
         */
         this.map.edit.wktOn('drawend', (wkt) => {
           this.$emit('update-wkt', wkt);
@@ -136,7 +128,10 @@ export default {
         });
       }
     });
-
+    if (!hasLayers) {
+      console.log('NO LAYERS AT MOUNT');
+      this.layers.geojson.getSource().once('change', () => { this.map.zoomToVectors(); });
+    }
     if (this.mapboxAPIKey) {
       const mapboxOpts = {
         title: 'MapBox Satellite',
@@ -153,26 +148,34 @@ export default {
     this.map = null;
   },
   watch: {
-    wkt(newWKT) {
-      // I will need to remove multiple layers when multiple have been added
-      if (!this.drawing) {
-        this.wkt.forEach((newElement) => {
-          if (this.layers[newElement.title]) {
-            this.map.map.removeLayer(this.layers[newElement.title]);
-            this.layers[newElement.title] = null;
-          }
-          if (newElement.wkt && newElement.wkt !== 'GEOMETRYCOLLECTION EMPTY') {
-            console.log('NEWELEMENT');
-            console.log(newElement);
+    wkt: {
+      handler(newWKT) {
+        if (!this.drawing) {
+          let hasLayers = false;
+          newWKT.forEach((newElement) => {
             /*
+            WHEN MULTIPLE LAYERS ARE PRESENT, I NEED TO ZOOM TO INCLUDE ALL OF THOSE LAYERS
             */
-            this.layers[newElement.title] = this.map.addLayer('wkt', newElement);
-            this.map.zoomToLayer(this.layers[newElement.title]);
-          } else {
+            if (this.layers[newElement.title]) {
+              this.map.map.removeLayer(this.layers[newElement.title]);
+              this.layers[newElement.title] = null;
+              console.log('REMOVED OLD MAP LAYER '+newElement.title);
+            }
+            if (newElement.wkt
+            && newElement.wkt !== 'GEOMETRYCOLLECTION EMPTY'
+            && newElement.wkt !== null) {
+              hasLayers = true;
+              console.log('ADDED NEW MAP LAYER '+newElement.title);
+              this.layers[newElement.title] = this.map.addLayer('wkt', newElement);
+              this.map.zoomToLayer(this.layers[newElement.title]);
+            }
+          });
+          if (!hasLayers) {
             this.map.zoomToVectors();
           }
-        });
-      }
+        }
+      },
+      deep: true,
     },
   },
 };

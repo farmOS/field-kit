@@ -1,8 +1,4 @@
 <template>
-  <!--
-  I need to build the wkt array in a method.
-  For now I just added [] around the single, hard-coded wkt.
--->
   <Map
     id="map"
     :overrideStyles="{ height: 'calc(100vh - 3rem)' }"
@@ -12,13 +8,7 @@
       controls: (defs) => defs.filter(def => def.constructor.name !== 'FullScreen'),
       units: systemOfMeasurement,
     }"
-    :wkt="[{
-      title: 'movement',
-      wkt: currentLog.movement
-        ? currentLog.movement.geometry
-        : undefined,
-      color: 'orange',
-    }]"
+    :wkt=mapLayers
     :geojson="{
       title: 'areas',
       url: areaGeoJSON,
@@ -41,6 +31,24 @@ export default {
     },
     currentLog() {
       return this.logs.find(log => log.localID === +this.id) || this.logs[0];
+    },
+    /*
+    Assemble layers for display
+    */
+    mapLayers() {
+      const movement = {
+        title: 'movement',
+        wkt: this.currentLog?.movement.data.geometry,
+        color: 'orange',
+        visible: true,
+      };
+      const previous = {
+        title: 'previous',
+        wkt: this.currentLog.geofield.data.geofield.data?.[0].geom,
+        color: 'blue',
+        visible: true,
+      };
+      return [movement, previous];
     },
   },
   methods: {
