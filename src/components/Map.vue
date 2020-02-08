@@ -103,13 +103,15 @@ export default {
           if (wktElement.title === 'movement') {
             console.log('ADDING WKT LAYER INSIDE DRAWING: '+wktElement.title);
             this.layers[wktElement.title] = this.map.addLayer('wkt', wktElement);
-            this.map.enableDraw({ layer: this.layers[wktElement.title] });
+            this.map.addBehavior('edit', { layer: this.layers[wktElement.title] });
+            this.map.addBehavior('measure', { layer: this.layers[wktElement.title] });
           } else {
             this.layers[wktElement.title] = this.map.addLayer('wkt', wktElement);
             this.map.zoomToLayer(this.layers[wktElement.title]);
           }
         } else {
-          this.map.enableDraw();
+          this.map.addBehavior('edit');
+          this.map.addBehavior('measure', { layer: this.map.edit.layer });
         }
         /*
         I may want to move these outside the for block
