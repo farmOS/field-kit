@@ -72,66 +72,65 @@ export default {
   }),
   mounted() {
     /*
-    Add scripts to render asset geometry
+    Render asset geometry
     */
     this.map = window.farmOS.map.create(this.id, this.options);
     if (this.geojson.url) {
       this.layers.geojson = this.map.addLayer('geojson', this.geojson);
     }
-    /*
-    Act on layers with geometry.
-    */
     let hasLayers = false;
     this.wkt.forEach((wktElement) => {
       /*
-      WHEN MULTIPLE LAYERS ARE PRESENT, I NEED TO ZOOM TO INCLUDE ALL OF THOSE LAYERS
+      When a movement layer is present, zoom to the movement layer.
+      Otherwise, zoom to the previous layer.
       */
       if (!this.drawing
         && wktElement.wkt
         && wktElement.wkt !== 'GEOMETRYCOLLECTION EMPTY'
         && wktElement.wkt !== null) {
-        hasLayers = true;
-        console.log('ADDING WKT LAYER OUTSIDE DRAWING: '+wktElement.title);
         this.layers[wktElement.title] = this.map.addLayer('wkt', wktElement);
-        this.map.zoomToLayer(this.layers[wktElement.title]);
+        if (hasLayers && this.layers.movement) {
+          this.map.zoomToLayer(this.layers.movement);
+        } else {
+          this.map.zoomToLayer(this.layers[wktElement.title]);
+          hasLayers = true;
+        }
       }
       if (this.drawing) {
         if (wktElement.wkt
           && wktElement.wkt !== 'GEOMETRYCOLLECTION EMPTY'
           && wktElement.wkt !== null) {
-          hasLayers = true;
           if (wktElement.title === 'movement') {
-            console.log('ADDING WKT LAYER INSIDE DRAWING: '+wktElement.title);
             this.layers[wktElement.title] = this.map.addLayer('wkt', wktElement);
-            this.map.addBehavior('edit', { layer: this.layers[wktElement.title] });
-            this.map.addBehavior('measure', { layer: this.layers[wktElement.title] });
-          } else {
+            this.map.zoomToLayer(this.layers.movement);
+            this.map.addBehavior('edit', { layer: this.layers.movement });
+            this.map.addBehavior('measure', { layer: this.layers.movement });
+          } else if (!hasLayers || !this.layers.movement) {
             this.layers[wktElement.title] = this.map.addLayer('wkt', wktElement);
             this.map.zoomToLayer(this.layers[wktElement.title]);
           }
+          hasLayers = true;
         } else {
           this.map.addBehavior('edit');
           this.map.addBehavior('measure', { layer: this.map.edit.layer });
         }
-        /*
-        I may want to move these outside the for block
-        */
-        this.map.edit.wktOn('drawend', (wkt) => {
-          this.$emit('update-wkt', wkt);
-        });
-        this.map.edit.wktOn('modifyend', (wkt) => {
-          this.$emit('update-wkt', wkt);
-        });
-        this.map.edit.wktOn('translateend', (wkt) => {
-          this.$emit('update-wkt', wkt);
-        });
-        this.map.edit.wktOn('delete', (wkt) => {
-          this.$emit('update-wkt', wkt);
-        });
       }
     });
+    if (this.drawing) {
+      this.map.edit.wktOn('drawend', (wkt) => {
+        this.$emit('update-wkt', wkt);
+      });
+      this.map.edit.wktOn('modifyend', (wkt) => {
+        this.$emit('update-wkt', wkt);
+      });
+      this.map.edit.wktOn('translateend', (wkt) => {
+        this.$emit('update-wkt', wkt);
+      });
+      this.map.edit.wktOn('delete', (wkt) => {
+        this.$emit('update-wkt', wkt);
+      });
+    }
     if (!hasLayers) {
-      console.log('NO LAYERS AT MOUNT');
       this.layers.geojson.getSource().once('change', () => { this.map.zoomToVectors(); });
     }
     if (this.mapboxAPIKey) {
@@ -160,20 +159,22 @@ export default {
           let hasLayers = false;
           newWKT.forEach((newElement) => {
             /*
-            WHEN MULTIPLE LAYERS ARE PRESENT, I NEED TO ZOOM TO INCLUDE ALL OF THOSE LAYERS
+            When multiple layers are present, the map zooms to the movement layer by default.
             */
             if (this.layers[newElement.title]) {
               this.map.map.removeLayer(this.layers[newElement.title]);
               this.layers[newElement.title] = null;
-              console.log('REMOVED OLD MAP LAYER '+newElement.title);
             }
             if (newElement.wkt
             && newElement.wkt !== 'GEOMETRYCOLLECTION EMPTY'
             && newElement.wkt !== null) {
-              hasLayers = true;
-              console.log('ADDED NEW MAP LAYER '+newElement.title);
               this.layers[newElement.title] = this.map.addLayer('wkt', newElement);
-              this.map.zoomToLayer(this.layers[newElement.title]);
+              if (hasLayers && this.layers.movement) {
+                this.map.zoomToLayer(this.layers.movement);
+              } else {
+                this.map.zoomToLayer(this.layers[newElement.title]);
+                hasLayers = true;
+              }
             }
           });
           if (!hasLayers) {

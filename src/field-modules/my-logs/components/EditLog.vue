@@ -1031,7 +1031,7 @@ export default {
     /*
     Watch for newly added or deleted areas and update the geofield accordingly.
     This will update map layers in turn.
-    TODO (POSSIBLY)
+    TODO
     Here I am following the behavior of the farmOS server UI.
     On the server, only the first area that is added is displayed on the map.
     In the future it might be useful to mergeGeometries to display all areas.
