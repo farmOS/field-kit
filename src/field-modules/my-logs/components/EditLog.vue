@@ -990,6 +990,11 @@ export default {
       };
       return [movement, previous];
     },
+    logAreas() {
+      return this.logs[this.currentLogIndex].area.data
+        ? this.logs[this.currentLogIndex].area.data
+        : null;
+    },
   },
 
   watch: {
@@ -1023,7 +1028,46 @@ export default {
         }, 5000);
       }
     },
-
+    /*
+    Watch for newly added or deleted areas and update the geofield accordingly.
+    This will update map layers in turn.
+    TODO (POSSIBLY)
+    Here I am following the behavior of the farmOS server UI.
+    On the server, only the first area that is added is displayed on the map.
+    In the future it might be useful to mergeGeometries to display all areas.
+    */
+    logAreas: {
+      handler(newAreas, oldAreas) {
+        // If adding an area
+        newAreas.forEach((newArea, index) => {
+          if (index > (oldAreas.length - 1)) {
+            const areaGeom = (this.areas.find(area => area.tid === newArea.id).geofield[0])
+              ? this.areas.find(area => area.tid === newArea.id).geofield[0].geom
+              : null;
+            if (areaGeom) {
+              const newGeom = this.logs[this.currentLogIndex].geofield.data.length > 0
+                ? this.logs[this.currentLogIndex].geofield.data[0].geom
+                : areaGeom;
+              this.updateCurrentLog('geofield', [{ geom: newGeom }]);
+            }
+          }
+        });
+        // If removing an area
+        if (oldAreas.length > newAreas.length) {
+          if (newAreas.length > 0) {
+            const areaGeom = (this.areas.find(area => area.tid === newAreas[0].id).geofield[0])
+              ? this.areas.find(area => area.tid === newAreas[0].id).geofield[0].geom
+              : null;
+            if (areaGeom) {
+              this.updateCurrentLog('geofield', [{ geom: areaGeom }]);
+            }
+          } else {
+            this.updateCurrentLog('geofield', []);
+          }
+        }
+      },
+      deep: false,
+    },
   },
 };
 

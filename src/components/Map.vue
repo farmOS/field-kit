@@ -152,6 +152,10 @@ export default {
   watch: {
     wkt: {
       handler(newWKT) {
+        /*
+        TODO:
+        Figure out why this is triggering twice when a new area is added.
+        */
         if (!this.drawing) {
           let hasLayers = false;
           newWKT.forEach((newElement) => {
