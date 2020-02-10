@@ -22,7 +22,11 @@ import Map from '@/components/Map';
 export default {
   name: 'EditMap',
   components: { Map },
-  props: ['logs', 'id', 'systemOfMeasurement'],
+  props: ['logs',
+    'id',
+    'systemOfMeasurement',
+    'mapLayers'],
+
   computed: {
     areaGeoJSON() {
       return (process.env.NODE_ENV === 'development')
@@ -32,25 +36,8 @@ export default {
     currentLog() {
       return this.logs.find(log => log.localID === +this.id) || this.logs[0];
     },
-    /*
-    Assemble layers for display
-    */
-    mapLayers() {
-      const movement = {
-        title: 'movement',
-        wkt: this.currentLog?.movement.data.geometry,
-        color: 'orange',
-        visible: true,
-      };
-      const previous = {
-        title: 'previous',
-        wkt: this.currentLog.geofield.data.geofield.data?.[0].geom,
-        color: 'blue',
-        visible: true,
-      };
-      return [movement, previous];
-    },
   },
+
   methods: {
     updateMovement(wkt) {
       const props = {

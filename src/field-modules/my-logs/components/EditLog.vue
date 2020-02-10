@@ -513,7 +513,7 @@
       </ul>
     </div>
 
-    <router-link :to="{ name: 'edit-map' }">
+    <router-link :to="{ name: 'edit-map', params: { mapLayers: mapLayers }}">
       <Map
         id="map"
         :overrideStyles="{ height: '90vw' }"
@@ -972,8 +972,16 @@ export default {
       return this.currentLog.images
         .filter(img => typeof img === 'string');
     },
+    logAreas() {
+      return this.currentLog.area.data
+        ? this.currentLog.area.data
+        : null;
+    },
     /*
-    Assemble layers for display
+    Assemble layers for display.
+    The 'previous' layer is assembled from the geofield plus
+    all area geometires associated with the log.
+    The 'movement' layer is the geometry in the log's movement field
     */
     mapLayers() {
       const movement = {
@@ -982,18 +990,28 @@ export default {
         color: 'orange',
         visible: true,
       };
+      const assembledPrevious = () => {
+        const fields = [];
+        if (this.currentLog.geofield.data.length > 0) {
+          fields.push(this.currentLog.geofield.data[0].geom);
+        }
+        this.logAreas.forEach((logArea) => {
+          const areaGeom = (this.areas.find(area => area.tid === logArea.id).geofield[0])
+            ? this.areas.find(area => area.tid === logArea.id).geofield[0].geom
+            : null;
+          if (areaGeom) { fields.push(areaGeom); }
+        });
+        return fields.length > 0
+          ? mergeGeometries(fields)
+          : null;
+      };
       const previous = {
         title: 'previous',
-        wkt: this.currentLog.geofield.data?.[0].geom,
+        wkt: assembledPrevious(),
         color: 'blue',
         visible: true,
       };
       return [movement, previous];
-    },
-    logAreas() {
-      return this.logs[this.currentLogIndex].area.data
-        ? this.logs[this.currentLogIndex].area.data
-        : null;
     },
   },
 
@@ -1029,41 +1047,17 @@ export default {
       }
     },
     /*
-    Watch for newly added or deleted areas and update the geofield accordingly.
-    This will update map layers in turn.
-    TODO
-    Here I am following the behavior of the farmOS server UI.
-    On the server, only the first area that is added is displayed on the map.
-    In the future it might be useful to mergeGeometries to display all areas.
+    Delete the geofield if it corresponds to a deleted area
     */
     logAreas: {
       handler(newAreas, oldAreas) {
-        // If adding an area
-        newAreas.forEach((newArea, index) => {
-          if (index > (oldAreas.length - 1)) {
-            const areaGeom = (this.areas.find(area => area.tid === newArea.id).geofield[0])
-              ? this.areas.find(area => area.tid === newArea.id).geofield[0].geom
-              : null;
-            if (areaGeom) {
-              const newGeom = this.logs[this.currentLogIndex].geofield.data.length > 0
-                ? this.logs[this.currentLogIndex].geofield.data[0].geom
-                : areaGeom;
-              this.updateCurrentLog('geofield', [{ geom: newGeom }]);
-            }
-          }
-        });
-        // If removing an area
-        if (oldAreas.length > newAreas.length) {
-          if (newAreas.length > 0) {
-            const areaGeom = (this.areas.find(area => area.tid === newAreas[0].id).geofield[0])
-              ? this.areas.find(area => area.tid === newAreas[0].id).geofield[0].geom
-              : null;
-            if (areaGeom) {
-              this.updateCurrentLog('geofield', [{ geom: areaGeom }]);
-            }
-          } else {
-            this.updateCurrentLog('geofield', []);
-          }
+        const areaDeleted = oldAreas.filter(n => !newAreas.includes(n));
+        if (areaDeleted.length > 0
+          && this.currentLog.geofield.data.length > 0
+          && this.areas.find(area => area.tid === areaDeleted[0].id).geofield.length > 0
+          && this.areas.find(area => area.tid === areaDeleted[0].id).geofield[0].geom
+          === this.currentLog.geofield.data[0].geom) {
+          this.updateCurrentLog('geofield', []);
         }
       },
       deep: false,

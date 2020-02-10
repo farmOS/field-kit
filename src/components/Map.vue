@@ -108,6 +108,8 @@ export default {
           } else if (!hasLayers || !this.layers.movement) {
             this.layers[wktElement.title] = this.map.addLayer('wkt', wktElement);
             this.map.zoomToLayer(this.layers[wktElement.title]);
+          } else {
+            this.layers[wktElement.title] = this.map.addLayer('wkt', wktElement);
           }
           hasLayers = true;
         } else {
