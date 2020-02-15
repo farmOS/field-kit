@@ -102,7 +102,7 @@ export default {
 
     // SEND LOGS TO SERVER (step 2 of sync)
     sendLogs({ commit, rootState }, indices) {
-      const { updateLog, logToServer } = farmLog(rootState.shell.logTypes);
+      const { updateLog, formatLogForServer } = farmLog(rootState.shell.logTypes);
       // Update logs in the database and local store after send completes
       function handleSyncResponse(response, index) {
         const props = {
@@ -117,7 +117,7 @@ export default {
       }
       return Promise.allSettled(
         indices.map((index) => {
-          const newLog = logToServer(rootState.farm.logs[index]);
+          const newLog = formatLogForServer(rootState.farm.logs[index]);
           return farm().log.send(newLog, localStorage.getItem('token'));
         }),
       )
@@ -147,7 +147,7 @@ export default {
     getServerLogs({
       commit, getters, dispatch, rootState,
     }) {
-      const { logFromServer } = farmLog(rootState.shell.logTypes);
+      const { mergeLogFromServer } = farmLog(rootState.shell.logTypes);
       const syncDate = JSON.parse(localStorage.getItem('syncDate'));
       return farm().log.get(getters.logFilters)
         .then(res => (
@@ -160,11 +160,11 @@ export default {
                 new Set(localLog.modules.concat(rootState.shell.currentModule)),
               );
               const props = { modules, isCachedLocally: false };
-              const mergedLog = logFromServer(serverLog, localLog, props);
+              const mergedLog = mergeLogFromServer(serverLog, localLog, props);
               commit('addLogs', mergedLog);
             } else {
               const modules = [rootState.shell.currentModule];
-              const formattedLog = logFromServer(serverLog, undefined, { modules });
+              const formattedLog = mergeLogFromServer(serverLog, undefined, { modules });
               dispatch('initializeLog', formattedLog);
             }
             // Return the id so we get back an array of logs that have already
@@ -182,7 +182,7 @@ export default {
         .then((res) => {
           res.list.filter(log => log.changed > syncDate).forEach((serverLog) => {
             const localLog = rootState.farm.logs.find(log => log.id === serverLog.id);
-            const mergedLog = logFromServer(serverLog, localLog);
+            const mergedLog = mergeLogFromServer(serverLog, localLog);
             commit('addLogs', mergedLog);
           });
         })

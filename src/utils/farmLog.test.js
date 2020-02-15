@@ -13,8 +13,8 @@ const syncDate = 1580000000;
 const {
   createLog,
   updateLog,
-  logToServer,
-  logFromServer,
+  formatLogForServer,
+  mergeLogFromServer,
 } = farmLog(defaultLogTypes, syncDate);
 
 describe('createLog', () => {
@@ -541,9 +541,9 @@ describe('updateLog', () => {
   });
 });
 
-describe('logToServer', () => {
+describe('formatLogForServer', () => {
   it('formats a newly created log for the server', () => {
-    expect(logToServer(createLog()))
+    expect(formatLogForServer(createLog()))
       .toMatchObject(
         expect.objectContaining({
           area: [],
@@ -570,9 +570,9 @@ describe('logToServer', () => {
   });
 });
 
-describe('logFromServer', () => {
+describe('mergeLogFromServer', () => {
   it('merges a log from the server with its local copy', () => {
-    expect(logFromServer(
+    expect(mergeLogFromServer(
       {
         area: [
           {

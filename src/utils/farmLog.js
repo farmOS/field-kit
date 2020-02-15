@@ -89,7 +89,7 @@ const farmLog = (logTypes, syncDate) => ({
       modules: props.modules || log.modules || [],
     };
   },
-  logToServer(log) {
+  formatLogForServer(log) {
     const changed = Math.floor(Date.now() / 1000);
     const updateProp = (key, def) => (log[key].data !== undefined ? log[key].data : def);
     const name = updateProp('name', '');
@@ -121,7 +121,7 @@ const farmLog = (logTypes, syncDate) => ({
     }
     return newLog;
   },
-  logFromServer(serverLog, localLog, props = {}) {
+  mergeLogFromServer(serverLog, localLog, props = {}) {
     const changed = Math.floor(Date.now() / 1000);
     // Supply a function for updating props based on certain conditions...
     const updateProp = (!localLog)
