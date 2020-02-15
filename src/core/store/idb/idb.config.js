@@ -6,7 +6,7 @@ import categoryUpgrades from './upgrades/categories';
 import equipmentUpgrades from './upgrades/equipment';
 
 export default {
-  version: 2,
+  version: 3,
   name: 'farmos',
   stores: [
     {

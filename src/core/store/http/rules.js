@@ -25,12 +25,7 @@ const nameRule = (log, { logTypes }) => {
     const name = `${logTypes[log.type.data].label} ${prettyDate} - ${prettyTime}`;
     return {
       syncable: true,
-      updateProps: {
-        name: {
-          data: name,
-          changed: (Date.now() / 1000).toFixed(0),
-        },
-      },
+      updateProps: { name },
     };
   }
   return { syncable: true };

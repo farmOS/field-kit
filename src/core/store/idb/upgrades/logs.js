@@ -16,6 +16,12 @@ export default [
       });
     },
   },
+  /**
+   * VERSION 2
+   * - Change the keypath from local_id to localID.
+   * - Disable autoincrement.
+   * - Add the my-logs module to every log.
+   */
   {
     version: 2,
     onUpgrade(event) {
@@ -48,6 +54,44 @@ export default [
         db.deleteObjectStore('logs');
         newStore.name = 'logs';
       });
+    },
+  },
+  /**
+   * VERSION 3
+   * - Convert strings to integers.
+   * - Change the `remoteUri` prop to `url` to be consistent w/ the server.
+   * - Convert `notes` back to objects instead of just plain strings.
+   */
+  {
+    version: 3,
+    onUpgrade(event) {
+      const isInt = string => /^[-+]?(\d+|Infinity)$/.test(string);
+      const reviver = (key, val) => (typeof val === 'string' && isInt(val) ? +val : val);
+      const parser = log => JSON.parse(JSON.stringify(log), reviver);
+      const store = event.target.transaction.objectStore('logs');
+      return new Promise((resolve, reject) => {
+        const getRequest = store.getAll();
+        getRequest.onsuccess = (getEvent) => {
+          const updatedLogs = getEvent.target.result
+            .map(log => parser({
+              ...log,
+              url: log.remoteUri,
+              notes: {
+                data: {
+                  value: log.notes.data,
+                  format: 'farm_format',
+                },
+                changed: log.notes.changed,
+              },
+            }));
+          resolve(updatedLogs);
+        };
+        getRequest.onerror = reject;
+      }).then(logs => Promise.all(logs.map(log => new Promise((resolve, reject) => {
+        const putRequest = store.put(log);
+        putRequest.onsuccess = resolve;
+        putRequest.onerror = reject;
+      }))));
     },
   },
 ];

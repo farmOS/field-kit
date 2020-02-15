@@ -1,4 +1,4 @@
-import makeLog from '@/utils/makeLog';
+import farmLog from '@/utils/farmLog';
 import {
   openDatabase,
   getRecords,
@@ -23,23 +23,20 @@ export default {
 
   actions: {
 
-    createCachedLog({ commit }, newLog) {
-      const newRecord = makeLog.toIdb(newLog);
+    updateCachedLog({ commit, rootState }, log) {
       openDatabase()
-        .then(db => saveRecord(db, logStore.name, newRecord))
-        .then(() => (
-          commit('updateLog', {
-            props: {
-              localID: newLog.localID,
-              isCachedLocally: true,
-            },
-          })
-        ))
+        .then(db => saveRecord(db, logStore.name, log))
+        .then(() => {
+          const { updateLog } = farmLog(rootState.shell.logTypes);
+          const newLog = updateLog(log, { isCachedLocally: true });
+          commit('addLogs', newLog);
+        })
         .catch(console.error); // eslint-disable-line no-console
     },
 
     loadCachedLogs({ commit, getters, rootState }) {
       const filters = getters.logFilters;
+      const { updateLog } = farmLog(rootState.shell.logTypes);
       const query = (log) => {
         let passesAllFilters;
         if (filters === null) {
@@ -47,6 +44,7 @@ export default {
         } else {
           const { type, done } = filters;
           const passesOwnerFilter = filters.log_owner === undefined
+            || log.log_owner.data === null
             || log.log_owner.data.length === 0
             || log.log_owner.data.some(owner => +owner.id === +filters.log_owner);
           const passesTypeFilter = type === undefined || type.includes(log.type.data);
@@ -62,10 +60,7 @@ export default {
         .then(db => getRecords(db, logStore.name, query))
         .then((results) => {
           const cachedLogs = results.map(log => (
-            makeLog.create({
-              ...log,
-              isCachedLocally: true,
-            })
+            updateLog(log, { isCachedLocally: true })
           ));
           commit('addLogs', cachedLogs);
         })
@@ -76,26 +71,6 @@ export default {
       return openDatabase()
         .then(db => generateLocalID(db, logStore.name))
         .catch(console.error); // eslint-disable-line no-console
-    },
-
-    updateCachedLog({ commit, rootState }, payload) {
-      const { props } = payload;
-      const index = payload.index !== undefined
-        ? payload.index
-        : rootState.farm.logs.findIndex(log => log.localID === props.localID);
-      const newLog = makeLog.toIdb({
-        ...rootState.farm.logs[index],
-        ...props,
-      });
-      openDatabase()
-        .then(db => saveRecord(db, logStore.name, newLog))
-        .then(key => commit('updateLog', {
-          index,
-          props: {
-            isCachedLocally: true,
-            localID: key,
-          },
-        }));
     },
 
     deleteCachedLog(_, { localID }) { // eslint-disable-line camelcase

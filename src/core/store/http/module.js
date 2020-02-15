@@ -1,9 +1,9 @@
 import farmOS from 'farmos';
 import Promise from 'core-js-pure/features/promise';
 import router from '@/core/router';
-import makeLog from '@/utils/makeLog';
+import farmLog from '@/utils/farmLog';
 import {
-  SyncError, createSyncReducer, checkLog, processLog,
+  SyncError, createSyncReducer,
 } from './sync';
 
 const farm = () => {
@@ -102,24 +102,22 @@ export default {
 
     // SEND LOGS TO SERVER (step 2 of sync)
     sendLogs({ commit, rootState }, indices) {
+      const { updateLog, logToServer } = farmLog(rootState.shell.logTypes);
       // Update logs in the database and local store after send completes
       function handleSyncResponse(response, index) {
-        commit('updateLog', {
-          index,
-          props: {
-            id: response.id,
-            remoteUri: response.uri,
-            wasPushedToServer: true,
-            isReadyToSync: false,
-            isCachedLocally: false,
-          },
-        });
+        const props = {
+          id: response.id,
+          url: response.uri,
+          wasPushedToServer: true,
+          isReadyToSync: false,
+          isCachedLocally: false,
+        };
+        const updatedLog = updateLog(rootState.farm.logs[index], props);
+        commit('addLogs', updatedLog);
       }
       return Promise.allSettled(
         indices.map((index) => {
-        // Either send or post logs, depending on whether they originated on the server
-        // Logs originating on the server possess an ID field; others do not.
-          const newLog = makeLog.toServer(rootState.farm.logs[index]);
+          const newLog = logToServer(rootState.farm.logs[index]);
           return farm().log.send(newLog, localStorage.getItem('token'));
         }),
       )
@@ -149,53 +147,43 @@ export default {
     getServerLogs({
       commit, getters, dispatch, rootState,
     }) {
-      const syncDate = localStorage.getItem('syncDate');
-      const allLogs = rootState.farm.logs;
+      const { logFromServer } = farmLog(rootState.shell.logTypes);
+      const syncDate = JSON.parse(localStorage.getItem('syncDate'));
       return farm().log.get(getters.logFilters)
         .then(res => (
-          // Returns an array of ids which have already been checked & merged
-          res.list.map((log) => {
-            const checkStatus = checkLog(log, allLogs, syncDate);
-            const modules = checkStatus.log
-              ? Array.from(new Set(checkStatus.log.modules.concat(rootState.shell.currentModule)))
-              : [rootState.shell.currentModule];
-            if (!checkStatus.serverChange && checkStatus.localId) {
-              commit('updateLog', {
-                index: checkStatus.storeIndex,
-                props: { modules, isCachedLocally: false },
-              });
+          // Filter over the response to eliminate server logs that haven't
+          // changed since the last successful sync event.
+          res.list.filter(log => log.changed > syncDate).map((serverLog) => {
+            const localLog = rootState.farm.logs.find(log => log.id === serverLog.id);
+            if (localLog !== undefined) {
+              const modules = Array.from(
+                new Set(localLog.modules.concat(rootState.shell.currentModule)),
+              );
+              const props = { modules, isCachedLocally: false };
+              const mergedLog = logFromServer(serverLog, localLog, props);
+              commit('addLogs', mergedLog);
+            } else {
+              const modules = [rootState.shell.currentModule];
+              const formattedLog = logFromServer(serverLog, undefined, { modules });
+              dispatch('initializeLog', formattedLog);
             }
-            if (checkStatus.serverChange && checkStatus.localId) {
-              const mergedLog = processLog(log, checkStatus, syncDate);
-              commit('updateLog', {
-                index: checkStatus.storeIndex,
-                props: { ...mergedLog, modules },
-              });
-            }
-            if (checkStatus.localId === null) {
-              const mergedLog = processLog(log, checkStatus, syncDate);
-              dispatch('initializeLog', { ...mergedLog, modules });
-            }
-            return log.id;
+            // Return the id so we get back an array of logs that have already
+            // been checked & merged.
+            return serverLog.id;
           })
         ))
         // Run a 2nd request for the remaining logs not included in the import filters
         .then((checkedIds) => {
-          const uncheckedIds = allLogs
+          const uncheckedIds = rootState.farm.logs
             .filter(log => log.id && !checkedIds.some(checkedId => log.id === checkedId))
             .map(log => log.id);
           return farm().log.get(uncheckedIds);
         })
         .then((res) => {
-          res.list.forEach((log) => {
-            const checkStatus = checkLog(log, allLogs, syncDate);
-            if (checkStatus.serverChange) {
-              const mergedLog = processLog(log, checkStatus, syncDate);
-              commit('updateLog', {
-                index: checkStatus.storeIndex,
-                props: mergedLog,
-              });
-            }
+          res.list.filter(log => log.changed > syncDate).forEach((serverLog) => {
+            const localLog = rootState.farm.logs.find(log => log.id === serverLog.id);
+            const mergedLog = logFromServer(serverLog, localLog);
+            commit('addLogs', mergedLog);
           });
         })
         .catch((err) => {
@@ -214,6 +202,7 @@ export default {
         });
     },
     syncAllLogs({ rootState, commit, dispatch }) {
+      const { updateLog } = farmLog(rootState.shell.logTypes);
       /*
         This handles the custom error type defined in ./sync.js,
         thrown by getServerLogs and sendLogs
@@ -284,15 +273,17 @@ export default {
                   show: true,
                 });
               }
-              commit('updateLog', {
-                index,
-                props: {
-                  isReadyToSync: false,
-                },
-              });
+              const updatedLog = updateLog(
+                rootState.farm.logs[index],
+                { isReadyToSync: false },
+              );
+              commit('addLogs', updatedLog);
             });
             // Before syncing, commit all necessary updates.
-            updates.forEach(update => commit('updateLog', update));
+            updates.forEach(({ index, props }) => {
+              const updatedLog = updateLog(rootState.farm.logs[index], props);
+              commit('addLogs', updatedLog);
+            });
             // Finally, send all logs that are syncable.
             return dispatch('sendLogs', syncables);
           })

@@ -76,8 +76,8 @@
     <div class="form-item form-item-name form-group">
       <label for="notes" class="control-label ">Notes</label>
       <textarea
-        :value="logs[currentLogIndex].notes.data"
-        @input="updateCurrentLog('notes', $event.target.value)"
+        :value="parseNotes(logs[currentLogIndex].notes)"
+        @input="updateNotes($event.target.value)"
         placeholder="Enter notes"
         type="text"
         class="form-control">
@@ -86,14 +86,17 @@
 
     <h4>Log Categories</h4>
     <div id="categories" class="form-item form-group">
-      <p v-if="!showAllCategories && logs[currentLogIndex].log_category.data.length < 1">
+      <p v-if="!showAllCategories
+        && (!logs[currentLogIndex].log_category.data
+        || logs[currentLogIndex].log_category.data.length < 1)">
         No categories selected
       </p>
       <select-box
         small
         v-for="cat in filteredCategories"
         :id="`category-${cat.tid}-${cat.name}`"
-        :selected="logs[currentLogIndex].log_category.data.some(_cat => cat.tid === _cat.id)"
+        :selected="logs[currentLogIndex].log_category.data
+          && logs[currentLogIndex].log_category.data.some(_cat => cat.tid === _cat.id)"
         :label="cat.name"
         :key="`category-${cat.tid}-${cat.name}`"
         @input="
@@ -112,74 +115,83 @@
       </div>
     </div>
 
-    <h4>Quantities</h4>
-    <label for="quantity" class="control-label ">Add new or edit existing quantity</label>
-    <div class="form-item form-item-name form-group">
-      <!-- To display a placeholder value ONLY when there are no existing quantities,
-      we must add the placeholder with an <option> tag and select it using the :value option -->
-      <select
-        :value="(logs[currentLogIndex].quantity.data.length > 0
-          && logs[currentLogIndex].quantity.data[0].measure)
-          ? logs[currentLogIndex].quantity.data[0].measure
-          : 'Select measure'"
-        @input="updateNewQuant('measure', $event.target.value, false)"
-        class="custom-select col-sm-3 ">
-          <option>Select measure</option>
-          <option
-            v-for="(measure, i) in quantMeasures"
-            :value="measure"
-            :key="`measure-${i}`">
-            {{ measure }}
-          </option>
-      </select>
-      <input
-        :value="(logs[currentLogIndex].quantity.data.length > 0)
-          ? logs[currentLogIndex].quantity.data[0].value
-          : null"
-        @input="updateNewQuant('value', $event.target.value, false)"
-        placeholder="Enter value"
-        type="number"
-        class="form-control"/>
-      <select
-      :value="(logs[currentLogIndex].quantity.data.length > 0
-          && logs[currentLogIndex].quantity.data[0].unit)
-          ? logs[currentLogIndex].quantity.data[0].unit.id
-          : 'Select unit'"
-        @input="updateNewQuant('unit', $event.target.value, false)"
-        class="custom-select col-sm-3 ">
-          <option>Select unit</option>
-          <option
-            v-for="(unit, i) in units"
-            :value="unit.tid"
-            :key="`unit-${i}`">
-            {{ (units) ? unit.name : '' }}
-          </option>
-      </select>
-      <input
-        :value="(logs[currentLogIndex].quantity.data.length > 0)
-          ? logs[currentLogIndex].quantity.data[0].label
-          : null"
-        @input="updateNewQuant('label', $event.target.value, false)"
-        placeholder="Enter label"
-        type="text"
-        class="form-control"/>
-    </div>
+    <div v-if="logs[currentLogIndex].quantity">
+      <h4>Quantities</h4>
+      <label for="quantity" class="control-label ">Add new or edit existing quantity</label>
+      <div class="form-item form-item-name form-group">
+        <!-- To display a placeholder value ONLY when there are no existing quantities,
+        we must add the placeholder with an <option> tag and select it using the :value option -->
+        <select
+          :value="(logs[currentLogIndex].quantity.data
+            && logs[currentLogIndex].quantity.data.length > 0
+            && logs[currentLogIndex].quantity.data[0].measure)
+            ? logs[currentLogIndex].quantity.data[0].measure
+            : 'Select measure'"
+          @input="updateNewQuant('measure', $event.target.value, false)"
+          class="custom-select col-sm-3 ">
+            <option>Select measure</option>
+            <option
+              v-for="(measure, i) in quantMeasures"
+              :value="measure"
+              :key="`measure-${i}`">
+              {{ measure }}
+            </option>
+        </select>
+        <input
+          :value="(logs[currentLogIndex].quantity.data
+            && logs[currentLogIndex].quantity.data.length > 0)
+            ? logs[currentLogIndex].quantity.data[0].value
+            : null"
+          @input="updateNewQuant('value', $event.target.value, false)"
+          placeholder="Enter value"
+          type="number"
+          class="form-control"/>
+        <select
+        :value="(logs[currentLogIndex].quantity.data
+            && logs[currentLogIndex].quantity.data.length > 0
+            && logs[currentLogIndex].quantity.data[0].unit)
+            ? logs[currentLogIndex].quantity.data[0].unit.id
+            : 'Select unit'"
+          @input="updateNewQuant('unit', $event.target.value, false)"
+          class="custom-select col-sm-3 ">
+            <option>Select unit</option>
+            <option
+              v-for="(unit, i) in units"
+              :value="unit.tid"
+              :key="`unit-${i}`">
+              {{ (units) ? unit.name : '' }}
+            </option>
+        </select>
+        <input
+          :value="(logs[currentLogIndex].quantity.data
+            && logs[currentLogIndex].quantity.data.length > 0)
+            ? logs[currentLogIndex].quantity.data[0].label
+            : null"
+          @input="updateNewQuant('label', $event.target.value, false)"
+          placeholder="Enter label"
+          type="text"
+          class="form-control"/>
+      </div>
 
-    <div class="form-item form-group">
-      <ul v-if="logs[currentLogIndex].quantity.data.length > 0" class="list-group">
-        <li
-          v-for="(quant, i) in logs[currentLogIndex].quantity.data"
-          v-bind:key="`quantity-${i}-${Math.floor(Math.random() * 1000000)}`"
-          class="list-group-item">
-          {{ quant.measure }}&nbsp;
-          {{ quant.value }}&nbsp;
-          {{ (quantUnitNames.length > 0) ? quantUnitNames[i] : '' }}&nbsp;
-          {{ quant.label }}
-          <span class="remove-list-item" @click="removeQuant(i)">
-            &#x2715;
-          </span>
-        </li>
-      </ul>
+      <div class="form-item form-group">
+        <ul
+          v-if="logs[currentLogIndex].quantity.data
+            && logs[currentLogIndex].quantity.data.length > 0"
+          class="list-group">
+          <li
+            v-for="(quant, i) in logs[currentLogIndex].quantity.data"
+            v-bind:key="`quantity-${i}-${Math.floor(Math.random() * 1000000)}`"
+            class="list-group-item">
+            {{ quant.measure }}&nbsp;
+            {{ quant.value }}&nbsp;
+            {{ (quantUnitNames.length > 0) ? quantUnitNames[i] : '' }}&nbsp;
+            {{ quant.label }}
+            <span class="remove-list-item" @click="removeQuant(i)">
+              &#x2715;
+            </span>
+          </li>
+        </ul>
+      </div>
     </div>
 
     <div class="form-item form-group">
@@ -368,8 +380,7 @@
         <ul class="list-group">
           <li
             class="list-group-item"
-            v-for="(geofield, i) in logs[currentLogIndex].geofield.data
-              .filter(g => g.geom.includes('POINT'))"
+            v-for="(geofield, i) in filteredGeofields"
             :key="`geofield-${i}`">
             {{ geofield.geom }}
             <span class="remove-list-item" @click="removeLocation(i)">
@@ -427,7 +438,8 @@
 
   <div
     class="container-fluid tab-content second"
-    :class="{ selected: tabSelected === 'SECOND' }">
+    :class="{ selected: tabSelected === 'SECOND' }"
+    v-if="logs[currentLogIndex].movement">
 
     <br>
     <Autocomplete
@@ -512,7 +524,9 @@
         }"
         :wkt="{
           title: 'movement',
-          wkt: logs[currentLogIndex].movement.data.geometry,
+          wkt: logs[currentLogIndex].movement.data
+            ? logs[currentLogIndex].movement.data.geometry
+            : undefined,
           color: 'orange',
         }"
         :geojson="{
@@ -538,6 +552,7 @@ import ToggleCheck from '@/components/ToggleCheck';
 import SelectBox from '@/components/SelectBox';
 import DateAndTimeForm from '@/components/DateAndTimeForm';
 import { mergeGeometries, removeGeometry, isNearby } from '@/utils/geometry';
+import parseNotes from '@/utils/parseNotes';
 
 export default {
   name: 'EditLog',
@@ -605,20 +620,13 @@ export default {
     },
 
     updateCurrentLog(key, val) {
-      const nowStamp = (Date.now() / 1000).toFixed(0);
-      let value = null;
-      // Preserve quantites as objects
-      if (key === 'quantity') {
-        value = val;
-      } else {
-        value = (typeof val === 'string') ? val : JSON.stringify(val);
-      }
-      const props = {
-        [key]: { data: value, changed: nowStamp },
-        isCachedLocally: false,
-        wasPushedToServer: false,
-      };
-      this.$store.commit('updateLog', { index: this.currentLogIndex, props });
+      const props = { [key]: val };
+      const index = this.currentLogIndex;
+      this.$store.dispatch('updateLog', { index, props });
+    },
+
+    updateNotes(value) {
+      this.updateCurrentLog('notes', { value, format: 'farm_format' });
     },
     /**
      * Key indicates the quantity attribute being added (measure, value, unit,
@@ -656,15 +664,21 @@ export default {
 
     addCategory(id) {
       const catReference = { id, resource: 'taxonomy_term' };
-      const newCategories = this.logs[this.currentLogIndex].log_category.data.concat(catReference);
-      this.updateCurrentLog('log_category', newCategories);
+      const oldCats = this.logs[this.currentLogIndex].log_category;
+      const newCats = oldCats.data
+        ? oldCats.data.concat(catReference)
+        : [catReference];
+      this.updateCurrentLog('log_category', newCats);
     },
 
     addEquipment(id) {
       if (id !== '') {
         const equipReference = { id, resource: 'farm_asset' };
-        const newEquipment = this.logs[this.currentLogIndex].equipment.data.concat(equipReference);
-        this.updateCurrentLog('equipment', newEquipment);
+        const oldEquip = this.logs[this.currentLogIndex].equipment;
+        const newEquip = oldEquip?.data
+          ? oldEquip.data.concat(equipReference)
+          : [equipReference];
+        this.updateCurrentLog('equipment', newEquip);
       }
     },
 
@@ -679,10 +693,14 @@ export default {
       const areaGeometry = (this.areas.find(area => area.tid === id).geofield[0])
         ? this.areas.find(area => area.tid === id).geofield[0].geom
         : null;
-      const prevGeometry = this.logs[this.currentLogIndex].movement.data.geometry;
-      const newGeometry = mergeGeometries([areaGeometry, prevGeometry]);
+      const prevMovement = this.logs[this.currentLogIndex].movement;
+      const newGeometry = prevMovement.data
+        ? mergeGeometries([areaGeometry, prevMovement.data.geometry])
+        : areaGeometry;
       const newMovement = {
-        area: this.logs[this.currentLogIndex].movement.data.area.concat(areaReference),
+        area: prevMovement.data
+          ? prevMovement.data.area.concat(areaReference)
+          : [areaReference],
         geometry: newGeometry,
       };
       this.updateCurrentLog('movement', newMovement);
@@ -759,9 +777,11 @@ export default {
     addLocation() {
       let props;
       function addGeofield(position) {
-        props = this.logs[this.currentLogIndex].geofield.data.concat({
-          geom: `POINT (${position.coords.longitude} ${position.coords.latitude})`,
-        });
+        const geom = `POINT (${position.coords.longitude} ${position.coords.latitude})`;
+        const oldGeofield = this.logs[this.currentLogIndex].geofield;
+        props = oldGeofield.data
+          ? oldGeofield.data.concat({ geom })
+          : [{ geom }];
       }
       function onError({ message }) {
         const errorPayload = { message, level: 'warning', show: false };
@@ -810,6 +830,7 @@ export default {
     assetsRequired() {
       return this.logs[this.currentLogIndex].type.data === 'farm_seeding' && this.selectedAssets < 1;
     },
+    parseNotes,
   },
 
   computed: {
@@ -841,7 +862,8 @@ export default {
       return this.areas;
     },
     filteredMovementAreas() {
-      if (this.logs[this.currentLogIndex].movement.data.area) {
+      const { movement } = this.logs[this.currentLogIndex];
+      if (movement && movement.data && movement.data.area) {
         const selectAreaRefs = this.logs[this.currentLogIndex].movement.data.area;
         return this.areas.filter(area => (
           !selectAreaRefs.some(selArea => area.tid === selArea.id)
@@ -850,10 +872,23 @@ export default {
       return this.areas;
     },
     filteredCategories() {
-      return this.categories.filter(cat => (
-        this.showAllCategories
-        || this.logs[this.currentLogIndex].log_category.data.some(_cat => cat.tid === _cat.id)
-      ));
+      const selectedCats = this.logs[this.currentLogIndex].log_category;
+      const noCatsAreSelected = !selectedCats?.data || selectedCats.data.length === 0;
+      if (!this.showAllCategories && !noCatsAreSelected) {
+        return this.categories.filter(cat => (
+          selectedCats.data.some(_cat => cat.tid === _cat.id)
+        ));
+      }
+      if (this.showAllCategories) {
+        return this.categories;
+      }
+      return [];
+    },
+    filteredGeofields() {
+      const geofields = this.logs[this.currentLogIndex].geofield?.data;
+      return this.logs[this.currentLogIndex].geofield?.data
+        ? geofields.filter(g => g.geom.includes('POINT'))
+        : [];
     },
     selectedAssets() {
       if (this.logs[this.currentLogIndex].asset) {
@@ -868,7 +903,8 @@ export default {
       return [];
     },
     selectedMovementAreas() {
-      if (this.logs[this.currentLogIndex].movement.data.area) {
+      const { movement } = this.logs[this.currentLogIndex];
+      if (movement && movement.data && movement.data.area) {
         return this.getAttached(
           this.logs[this.currentLogIndex].movement.data.area,
           this.areas,
@@ -878,7 +914,7 @@ export default {
       return [];
     },
     quantUnitNames() {
-      if (this.units.length > 0 && this.logs[this.currentLogIndex].quantity.data.length > 0) {
+      if (this.units.length > 0 && this.logs[this.currentLogIndex].quantity?.data.length > 0) {
         const unitNames = [];
         this.logs[this.currentLogIndex].quantity.data.forEach((quant) => {
           if (quant.unit) {

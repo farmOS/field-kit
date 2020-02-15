@@ -1,4 +1,4 @@
-const farmLog = logTypes => ({
+const farmLog = (logTypes, syncDate) => ({
   createLog(props = {}) {
     const changed = Math.floor(Date.now() / 1000);
     const name = { changed, data: props.name || '', conflicts: [] };
@@ -6,6 +6,7 @@ const farmLog = logTypes => ({
     const timestamp = { changed, data: props.timestamp || changed, conflicts: [] };
     const done = { changed, data: props.done || false, conflicts: [] };
     const {
+      localID = null,
       isCachedLocally = false,
       wasPushedToServer = false,
       isReadyToSync = false,
@@ -22,6 +23,7 @@ const farmLog = logTypes => ({
       type,
       timestamp,
       done,
+      localID,
       isCachedLocally,
       wasPushedToServer,
       isReadyToSync,
@@ -53,23 +55,37 @@ const farmLog = logTypes => ({
     const type = updateProp('type', 'farm_activity');
     const timestamp = updateProp('timestamp', changed);
     const done = updateProp('done', false);
-    const schema = logTypes[type.data].fields;
-    const entries = Object.entries(schema).map(([key, { default_value: def }]) => {
+    const schema = logTypes[type.data]?.fields;
+    // If the schema is missing for this log type, b/c it hasn't come from the
+    // server yet or was modified, just work with the log's existing key-value pairs.
+    const entries = schema ? Object.entries(schema) : Object.entries(log);
+    const updatedEntries = entries.map(([key, { default_value: def = null }]) => {
       const value = updateProp(key, def);
       return [key, value];
     });
+    const updateMetaData = (key, def) => {
+      let value;
+      if (props[key] !== undefined) {
+        value = props[key];
+      } else if (log[key] !== undefined) {
+        value = log[key];
+      } else {
+        value = def;
+      }
+      return value;
+    };
     return {
-      ...Object.fromEntries(entries),
+      ...Object.fromEntries(updatedEntries),
       name,
       type,
       timestamp,
       done,
-      url: props.url || log.url || log.remoteUri,
+      url: props.url || log.url,
       id: log.id,
       localID: props.localID || log.localID,
-      isCachedLocally: props.isCachedLocally || log.isCachedLocally || false,
-      wasPushedToServer: props.wasPushedToServer || log.wasPushedToServer || false,
-      isReadyToSync: props.isReadyToSync || log.isReadyToSync || false,
+      isCachedLocally: updateMetaData('isCachedLocally', false),
+      wasPushedToServer: updateMetaData('wasPushedToServer', false),
+      isReadyToSync: updateMetaData('isReadyToSync', false),
       modules: props.modules || log.modules || [],
     };
   },
@@ -80,13 +96,21 @@ const farmLog = logTypes => ({
     const type = updateProp('type', 'farm_activity');
     const timestamp = updateProp('timestamp', changed);
     const done = updateProp('done', false);
-    const schema = logTypes[type].fields;
-    const entries = Object.entries(schema).map(([key, { default_value: def }]) => {
-      const value = updateProp(key, def);
+    const schema = logTypes[type]?.fields;
+    // If the schema is missing for this log type, b/c it hasn't come from the
+    // server yet or was modified, just work with the log's existing key-value pairs.
+    const entries = schema ? Object.entries(schema) : Object.entries(log);
+    const updatedEntries = entries.map(([key, { default_value: def = null }]) => {
+      // We've got to hardcode this logic re: notes for now b/c the server does
+      // not give us a valid default value. :/
+      const isInvalidNotesProp = (key === 'notes' && log.notes.data === null);
+      const value = isInvalidNotesProp
+        ? { value: '', format: 'farm_format' }
+        : updateProp(key, def);
       return [key, value];
     });
     const newLog = {
-      ...Object.fromEntries(entries),
+      ...Object.fromEntries(updatedEntries),
       name,
       type,
       timestamp,
@@ -97,21 +121,27 @@ const farmLog = logTypes => ({
     }
     return newLog;
   },
-  logFromServer(serverLog, localLog) {
+  logFromServer(serverLog, localLog, props = {}) {
     const changed = Math.floor(Date.now() / 1000);
     // Supply a function for updating props based on certain conditions...
     const updateProp = (!localLog)
       // If there's no local log provided, use the server log's value for all props.
       ? (key, def) => (
         serverLog[key]
-          ? { changed, data: serverLog[key], conflicts: [] }
+          ? { changed, data: props[key] || serverLog[key], conflicts: [] }
           : { changed, data: def, conflicts: [] }
       )
       // Otherwise we need to compare key-by-key...
       : (key, def) => {
         let prop;
+        if (props[key] !== undefined) {
+          prop = {
+            changed,
+            data: props[key],
+            conflicts: localLog[key].conflicts,
+          };
         // If the local log is more recent for this key, use its value as prop.
-        if (serverLog.changed < localLog[key].changed) {
+        } else if (serverLog.changed < localLog[key].changed || syncDate > localLog[key].changed) {
           prop = {
             changed: localLog[key].changed,
             data: localLog[key].data,
@@ -121,7 +151,7 @@ const farmLog = logTypes => ({
         // synced, use the server log's value as prop.
         } else if (serverLog.changed > localLog[key].changed && localLog.wasPushedToServer) {
           prop = {
-            changed,
+            changed: serverLog.changed,
             data: serverLog[key],
             conflicts: localLog[key].conflicts,
           };
@@ -149,21 +179,37 @@ const farmLog = logTypes => ({
     const type = updateProp('type', 'farm_activity');
     const timestamp = updateProp('timestamp', changed);
     const done = updateProp('done', false);
-    const url = updateProp('url', '');
-    const schema = logTypes[type.data].fields;
-    const entries = Object.entries(schema).map(([key, { default_value: def }]) => {
+    // If the schema is missing for this log type, b/c it hasn't come from the
+    // server yet or was modified, just work with the log's existing key-value pairs.
+    const schema = logTypes[type.data]?.fields;
+    const entries = schema ? Object.entries(schema) : Object.entries(serverLog);
+    const updatedEntries = entries.map(([key, { default_value: def }]) => {
       const value = updateProp(key, def);
       return [key, value];
     });
+    const updateMetaData = (key, def) => {
+      let value;
+      if (props[key] !== undefined) {
+        value = props[key];
+      } else if (localLog && localLog[key] !== undefined) {
+        value = localLog[key];
+      } else {
+        value = def;
+      }
+      return value;
+    };
     return {
-      ...Object.fromEntries(entries),
+      ...Object.fromEntries(updatedEntries),
       name,
       type,
       timestamp,
       done,
-      url,
-      modules: localLog.modules || [],
+      url: serverLog.url,
       id: serverLog.id,
+      isCachedLocally: updateMetaData('isCachedLocally', false),
+      wasPushedToServer: updateMetaData('wasPushedToServer', false),
+      isReadyToSync: updateMetaData('isReadyToSync', false),
+      modules: updateMetaData('modules', []),
     };
   },
 });

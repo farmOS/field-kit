@@ -10,7 +10,9 @@
     }"
     :wkt="{
       title: 'movement',
-      wkt: logs[currentLogIndex].movement.data.geometry,
+      wkt: logs[currentLogIndex].movement.data
+        ? logs[currentLogIndex].movement.data.geometry
+        : undefined,
       color: 'orange',
     }"
     :geojson="{
@@ -26,12 +28,12 @@ import Map from '@/components/Map';
 export default {
   name: 'EditMap',
   components: { Map },
-  props: [ 'logs', 'id', 'systemOfMeasurement'],
+  props: ['logs', 'id', 'systemOfMeasurement'],
   computed: {
     areaGeoJSON() {
       return (process.env.NODE_ENV === 'development')
         ? 'http://localhost:8080/farm/areas/geojson/all'
-        : `${localStorage.getItem('host')}/farm/areas/geojson/all`
+        : `${localStorage.getItem('host')}/farm/areas/geojson/all`;
     },
     currentLogIndex() {
       const index = this.logs.findIndex(log => log.localID === +this.id);
@@ -42,19 +44,14 @@ export default {
     updateMovement(wkt) {
       const props = {
         movement: {
-          data: {
-            area: this.logs[this.currentLogIndex].movement.data.area,
-            geometry: wkt,
-          },
-          changed: (Date.now() / 1000).toFixed(0)
+          area: this.logs[this.currentLogIndex].movement.data?.area,
+          geometry: wkt,
         },
-        isCachedLocally: false,
-        wasPushedToServer: false,
       };
-      this.$store.commit('updateLog', { index: this.currentLogIndex, props });
+      this.$store.dispatch('updateLog', { index: this.currentLogIndex, props });
     },
   },
-}
+};
 </script>
 
 <style scoped>

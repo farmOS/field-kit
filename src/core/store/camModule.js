@@ -4,33 +4,31 @@ export default {
     /*
     called when the get photo button is tapped
     */
-    getPhotoFromCamera({ commit, rootState }, index) {
+    getPhotoFromCamera({ dispatch, rootState }, index) {
       function handleResponse(photoLoc) {
         const prevLog = rootState.farm.logs[index];
         const dataURL = `data:image/jpeg;base64,${photoLoc}`;
-        const nowStamp = (Date.now() / 1000).toFixed(0);
         const props = {
-          images: { data: prevLog.images.data.concat(dataURL), changed: nowStamp },
+          images: prevLog.images.data.concat(dataURL),
           isCachedLocally: false,
           wasPushedToServer: false,
         };
-        commit('updateLog', { index, props });
+        dispatch('updateLog', { index, props });
       }
       function handleError(error) { // eslint-disable-line no-unused-vars
       }
       getPhotoFromCamera() // eslint-disable-line no-use-before-define
         .then(handleResponse, handleError);
     },
-    loadPhotoBlob({ commit, rootState }, { file, index }) {
+    loadPhotoBlob({ dispatch, rootState }, { file, index }) {
       const prevLog = rootState.farm.logs[index];
-      const nowStamp = (Date.now() / 1000).toFixed(0);
       readFileData(file).then((data) => { // eslint-disable-line no-use-before-define
         const props = {
-          images: { data: prevLog.images.data.concat(data), changed: nowStamp },
+          images: prevLog.images.data.concat(data),
           isCachedLocally: false,
           wasPushedToServer: false,
         };
-        commit('updateLog', { index, props });
+        dispatch('updateLog', { index, props });
       });
     },
   },

@@ -47,7 +47,7 @@
             </div>
 
             <div class="card-row-2">
-              <p>{{log.notes.data}}</p>
+              <p>{{parseNotes(log.notes)}}</p>
             </div>
 
             <div class="card-row-3">
@@ -88,6 +88,7 @@
 
 <script>
 import moment from 'moment';
+import parseNotes from '@/utils/parseNotes';
 import IconAddCircle from '@/components/icons/icon-add-circle';
 import IconAssignment from '@/components/icons/icon-assignment';
 import IconAssignmentDone from '@/components/icons/icon-assignment-done';
@@ -143,13 +144,18 @@ export default {
     passesFilters(log) {
       const passesTypeFilter = !this.logDisplayFilters.excludedTypes.includes(log.type.data);
       const passesCategoryFilter = () => {
-        if (log.log_category.data.length === 0
-          && this.logDisplayFilters.excludedCategories.includes(-1)) {
+        const logHasNoCats = log.log_category.data === null
+          || log.log_category.data.length === 0;
+        const noCatsFilterIsSelected = this.logDisplayFilters.excludedCategories.includes(-1);
+        if (logHasNoCats && noCatsFilterIsSelected) {
           return false;
         }
-        return !log.log_category.data.some(cat => (
-          this.logDisplayFilters.excludedCategories.some(exCat => +exCat === +cat.id)
-        ));
+        if (log.log_category.data !== null) {
+          return !log.log_category.data.some(cat => (
+            this.logDisplayFilters.excludedCategories.some(exCat => +exCat === +cat.id)
+          ));
+        }
+        return true;
       };
       const passesDateFilter = () => {
         if (Number.isNaN(Number(log.timestamp.data))) {
@@ -186,12 +192,10 @@ export default {
       return false;
     },
     startNewLog() {
-      const timestamp = Math.floor(new Date() / 1000).toString();
-      this.$store.dispatch('initializeLog', {
-        type: { data: 'farm_activity', changed: timestamp },
-        timestamp: { data: timestamp, changed: timestamp },
-      }).then(id => this.$router.push({ path: `/logs/${id}` }));
+      this.$store.dispatch('initializeLog')
+        .then(id => this.$router.push({ path: `/logs/${id}` }));
     },
+    parseNotes,
   },
 };
 

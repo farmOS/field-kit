@@ -8,8 +8,8 @@
     </template>
     <template #right-menu>
       <a
-        v-if="logs[currentLogIndex].remoteUri"
-        :href="logs[currentLogIndex].remoteUri">
+        v-if="logs[currentLogIndex].url"
+        :href="logs[currentLogIndex].url">
         <li>
           <icon-open-in-new/>
         </li>
@@ -20,8 +20,8 @@
     </template>
     <template #more-menu>
       <a
-        v-if="logs[currentLogIndex].remoteUri !==''"
-        :href="logs[currentLogIndex].remoteUri">
+        v-if="logs[currentLogIndex].url !==''"
+        :href="logs[currentLogIndex].url">
         <li>Open in browser</li>
       </a>
       <li @click="$emit('deleteCurrentLog')">
@@ -39,13 +39,18 @@ import IconOpenInNew from '@/components/icons/icon-open-in-new';
 
 export default {
   name: 'EditLogsMenuBar',
-  components: { MenuBar, IconArrowBack, IconDelete, IconOpenInNew },
-  props: [ 'logs', 'id' ],
+  components: {
+    MenuBar,
+    IconArrowBack,
+    IconDelete,
+    IconOpenInNew,
+  },
+  props: ['logs', 'id'],
   computed: {
     currentLogIndex() {
       const index = this.logs.findIndex(log => log.localID === +this.id);
       return index >= 0 ? index : 0;
     },
-  }
+  },
 };
 </script>

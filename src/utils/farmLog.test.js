@@ -8,243 +8,234 @@ if (!Object.fromEntries) {
   fromEntries.shim();
 }
 
+// const syncDate = 1580565564;
+const syncDate = 1580000000;
 const {
   createLog,
   updateLog,
   logToServer,
   logFromServer,
-} = farmLog(defaultLogTypes);
+} = farmLog(defaultLogTypes, syncDate);
 
 describe('createLog', () => {
   it('creates a new log w/o initial props', () => {
     expect(createLog())
-      .toMatchObject(
-        expect.objectContaining({
-          area: {
-            changed: expect.any(Number),
-            data: [],
-            conflicts: [],
-          },
-          asset: {
-            changed: expect.any(Number),
-            data: [],
-            conflicts: [],
-          },
-          files: {
-            changed: expect.any(Number),
-            data: [],
-            conflicts: [],
-          },
-          geofield: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          images: {
-            changed: expect.any(Number),
-            data: [],
-            conflicts: [],
-          },
-          notes: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          movement: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          log_category: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          log_owner: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          inventory: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          membership: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          quantity: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          flags: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          data: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          equipment: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          name: {
-            changed: expect.any(Number),
-            data: '',
-            conflicts: [],
-          },
-          type: {
-            changed: expect.any(Number),
-            data: 'farm_activity',
-            conflicts: [],
-          },
-          timestamp: {
-            changed: expect.any(Number),
-            data: expect.any(Number),
-            conflicts: [],
-          },
-          done: {
-            changed: expect.any(Number),
-            data: false,
-            conflicts: [],
-          },
-          isCachedLocally: false,
-          wasPushedToServer: false,
-          isReadyToSync: false,
-          modules: [],
-        }),
-      );
+      .toMatchObject({
+        area: {
+          changed: expect.any(Number),
+          data: [],
+          conflicts: [],
+        },
+        asset: {
+          changed: expect.any(Number),
+          data: [],
+          conflicts: [],
+        },
+        files: {
+          changed: expect.any(Number),
+          data: [],
+          conflicts: [],
+        },
+        geofield: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        images: {
+          changed: expect.any(Number),
+          data: [],
+          conflicts: [],
+        },
+        notes: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        movement: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        log_category: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        log_owner: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        inventory: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        membership: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        quantity: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        flags: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        data: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        equipment: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        name: {
+          changed: expect.any(Number),
+          data: '',
+          conflicts: [],
+        },
+        type: {
+          changed: expect.any(Number),
+          data: 'farm_activity',
+          conflicts: [],
+        },
+        timestamp: {
+          changed: expect.any(Number),
+          data: expect.any(Number),
+          conflicts: [],
+        },
+        done: {
+          changed: expect.any(Number),
+          data: false,
+          conflicts: [],
+        },
+        isCachedLocally: false,
+        wasPushedToServer: false,
+        isReadyToSync: false,
+        modules: [],
+      });
   });
 
   it('creates a new log w initial props', () => {
     expect(createLog({ name: 'A new log', notes: 'here are some notes' }))
-      .toMatchObject(
-        expect.objectContaining({
-          area: {
-            changed: expect.any(Number),
-            data: [],
-            conflicts: [],
-          },
-          asset: {
-            changed: expect.any(Number),
-            data: [],
-            conflicts: [],
-          },
-          files: {
-            changed: expect.any(Number),
-            data: [],
-            conflicts: [],
-          },
-          geofield: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          images: {
-            changed: expect.any(Number),
-            data: [],
-            conflicts: [],
-          },
-          notes: {
-            changed: expect.any(Number),
-            data: 'here are some notes',
-            conflicts: [],
-          },
-          movement: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          log_category: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          log_owner: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          inventory: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          membership: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          quantity: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          flags: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          data: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          equipment: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          name: {
-            changed: expect.any(Number),
-            data: 'A new log',
-            conflicts: [],
-          },
-          type: {
-            changed: expect.any(Number),
-            data: 'farm_activity',
-            conflicts: [],
-          },
-          timestamp: {
-            changed: expect.any(Number),
-            data: expect.any(Number),
-            conflicts: [],
-          },
-          done: {
-            changed: expect.any(Number),
-            data: false,
-            conflicts: [],
-          },
-          isCachedLocally: false,
-          wasPushedToServer: false,
-          isReadyToSync: false,
-          modules: [],
-        }),
-      );
+      .toMatchObject({
+        area: {
+          changed: expect.any(Number),
+          data: [],
+          conflicts: [],
+        },
+        asset: {
+          changed: expect.any(Number),
+          data: [],
+          conflicts: [],
+        },
+        files: {
+          changed: expect.any(Number),
+          data: [],
+          conflicts: [],
+        },
+        geofield: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        images: {
+          changed: expect.any(Number),
+          data: [],
+          conflicts: [],
+        },
+        notes: {
+          changed: expect.any(Number),
+          data: 'here are some notes',
+          conflicts: [],
+        },
+        movement: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        log_category: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        log_owner: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        inventory: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        membership: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        quantity: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        flags: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        data: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        equipment: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        name: {
+          changed: expect.any(Number),
+          data: 'A new log',
+          conflicts: [],
+        },
+        type: {
+          changed: expect.any(Number),
+          data: 'farm_activity',
+          conflicts: [],
+        },
+        timestamp: {
+          changed: expect.any(Number),
+          data: expect.any(Number),
+          conflicts: [],
+        },
+        done: {
+          changed: expect.any(Number),
+          data: false,
+          conflicts: [],
+        },
+        isCachedLocally: false,
+        wasPushedToServer: false,
+        isReadyToSync: false,
+        modules: [],
+      });
   });
 });
 
-// A helper function that should be used before updating old logs, or ideally,
-// used first in a DB migration.
-const convertStringsToNumbers = obj => JSON.parse(
-  JSON.stringify(obj),
-  (key, val) => (
-    typeof val === 'string' && !Number.isNaN(Number(val))
-      ? +val
-      : val
-  ),
-);
+const isInt = string => /^[-+]?(\d+|Infinity)$/.test(string);
+const reviver = (key, val) => (typeof val === 'string' && isInt(val) ? +val : val);
+const parser = log => JSON.parse(JSON.stringify(log), reviver);
 
 describe('updateLog', () => {
   it('can reformat old logs', () => {
-    expect(updateLog(convertStringsToNumbers({
+    expect(updateLog(parser({
       log_owner: {
         data: [
           {
@@ -269,7 +260,9 @@ describe('updateLog', () => {
       isCachedLocally: true,
       isReadyToSync: false,
       wasPushedToServer: false,
-      remoteUri: '/log/255',
+      // NOTE: I've manually changed `remoteUri` to `url` to reflect the DB
+      // migration that's been written to handle this instead.
+      url: '/log/255',
       asset: {
         data: [
           {
@@ -299,256 +292,252 @@ describe('updateLog', () => {
         changed: '1573832704',
       },
     })))
-      .toMatchObject(
-        expect.objectContaining({
-          area: {
-            changed: 1573832704,
-            data: [
-              {
-                uri: 'http://localhost:80/taxonomy_term/11',
-                id: 11,
-                resource: 'taxonomy_term',
-              },
-            ],
-            conflicts: [],
-          },
-          asset: {
-            changed: 1573832704,
-            data: [
-              {
-                uri: 'http://localhost:80/farm_asset/11',
-                id: 11,
-                resource: 'farm_asset',
-              },
-            ],
-            conflicts: [],
-          },
-          files: {
-            changed: expect.any(Number),
-            data: [],
-            conflicts: [],
-          },
-          geofield: {
-            changed: 1573832704,
-            data: [
-              {
-                geom: 'POLYGON ((-75.53643733263014 42.54424760416683, -75.5360350012779 42.54427527000766, -75.53589016199109 42.54412508386721, -75.53547173738478 42.54316467447933, -75.53547173738478 42.54301053332517, -75.53564876317976 42.54289196294764, -75.53582578897475 42.54281291590414, -75.53588747978209 42.54302634269183, -75.53643733263014 42.54424760416683))',
-                geo_type: 'polygon',
-                lat: 42.5435920981,
-                lon: -75.535910393822,
-                left: -75.53643733263,
-                top: 42.544275270008,
-                right: -75.535471737385,
-                bottom: 42.542812915904,
-                srid: null,
-                latlon: '42.543592098100,-75.535910393822',
-                schemaorg_shape: '42.542812915904,-75.536437332630 42.542812915904,-75.535471737385 42.544275270008,-75.535471737385 42.544275270008,-75.536437332630 42.542812915904,-75.536437332630',
-              },
-            ],
-            conflicts: [],
-          },
-          images: {
-            changed: 1573832704,
-            data: [],
-            conflicts: [],
-          },
-          notes: {
-            changed: 1573832704,
-            data: 'yep some notes',
-            conflicts: [],
-          },
-          movement: {
-            changed: null,
-            data: {
-              area: [],
-              geometry: 0,
+      .toMatchObject({
+        area: {
+          changed: 1573832704,
+          data: [
+            {
+              uri: 'http://localhost:80/taxonomy_term/11',
+              id: 11,
+              resource: 'taxonomy_term',
             },
-            conflicts: [],
-          },
-          log_category: {
-            changed: 1573832704,
-            data: [],
-            conflicts: [],
-          },
-          log_owner: {
-            changed: 1573832704,
-            data: [
-              {
-                uri: 'http://localhost:80/user/1',
-                id: 1,
-                resource: 'user',
-              },
-            ],
-            conflicts: [],
-          },
-          inventory: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          membership: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          quantity: {
-            changed: 1573832704,
-            data: [],
-            conflicts: [],
-          },
-          flags: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          data: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          equipment: {
-            changed: 1573832704,
-            data: [],
-            conflicts: [],
-          },
-          name: {
-            changed: 1573832704,
-            data: 'apply input',
-            conflicts: [],
-          },
-          type: {
-            changed: 1573832704,
-            data: 'farm_activity',
-            conflicts: [],
-          },
-          timestamp: {
-            changed: 1573832704,
-            data: 1551753643,
-            conflicts: [],
-          },
-          done: {
-            changed: 1579140679,
-            data: false,
-            conflicts: [],
-          },
-          url: '/log/255',
-          id: 255,
-          localID: 2,
-          isCachedLocally: true,
-          wasPushedToServer: false,
-          isReadyToSync: false,
-          modules: [
-            'my-logs',
           ],
-        }),
-      );
+          conflicts: [],
+        },
+        asset: {
+          changed: 1573832704,
+          data: [
+            {
+              uri: 'http://localhost:80/farm_asset/11',
+              id: 11,
+              resource: 'farm_asset',
+            },
+          ],
+          conflicts: [],
+        },
+        files: {
+          changed: expect.any(Number),
+          data: [],
+          conflicts: [],
+        },
+        geofield: {
+          changed: 1573832704,
+          data: [
+            {
+              geom: 'POLYGON ((-75.53643733263014 42.54424760416683, -75.5360350012779 42.54427527000766, -75.53589016199109 42.54412508386721, -75.53547173738478 42.54316467447933, -75.53547173738478 42.54301053332517, -75.53564876317976 42.54289196294764, -75.53582578897475 42.54281291590414, -75.53588747978209 42.54302634269183, -75.53643733263014 42.54424760416683))',
+              geo_type: 'polygon',
+              lat: '42.543592098100',
+              lon: '-75.535910393822',
+              left: '-75.536437332630',
+              top: '42.544275270008',
+              right: '-75.535471737385',
+              bottom: '42.542812915904',
+              srid: null,
+              latlon: '42.543592098100,-75.535910393822',
+              schemaorg_shape: '42.542812915904,-75.536437332630 42.542812915904,-75.535471737385 42.544275270008,-75.535471737385 42.544275270008,-75.536437332630 42.542812915904,-75.536437332630',
+            },
+          ],
+          conflicts: [],
+        },
+        images: {
+          changed: 1573832704,
+          data: [],
+          conflicts: [],
+        },
+        notes: {
+          changed: 1573832704,
+          data: 'yep some notes',
+          conflicts: [],
+        },
+        movement: {
+          changed: null,
+          data: {
+            area: [],
+            geometry: '',
+          },
+          conflicts: [],
+        },
+        log_category: {
+          changed: 1573832704,
+          data: [],
+          conflicts: [],
+        },
+        log_owner: {
+          changed: 1573832704,
+          data: [
+            {
+              uri: 'http://localhost:80/user/1',
+              id: 1,
+              resource: 'user',
+            },
+          ],
+          conflicts: [],
+        },
+        inventory: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        membership: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        quantity: {
+          changed: 1573832704,
+          data: [],
+          conflicts: [],
+        },
+        flags: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        data: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        equipment: {
+          changed: 1573832704,
+          data: [],
+          conflicts: [],
+        },
+        name: {
+          changed: 1573832704,
+          data: 'apply input',
+          conflicts: [],
+        },
+        type: {
+          changed: 1573832704,
+          data: 'farm_activity',
+          conflicts: [],
+        },
+        timestamp: {
+          changed: 1573832704,
+          data: 1551753643,
+          conflicts: [],
+        },
+        done: {
+          changed: 1579140679,
+          data: false,
+          conflicts: [],
+        },
+        url: '/log/255',
+        id: 255,
+        localID: 2,
+        isCachedLocally: true,
+        wasPushedToServer: false,
+        isReadyToSync: false,
+        modules: [
+          'my-logs',
+        ],
+      });
   });
 
   it('updates a newly created log', () => {
     expect(updateLog(createLog(), { name: 'A new log', notes: 'here are some notes' }))
-      .toMatchObject(
-        expect.objectContaining({
-          area: {
-            changed: expect.any(Number),
-            data: [],
-            conflicts: [],
-          },
-          asset: {
-            changed: expect.any(Number),
-            data: [],
-            conflicts: [],
-          },
-          files: {
-            changed: expect.any(Number),
-            data: [],
-            conflicts: [],
-          },
-          geofield: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          images: {
-            changed: expect.any(Number),
-            data: [],
-            conflicts: [],
-          },
-          notes: {
-            changed: expect.any(Number),
-            data: 'here are some notes',
-            conflicts: [],
-          },
-          movement: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          log_category: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          log_owner: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          inventory: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          membership: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          quantity: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          flags: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          data: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          equipment: {
-            changed: expect.any(Number),
-            data: null,
-            conflicts: [],
-          },
-          name: {
-            changed: expect.any(Number),
-            data: 'A new log',
-            conflicts: [],
-          },
-          type: {
-            changed: expect.any(Number),
-            data: 'farm_activity',
-            conflicts: [],
-          },
-          timestamp: {
-            changed: expect.any(Number),
-            data: expect.any(Number),
-            conflicts: [],
-          },
-          done: {
-            changed: expect.any(Number),
-            data: false,
-            conflicts: [],
-          },
-          isCachedLocally: false,
-          wasPushedToServer: false,
-          isReadyToSync: false,
-          modules: [],
-        }),
-      );
+      .toMatchObject({
+        area: {
+          changed: expect.any(Number),
+          data: [],
+          conflicts: [],
+        },
+        asset: {
+          changed: expect.any(Number),
+          data: [],
+          conflicts: [],
+        },
+        files: {
+          changed: expect.any(Number),
+          data: [],
+          conflicts: [],
+        },
+        geofield: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        images: {
+          changed: expect.any(Number),
+          data: [],
+          conflicts: [],
+        },
+        notes: {
+          changed: expect.any(Number),
+          data: 'here are some notes',
+          conflicts: [],
+        },
+        movement: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        log_category: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        log_owner: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        inventory: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        membership: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        quantity: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        flags: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        data: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        equipment: {
+          changed: expect.any(Number),
+          data: null,
+          conflicts: [],
+        },
+        name: {
+          changed: expect.any(Number),
+          data: 'A new log',
+          conflicts: [],
+        },
+        type: {
+          changed: expect.any(Number),
+          data: 'farm_activity',
+          conflicts: [],
+        },
+        timestamp: {
+          changed: expect.any(Number),
+          data: expect.any(Number),
+          conflicts: [],
+        },
+        done: {
+          changed: expect.any(Number),
+          data: false,
+          conflicts: [],
+        },
+        isCachedLocally: false,
+        wasPushedToServer: false,
+        isReadyToSync: false,
+        modules: [],
+      });
   });
 });
 
@@ -616,7 +605,10 @@ describe('logFromServer', () => {
           },
         ],
         images: [],
-        notes: 'yep some notes',
+        notes: {
+          value: 'yep some notes',
+          format: 'farm_format',
+        },
         movement: {
           area: [],
           geometry: 0,
@@ -641,6 +633,7 @@ describe('logFromServer', () => {
         done: false,
         id: 255,
         changed: 1580565564,
+        url: 'https://test.farmos.net/log/179',
       },
       {
         area: {
@@ -676,12 +669,12 @@ describe('logFromServer', () => {
             {
               geom: 'POLYGON ((-75.53643733263014 42.54424760416683, -75.5360350012779 42.54427527000766, -75.53589016199109 42.54412508386721, -75.53547173738478 42.54316467447933, -75.53547173738478 42.54301053332517, -75.53564876317976 42.54289196294764, -75.53582578897475 42.54281291590414, -75.53588747978209 42.54302634269183, -75.53643733263014 42.54424760416683))',
               geo_type: 'polygon',
-              lat: 42.5435920981,
-              lon: -75.535910393822,
-              left: -75.53643733263,
-              top: 42.544275270008,
-              right: -75.535471737385,
-              bottom: 42.542812915904,
+              lat: '42.543592098100',
+              lon: '-75.535910393822',
+              left: '-75.536437332630',
+              top: '42.544275270008',
+              right: '-75.535471737385',
+              bottom: '42.542812915904',
               srid: null,
               latlon: '42.543592098100,-75.535910393822',
               schemaorg_shape: '42.542812915904,-75.536437332630 42.542812915904,-75.535471737385 42.544275270008,-75.535471737385 42.544275270008,-75.536437332630 42.542812915904,-75.536437332630',
@@ -695,12 +688,15 @@ describe('logFromServer', () => {
           conflicts: [],
         },
         notes: {
-          changed: 1573832704,
-          data: 'some different notes',
+          changed: 1580000001,
+          data: {
+            value: 'some different notes',
+            format: 'farm_format',
+          },
           conflicts: [],
         },
         movement: {
-          changed: null,
+          changed: 1573832704,
           data: {
             area: [],
             geometry: 0,
@@ -773,7 +769,7 @@ describe('logFromServer', () => {
           data: false,
           conflicts: [],
         },
-        url: '/log/255',
+        url: 'https://test.farmos.net/log/179',
         id: 255,
         localID: 2,
         isCachedLocally: true,
@@ -793,18 +789,7 @@ describe('logFromServer', () => {
             resource: 'taxonomy_term',
           },
         ],
-        conflicts: [
-          {
-            changed: 1580565564,
-            data: [
-              {
-                uri: 'http://localhost:80/taxonomy_term/11',
-                id: 11,
-                resource: 'taxonomy_term',
-              },
-            ],
-          },
-        ],
+        conflicts: [],
       },
       asset: {
         changed: 1573832704,
@@ -815,18 +800,7 @@ describe('logFromServer', () => {
             resource: 'farm_asset',
           },
         ],
-        conflicts: [
-          {
-            changed: 1580565564,
-            data: [
-              {
-                uri: 'http://localhost:80/farm_asset/11',
-                id: 11,
-                resource: 'farm_asset',
-              },
-            ],
-          },
-        ],
+        conflicts: [],
       },
       files: {
         changed: 1580567553,
@@ -839,83 +813,52 @@ describe('logFromServer', () => {
           {
             geom: 'POLYGON ((-75.53643733263014 42.54424760416683, -75.5360350012779 42.54427527000766, -75.53589016199109 42.54412508386721, -75.53547173738478 42.54316467447933, -75.53547173738478 42.54301053332517, -75.53564876317976 42.54289196294764, -75.53582578897475 42.54281291590414, -75.53588747978209 42.54302634269183, -75.53643733263014 42.54424760416683))',
             geo_type: 'polygon',
-            lat: 42.5435920981,
-            lon: -75.535910393822,
-            left: -75.53643733263,
-            top: 42.544275270008,
-            right: -75.535471737385,
-            bottom: 42.542812915904,
+            lat: '42.543592098100',
+            lon: '-75.535910393822',
+            left: '-75.536437332630',
+            top: '42.544275270008',
+            right: '-75.535471737385',
+            bottom: '42.542812915904',
             srid: null,
             latlon: '42.543592098100,-75.535910393822',
             schemaorg_shape: '42.542812915904,-75.536437332630 42.542812915904,-75.535471737385 42.544275270008,-75.535471737385 42.544275270008,-75.536437332630 42.542812915904,-75.536437332630',
           },
         ],
-        conflicts: [
-          {
-            changed: 1580565564,
-            data: [
-              {
-                geom: 'POLYGON ((-75.53643733263014 42.54424760416683, -75.5360350012779 42.54427527000766, -75.53589016199109 42.54412508386721, -75.53547173738478 42.54316467447933, -75.53547173738478 42.54301053332517, -75.53564876317976 42.54289196294764, -75.53582578897475 42.54281291590414, -75.53588747978209 42.54302634269183, -75.53643733263014 42.54424760416683))',
-                geo_type: 'polygon',
-                lat: 42.5435920981,
-                lon: -75.535910393822,
-                left: -75.53643733263,
-                top: 42.544275270008,
-                right: -75.535471737385,
-                bottom: 42.542812915904,
-                srid: null,
-                latlon: '42.543592098100,-75.535910393822',
-                schemaorg_shape: '42.542812915904,-75.536437332630 42.542812915904,-75.535471737385 42.544275270008,-75.535471737385 42.544275270008,-75.536437332630 42.542812915904,-75.536437332630',
-              },
-            ],
-          },
-        ],
+        conflicts: [],
       },
       images: {
         changed: 1573832704,
         data: [],
-        conflicts: [
-          {
-            changed: 1580565564,
-            data: [],
-          },
-        ],
+        conflicts: [],
       },
       notes: {
-        changed: 1573832704,
-        data: 'some different notes',
-        conflicts: [
-          {
-            changed: 1580565564,
-            data: 'yep some notes',
-          },
-        ],
-      },
-      movement: {
-        changed: null,
+        changed: 1580000001,
         data: {
-          area: [],
-          geometry: 0,
+          value: 'some different notes',
+          format: 'farm_format',
         },
         conflicts: [
           {
             changed: 1580565564,
             data: {
-              area: [],
-              geometry: 0,
+              value: 'yep some notes',
+              format: 'farm_format',
             },
           },
         ],
       },
+      movement: {
+        changed: 1573832704,
+        data: {
+          area: [],
+          geometry: 0,
+        },
+        conflicts: [],
+      },
       log_category: {
         changed: 1573832704,
         data: [],
-        conflicts: [
-          {
-            changed: 1580565564,
-            data: [],
-          },
-        ],
+        conflicts: [],
       },
       log_owner: {
         changed: 1573832704,
@@ -926,18 +869,7 @@ describe('logFromServer', () => {
             resource: 'user',
           },
         ],
-        conflicts: [
-          {
-            changed: 1580565564,
-            data: [
-              {
-                uri: 'http://localhost:80/user/1',
-                id: 1,
-                resource: 'user',
-              },
-            ],
-          },
-        ],
+        conflicts: [],
       },
       inventory: {
         changed: 1580567553,
@@ -952,12 +884,7 @@ describe('logFromServer', () => {
       quantity: {
         changed: 1573832704,
         data: [],
-        conflicts: [
-          {
-            changed: 1580565564,
-            data: [],
-          },
-        ],
+        conflicts: [],
       },
       flags: {
         changed: 1580567553,
@@ -972,58 +899,29 @@ describe('logFromServer', () => {
       equipment: {
         changed: 1573832704,
         data: [],
-        conflicts: [
-          {
-            changed: 1580565564,
-            data: [],
-          },
-        ],
+        conflicts: [],
       },
       name: {
         changed: 1573832704,
         data: 'apply input',
-        conflicts: [
-          {
-            changed: 1580565564,
-            data: 'apply input',
-          },
-        ],
+        conflicts: [],
       },
       type: {
         changed: 1573832704,
         data: 'farm_activity',
-        conflicts: [
-          {
-            changed: 1580565564,
-            data: 'farm_activity',
-          },
-        ],
+        conflicts: [],
       },
       timestamp: {
         changed: 1573832704,
         data: 1551753643,
-        conflicts: [
-          {
-            changed: 1580565564,
-            data: 1551753643,
-          },
-        ],
+        conflicts: [],
       },
       done: {
         changed: 1579140679,
         data: false,
-        conflicts: [
-          {
-            changed: 1580565564,
-            data: false,
-          },
-        ],
-      },
-      url: {
-        changed: expect.any(Number),
-        data: '',
         conflicts: [],
       },
+      url: 'https://test.farmos.net/log/179',
       modules: [
         'my-logs',
       ],
