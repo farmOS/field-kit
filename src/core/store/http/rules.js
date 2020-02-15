@@ -13,6 +13,13 @@
  * syncAllLogs action.
  */
 
+// A helper that determines if a value is falsey, or is an empty array or object.
+const isNullish = val => (
+  !val
+  || (Array.isArray(val) && val.length < 1)
+  || (typeof val === 'object' && Object.values(val).length < 1)
+);
+
 // If a log is missing a name, generate one.
 const nameRule = (log, { logTypes }) => {
   if (!log.name.data) {
@@ -43,22 +50,19 @@ const dateRule = (log) => {
   return { syncable: true };
 };
 
-// If a seeding log does not have at least one planting asset, don't sync it
-const seedingRule = (log, { assets }) => {
-  if (log.type.data === 'farm_seeding') {
-    const hasPlantingAsset = log.asset.data
-      .some(logAsset => assets
-        .some(asset => (
-          asset.id === logAsset.id && asset.type === 'planting'
-        )));
-    if (!hasPlantingAsset) {
-      return {
-        syncable: false,
-        reason: 'Seeding logs must have at least one planting asset.',
-      };
-    }
-  }
-  return { syncable: true };
+// Check for required fields based on the schema for the current log's type.
+const requiredFieldsRule = (log, { logTypes }) => {
+  const schema = logTypes[log.type.data];
+  return Object.entries(schema.fields)
+    .reduce(({ syncable, reason }, [field, { required, label }]) => {
+      if (required && isNullish(log[field].data)) {
+        return {
+          syncable: false,
+          reason: `${reason}${schema.label} logs must have a value in the ${label} field. `,
+        };
+      }
+      return { syncable, reason };
+    }, { syncable: true, reason: '' });
 };
 
-export default [nameRule, dateRule, seedingRule];
+export default [nameRule, dateRule, requiredFieldsRule];

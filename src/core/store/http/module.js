@@ -257,7 +257,6 @@ export default {
             // Save the current time as the most recent syncDate
             localStorage.setItem('syncDate', (Date.now() / 1000).toFixed(0));
             const syncReducer = createSyncReducer({
-              assets: rootState.farm.assets,
               logTypes: rootState.shell.logTypes,
             });
             // Process and sort the logs into syncable and unsyncable logs,
