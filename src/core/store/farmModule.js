@@ -66,7 +66,8 @@ export default {
     updateAllLogs(state, fn) {
       state.logs = state.logs.map(log => fn(log));
     },
-    deleteLog(state, { index }) {
+    deleteLog(state, localID) {
+      const index = state.logs.findIndex(log => log.localID === localID);
       state.logs.splice(index, 1);
     },
     deleteAllAssets(state) {
@@ -110,16 +111,13 @@ export default {
     // has not been cached locally, nor pushed to the server.
     // **It should NOT be used by Field Kit Core!**
     // Core should use the addLogs mutation instead.
-    updateLog({ commit, rootState }, payload) {
-      const { index, props } = payload;
+    updateLog({ commit, rootState }, props) {
       const { updateLog } = farmLog(rootState.shell.logTypes);
-      const oldLog = index !== undefined
-        ? rootState.farm.logs[index]
-        : rootState.farm.logs.find(log => props.localID === log.localID);
+      const oldLog = rootState.farm.logs.find(log => props.localID === log.localID);
       if (oldLog === undefined) {
-        throw new Error('The updateLog action requires an index or localID prop '
-          + 'as part of the payload. If the log does not have a localID yet, '
-          + 'use the initializeLog action instead.');
+        throw new Error('The updateLog action requires a localID among the '
+          + 'props supplied as the payload. If the log does not have a localID '
+          + 'yet, use the initializeLog action instead.');
       }
       const newLog = updateLog(oldLog, {
         // Set isCahchedLocally & wasPushedToServer to false, but allow them

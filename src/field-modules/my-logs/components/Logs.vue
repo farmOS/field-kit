@@ -16,7 +16,7 @@
       @removeFromExcludedCategories="removeFromExcludedCategories($event)"
       @setDateFilter="setDateFilter($event)"
       :logTypes='logTypes'
-      :logs='logs'
+      :logs='sortLogsDescending(logs)'
       :areas='areas'
       :assets='assets'
       :useGeolocation='useGeolocation'
@@ -48,9 +48,9 @@
             </button>
           </div>
           <div class="modal-body">
-            Are sure you'd like to delete the log "{{logs[logIndexToDelete].name}}"?&nbsp;
+            Are sure you'd like to delete the log "{{logToDelete.name}}"?&nbsp;
             <span
-              v-if='logs[logIndexToDelete].wasPushedToServer'>
+              v-if='logToDelete.wasPushedToServer'>
               Deleting it on this device will not remove the log from the server.
             </span>
             <span v-else>
@@ -75,16 +75,17 @@
       </div>
     </div>
   </div>
-  </div>
 </template>
 
 <script>
+import sort from 'ramda/src/sort';
+
 export default {
   name: 'Logs',
   data() {
     return {
       showDeleteDialog: false,
-      logIndexToDelete: null,
+      logIDToDelete: null,
       logDisplayFilters: {
         date: 'ALL_TIME',
         // NOTE: We're tracking which types/categories to EXCLUDE, so we can manage
@@ -105,33 +106,29 @@ export default {
     'units',
     'categories',
     'equipment',
-    ],
+  ],
   created() {
     this.clearDisplayFilters();
     this.loadCachedDisplayFilters();
   },
   methods: {
+    sortLogsDescending(logs) {
+      const compare = (logA, logB) => logB.timestamp - logA.timestamp;
+      return sort(compare, logs);
+    },
+
     /**
      * DELETION METHODS
      */
-    openDeleteDialog(index) {
+    openDeleteDialog(localID) {
       this.showDeleteDialog = true;
-      this.logIndexToDelete = index;
+      this.logIDToDelete = localID;
     },
     cancelDelete() {
       this.showDeleteDialog = false;
     },
     confirmDelete() {
-      const log = this.logs[this.logIndexToDelete];
-      const payload = {
-        index: this.logIndexToDelete,
-        localID: log.localID,
-        id: log.id,
-        remoteUri: log.remoteUri,
-        name: log.name,
-        type: log.type,
-      };
-      this.$store.commit('deleteLog', payload);
+      this.$store.commit('deleteLog', this.logIDToDelete);
       this.showDeleteDialog = false;
       if (this.$route.name === 'edit-log') {
         this.$router.push({ path: '/logs' });
@@ -209,7 +206,12 @@ export default {
       localStorage.setItem('excludedCategories', '[]');
       localStorage.setItem('dateFilter', 'ALL_TIME');
     },
-  }
+  },
+  computed: {
+    logToDelete() {
+      return this.logs.find(log => log.localID === this.logIDToDelete);
+    },
+  },
 };
 </script>
 

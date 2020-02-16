@@ -10,8 +10,8 @@
     }"
     :wkt="{
       title: 'movement',
-      wkt: logs[currentLogIndex].movement
-        ? logs[currentLogIndex].movement.geometry
+      wkt: currentLog.movement
+        ? currentLog.movement.geometry
         : undefined,
       color: 'orange',
     }"
@@ -35,20 +35,20 @@ export default {
         ? 'http://localhost:8080/farm/areas/geojson/all'
         : `${localStorage.getItem('host')}/farm/areas/geojson/all`;
     },
-    currentLogIndex() {
-      const index = this.logs.findIndex(log => log.localID === +this.id);
-      return index >= 0 ? index : 0;
+    currentLog() {
+      return this.logs.find(log => log.localID === +this.id) || this.logs[0];
     },
   },
   methods: {
     updateMovement(wkt) {
       const props = {
         movement: {
-          area: this.logs[this.currentLogIndex]?.movement.area,
+          area: this.currentLog?.movement.area,
           geometry: wkt,
         },
+        localID: this.id,
       };
-      this.$store.dispatch('updateLog', { index: this.currentLogIndex, props });
+      this.$store.dispatch('updateLog', props);
     },
   },
 };

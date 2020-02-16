@@ -8,20 +8,20 @@
     </template>
     <template #right-menu>
       <a
-        v-if="logs[currentLogIndex].url"
-        :href="logs[currentLogIndex].url">
+        v-if="currentLog.url"
+        :href="currentLog.url">
         <li>
           <icon-open-in-new/>
         </li>
       </a>
-      <li @click="$emit('deleteCurrentLog', currentLogIndex)">
+      <li @click="$emit('deleteCurrentLog', +id)">
         <icon-delete/>
       </li>
     </template>
     <template #more-menu>
       <a
-        v-if="logs[currentLogIndex].url !==''"
-        :href="logs[currentLogIndex].url">
+        v-if="currentLog.url !==''"
+        :href="currentLog.url">
         <li>Open in browser</li>
       </a>
       <li @click="$emit('deleteCurrentLog')">
@@ -47,9 +47,8 @@ export default {
   },
   props: ['logs', 'id'],
   computed: {
-    currentLogIndex() {
-      const index = this.logs.findIndex(log => log.localID === +this.id);
-      return index >= 0 ? index : 0;
+    currentLog() {
+      return this.logs.find(log => log.localID === +this.id) || this.logs[0];
     },
   },
 };

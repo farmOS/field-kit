@@ -73,7 +73,7 @@ export default {
         .catch(console.error); // eslint-disable-line no-console
     },
 
-    deleteCachedLog(_, { localID }) { // eslint-disable-line camelcase
+    deleteCachedLog(_, localID) { // eslint-disable-line camelcase
       openDatabase()
         .then(db => deleteRecord(db, logStore.name, localID))
         .catch(console.error); // eslint-disable-line no-console
