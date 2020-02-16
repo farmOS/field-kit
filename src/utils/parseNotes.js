@@ -1,6 +1,6 @@
 export default function parseNotes(notes) {
-  if (notes.data === null) { return ''; }
+  if (notes === null) { return ''; }
   const tmp = document.createElement('div');
-  tmp.innerHTML = notes.data.value;
+  tmp.innerHTML = notes.value;
   return tmp.textContent || tmp.innerText || '';
 }

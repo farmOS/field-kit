@@ -26,15 +26,15 @@
             <div class="card-row-1">
               <icon-assignment-done
                 class="assignment done"
-                v-if="log.done.data"/>
+                v-if="log.done"/>
               <icon-assignment
                 class="assignment"
-                v-if="!log.done.data && (log.timestamp.data * 1000 > new Date().valueOf())"/>
+                v-if="!log.done && (log.timestamp * 1000 > new Date().valueOf())"/>
               <icon-assignment-late
                 class="assignment late"
-                v-if="!log.done.data && (log.timestamp.data * 1000 < new Date().valueOf())"/>
+                v-if="!log.done && (log.timestamp * 1000 < new Date().valueOf())"/>
               <div class="log-name">
-                <h5>{{log.name.data}}</h5>
+                <h5>{{log.name}}</h5>
               </div>
               <icon-cloud-done v-if="log.wasPushedToServer" class="sync-status"/>
               <div
@@ -52,8 +52,8 @@
 
             <div class="card-row-3">
               <div class="date-and-type">
-                <span class="log-type">{{logTypes[log.type.data].label.toUpperCase()}}</span>
-                <span>{{showDate(log.timestamp.data)}}</span>
+                <span class="log-type">{{logTypes[log.type].label.toUpperCase()}}</span>
+                <span>{{showDate(log.timestamp)}}</span>
               </div>
               <div class="tags">
                 <span
@@ -130,35 +130,35 @@ export default {
     // Pass in a log and get back an array of the areas attached to that log
     mapTidsToAreas(log) {
       if (log.area && this.areas.length > 0) {
-        return log.area.data.map(a1 => this.areas.find(a2 => +a2.tid === +a1.id));
+        return log.area.map(a1 => this.areas.find(a2 => +a2.tid === +a1.id));
       }
       return [];
     },
     // Pass in a log and get back an array of the areas attached to that log
     mapIdsToAssets(log) {
       if (log.asset && this.assets.length > 0) {
-        return log.asset.data.map(a1 => this.assets.find(a2 => +a2.id === +a1.id));
+        return log.asset.map(a1 => this.assets.find(a2 => +a2.id === +a1.id));
       }
       return [];
     },
     passesFilters(log) {
-      const passesTypeFilter = !this.logDisplayFilters.excludedTypes.includes(log.type.data);
+      const passesTypeFilter = !this.logDisplayFilters.excludedTypes.includes(log.type);
       const passesCategoryFilter = () => {
-        const logHasNoCats = log.log_category.data === null
-          || log.log_category.data.length === 0;
+        const logHasNoCats = log.log_category === null
+          || log.log_category.length === 0;
         const noCatsFilterIsSelected = this.logDisplayFilters.excludedCategories.includes(-1);
         if (logHasNoCats && noCatsFilterIsSelected) {
           return false;
         }
-        if (log.log_category.data !== null) {
-          return !log.log_category.data.some(cat => (
+        if (log.log_category !== null) {
+          return !log.log_category.some(cat => (
             this.logDisplayFilters.excludedCategories.some(exCat => +exCat === +cat.id)
           ));
         }
         return true;
       };
       const passesDateFilter = () => {
-        if (Number.isNaN(Number(log.timestamp.data))) {
+        if (Number.isNaN(Number(log.timestamp))) {
           return true;
         }
         const filter = this.logDisplayFilters.date;
@@ -183,7 +183,7 @@ export default {
         if (filter === 'ALL_TIME') {
           dateLimit = 0;
         }
-        return log.timestamp.data > dateLimit;
+        return log.timestamp > dateLimit;
       };
 
       if (passesTypeFilter && passesCategoryFilter() && passesDateFilter()) {

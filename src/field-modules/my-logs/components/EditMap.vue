@@ -10,8 +10,8 @@
     }"
     :wkt="{
       title: 'movement',
-      wkt: logs[currentLogIndex].movement.data
-        ? logs[currentLogIndex].movement.data.geometry
+      wkt: logs[currentLogIndex].movement
+        ? logs[currentLogIndex].movement.geometry
         : undefined,
       color: 'orange',
     }"
@@ -44,7 +44,7 @@ export default {
     updateMovement(wkt) {
       const props = {
         movement: {
-          area: this.logs[this.currentLogIndex].movement.data?.area,
+          area: this.logs[this.currentLogIndex]?.movement.area,
           geometry: wkt,
         },
       };

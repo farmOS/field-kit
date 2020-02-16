@@ -48,7 +48,7 @@
             </button>
           </div>
           <div class="modal-body">
-            Are sure you'd like to delete the log "{{logs[logIndexToDelete].name.data}}"?&nbsp;
+            Are sure you'd like to delete the log "{{logs[logIndexToDelete].name}}"?&nbsp;
             <span
               v-if='logs[logIndexToDelete].wasPushedToServer'>
               Deleting it on this device will not remove the log from the server.
@@ -128,8 +128,8 @@ export default {
         localID: log.localID,
         id: log.id,
         remoteUri: log.remoteUri,
-        name: log.name.data,
-        type: log.type.data,
+        name: log.name,
+        type: log.type,
       };
       this.$store.commit('deleteLog', payload);
       this.showDeleteDialog = false;

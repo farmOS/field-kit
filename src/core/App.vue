@@ -78,7 +78,7 @@
               :userId='userId'
               :systemOfMeasurement='systemOfMeasurement'
               :logTypes='logTypes'
-              :logs='logs'
+              :logs='removeMetaData(logs)'
               :areas='areas'
               :assets='assets'
               :units='units'
@@ -103,6 +103,15 @@ import IconMenu from '@/components/icons/icon-menu';
 import IconArrowBack from '@/components/icons/icon-arrow-back';
 import DrawerList from '@/components/DrawerList';
 import DrawerListItem from '@/components/DrawerListItem';
+
+const removeMetaData = entities => entities
+  .map(entity => Object.fromEntries(
+    Object.entries(entity).map(([key, val]) => (
+      typeof val === 'object' && 'data' in val
+        ? [key, val.data]
+        : [key, val]
+    )),
+  ));
 
 const ModuleMenuItems = Vue.component('module-menu-items', {
   render(createElement) {
@@ -201,6 +210,7 @@ export default {
     setUseGeolocation(checked) {
       this.$store.commit('setUseGeolocation', checked);
     },
+    removeMetaData,
   },
 };
 </script>
