@@ -6,17 +6,19 @@
       <div class="card-body">
 
         <date-and-time-form
-          :timestamp="currentLog.timestamp.data"
+          :timestamp="currentLog.timestamp"
           @input="updateCurrentLog('timestamp', $event)"/>
 
         <div class="form-row">
           <div class="form-item form-group col">
-            <label for="precip-amt" class="control-label">Precipitation amount ({{unitAbbr}})</label>
-            <input 
+            <label for="precip-amt" class="control-label">
+              Precipitation amount ({{unitAbbr}})
+            </label>
+            <input
               id="precip-amt"
               type="number"
               min="0"
-              :value="currentLog.quantity.data[0].value"
+              :value="currentLog.quantity[0].value"
               @input="updateQuantity('value', $event.target.value)"
               class="form-control">
           </div>
@@ -24,23 +26,23 @@
             <label for="precip-type" class="control-label">Precipitation Type</label>
             <div id="precip-type" class="form-item form-group">
               <div class="form-check">
-                <input 
+                <input
                   id="precip-type-rain"
                   name="precip-type"
                   type="radio"
                   value="rain"
-                  :checked="currentLog.quantity.data[0].label === 'rain'"
+                  :checked="currentLog.quantity[0].label === 'rain'"
                   @input="updateQuantity('label', $event ? 'rain' : 'snow')"
                   class="form-check-input">
                 <label for="precip-type-rain" class="form-check-label">Rain</label>
               </div>
               <div class="form-check">
-                <input 
+                <input
                   id="precip-type-snow"
                   name="precip-type"
                   type="radio"
                   value="snow"
-                  :checked="currentLog.quantity.data[0].label === 'snow'"
+                  :checked="currentLog.quantity[0].label === 'snow'"
                   @input="updateQuantity('label', $event ? 'snow' : 'rain')"
                   class="form-check-input">
                 <label for="precip-type-snow" class="form-check-label">Snow</label>
@@ -54,8 +56,8 @@
             <label for="notes" class="control-label">Notes</label>
             <textarea
               id="notes"
-              :value="currentLog.notes.data"
-              @input="updateCurrentLog('notes', $event.target.value)"
+              :value="parseNotes(currentLog.notes)"
+              @input="updateNotes($event.target.value)"
               placeholder="Enter notes"
               class="form-textarea form-control">
             </textarea>
@@ -80,14 +82,20 @@
             </tr>
             <tr v-for="log in logs" :key="`log-${log.localID}`" @click="currentLogID = log.localID">
               <th scope="row">
-                {{new Date(log.timestamp.data * 1000).toLocaleDateString(undefined, {dateStyle: 'medium'})}}
+                {{
+                  new Date(log.timestamp * 1000)
+                    .toLocaleDateString(undefined, { dateStyle: 'medium' })
+                }}
               </th>
               <td>
-                {{new Date(log.timestamp.data * 1000).toLocaleTimeString(undefined, {timeStyle: 'short'})}}
+                {{
+                  new Date(log.timestamp * 1000)
+                    .toLocaleTimeString(undefined, { timeStyle: 'short' })
+                }}
               </td>
-              <td>{{`${log.quantity.data[0].value} ${unitAbbr}`}}</td>
-              <td v-if="log.quantity.data[0].label === 'snow'"><icon-snowflake/></td>
-              <td v-if="log.quantity.data[0].label === 'rain'"><icon-raindrops/></td>
+              <td>{{`${log.quantity[0].value} ${unitAbbr}`}}</td>
+              <td v-if="log.quantity[0].label === 'snow'"><icon-snowflake/></td>
+              <td v-if="log.quantity[0].label === 'rain'"><icon-raindrops/></td>
             </tr>
           </tbody>
         </table>
@@ -98,6 +106,7 @@
 </template>
 
 <script>
+import parseNotes from '@/utils/parseNotes';
 import DateAndTimeForm from '@/components/DateAndTimeForm';
 import IconAddCircle from '@/components/icons/icon-add-circle';
 import IconRaindrops from '@/components/icons/icon-raindrops';
@@ -105,7 +114,12 @@ import IconSnowflake from '@/components/icons/icon-snowflake';
 
 export default {
   name: 'Weather',
-  components: { DateAndTimeForm, IconAddCircle, IconRaindrops, IconSnowflake },
+  components: {
+    DateAndTimeForm,
+    IconAddCircle,
+    IconRaindrops,
+    IconSnowflake,
+  },
   data: () => ({
     currentLogID: null,
     time: {
@@ -113,7 +127,7 @@ export default {
       hour: null,
       minute: null,
       am: true,
-    }
+    },
   }),
   props: ['logs', 'units', 'categories', 'systemOfMeasurement'],
   created() {
@@ -129,35 +143,31 @@ export default {
   },
   methods: {
     createWeatherLog() {
-      const timestamp = Math.floor(new Date() / 1000).toString();
       this.$store.dispatch('initializeLog', {
-        type: { data: 'farm_observation', changed: timestamp },
-        log_category: { data: [{ id: this.weatherTid }], changed: timestamp },
-        quantity: {
-          data: [{
-            measure: 'length',
-            value: 0,
-            unit: { id: this.unitTid },
-            label: 'rain',
-          }],
-          changed: timestamp,
-        },
-        timestamp: { data: timestamp, changed: timestamp },
-      }).then(id => this.currentLogID = id);
+        type: 'farm_observation',
+        log_category: [{ id: this.weatherTid }],
+        quantity: [{
+          measure: 'length',
+          value: 0,
+          unit: { id: this.unitTid },
+          label: 'rain',
+        }],
+        done: true,
+      }).then((id) => { this.currentLogID = id; });
     },
     updateCurrentLog(key, val) {
-      const timestamp = Math.floor(new Date() / 1000).toString();
       const props = {
-        [key]: { data: val, changed: timestamp },
+        [key]: val,
         localID: this.currentLogID,
-        isCachedLocally: false,
-        wasPushedToServer: false,
       };
-      this.$store.commit('updateLog', { props });
+      this.$store.dispatch('updateLog', { props });
+    },
+    updateNotes(value) {
+      this.updateCurrentLog('notes', { value, format: 'farm_format' });
     },
     updateQuantity(key, val) {
       const quantity = [{
-        ...this.currentLog.quantity.data[0],
+        ...this.currentLog.quantity[0],
         [key]: val,
       }];
       this.updateCurrentLog('quantity', quantity);
@@ -175,8 +185,9 @@ export default {
       const date = +nonUnixTimestamp.split('-')[2];
       return Math.floor(new Date(year, monthIndex, date).getTime() / 1000).toString();
     },
+    parseNotes,
   },
-}
+};
 </script>
 
 <style>
