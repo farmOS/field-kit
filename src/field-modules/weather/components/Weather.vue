@@ -160,7 +160,7 @@ export default {
         [key]: val,
         localID: this.currentLogID,
       };
-      this.$store.dispatch('updateLog', { props });
+      this.$store.dispatch('updateLog', props);
     },
     updateNotes(value) {
       this.updateCurrentLog('notes', { value, format: 'farm_format' });
