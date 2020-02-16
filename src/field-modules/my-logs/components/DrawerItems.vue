@@ -18,7 +18,8 @@ export default {
   },
   methods: {
     openNewLog() {
-      this.$store.dispatch('initializeLog', { modules: ['my-logs'] })
+      const props = { modules: ['my-logs'], done: true };
+      this.$store.dispatch('initializeLog', props)
         .then(id => this.$router.push({ path: `/logs/${id}` }));
     },
   },

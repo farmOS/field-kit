@@ -192,7 +192,7 @@ export default {
       return false;
     },
     startNewLog() {
-      this.$store.dispatch('initializeLog')
+      this.$store.dispatch('initializeLog', { done: true })
         .then(id => this.$router.push({ path: `/logs/${id}` }));
     },
     parseNotes,
