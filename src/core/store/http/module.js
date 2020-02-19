@@ -31,7 +31,7 @@ export default {
         }
 
         // LOG_OWNER
-        if (cur.filters.log.log_owner === 'SELF') {
+        if (cur.filters.log.log_owner === 'SELF' && rootState.shell.user.uid) {
           logOwner = rootState.shell.user.uid;
         } else if (typeof cur.filters.log.log_owner === 'number') {
           logOwner = cur.filters.log.log_owner;
