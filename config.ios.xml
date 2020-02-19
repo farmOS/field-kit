@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="org.farmos.app" version="0.4.11" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="org.farmos.app" version="0.4.12" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>farmOS</name>
     <description>
 				A native front-end app for farmOS.
@@ -27,10 +27,10 @@
         <key>NSPhotoLibraryUsageDescription</key>
         <string>farmOS would like access to the photo library</string>
     </config-file>
-    <config-file mode="replace" parent="NSLocationAlwaysUsageDescription" platform="ios">
-        <key>NSLocationAlwaysUsageDescription</key>
-        <string>farmOS would like access your GPS location</string>
-    </config-file>
+    <plugin name="cordova-plugin-geolocation">
+      <variable name="LOCATION_WHEN_IN_USE_DESCRIPTION" value="farmOS would like to access the location." />
+      <variable name="LOCATION_ALWAYS_USAGE_DESCRIPTION" value="farmOS would like to access the location." />
+    </plugin>
     <plugin name="cordova-plugin-whitelist" spec="^1.3.3" />
     <plugin name="cordova-plugin-camera" spec="&lt;=2.4.1">
         <variable name="CAMERA_USAGE_DESCRIPTION" value="farmOS would like access to the camera" />
@@ -46,7 +46,6 @@
     </plugin>
     <engine name="android" spec="^7.1.1" />
     <engine name="ios" spec="^4.5.5" />
-    <plugin name="cordova-plugin-geolocation" spec="&lt;=2.4.3" />
     <plugin name="cordova-plugin-splashscreen" spec="^5.0.2" />
     <platform name="android">
     	<icon qualifier="ldpi" src="res/icons/android/drawable-ldpi-icon.png" />
