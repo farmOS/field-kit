@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="org.farmos.app" version="0.4.12" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="org.farmos.app" version="0.4.13" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>farmOS</name>
     <description>
 				A native front-end app for farmOS.
@@ -27,11 +27,9 @@
         <key>NSPhotoLibraryUsageDescription</key>
         <string>farmOS would like access to the photo library</string>
     </config-file>
-    <plugin name="cordova-plugin-geolocation">
-      <variable name="LOCATION_WHEN_IN_USE_DESCRIPTION" value="farmOS would like to access the location." />
-      <variable name="LOCATION_ALWAYS_USAGE_DESCRIPTION" value="farmOS would like to access the location." />
-    </plugin>
-    <plugin name="cordova-plugin-whitelist" spec="^1.3.3" />
+    <plugin name="cordova-custom-config" version="*"/>
+    <config-file overwrite="true" parent="NSLocationAlwaysUsageDescription" platform="ios" target="*-Info.plist"> <string>Allow the app to know your location</string> </config-file>
+    <config-file overwrite="true" parent="NSLocationWhenInUseUsageDescription" platform="ios" target="*-Info.plist"> <string>Allow the app to know your location</string> </config-file>    <plugin name="cordova-plugin-whitelist" spec="^1.3.3" />
     <plugin name="cordova-plugin-camera" spec="&lt;=2.4.1">
         <variable name="CAMERA_USAGE_DESCRIPTION" value="farmOS would like access to the camera" />
         <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="farmOS would like access to the camera" />
