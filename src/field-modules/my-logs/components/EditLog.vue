@@ -622,7 +622,7 @@ export default {
     updateCurrentLog(key, val) {
       const props = {
         [key]: val,
-        localID: this.id,
+        localID: +this.id,
       };
       this.$store.dispatch('updateLog', props);
     },

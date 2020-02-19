@@ -46,7 +46,7 @@ export default {
           area: this.currentLog?.movement.area,
           geometry: wkt,
         },
-        localID: this.id,
+        localID: +this.id,
       };
       this.$store.dispatch('updateLog', props);
     },
