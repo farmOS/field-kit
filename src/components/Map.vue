@@ -43,19 +43,10 @@ export default {
     },
     wkt: {
       type: Array,
-      validator: wktArray => wktArray.every((e) => {
-        if (
-          typeof e.title === 'string'
-          && (typeof e.wkt === 'string'
-          || e.wkt === null)
+      validator: wktArray => wktArray.every(e => typeof e.title === 'string'
+          && (typeof e.wkt === 'string' || e.wkt === null)
           && typeof e.color === 'string'
-          && (!e.visible
-          || typeof e.visible === 'boolean')
-        ) {
-          return true;
-        }
-        return false;
-      }),
+          && (!e.visible || typeof e.visible === 'boolean')),
     },
     geojson: {
       title: String,
@@ -65,15 +56,10 @@ export default {
     },
   },
   computed: mapState({
-    /*
-    Add asset geometry to state
-    */
     mapboxAPIKey: state => state.shell.mapboxAPIKey,
   }),
   mounted() {
-    /*
-    Render asset geometry
-    */
+    // Render asset geometry
     this.map = window.farmOS.map.create(this.id, this.options);
     if (this.geojson.url) {
       this.layers.geojson = this.map.addLayer('geojson', this.geojson);
@@ -86,8 +72,7 @@ export default {
       */
       if (!this.drawing
         && wktElement.wkt
-        && wktElement.wkt !== 'GEOMETRYCOLLECTION EMPTY'
-        && wktElement.wkt !== null) {
+        && wktElement.wkt !== 'GEOMETRYCOLLECTION EMPTY') {
         this.layers[wktElement.title] = this.map.addLayer('wkt', wktElement);
         if (hasLayers && this.layers.movement) {
           this.map.zoomToLayer(this.layers.movement);
@@ -98,8 +83,7 @@ export default {
       }
       if (this.drawing) {
         if (wktElement.wkt
-          && wktElement.wkt !== 'GEOMETRYCOLLECTION EMPTY'
-          && wktElement.wkt !== null) {
+          && wktElement.wkt !== 'GEOMETRYCOLLECTION EMPTY') {
           if (wktElement.title === 'movement') {
             this.layers[wktElement.title] = this.map.addLayer('wkt', wktElement);
             this.map.zoomToLayer(this.layers.movement);
@@ -150,16 +134,11 @@ export default {
   watch: {
     wkt: {
       handler(newWKT) {
-        /*
-        TODO:
-        Figure out why this is triggering twice when a new area is added.
-        */
+        // TODO: Figure out why this is triggering twice when a new area is added.
         if (!this.drawing) {
           let hasLayers = false;
           newWKT.forEach((newElement) => {
-            /*
-            When multiple layers are present, the map zooms to the movement layer by default.
-            */
+            // When multiple layers are present, the map zooms to the movement layer by default.
             if (this.layers[newElement.title]) {
               this.map.map.removeLayer(this.layers[newElement.title]);
               this.layers[newElement.title] = null;
