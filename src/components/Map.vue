@@ -112,9 +112,6 @@ export default {
             this.layers[wktElement.title] = this.map.addLayer('wkt', wktElement);
           }
           hasLayers = true;
-        } else {
-          this.map.addBehavior('edit');
-          this.map.addBehavior('measure', { layer: this.map.edit.layer });
         }
       }
     });
