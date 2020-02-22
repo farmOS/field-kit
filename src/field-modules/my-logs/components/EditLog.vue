@@ -989,6 +989,8 @@ export default {
         wkt: this.currentLog?.movement.data.geometry,
         color: 'orange',
         visible: true,
+        weight: 0,
+        canEdit: !!this.logs[this.currentLogIndex].movement.data.geometry,
       };
       const assembledPrevious = () => {
         const fields = [];
@@ -1008,8 +1010,10 @@ export default {
       const previous = {
         title: 'previous',
         wkt: assembledPrevious(),
-        color: 'blue',
+        color: 'green',
         visible: true,
+        weight: 1,
+        canEdit: false,
       };
       return [movement, previous];
     },

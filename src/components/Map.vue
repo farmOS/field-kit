@@ -46,7 +46,9 @@ export default {
       validator: wktArray => wktArray.every(e => typeof e.title === 'string'
           && (typeof e.wkt === 'string' || e.wkt === null)
           && typeof e.color === 'string'
-          && (!e.visible || typeof e.visible === 'boolean')),
+          && (!e.visible || typeof e.visible === 'boolean')
+          && typeof e.weight === 'number'
+          && typeof e.canEdit === 'boolean'),
     },
     geojson: {
       title: String,
@@ -65,31 +67,30 @@ export default {
       this.layers.geojson = this.map.addLayer('geojson', this.geojson);
     }
     let hasLayers = false;
+    // De-weights layers without geometries
+    const layerWeights = this.wkt.map(e => (e.wkt
+      && e.wkt !== 'GEOMETRYCOLLECTION EMPTY'
+      ? e.weight : 99));
     this.wkt.forEach((wktElement) => {
-      /*
-      When a movement layer is present, zoom to the movement layer.
-      Otherwise, zoom to the previous layer.
-      */
+      // Zoom to the layer if it has the lowest weight
       if (!this.drawing
         && wktElement.wkt
         && wktElement.wkt !== 'GEOMETRYCOLLECTION EMPTY') {
         this.layers[wktElement.title] = this.map.addLayer('wkt', wktElement);
-        if (hasLayers && this.layers.movement) {
-          this.map.zoomToLayer(this.layers.movement);
-        } else {
+        if (wktElement.weight === Math.min(...layerWeights)) {
           this.map.zoomToLayer(this.layers[wktElement.title]);
-          hasLayers = true;
         }
+        hasLayers = true;
       }
       if (this.drawing) {
         if (wktElement.wkt
           && wktElement.wkt !== 'GEOMETRYCOLLECTION EMPTY') {
-          if (wktElement.title === 'movement') {
+          if (wktElement.weight === Math.min(...layerWeights) && wktElement.canEdit) {
             this.layers[wktElement.title] = this.map.addLayer('wkt', wktElement);
-            this.map.zoomToLayer(this.layers.movement);
-            this.map.addBehavior('edit', { layer: this.layers.movement });
-            this.map.addBehavior('measure', { layer: this.layers.movement });
-          } else if (!hasLayers || !this.layers.movement) {
+            this.map.zoomToLayer(this.layers[wktElement.title]);
+            this.map.addBehavior('edit', { layer: this.layers[wktElement.title] });
+            this.map.addBehavior('measure', { layer: this.layers[wktElement.title] });
+          } else if (wktElement.weight === Math.min(...layerWeights)) {
             this.layers[wktElement.title] = this.map.addLayer('wkt', wktElement);
             this.map.zoomToLayer(this.layers[wktElement.title]);
           } else {
@@ -137,19 +138,20 @@ export default {
         // TODO: Figure out why this is triggering twice when a new area is added.
         if (!this.drawing) {
           let hasLayers = false;
+          // Preferentially weights layers with geometries
+          const layerWeights = newWKT.map(e => (e.wkt
+            && e.wkt !== 'GEOMETRYCOLLECTION EMPTY'
+            ? e.weight : 99));
           newWKT.forEach((newElement) => {
-            // When multiple layers are present, the map zooms to the movement layer by default.
+            // Zoom to the layer if it has the lowest weight
             if (this.layers[newElement.title]) {
               this.map.map.removeLayer(this.layers[newElement.title]);
               this.layers[newElement.title] = null;
             }
             if (newElement.wkt
-            && newElement.wkt !== 'GEOMETRYCOLLECTION EMPTY'
-            && newElement.wkt !== null) {
+            && newElement.wkt !== 'GEOMETRYCOLLECTION EMPTY') {
               this.layers[newElement.title] = this.map.addLayer('wkt', newElement);
-              if (hasLayers && this.layers.movement) {
-                this.map.zoomToLayer(this.layers.movement);
-              } else {
+              if (newElement.weight === Math.min(...layerWeights)) {
                 this.map.zoomToLayer(this.layers[newElement.title]);
                 hasLayers = true;
               }
