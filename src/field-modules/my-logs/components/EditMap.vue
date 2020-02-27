@@ -18,14 +18,15 @@
 
 <script>
 import Map from '@/components/Map';
+import { mergeGeometries } from '@/utils/geometry';
 
 export default {
   name: 'EditMap',
   components: { Map },
   props: ['logs',
+    'areas',
     'id',
-    'systemOfMeasurement',
-    'mapLayers'],
+    'systemOfMeasurement'],
 
   computed: {
     areaGeoJSON() {
@@ -35,6 +36,41 @@ export default {
     },
     currentLog() {
       return this.logs.find(log => log.localID === +this.id) || this.logs[0];
+    },
+    logAreas() {
+      return this.currentLog.area.data
+        ? this.currentLog.area.data
+        : null;
+    },
+    /*
+    Assemble layers for display.
+    The 'previous' layer is assembled from the geofield plus
+    all area geometires associated with the log.
+    The 'movement' layer is the geometry in the log's movement field
+    */
+    mapLayers() {
+      const movement = {
+        title: 'movement',
+        wkt: this.currentLog?.movement.data.geometry,
+        color: 'orange',
+        visible: true,
+        weight: 0,
+        canEdit: !!this.currentLog.movement.data.geometry,
+      };
+      const previousGeoms = this.logAreas
+        .map(logArea => this.areas.find(area => area.tid === logArea.id).geofield?.[0].geom)
+        .concat(this.currentLog.geofield.data?.[0].geom)
+        .filter(a => !!a);
+      const previousWKT = mergeGeometries(previousGeoms);
+      const previous = {
+        title: 'previous',
+        wkt: previousWKT,
+        color: 'green',
+        visible: true,
+        weight: 1,
+        canEdit: false,
+      };
+      return [movement, previous];
     },
   },
 

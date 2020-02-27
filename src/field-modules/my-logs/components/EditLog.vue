@@ -513,7 +513,7 @@
       </ul>
     </div>
 
-    <router-link :to="{ name: 'edit-map', params: { mapLayers: mapLayers }}">
+    <router-link :to="{ name: 'edit-map'}">
       <Map
         id="map"
         :overrideStyles="{ height: '90vw' }"
@@ -990,26 +990,16 @@ export default {
         color: 'orange',
         visible: true,
         weight: 0,
-        canEdit: !!this.logs[this.currentLogIndex].movement.data.geometry,
+        canEdit: !!this.currentLog.movement.data.geometry,
       };
-      const assembledPrevious = () => {
-        const fields = [];
-        if (this.currentLog.geofield.data.length > 0) {
-          fields.push(this.currentLog.geofield.data[0].geom);
-        }
-        this.logAreas.forEach((logArea) => {
-          const areaGeom = (this.areas.find(area => area.tid === logArea.id).geofield[0])
-            ? this.areas.find(area => area.tid === logArea.id).geofield[0].geom
-            : null;
-          if (areaGeom) { fields.push(areaGeom); }
-        });
-        return fields.length > 0
-          ? mergeGeometries(fields)
-          : null;
-      };
+      const previousGeoms = this.logAreas
+        .map(logArea => this.areas.find(area => area.tid === logArea.id).geofield?.[0].geom)
+        .concat(this.currentLog.geofield.data?.[0].geom)
+        .filter(a => !!a);
+      const previousWKT = mergeGeometries(previousGeoms);
       const previous = {
         title: 'previous',
-        wkt: assembledPrevious(),
+        wkt: previousWKT,
         color: 'green',
         visible: true,
         weight: 1,
