@@ -115,7 +115,7 @@
       </div>
     </div>
 
-    <div v-if="currentLog.quantity">
+    <div v-if="currentLog.quantity !== undefined">
       <h4>Quantities</h4>
       <label for="quantity" class="control-label ">Add new or edit existing quantity</label>
       <div class="form-item form-item-name form-group">
@@ -439,7 +439,7 @@
   <div
     class="container-fluid tab-content second"
     :class="{ selected: tabSelected === 'SECOND' }"
-    v-if="currentLog.movement">
+    v-if="currentLog.movement !== undefined">
 
     <br>
     <Autocomplete
