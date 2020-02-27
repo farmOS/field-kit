@@ -100,7 +100,7 @@ export default {
         }
       }
     });
-    if (this.drawing) {
+    if (this.drawing && this.map.edit) {
       this.map.edit.wktOn('drawend', (wkt) => {
         this.$emit('update-wkt', wkt);
       });
