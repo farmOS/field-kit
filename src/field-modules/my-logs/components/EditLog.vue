@@ -717,9 +717,18 @@ export default {
     },
 
     removeArea(area) {
+      // Update the current log with a new array of areas, sans the removed one.
       const newAreas = this.currentLog.area
         .filter(_area => _area.id !== area.tid);
       this.updateCurrentLog('area', newAreas);
+
+      // Also remove the area's geofield from the current log.
+      const removedGeofields = this.areas
+        .find(_area => _area.tid === area.tid)
+        ?.geofield;
+      const newGeofields = this.currentLog.geofield
+        ?.filter(geofield => !removedGeofields.some(_geofield => geofield.geom === _geofield.geom));
+      this.updateCurrentLog('geofield', newGeofields);
     },
 
     removeMovementArea(area) {
@@ -972,11 +981,6 @@ export default {
       return this.currentLog.images
         .filter(img => typeof img === 'string');
     },
-    logAreas() {
-      return this.currentLog.area.data
-        ? this.currentLog.area.data
-        : null;
-    },
     /*
     Assemble layers for display.
     The 'previous' layer is assembled from the geofield plus
@@ -986,17 +990,17 @@ export default {
     mapLayers() {
       const movement = {
         title: 'movement',
-        wkt: this.currentLog?.movement.data.geometry,
+        wkt: this.currentLog.movement?.geometry,
         color: 'orange',
         visible: true,
         weight: 0,
-        canEdit: !!this.currentLog.movement.data.geometry,
+        canEdit: !!this.currentLog.movement?.geometry,
       };
-      const previousGeoms = this.logAreas
-        .map(logArea => this.areas.find(area => area.tid === logArea.id).geofield?.[0].geom)
-        .concat(this.currentLog.geofield.data?.[0].geom)
-        .filter(a => !!a);
-      const previousWKT = mergeGeometries(previousGeoms);
+      const previousGeoms = this.currentLog.area
+        ?.map(logArea => this.areas.find(area => area.tid === logArea.id).geofield?.[0].geom)
+        ?.concat(this.currentLog.geofield?.[0].geom)
+        ?.filter(a => !!a);
+      const previousWKT = previousGeoms ? mergeGeometries(previousGeoms) : undefined;
       const previous = {
         title: 'previous',
         wkt: previousWKT,
@@ -1039,22 +1043,6 @@ export default {
           navigator.geolocation.clearWatch(watch);
         }, 5000);
       }
-    },
-    /*
-    Delete the geofield if it corresponds to a deleted area
-    */
-    logAreas: {
-      handler(newAreas, oldAreas) {
-        const areaDeleted = oldAreas.filter(n => !newAreas.includes(n));
-        if (areaDeleted.length > 0
-          && this.currentLog.geofield.data.length > 0
-          && this.areas.find(area => area.tid === areaDeleted[0].id).geofield.length > 0
-          && this.areas.find(area => area.tid === areaDeleted[0].id).geofield[0].geom
-          === this.currentLog.geofield.data[0].geom) {
-          this.updateCurrentLog('geofield', []);
-        }
-      },
-      deep: false,
     },
   },
 };

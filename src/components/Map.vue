@@ -44,7 +44,7 @@ export default {
     wkt: {
       type: Array,
       validator: wktArray => wktArray.every(e => typeof e.title === 'string'
-          && (typeof e.wkt === 'string' || e.wkt === null)
+          && (typeof e.wkt === 'string' || !e.wkt)
           && typeof e.color === 'string'
           && (!e.visible || typeof e.visible === 'boolean')
           && typeof e.weight === 'number'
@@ -61,7 +61,6 @@ export default {
     mapboxAPIKey: state => state.shell.mapboxAPIKey,
   }),
   mounted() {
-    // Render asset geometry
     this.map = window.farmOS.map.create(this.id, this.options);
     if (this.geojson.url) {
       this.layers.geojson = this.map.addLayer('geojson', this.geojson);

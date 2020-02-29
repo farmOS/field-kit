@@ -37,11 +37,6 @@ export default {
     currentLog() {
       return this.logs.find(log => log.localID === +this.id) || this.logs[0];
     },
-    logAreas() {
-      return this.currentLog.area.data
-        ? this.currentLog.area.data
-        : null;
-    },
     /*
     Assemble layers for display.
     The 'previous' layer is assembled from the geofield plus
@@ -51,16 +46,16 @@ export default {
     mapLayers() {
       const movement = {
         title: 'movement',
-        wkt: this.currentLog?.movement.data.geometry,
+        wkt: this.currentLog.movement?.geometry,
         color: 'orange',
         visible: true,
         weight: 0,
-        canEdit: !!this.currentLog.movement.data.geometry,
+        canEdit: !!this.currentLog.movement?.geometry,
       };
-      const previousGeoms = this.logAreas
-        .map(logArea => this.areas.find(area => area.tid === logArea.id).geofield?.[0].geom)
-        .concat(this.currentLog.geofield.data?.[0].geom)
-        .filter(a => !!a);
+      const previousGeoms = this.currentLog.area
+        ?.map(logArea => this.areas.find(area => area.tid === logArea.id).geofield?.[0].geom)
+        ?.concat(this.currentLog.geofield?.[0].geom)
+        ?.filter(a => !!a);
       const previousWKT = mergeGeometries(previousGeoms);
       const previous = {
         title: 'previous',
