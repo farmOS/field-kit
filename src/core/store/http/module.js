@@ -71,7 +71,7 @@ export default {
       return farm().asset.get().then((res) => {
         // If a successful response is received, delete and replace all assets
         commit('deleteAllAssets');
-        const assets = res.list.map(({ id, name, type }) => ({ id, name, type }));
+        const assets = res.list.map(({ id, name, type, geometry }) => ({ id, name, type, geometry }));
         commit('addAssets', assets);
       });
     },
@@ -94,7 +94,7 @@ export default {
     updateEquipment({ commit }) {
       return farm().asset.get().then((res) => {
         commit('deleteAllEquipment');
-        const assets = res.list.map(({ id, name, type }) => ({ id, name, type }));
+        const assets = res.list.map(({ id, name, type, geometry }) => ({ id, name, type, geometry }));
         const equipment = assets.filter(a => a.type === 'equipment');
         commit('addEquipment', equipment);
       });

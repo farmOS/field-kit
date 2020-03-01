@@ -24,7 +24,7 @@ export default {
   name: 'EditMap',
   components: { Map },
   props: ['logs',
-    'areas',
+    'assets',
     'id',
     'systemOfMeasurement'],
 
@@ -52,10 +52,9 @@ export default {
         weight: 0,
         canEdit: !!this.currentLog.movement?.geometry,
       };
-      const previousGeoms = this.currentLog.area
-        ?.map(logArea => this.areas.find(area => area.tid === logArea.id).geofield?.[0].geom)
-        ?.concat(this.currentLog.geofield?.[0].geom)
-        ?.filter(a => !!a);
+      const previousGeoms = this.currentLog.asset
+        ?.map(logAsset => this.assets
+        ?.find(asset => asset.id === logAsset.id)?.geometry);
       const previousWKT = mergeGeometries(previousGeoms);
       const previous = {
         title: 'previous',
