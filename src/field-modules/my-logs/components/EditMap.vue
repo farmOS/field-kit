@@ -54,7 +54,7 @@ export default {
       };
       const previousGeoms = this.currentLog.asset
         ?.map(logAsset => this.assets
-        ?.find(asset => asset.id === logAsset.id)?.geometry);
+          ?.find(asset => asset.id === logAsset.id)?.geometry);
       const previousWKT = mergeGeometries(previousGeoms);
       const previous = {
         title: 'previous',

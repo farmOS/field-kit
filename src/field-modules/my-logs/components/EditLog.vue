@@ -513,7 +513,7 @@
       </ul>
     </div>
 
-    <router-link :to="{ name: 'edit-map'}">
+    <router-link :to="{ name: 'edit-map' }">
       <Map
         id="map"
         :overrideStyles="{ height: '90vw' }"
@@ -998,7 +998,7 @@ export default {
       };
       const previousGeoms = this.currentLog.asset
         ?.map(logAsset => this.assets
-        ?.find(asset => asset.id === logAsset.id)?.geometry);
+          ?.find(asset => asset.id === logAsset.id)?.geometry);
       const previousWKT = previousGeoms ? mergeGeometries(previousGeoms) : undefined;
       const previous = {
         title: 'previous',

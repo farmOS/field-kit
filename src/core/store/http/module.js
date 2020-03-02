@@ -71,8 +71,7 @@ export default {
       return farm().asset.get().then((res) => {
         // If a successful response is received, delete and replace all assets
         commit('deleteAllAssets');
-        const assets = res.list.map(({ id, name, type, geometry }) => ({ id, name, type, geometry }));
-        commit('addAssets', assets);
+        commit('addAssets', res.list);
       });
     },
     updateUnits({ commit }) {
