@@ -144,7 +144,6 @@ export default {
       this.$store.dispatch('updateAreas');
       this.$store.dispatch('updateUnits');
       this.$store.dispatch('updateCategories');
-      this.$store.dispatch('updateEquipment');
     },
 
     /**

@@ -90,14 +90,6 @@ export default {
         commit('addCategories', cats);
       });
     },
-    updateEquipment({ commit }) {
-      return farm().asset.get().then((res) => {
-        commit('deleteAllEquipment');
-        const assets = res.list.map(({ id, name, type, geometry }) => ({ id, name, type, geometry }));
-        const equipment = assets.filter(a => a.type === 'equipment');
-        commit('addEquipment', equipment);
-      });
-    },
 
     // SEND LOGS TO SERVER (step 2 of sync)
     sendLogs({ commit, rootState }, indices) {

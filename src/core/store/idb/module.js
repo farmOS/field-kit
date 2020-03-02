@@ -16,7 +16,6 @@ const [
   areaStore,
   unitStore,
   catStore,
-  equipStore,
 ] = config.stores;
 
 export default {
@@ -193,34 +192,6 @@ export default {
         .then(db => getRecords(db, catStore.name))
         .then((results) => {
           commit('addCategories', results);
-        })
-        .catch(console.error); // eslint-disable-line no-console
-    },
-
-    createCachedEquipment(_, newEquip) {
-      openDatabase()
-        .then(db => saveRecord(db, equipStore.name, newEquip))
-        .catch(console.error); // eslint-disable-line no-console
-    },
-
-    // TODO: Remove duplication with createCachedEquipment
-    updateCachedEquipment(context, equip) {
-      openDatabase()
-        .then(db => saveRecord(db, equipStore.name, equip))
-        .catch(console.error); // eslint-disable-line no-console
-    },
-
-    deleteAllCachedEquipment() {
-      openDatabase()
-        .then(db => clearStore(db, equipStore.name))
-        .catch(console.error); // eslint-disable-line no-console
-    },
-
-    loadCachedEquipment({ commit }) {
-      openDatabase()
-        .then(db => getRecords(db, equipStore.name))
-        .then((results) => {
-          commit('addEquipment', results);
         })
         .catch(console.error); // eslint-disable-line no-console
     },

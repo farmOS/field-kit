@@ -53,7 +53,11 @@ export default {
     areas: [],
     units: [],
     categories: [],
-    equipment: [],
+  },
+  getters: {
+    equipment(state) {
+      return state.assets.filter(a => a.type === 'equipment');
+    },
   },
   mutations: {
     addLogs: makeEntityAdder('logs', 'localID'),
@@ -61,7 +65,6 @@ export default {
     addAreas: makeEntityAdder('areas', 'tid'),
     addUnits: makeEntityAdder('units', 'tid'),
     addCategories: makeEntityAdder('categories', 'tid'),
-    addEquipment: makeEntityAdder('equipment', 'id'),
     // Takes a function as payload and applies it to each log object
     updateAllLogs(state, fn) {
       state.logs = state.logs.map(log => fn(log));
@@ -81,9 +84,6 @@ export default {
     },
     deleteAllCategories(state) {
       state.categories = [];
-    },
-    deleteAllEquipment(state) {
-      state.equipment = [];
     },
     filterLogs(state, predicate) {
       const filteredLogs = state.logs.filter(predicate);

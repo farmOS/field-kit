@@ -97,7 +97,7 @@
 
 <script>
 import Vue from 'vue';
-import { mapState } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 import { version } from '../../package.json';
 import IconMenu from '@/components/icons/icon-menu';
 import IconArrowBack from '@/components/icons/icon-arrow-back';
@@ -125,8 +125,8 @@ const ModuleMenuItems = Vue.component('module-menu-items', {
             self.$store.commit('filterLogs', log => log.modules.includes(module.name));
             self.$store.dispatch('loadCachedLogs');
           },
-        }
-      }
+        },
+      },
     )));
   },
   props: {
@@ -161,36 +161,39 @@ export default {
     this.$store.dispatch('loadCachedAreas');
     this.$store.dispatch('loadCachedUnits');
     this.$store.dispatch('loadCachedCategories');
-    this.$store.dispatch('loadCachedEquipment');
   },
-  computed: mapState({
-    /**
-     * SHELL STATE
-     */
-    errors: state => state.shell.errors,
-    username: state => state.shell.user.name,
-    userId: state => state.shell.user.uid,
-    isLoggedIn: state => state.shell.user.isLoggedIn,
-    useGeolocation: state => state.shell.settings.useGeolocation,
-    systemOfMeasurement: state => state.shell.systemOfMeasurement,
-    logTypes: state => state.shell.logTypes,
-    farmName: state => state.shell.farmInfo.name,
-    // Provide an example url for the dev server environment
-    farmUrl: state => ((state.shell.farmInfo.url === '')
-      ? 'example.farmos.net'
-      : state.shell.farmInfo.url),
-    modules: state => state.shell.modules,
+  computed: {
+    ...mapState({
+      /**
+       * SHELL STATE
+       */
+      errors: state => state.shell.errors,
+      username: state => state.shell.user.name,
+      userId: state => state.shell.user.uid,
+      isLoggedIn: state => state.shell.user.isLoggedIn,
+      useGeolocation: state => state.shell.settings.useGeolocation,
+      systemOfMeasurement: state => state.shell.systemOfMeasurement,
+      logTypes: state => state.shell.logTypes,
+      farmName: state => state.shell.farmInfo.name,
+      // Provide an example url for the dev server environment
+      farmUrl: state => ((state.shell.farmInfo.url === '')
+        ? 'example.farmos.net'
+        : state.shell.farmInfo.url),
+      modules: state => state.shell.modules,
 
-    /**
-     * FARM STATE
-     */
-    logs: state => state.farm.logs,
-    areas: state => state.farm.areas,
-    assets: state => state.farm.assets,
-    units: state => state.farm.units,
-    categories: state => state.farm.categories,
-    equipment: state => state.farm.equipment,
-  }),
+      /**
+       * FARM STATE
+       */
+      logs: state => state.farm.logs,
+      areas: state => state.farm.areas,
+      assets: state => state.farm.assets,
+      units: state => state.farm.units,
+      categories: state => state.farm.categories,
+    }),
+    ...mapGetters([
+      'equipment',
+    ]),
+  },
   watch: {
     showDrawer(currentShowDrawer) {
       if (currentShowDrawer) {
