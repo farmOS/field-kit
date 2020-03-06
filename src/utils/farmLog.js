@@ -183,7 +183,14 @@ const farmLog = (logTypes, syncDate) => ({
     // server yet or was modified, just work with the log's existing key-value pairs.
     const schema = logTypes[type.data]?.fields;
     const entries = schema ? Object.entries(schema) : Object.entries(serverLog);
-    const updatedEntries = entries.map(([key, { default_value: def }]) => {
+    const updatedEntries = entries.map(([key, { default_value: def, type: fieldType }]) => {
+      // Due to a bug on the server, notes and other text_long fields sometimes
+      // come from the server with value of [], which gets rejected if sent back
+      // to the server, so we're reassigning the function parameter (oh no!)
+      // on that key to correct the error.
+      if (fieldType === 'text_long' && Array.isArray(serverLog[key])) {
+        serverLog[key] = null; // eslint-disable-line no-param-reassign
+      }
       const value = updateProp(key, def);
       return [key, value];
     });
