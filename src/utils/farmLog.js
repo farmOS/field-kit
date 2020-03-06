@@ -214,7 +214,7 @@ const farmLog = (logTypes, syncDate) => ({
       url: serverLog.url,
       id: serverLog.id,
       isCachedLocally: updateMetaData('isCachedLocally', false),
-      wasPushedToServer: updateMetaData('wasPushedToServer', false),
+      wasPushedToServer: updateMetaData('wasPushedToServer', true),
       isReadyToSync: updateMetaData('isReadyToSync', false),
       modules: updateMetaData('modules', []),
     };
