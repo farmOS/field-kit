@@ -551,7 +551,7 @@ describe('formatLogForServer', () => {
           files: [],
           geofield: null,
           images: [],
-          notes: null,
+          notes: { value: '', format: 'farm_format' },
           movement: null,
           log_category: null,
           log_owner: null,

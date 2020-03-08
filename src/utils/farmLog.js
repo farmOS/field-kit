@@ -81,7 +81,7 @@ const farmLog = (logTypes, syncDate) => ({
       timestamp,
       done,
       url: props.url || log.url,
-      id: log.id,
+      id: props.id || log.id,
       localID: props.localID || log.localID,
       isCachedLocally: updateMetaData('isCachedLocally', false),
       wasPushedToServer: updateMetaData('wasPushedToServer', false),
@@ -140,19 +140,19 @@ const farmLog = (logTypes, syncDate) => ({
             data: props[key],
             conflicts: localLog[key].conflicts,
           };
-        // If the local log is more recent for this key, use its value as prop.
-        } else if (serverLog.changed < localLog[key].changed || syncDate > localLog[key].changed) {
-          prop = {
-            changed: localLog[key].changed,
-            data: localLog[key].data,
-            conflicts: localLog[key].conflicts,
-          };
         // If the server log is more recent but the local log has already been
         // synced, use the server log's value as prop.
         } else if (serverLog.changed > localLog[key].changed && localLog.wasPushedToServer) {
           prop = {
             changed: serverLog.changed,
             data: serverLog[key],
+            conflicts: localLog[key].conflicts,
+          };
+        // If the local log is more recent for this key, use its value as prop.
+        } else if (serverLog.changed < localLog[key].changed || syncDate > localLog[key].changed) {
+          prop = {
+            changed: localLog[key].changed,
+            data: localLog[key].data,
             conflicts: localLog[key].conflicts,
           };
         // If the server log is more recent and the local log has outstanding
@@ -211,6 +211,7 @@ const farmLog = (logTypes, syncDate) => ({
       type,
       timestamp,
       done,
+      localID: localLog?.localID,
       url: serverLog.url,
       id: serverLog.id,
       isCachedLocally: updateMetaData('isCachedLocally', false),
