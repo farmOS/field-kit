@@ -43,32 +43,31 @@
 </template>
 
 <script>
-  export default {
-    name: 'Logout',
-    methods: {
-      goBack() {
-        this.$router.back();
-      },
-      logout() {
-
-        // Call logout function from farmos.js
-        this.$store.dispatch('logout');
-
-        // Remove logs, assets, areas, user info & site info from store & local persistance
-        this.$store.dispatch('deleteAllCachedLogs');
-        this.$store.dispatch('deleteAllCachedAssets');
-        this.$store.dispatch('deleteAllCachedAreas');
-        this.$store.dispatch('deleteAllCachedUnits');
-        this.$store.dispatch('deleteAllCachedEquipment');
-        this.$store.dispatch('deleteAllCachedCategories');
-        this.$store.dispatch('deleteCachedUserAndSiteInfo');
-
-        // Set login status to false and return to login screen
-        this.$store.commit('setLoginStatus', false);
-        this.$router.push({ path: '/login' });
-      },
+export default {
+  name: 'Logout',
+  methods: {
+    goBack() {
+      this.$router.back();
     },
-  }
+    logout() {
+      // Call logout function from farmos.js
+      this.$store.dispatch('logout');
+
+      // Remove logs, assets, areas, user info & site info from store & local persistance
+      this.$store.dispatch('deleteAllCachedLogs');
+      this.$store.dispatch('deleteAllCachedAssets');
+      this.$store.dispatch('deleteAllCachedAreas');
+      this.$store.dispatch('deleteAllCachedUnits');
+      this.$store.dispatch('deleteAllCachedEquipment');
+      this.$store.dispatch('deleteAllCachedCategories');
+      this.$store.dispatch('deleteCachedUserAndSiteInfo');
+
+      // Set login status to false and return to login screen
+      this.$store.commit('setLoginStatus', false);
+      this.$router.push({ path: '/login' });
+    },
+  },
+};
 </script>
 
 <style lang="css" scoped>

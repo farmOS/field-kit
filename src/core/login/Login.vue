@@ -58,8 +58,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-import iconSpinner from '@/components/icons/icon-spinner.vue';
+import iconSpinner from '@/components/icons/icon-spinner';
 
 export default {
   components: {
@@ -114,7 +113,7 @@ export default {
       this.username = window.localStorage.getItem('username');
       this.password = window.localStorage.getItem('password');
       this.checkValues();
-    }
+    },
 
   },
   created() {
