@@ -73,6 +73,9 @@ export default {
       const index = state.logs.findIndex(log => log.localID === localID);
       state.logs.splice(index, 1);
     },
+    deleteAllLogs(state) {
+      state.logs = [];
+    },
     deleteAllAssets(state) {
       state.assets = [];
     },

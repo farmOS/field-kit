@@ -54,11 +54,15 @@ export default {
       this.$store.dispatch('logout');
 
       // Remove logs, assets, areas, user info & site info from store & local persistance
+      this.$store.commit('deleteAllLogs');
       this.$store.dispatch('deleteAllCachedLogs');
+      this.$store.commit('deleteAllAssets');
       this.$store.dispatch('deleteAllCachedAssets');
+      this.$store.commit('deleteAllAreas');
       this.$store.dispatch('deleteAllCachedAreas');
+      this.$store.commit('deleteAllUnits');
       this.$store.dispatch('deleteAllCachedUnits');
-      this.$store.dispatch('deleteAllCachedEquipment');
+      this.$store.commit('deleteAllCategories');
       this.$store.dispatch('deleteAllCachedCategories');
       this.$store.dispatch('deleteCachedUserAndSiteInfo');
 
