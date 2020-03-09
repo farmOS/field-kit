@@ -64,7 +64,7 @@ export default {
         weight: 1,
         canEdit: false,
       };
-      return [movement, previous];
+      return [previous, movement];
     },
   },
 
