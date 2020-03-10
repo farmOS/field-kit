@@ -277,7 +277,10 @@ export default {
             return dispatch('sendLogs', syncables);
           })
           // Handle syncErrors thrown by getServerLogs
-          .catch(handleSyncError);
+          .catch(handleSyncError)
+          .finally(() => {
+            commit('updateAllLogs', log => ({ ...log, isReadyToSync: false }));
+          });
       } else {
         router.push('/login');
       }
