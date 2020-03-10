@@ -145,7 +145,7 @@ export default {
           // Filter over the response to eliminate server logs that haven't
           // changed since the last successful sync event.
           res.list.filter(log => log.changed > syncDate).forEach((serverLog) => {
-            const localLog = rootState.farm.logs.find(log => log.id === serverLog.id);
+            const localLog = rootState.farm.logs.find(log => +log.id === +serverLog.id);
             if (localLog !== undefined) {
               const modules = Array.from(
                 new Set(localLog.modules.concat(rootState.shell.currentModule)),
@@ -160,18 +160,18 @@ export default {
             }
           });
           // Return an array of ids that have already been checked & merged.
-          return res.list.map(serverLog => serverLog.id);
+          return res.list.map(serverLog => +serverLog.id);
         })
         // Run a 2nd request for the remaining logs not included in the import filters
         .then((checkedIds) => {
           const uncheckedIds = rootState.farm.logs
-            .filter(log => log.id && !checkedIds.some(checkedId => log.id === checkedId))
+            .filter(log => log.id && !checkedIds.some(checkedId => +log.id === +checkedId))
             .map(log => log.id);
           return farm().log.get(uncheckedIds);
         })
         .then((res) => {
           res.list.filter(log => log.changed > syncDate).forEach((serverLog) => {
-            const localLog = rootState.farm.logs.find(log => log.id === serverLog.id);
+            const localLog = rootState.farm.logs.find(log => +log.id === +serverLog.id);
             const mergedLog = mergeLogFromServer(serverLog, localLog);
             commit('addLogs', mergedLog);
           });

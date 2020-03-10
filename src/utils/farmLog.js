@@ -123,6 +123,13 @@ const farmLog = (logTypes, syncDate) => ({
   },
   mergeLogFromServer(serverLog, localLog, props = {}) {
     const changed = Math.floor(Date.now() / 1000);
+
+    // Some dirty reassignment to coerce these props to numbers b/c the server
+    // sends them as strings. :/
+    serverLog.changed = +serverLog.changed; // eslint-disable-line no-param-reassign
+    serverLog.timestamp = +serverLog.timestamp; // eslint-disable-line no-param-reassign
+    serverLog.done = +serverLog.done; // eslint-disable-line no-param-reassign
+
     // Supply a function for updating props based on certain conditions...
     const updateProp = (!localLog)
       // If there's no local log provided, use the server log's value for all props.

@@ -27,7 +27,7 @@
     "cordova-plugin-whitelist": "^1.3.4",
     "core-js-pure": "^3.4.7",
     "farmOS-map": "github:farmOS/farmOS-map#v1.0.0",
-    "farmos": "0.0.8",
+    "farmos": "0.0.9",
     "moment": "^2.24.0",
     "ramda": "^0.27.0",
     "vue": "^2.6.10",
