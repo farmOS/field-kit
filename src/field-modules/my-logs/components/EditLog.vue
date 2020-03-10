@@ -891,7 +891,7 @@ export default {
     filteredGeofields() {
       const geofields = this.currentLog.geofield;
       return this.currentLog.geofield
-        ? geofields.filter(g => g.geom.includes('POINT'))
+        ? geofields.filter(g => g.geom?.includes('POINT'))
         : [];
     },
     selectedAssets() {
