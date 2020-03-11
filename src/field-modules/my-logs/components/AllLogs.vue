@@ -87,7 +87,6 @@
 </template>
 
 <script>
-import moment from 'moment';
 import parseNotes from '@/utils/parseNotes';
 import IconAddCircle from '@/components/icons/icon-add-circle';
 import IconAssignment from '@/components/icons/icon-assignment';
@@ -125,7 +124,9 @@ export default {
       if (Number.isNaN(Number(unixTimestamp))) {
         return 'No Date Provided';
       }
-      return moment.unix(unixTimestamp).format('MMM DD YYYY');
+      const date = new Date(unixTimestamp * 1000);
+      const opts = { month: 'short', day: 'numeric', year: 'numeric' };
+      return date.toLocaleDateString(undefined, opts);
     },
     // Pass in a log and get back an array of the areas attached to that log
     mapTidsToAreas(log) {

@@ -28,7 +28,6 @@
     "core-js-pure": "^3.4.7",
     "farmOS-map": "github:farmOS/farmOS-map#d50daf5014039cda75345bd0ce34adc4475e1f5c",
     "farmos": "^0.1.2",
-    "moment": "^2.24.0",
     "ramda": "^0.27.0",
     "vue": "^2.6.10",
     "vue-router": "^3.1.3",
