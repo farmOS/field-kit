@@ -87,16 +87,6 @@
 </template>
 
 <script>
-import IconAddCircle from '@/components/icons/icon-add-circle';
-import IconAssignment from '@/components/icons/icon-assignment';
-import IconAssignmentDone from '@/components/icons/icon-assignment-done';
-import IconAssignmentLate from '@/components/icons/icon-assignment-late';
-import IconCloudDone from '@/components/icons/icon-cloud-done';
-import IconCloudUpload from '@/components/icons/icon-cloud-upload';
-import IconDelete from '@/components/icons/icon-delete';
-import IconEdit from '@/components/icons/icon-edit';
-import IconSync from '@/components/icons/icon-sync';
-
 const { parseNotes } = window.farmOS.utils;
 
 export default {
@@ -109,17 +99,6 @@ export default {
     'logDisplayFilters',
     'areas',
   ],
-  components: {
-    IconAddCircle,
-    IconAssignment,
-    IconAssignmentDone,
-    IconAssignmentLate,
-    IconCloudDone,
-    IconCloudUpload,
-    IconDelete,
-    IconEdit,
-    IconSync,
-  },
   methods: {
     showDate(unixTimestamp) {
       if (Number.isNaN(Number(unixTimestamp))) {

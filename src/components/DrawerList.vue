@@ -4,5 +4,11 @@
   </ul>
 </template>
 
+<script>
+export default {
+  name: 'DrawerList',
+};
+</script>
+
 <style scoped>
 </style>

@@ -6,6 +6,12 @@
   </li>
 </template>
 
+<script>
+export default {
+  name: 'DrawerListItem',
+};
+</script>
+
 <style scoped>
   .clickable:hover {
     background-color: #eee;

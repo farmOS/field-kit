@@ -6,3 +6,9 @@
     <polygon points="19.137,82.627 206.424,269.913 305.576,269.913 492.863,82.627 		"/>
   </svg>
 </template>
+
+<script>
+export default {
+  name: 'IconFilter',
+};
+</script>

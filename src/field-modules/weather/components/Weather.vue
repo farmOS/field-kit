@@ -106,21 +106,10 @@
 </template>
 
 <script>
-import DateAndTimeForm from '@/components/DateAndTimeForm';
-import IconAddCircle from '@/components/icons/icon-add-circle';
-import IconRaindrops from '@/components/icons/icon-raindrops';
-import IconSnowflake from '@/components/icons/icon-snowflake';
-
 const { parseNotes } = window.farmOS.utils;
 
 export default {
   name: 'Weather',
-  components: {
-    DateAndTimeForm,
-    IconAddCircle,
-    IconRaindrops,
-    IconSnowflake,
-  },
   data: () => ({
     currentLogID: null,
     time: {

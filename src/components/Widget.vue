@@ -6,6 +6,12 @@
 
 </template>
 
+<script>
+export default {
+  name: 'Widget',
+};
+</script>
+
 <style scoped>
   .widget {
     padding: 1rem;

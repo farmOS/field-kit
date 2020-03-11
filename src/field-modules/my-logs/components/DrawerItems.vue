@@ -8,14 +8,8 @@
 </template>
 
 <script>
-import DrawerList from '@/components/DrawerList';
-import DrawerListItem from '@/components/DrawerListItem';
 
 export default {
-  components: {
-    DrawerList,
-    DrawerListItem,
-  },
   methods: {
     openNewLog() {
       const props = { modules: ['my-logs'], done: true };

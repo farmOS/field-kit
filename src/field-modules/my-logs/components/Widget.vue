@@ -19,16 +19,7 @@
 </template>
 
 <script>
-import Widget from '@/components/Widget';
-import IconAssignment from '@/components/icons/icon-assignment';
-import IconFilter from '@/components/icons/icon-filter';
-
 export default {
-  components: {
-    Widget,
-    IconAssignment,
-    IconFilter,
-  },
   methods: {
     openMyLogs() {
       this.$router.push({ path: '/logs' });

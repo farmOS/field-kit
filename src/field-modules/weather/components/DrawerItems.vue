@@ -6,18 +6,6 @@
   </drawer-list>
 </template>
 
-<script>
-import DrawerList from '@/components/DrawerList';
-import DrawerListItem from '@/components/DrawerListItem';
-
-export default {
-  components: {
-    DrawerList,
-    DrawerListItem,
-  },
-}
-</script>
-
 <style >
   a, a:hover {
     text-decoration: none;

@@ -10,13 +10,9 @@
 </template>
 
 <script>
-import MenuBar from '@/components/MenuBar';
-import IconMenu from '@/components/icons/icon-menu';
-
 export default {
   name: 'WeatherMenuBar',
-  components: { MenuBar, IconMenu },
-}
+};
 </script>
 
 <style>

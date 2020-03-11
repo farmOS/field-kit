@@ -6,6 +6,7 @@ import './bootstrap-simplex.min.css';
 import './vars.css';
 import manifest from '../field-modules/test-plugin/manifest.json';
 import utils from '../utils';
+import components from '../components';
 
 Vue.config.productionTip = false;
 
@@ -25,6 +26,10 @@ if (window.farmOS === undefined) {
   window.farmOS = {};
 }
 window.farmOS.utils = utils;
+
+// Register the shared component library globally so they can be accessed from
+// any other component on the root Vue instance.
+components.forEach((c) => { Vue.component(c.name, c); });
 
 export default (el, plugins) => {
   // Load build-time plugins

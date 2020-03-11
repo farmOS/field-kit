@@ -32,19 +32,9 @@
 </template>
 
 <script>
-import MenuBar from '@/components/MenuBar';
-import IconArrowBack from '@/components/icons/icon-arrow-back';
-import IconDelete from '@/components/icons/icon-delete';
-import IconOpenInNew from '@/components/icons/icon-open-in-new';
 
 export default {
   name: 'EditLogsMenuBar',
-  components: {
-    MenuBar,
-    IconArrowBack,
-    IconDelete,
-    IconOpenInNew,
-  },
   props: ['logs', 'id'],
   computed: {
     currentLog() {

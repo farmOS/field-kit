@@ -10,12 +10,8 @@
 </template>
 
 <script>
-import MenuBar from '@/components/MenuBar';
-import IconArrowBack from '@/components/icons/icon-arrow-back';
-
 export default {
   name: 'EditMapMenuBar',
-  components: { MenuBar, IconArrowBack },
   props: ['logs', 'id'],
   computed: {
     logLink() {
@@ -28,5 +24,5 @@ export default {
       };
     },
   },
-}
+};
 </script>

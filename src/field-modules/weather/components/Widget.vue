@@ -11,14 +11,7 @@
 </template>
 
 <script>
-import Widget from '@/components/Widget';
-import IconRaindrops from '@/components/icons/icon-raindrops';
-
 export default {
-  components: {
-    Widget,
-    IconRaindrops,
-  },
   methods: {
     openWeather() {
       this.$router.push({ path: '/weather' });

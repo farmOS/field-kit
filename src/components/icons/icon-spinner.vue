@@ -6,6 +6,12 @@
   </svg>
 </template>
 
+<script>
+export default {
+  name: 'IconSpinner',
+};
+</script>
+
 <style scoped>
 .spinner {
   animation: rotate 2s linear infinite;

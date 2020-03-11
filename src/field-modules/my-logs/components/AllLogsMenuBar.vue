@@ -24,19 +24,8 @@
 </template>
 
 <script>
-import MenuBar from '@/components/MenuBar';
-import IconCloudUpload from '@/components/icons/icon-cloud-upload';
-import IconFilter from '@/components/icons/icon-filter';
-import IconMenu from '@/components/icons/icon-menu';
-
 export default {
   name: 'AllLogsMenuBar',
-  components: {
-    MenuBar,
-    IconCloudUpload,
-    IconFilter,
-    IconMenu,
-  },
 };
 </script>
 

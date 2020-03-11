@@ -538,15 +538,6 @@
 </template>
 
 <script>
-import Autocomplete from '@/components/Autocomplete';
-import IconExpandLess from '@/components/icons/icon-expand-less';
-import IconExpandMore from '@/components/icons/icon-expand-more';
-import IconSpinner from '@/components/icons/icon-spinner';
-import Map from '@/components/Map';
-import ToggleCheck from '@/components/ToggleCheck';
-import SelectBox from '@/components/SelectBox';
-import DateAndTimeForm from '@/components/DateAndTimeForm';
-
 const {
   parseNotes,
   mergeGeometries,
@@ -556,16 +547,6 @@ const {
 
 export default {
   name: 'EditLog',
-  components: {
-    Autocomplete,
-    IconExpandLess,
-    IconExpandMore,
-    IconSpinner,
-    Map,
-    ToggleCheck,
-    SelectBox,
-    DateAndTimeForm,
-  },
 
   data() {
     return {
