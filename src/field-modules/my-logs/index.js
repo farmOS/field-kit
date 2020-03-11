@@ -1,5 +1,6 @@
 import modConfig from './module.config';
-import createFieldModule from '../createFieldModule';
+
+const { createFieldModule } = window.farmOS.utils;
 
 const MyLogsFieldModule = createFieldModule(modConfig);
 

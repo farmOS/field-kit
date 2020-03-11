@@ -546,8 +546,13 @@ import Map from '@/components/Map';
 import ToggleCheck from '@/components/ToggleCheck';
 import SelectBox from '@/components/SelectBox';
 import DateAndTimeForm from '@/components/DateAndTimeForm';
-import { mergeGeometries, removeGeometry, isNearby } from '@/utils/geometry';
-import parseNotes from '@/utils/parseNotes';
+
+const {
+  parseNotes,
+  mergeGeometries,
+  removeGeometry,
+  isNearby,
+} = window.farmOS.utils;
 
 export default {
   name: 'EditLog',

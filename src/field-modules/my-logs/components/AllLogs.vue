@@ -87,7 +87,6 @@
 </template>
 
 <script>
-import parseNotes from '@/utils/parseNotes';
 import IconAddCircle from '@/components/icons/icon-add-circle';
 import IconAssignment from '@/components/icons/icon-assignment';
 import IconAssignmentDone from '@/components/icons/icon-assignment-done';
@@ -97,6 +96,8 @@ import IconCloudUpload from '@/components/icons/icon-cloud-upload';
 import IconDelete from '@/components/icons/icon-delete';
 import IconEdit from '@/components/icons/icon-edit';
 import IconSync from '@/components/icons/icon-sync';
+
+const { parseNotes } = window.farmOS.utils;
 
 export default {
   name: 'AllLogs',

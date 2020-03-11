@@ -18,7 +18,8 @@
 
 <script>
 import Map from '@/components/Map';
-import { mergeGeometries } from '@/utils/geometry';
+
+const { mergeGeometries } = window.farmOS.utils;
 
 export default {
   name: 'EditMap',

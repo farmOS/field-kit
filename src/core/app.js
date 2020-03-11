@@ -5,6 +5,7 @@ import App from './App.vue'; // eslint-disable-line import/extensions
 import './bootstrap-simplex.min.css';
 import './vars.css';
 import manifest from '../field-modules/test-plugin/manifest.json';
+import utils from '../utils';
 
 Vue.config.productionTip = false;
 
@@ -18,6 +19,12 @@ const fakeFarm = {
     });
   },
 };
+
+// Attach utils to the global namespace so Field Modules can access them.
+if (window.farmOS === undefined) {
+  window.farmOS = {};
+}
+window.farmOS.utils = utils;
 
 export default (el, plugins) => {
   // Load build-time plugins
