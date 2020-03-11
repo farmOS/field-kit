@@ -93,9 +93,9 @@
                     .toLocaleTimeString(undefined, { timeStyle: 'short' })
                 }}
               </td>
-              <td>{{`${log.quantity[0].value} ${unitAbbr}`}}</td>
-              <td v-if="log.quantity[0].label === 'snow'"><icon-snowflake/></td>
-              <td v-if="log.quantity[0].label === 'rain'"><icon-raindrops/></td>
+              <td v-if="log.quantity[0]">{{`${log.quantity[0].value} ${unitAbbr}`}}</td>
+              <td v-if="log.quantity[0] && log.quantity[0].label === 'snow'"><icon-snowflake/></td>
+              <td v-if="log.quantity[0] && log.quantity[0].label === 'rain'"><icon-raindrops/></td>
             </tr>
           </tbody>
         </table>
