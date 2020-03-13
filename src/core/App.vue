@@ -28,13 +28,11 @@
             <farm-drawer-list-item>Home</farm-drawer-list-item>
           </router-link>
           <farm-drawer-list-item :clickable="false">
-            <label for="location-switch">Share My Location&nbsp;</label>
-            <input
-              id="location-switch"
-              class="toggle-check"
-              type="checkbox"
+            <farm-toggle-check
+              label="Share My Location"
+              labelPosition="before"
               :checked="useGeolocation"
-              @input="setUseGeolocation($event.target.checked)"/>
+              @input="setUseGeolocation($event)"/>
           </farm-drawer-list-item>
           <farm-drawer-list-item :clickable="false">Version: {{version}}</farm-drawer-list-item>
           <router-link to="/login" v-if="!isLoggedIn" @click.native="showDrawer = !showDrawer">
@@ -277,40 +275,6 @@ export default {
   .drawer a, .drawer a:hover {
     text-decoration: none;
     color: inherit;
-  }
-
-  input.toggle-check {
-    position: relative;
-    -webkit-appearance: none;
-    outline: none;
-    width: 1.6667rem;
-    height: 1rem;
-    background-color: #fff;
-    border: 1px solid #D9DADC;
-    border-radius: 1.6667rem;
-    box-shadow: inset -0.6667rem 0 0 0 #fff;
-  }
-
-  input.toggle-check:after {
-    content: "";
-    position: absolute;
-    top: 1px;
-    left: 1px;
-    background: transparent;
-    width: 0.8667rem;
-    height: 0.8667rem;
-    border-radius: 50%;
-    box-shadow: 1px 0px 2px rgba(0,0,0,0.2);
-  }
-
-  input.toggle-check:checked {
-    box-shadow: inset 0.6667rem 0 0 0 var(--cyan);
-    border-color: var(--cyan);
-  }
-
-  input.toggle-check:checked:after {
-    left: 0.6667rem;
-    box-shadow: -1px 0px 2px rgba(0,0,0,0.05);
   }
 
 </style>

@@ -13,8 +13,8 @@
 <script>
 export default {
   name: 'FarmToggleCheck',
-  props: ['label', 'labelPosition', 'checked']
-}
+  props: ['label', 'labelPosition', 'checked'],
+};
 </script>
 
 <style lang="css" scoped>
