@@ -1,12 +1,12 @@
 <template>
-  <menu-bar :more="false">
+  <farm-menu-bar :more="false">
     <template #left-menu>
       <router-link :to="logLink" tag="li">
         <icon-arrow-back/>
       </router-link>
       <li>Map</li>
     </template>
-  </menu-bar>
+  </farm-menu-bar>
 </template>
 
 <script>

@@ -1,9 +1,9 @@
 <template>
-  <drawer-list>
+  <farm-drawer-list>
     <router-link :to="{ name: 'weather-form' }">
-      <drawer-list-item>Record Weather Event</drawer-list-item>
+      <farm-drawer-list-item>Record Weather Event</farm-drawer-list-item>
     </router-link>
-  </drawer-list>
+  </farm-drawer-list>
 </template>
 
 <style >

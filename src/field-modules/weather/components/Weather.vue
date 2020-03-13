@@ -5,7 +5,7 @@
       <div class="card-header">Record a weather event</div>
       <div class="card-body">
 
-        <date-and-time-form
+        <farm-date-time-form
           :timestamp="currentLog.timestamp"
           @input="updateCurrentLog('timestamp', $event)"/>
 

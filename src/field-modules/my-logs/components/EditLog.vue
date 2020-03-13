@@ -27,7 +27,7 @@
 
     <br>
     <div class="form-item form-group">
-      <toggle-check
+      <farm-toggle-check
         label="Done"
         labelPosition="after"
         :checked="currentLog.done"
@@ -45,7 +45,7 @@
         autofocus>
     </div>
 
-    <date-and-time-form
+    <farm-date-time-form
       :timestamp="currentLog.timestamp"
       @input="updateCurrentLog('timestamp', $event)"/>
 
@@ -91,7 +91,7 @@
         || currentLog.log_category.length < 1)">
         No categories selected
       </p>
-      <select-box
+      <farm-select-box
         small
         v-for="cat in filteredCategories"
         :id="`category-${cat.tid}-${cat.name}`"
@@ -206,7 +206,7 @@
     </div>
 
     <h4>Assets</h4>
-    <Autocomplete
+    <farm-autocomplete
       :objects="filteredAssets"
       searchKey="name"
       searchId="id"
@@ -226,7 +226,7 @@
           </button>
         </div>
       </template>
-    </Autocomplete>
+    </farm-autocomplete>
 
     <div class="form-item form-item-name form-group">
       <ul class="list-group">
@@ -278,7 +278,7 @@
       <h4>Areas &amp; Location</h4>
 
       <!-- We're using a radio button to choose whether areas are selected
-      automatically based on device location, or using an Autocomplete.
+      automatically based on device location, or using an autocomplete.
       This will use the useLocalAreas conditional var -->
       <div  v-if="useGeolocation" class="form-item form-item-name form-group">
         <div class="form-check">
@@ -324,7 +324,7 @@
       </div>
 
       <!-- If not using the user's location, show a search bar -->
-      <Autocomplete
+      <farm-autocomplete
         v-if="!useLocalAreas"
         :objects="filteredAreas"
         searchKey="name"
@@ -344,7 +344,7 @@
             </button>
           </div>
         </template>
-      </Autocomplete>
+      </farm-autocomplete>
 
       <!-- Display the areas attached to each log -->
       <div class="form-item form-item-name form-group">
@@ -443,7 +443,7 @@
     v-if="currentLog.movement !== undefined">
 
     <br>
-    <Autocomplete
+    <farm-autocomplete
       :objects="filteredAssets"
       searchKey="name"
       searchId="id"
@@ -463,7 +463,7 @@
           </button>
         </div>
       </template>
-    </Autocomplete>
+    </farm-autocomplete>
 
     <div class="form-item form-item-name form-group">
       <ul class="list-group">
@@ -479,7 +479,7 @@
       </ul>
     </div>
 
-    <Autocomplete
+    <farm-autocomplete
       :objects="filteredMovementAreas"
       searchKey="name"
       searchId="tid"
@@ -498,7 +498,7 @@
           </button>
         </div>
       </template>
-    </Autocomplete>
+    </farm-autocomplete>
 
     <div class="form-item form-item-name form-group">
       <ul class="list-group">
@@ -515,7 +515,7 @@
     </div>
 
     <router-link :to="{ name: 'edit-map' }">
-      <Map
+      <farm-map
         id="map"
         :overrideStyles="{ height: '90vw' }"
         :drawing="false"

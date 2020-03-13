@@ -1,5 +1,5 @@
 <template>
-  <Map
+  <farm-map
     id="map"
     :overrideStyles="{ height: 'calc(100vh - 3rem)' }"
     @update-wkt="updateMovement"
@@ -17,8 +17,6 @@
 </template>
 
 <script>
-import Map from '@/components/Map';
-
 const { mergeGeometries } = window.farmOS.utils;
 
 export default {

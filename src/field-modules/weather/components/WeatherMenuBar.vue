@@ -1,12 +1,12 @@
 <template>
-  <menu-bar :more="false">
+  <farm-menu-bar :more="false">
     <template #left-menu>
       <li @click="$emit('toggleDrawer')">
         <icon-menu/>
       </li>
       <li>Weather</li>
     </template>
-  </menu-bar>
+  </farm-menu-bar>
 </template>
 
 <script>

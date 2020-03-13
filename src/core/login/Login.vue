@@ -58,12 +58,7 @@
 </template>
 
 <script>
-import iconSpinner from '@/components/icons/icon-spinner';
-
 export default {
-  components: {
-    iconSpinner,
-  },
   name: 'Login',
   data() {
     return {

@@ -23,11 +23,11 @@
           </div>
         </header>
         <module-menu-items :modules="modules" @click.native="showDrawer = !showDrawer"/>
-        <drawer-list>
+        <farm-drawer-list>
           <router-link to="/homescreen" @click.native="showDrawer = !showDrawer">
-            <drawer-list-item>Home</drawer-list-item>
+            <farm-drawer-list-item>Home</farm-drawer-list-item>
           </router-link>
-          <drawer-list-item :clickable="false">
+          <farm-drawer-list-item :clickable="false">
             <label for="location-switch">Share My Location&nbsp;</label>
             <input
               id="location-switch"
@@ -35,15 +35,15 @@
               type="checkbox"
               :checked="useGeolocation"
               @input="setUseGeolocation($event.target.checked)"/>
-          </drawer-list-item>
-          <drawer-list-item :clickable="false">Version: {{version}}</drawer-list-item>
+          </farm-drawer-list-item>
+          <farm-drawer-list-item :clickable="false">Version: {{version}}</farm-drawer-list-item>
           <router-link to="/login" v-if="!isLoggedIn" @click.native="showDrawer = !showDrawer">
-            <drawer-list-item >Login</drawer-list-item>
+            <farm-drawer-list-item >Login</farm-drawer-list-item>
           </router-link>
           <router-link to="/logout" v-if="isLoggedIn" @click.native="showDrawer = !showDrawer">
-            <drawer-list-item>Logout</drawer-list-item>
+            <farm-drawer-list-item>Logout</farm-drawer-list-item>
           </router-link>
-        </drawer-list>
+        </farm-drawer-list>
 
       </div>
     </transition>
@@ -102,10 +102,6 @@
 <script>
 import Vue from 'vue';
 import { mapState, mapGetters } from 'vuex';
-import IconMenu from '@/components/icons/icon-menu';
-import IconArrowBack from '@/components/icons/icon-arrow-back';
-import DrawerList from '@/components/DrawerList';
-import DrawerListItem from '@/components/DrawerListItem';
 import { version } from '../../package.json';
 
 const removeMetaData = entities => entities
@@ -145,10 +141,6 @@ export default {
   name: 'App',
   components: {
     ModuleMenuItems,
-    IconMenu,
-    IconArrowBack,
-    DrawerList,
-    DrawerListItem,
   },
   data() {
     return {

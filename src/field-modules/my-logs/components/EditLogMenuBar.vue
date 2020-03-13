@@ -1,5 +1,5 @@
 <template>
-  <menu-bar>
+  <farm-menu-bar>
     <template #left-menu>
       <router-link :to="{ name: 'logs' }" tag="li">
         <icon-arrow-back/>
@@ -28,11 +28,10 @@
         Delete from device
       </li>
     </template>
-  </menu-bar>
+  </farm-menu-bar>
 </template>
 
 <script>
-
 export default {
   name: 'EditLogsMenuBar',
   props: ['logs', 'id'],

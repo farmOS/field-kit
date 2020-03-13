@@ -1,13 +1,13 @@
 // Shared Component Library
-import Autocomplete from './Autocomplete';
-import DateAndTimeForm from './DateAndTimeForm';
-import DrawerList from './DrawerList';
-import DrawerListItem from './DrawerListItem';
-import FarmMap from './Map';
-import MenuBar from './MenuBar';
-import SelectBox from './SelectBox';
-import ToggleCheck from './ToggleCheck';
-import Widget from './Widget';
+import FarmAutocomplete from './FarmAutocomplete';
+import FarmDateTimeForm from './FarmDateTimeForm';
+import FarmDrawerList from './FarmDrawerList';
+import FarmDrawerListItem from './FarmDrawerListItem';
+import FarmMap from './FarmMap';
+import FarmMenuBar from './FarmMenuBar';
+import FarmSelectBox from './FarmSelectBox';
+import FarmToggleCheck from './FarmToggleCheck';
+import FarmWidget from './FarmWidget';
 
 // Icon Library
 import IconAddCircle from './icons/icon-add-circle';
@@ -31,15 +31,15 @@ import IconSpinner from './icons/icon-spinner';
 import IconSync from './icons/icon-sync';
 
 export default [
-  Autocomplete,
-  DateAndTimeForm,
-  DrawerList,
-  DrawerListItem,
+  FarmAutocomplete,
+  FarmDateTimeForm,
+  FarmDrawerList,
+  FarmDrawerListItem,
   FarmMap,
-  MenuBar,
-  SelectBox,
-  ToggleCheck,
-  Widget,
+  FarmMenuBar,
+  FarmSelectBox,
+  FarmToggleCheck,
+  FarmWidget,
   IconAddCircle,
   IconArrowBack,
   IconAssignmentDone,
@@ -59,4 +59,4 @@ export default [
   IconSnowflake,
   IconSpinner,
   IconSync,
-]
+];

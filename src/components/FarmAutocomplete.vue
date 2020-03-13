@@ -34,7 +34,7 @@
 
 <script>
 export default {
-  name: 'Autocomplete',
+  name: 'FarmAutocomplete',
   /*
     PROPS: The objects are an array of JS objects we are searching through. The
     searchKey must be provided so we know specifically which property on each

@@ -19,7 +19,7 @@
 import IconMoreVert from './icons/icon-more-vert';
 
 export default {
-  name: 'MenuBar',
+  name: 'FarmMenuBar',
   components: { IconMoreVert },
   props: {
     more: {

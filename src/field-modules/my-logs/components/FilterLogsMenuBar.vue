@@ -1,5 +1,5 @@
 <template>
-  <menu-bar>
+  <farm-menu-bar>
     <template #left-menu>
       <router-link :to="{ name: 'logs' }" tag="li">
         <icon-arrow-back/>
@@ -9,7 +9,7 @@
     <template #more-menu>
       <li @click="resetDisplayFilters">Reset filters</li>
     </template>
-  </menu-bar>
+  </farm-menu-bar>
 </template>
 
 <script>

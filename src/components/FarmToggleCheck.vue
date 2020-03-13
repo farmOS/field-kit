@@ -12,7 +12,7 @@
 
 <script>
 export default {
-  name: 'ToggleCheck',
+  name: 'FarmToggleCheck',
   props: ['label', 'labelPosition', 'checked']
 }
 </script>

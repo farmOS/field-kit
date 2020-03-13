@@ -1,6 +1,6 @@
 <template>
 
-  <widget>
+  <farm-widget>
     <h4 class="card-title">My Logs Widget</h4>
     <h5
       @click="openMyLogs"
@@ -14,7 +14,7 @@
       Filter Logs
       <IconFilter class="inline-svg"/>
     </h5>
-  </widget>
+  </farm-widget>
 
 </template>
 

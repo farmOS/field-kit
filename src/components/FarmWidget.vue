@@ -8,7 +8,7 @@
 
 <script>
 export default {
-  name: 'Widget',
+  name: 'FarmWidget',
 };
 </script>
 

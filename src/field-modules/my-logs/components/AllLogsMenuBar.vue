@@ -1,5 +1,5 @@
 <template>
-  <menu-bar>
+  <farm-menu-bar>
     <template #left-menu>
       <li @click="$emit('toggleDrawer')">
         <icon-menu/>
@@ -20,7 +20,7 @@
         Filter logs
       </router-link>
     </template>
-  </menu-bar>
+  </farm-menu-bar>
 </template>
 
 <script>

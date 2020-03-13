@@ -1,19 +1,14 @@
 <template>
-  <widget>
-    <p> Test Component Widget </p>
-  </widget>
+  <farm-widget>
+    <p>Test Component Widget</p>
+  </farm-widget>
 </template>
 
 <script>
-import Widget from '@/components/Widget';
-
 export default {
-  components: {
-    Widget,
-  },
   methods: {
-  }
-}
+  },
+};
 </script>
 
 <style scoped>

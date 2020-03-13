@@ -1,14 +1,13 @@
 <template>
-  <drawer-list>
+  <farm-drawer-list>
     <router-link :to="{ name: 'logs' }">
-      <drawer-list-item>My Logs</drawer-list-item>
+      <farm-drawer-list-item>My Logs</farm-drawer-list-item>
     </router-link>
-    <drawer-list-item @click="openNewLog">New Log</drawer-list-item>
-  </drawer-list>
+    <farm-drawer-list-item @click="openNewLog">New Log</farm-drawer-list-item>
+  </farm-drawer-list>
 </template>
 
 <script>
-
 export default {
   methods: {
     openNewLog() {

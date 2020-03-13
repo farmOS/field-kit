@@ -1,5 +1,5 @@
 <template>
-  <widget>
+  <farm-widget>
     <h4 class="card-title">Weather Widget</h4>
     <h5
       @click="openWeather"
@@ -7,7 +7,7 @@
       Log Weather
       <IconRaindrops class="inline-svg"/>
     </h5>
-  </widget>
+  </farm-widget>
 </template>
 
 <script>
