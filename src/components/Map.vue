@@ -82,8 +82,7 @@ export default {
         hasLayers = true;
       }
       if (this.drawing) {
-        if (wktElement.wkt
-          && wktElement.wkt !== 'GEOMETRYCOLLECTION EMPTY') {
+        if (wktElement.wkt && wktElement.wkt !== 'GEOMETRYCOLLECTION EMPTY') {
           if (wktElement.weight === Math.min(...layerWeights) && wktElement.canEdit) {
             this.layers[wktElement.title] = this.map.addLayer('wkt', wktElement);
             this.map.zoomToLayer(this.layers[wktElement.title]);
@@ -96,6 +95,9 @@ export default {
             this.layers[wktElement.title] = this.map.addLayer('wkt', wktElement);
           }
           hasLayers = true;
+        } else {
+          this.map.addBehavior('edit');
+          this.map.addBehavior('measure', { layer: this.map.edit.layer });
         }
       }
     });

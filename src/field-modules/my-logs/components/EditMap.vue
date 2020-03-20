@@ -50,7 +50,7 @@ export default {
         color: 'orange',
         visible: true,
         weight: 0,
-        canEdit: !!this.currentLog.movement?.geometry,
+        canEdit: true,
       };
       const previousGeoms = this.currentLog.asset
         ?.map(logAsset => this.assets
@@ -72,7 +72,7 @@ export default {
     updateMovement(wkt) {
       const props = {
         movement: {
-          area: this.currentLog?.movement.area,
+          area: this.currentLog.movement?.area,
           geometry: wkt,
         },
         localID: +this.id,
