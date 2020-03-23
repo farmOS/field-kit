@@ -54,7 +54,7 @@ function generateLocalID(db, storeName) {
   let i = 1;
   return new Promise((resolve, reject) => {
     const store = db.transaction(storeName, 'readonly').objectStore(storeName);
-    const request = store.openCursor(null, 'prevunique');
+    const request = store.openCursor(null, 'prev');
     request.onerror = event => reject(new Error(event.target.erorr));
     request.onsuccess = (event) => {
       // Return if the cursor has already moved back more than once.
