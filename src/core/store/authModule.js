@@ -127,16 +127,29 @@ export default {
     },
 
     loadCachedUserAndSiteInfo({ commit }) {
-      commit('changeUsername', localStorage.getItem('username'));
-      commit('changeEmail', localStorage.getItem('email'));
-      commit('changeUid', localStorage.getItem('uid'));
-      commit('changeMapboxAPIKey', localStorage.getItem('mapboxAPIKey'));
-      commit('changeSystemOfMeasurement', localStorage.getItem('systemOfMeasurement'));
-      commit('setLoginStatus', JSON.parse(localStorage.getItem('isLoggedIn')));
-      commit('changeFarmName', localStorage.getItem('farmName'));
-      commit('changeFarmUrl', localStorage.getItem('host'));
-      commit('changeLogTypes', JSON.parse(localStorage.getItem('logTypes')));
-      commit('setUseGeolocation', JSON.parse(localStorage.getItem('useGeolocation')));
+      // Helper so we don't overwrite defaults if the key isn't in LS.
+      const safeLoad = (mutation, key) => {
+        let value;
+        try {
+          value = JSON.parse(localStorage.getItem(key));
+        } catch (e) {
+          value = localStorage.getItem(key);
+        }
+        if (value) {
+          commit(mutation, value);
+        }
+      };
+
+      safeLoad('changeUsername', 'username');
+      safeLoad('changeEmail', 'email');
+      safeLoad('changeUid', 'uid');
+      safeLoad('changeMapboxAPIKey', 'mapboxAPIKey');
+      safeLoad('changeSystemOfMeasurement', 'systemOfMeasurement');
+      safeLoad('setLoginStatus', 'isLoggedIn');
+      safeLoad('changeFarmName', 'farmName');
+      safeLoad('changeFarmUrl', 'host');
+      safeLoad('changeLogTypes', 'logTypes');
+      safeLoad('setUseGeolocation', 'useGeolocation');
     },
 
     deleteCachedUserAndSiteInfo({ commit }) {
