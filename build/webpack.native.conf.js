@@ -77,6 +77,10 @@ const webpackConfig = merge(baseWebpackConfig, {
         ignore: ['.*']
       },
       {
+        from: 'package.json',
+        to: `${config.native.assetsRoot}/package.json`
+      },
+      {
         from: 'config.ios.xml',
         to: `${config.native.assetsRoot}/config.xml`
       },
