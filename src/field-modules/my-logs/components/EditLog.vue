@@ -118,16 +118,16 @@
     <div v-if="currentLog.quantity !== undefined">
       <h4>Quantities</h4>
       <label for="quantity" class="control-label ">Add new or edit existing quantity</label>
-      <div class="form-item form-item-name form-group">
+      <div v-if="currentQuant >= 0" class="form-item form-item-name form-group">
         <!-- To display a placeholder value ONLY when there are no existing quantities,
         we must add the placeholder with an <option> tag and select it using the :value option -->
         <select
           :value="(currentLog.quantity
             && currentLog.quantity.length > 0
-            && currentLog.quantity[0].measure)
-            ? currentLog.quantity[0].measure
+            && currentLog.quantity[currentQuant].measure)
+            ? currentLog.quantity[currentQuant].measure
             : 'Select measure'"
-          @input="updateNewQuant('measure', $event.target.value, false)"
+          @input="updateQuantity('measure', $event.target.value, currentQuant)"
           class="custom-select col-sm-3 ">
             <option>Select measure</option>
             <option
@@ -140,19 +140,19 @@
         <input
           :value="(currentLog.quantity
             && currentLog.quantity.length > 0)
-            ? currentLog.quantity[0].value
+            ? currentLog.quantity[currentQuant].value
             : null"
-          @input="updateNewQuant('value', $event.target.value, false)"
+          @input="updateQuantity('value', $event.target.value, currentQuant)"
           placeholder="Enter value"
           type="number"
           class="form-control"/>
         <select
         :value="(currentLog.quantity
             && currentLog.quantity.length > 0
-            && currentLog.quantity[0].unit)
-            ? currentLog.quantity[0].unit.id
+            && currentLog.quantity[currentQuant].unit)
+            ? currentLog.quantity[currentQuant].unit.id
             : 'Select unit'"
-          @input="updateNewQuant('unit', $event.target.value, false)"
+          @input="updateQuantity('unit', $event.target.value, currentQuant)"
           class="custom-select col-sm-3 ">
             <option>Select unit</option>
             <option
@@ -165,9 +165,9 @@
         <input
           :value="(currentLog.quantity
             && currentLog.quantity.length > 0)
-            ? currentLog.quantity[0].label
+            ? currentLog.quantity[currentQuant].label
             : null"
-          @input="updateNewQuant('label', $event.target.value, false)"
+          @input="updateQuantity('label', $event.target.value, currentQuant)"
           placeholder="Enter label"
           type="text"
           class="form-control"/>
@@ -181,27 +181,28 @@
           <li
             v-for="(quant, i) in currentLog.quantity"
             v-bind:key="`quantity-${i}-${Math.floor(Math.random() * 1000000)}`"
+            @click="currentQuant = i"
             class="list-group-item">
             {{ quant.measure }}&nbsp;
             {{ quant.value }}&nbsp;
             {{ (quantUnitNames.length > 0) ? quantUnitNames[i] : '' }}&nbsp;
             {{ quant.label }}
-            <span class="remove-list-item" @click="removeQuant(i)">
+            <span class="remove-list-item" @click="removeQuant(i); $event.stopPropagation()">
               &#x2715;
             </span>
           </li>
         </ul>
       </div>
-    </div>
 
-    <div class="form-item form-group">
-      <button
-        type="button"
-        class="btn btn-success"
-        @click="updateNewQuant(null, null, true)"
-        name="addNewQuantity">
-        Add another quantity
-      </button>
+      <div class="form-item form-group">
+        <button
+          type="button"
+          class="btn btn-success"
+          @click="updateQuantity(null, null, -1)"
+          name="addNewQuantity">
+          Add another quantity
+        </button>
+      </div>
     </div>
 
     <h4>Assets</h4>
@@ -568,6 +569,7 @@ export default {
       isWorking: false,
       localAreas: [],
       showAllCategories: false,
+      currentQuant: -1,
       quantMeasures: [
         'count',
         'length',
@@ -624,37 +626,31 @@ export default {
     updateNotes(value) {
       this.updateCurrentLog('notes', { value, format: 'farm_format' });
     },
-    /**
-     * Key indicates the quantity attribute being added (measure, value, unit,
-     * label). didPressNew (bool) indicates whether or not updateNewQuant was
-     * called by the 'new quantity' button.
-     */
-    updateNewQuant(key, value, didPressNew) {
-      // If no quantities exist, or if the 'add quantity button was pressed, create a quantity!
-      if (this.currentLog.quantity.length === 0 || didPressNew) {
-        let currentQuants = [];
-        if (this.currentLog.quantity) {
-          currentQuants = this.currentLog.quantity;
-        }
-        const quanTemplate = {
+    updateQuantity(key, value, index) {
+      const currentQuants = this.currentLog.quantity || [];
+      const storedVal = (key === 'unit')
+        ? { id: value, resource: 'taxonomy_term' }
+        : value;
+      let updatedQuant; let updatedQuants;
+      if (index >= 0) {
+        updatedQuant = { ...currentQuants[index], [key]: storedVal };
+        updatedQuants = [
+          ...currentQuants.slice(0, index),
+          updatedQuant,
+          ...currentQuants.slice(index + 1),
+        ];
+      } else {
+        updatedQuant = {
           measure: null,
           value: null,
           unit: null,
           label: null,
         };
-        currentQuants.unshift(quanTemplate);
-        this.updateCurrentLog('quantity', currentQuants);
+        updatedQuants = [...currentQuants, updatedQuant];
       }
-      const updatedQuant = this.currentLog.quantity;
-      // "Select quantity" and "Select unit" are placeholder values;
-      // don't update the log when selected.
-      if (key === 'unit' && value !== 'Select unit' && !didPressNew) {
-        const unitRef = { id: value, resource: 'taxonomy_term' };
-        updatedQuant[0][key] = unitRef;
-        this.updateCurrentLog('quantity', updatedQuant);
-      } else if (value !== 'Select measure' && value !== 'Select unit' && !didPressNew) {
-        updatedQuant[0][key] = value;
-        this.updateCurrentLog('quantity', updatedQuant);
+      this.updateCurrentLog('quantity', updatedQuants);
+      if (index < 0) {
+        this.currentQuant = updatedQuants.length - 1;
       }
     },
 
@@ -748,8 +744,13 @@ export default {
     },
 
     removeQuant(index) {
-      const newQuant = this.currentLog.quantity;
-      newQuant.splice(index, 1);
+      if (this.currentQuant >= index) {
+        this.currentQuant = this.currentQuant - 1;
+      }
+      const newQuant = [
+        ...this.currentLog.quantity.slice(0, index),
+        ...this.currentLog.quantity.slice(index + 1),
+      ];
       this.updateCurrentLog('quantity', newQuant);
     },
 
@@ -1143,6 +1144,7 @@ export default {
 
   .remove-list-item {
     float: right;
+    cursor: pointer;
   }
 
   #categories {
