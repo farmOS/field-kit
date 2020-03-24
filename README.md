@@ -7,8 +7,6 @@
 
 farmOS Client is a lightweight application for connecting to a farmOS server from any mobile device. It is a hybrid app, meaning it can run in a web browser but can also be packaged as a native app for iOS and Android. The goal is to create a fast and focused client app for day-to-day and in-the-field record keeping that stores data locally for offline use, and syncs back to a farmOS server when internet access is available.
 
-The application consists of the main client, which provides the UI and core features, in addition to native plugins, which provide specific support for native functionality, like the ability to persist data and access the camera. It is built using Vue.js and Apache Cordova.
-
 ## GETTING STARTED
 
 To run the client in your browser using the Webpack DevServer, clone this repo and run:
