@@ -45,6 +45,13 @@
     <engine name="android" spec="^7.1.1" />
     <engine name="ios" spec="^4.5.5" />
     <plugin name="cordova-plugin-splashscreen" spec="^5.0.2" />
+    <platform name="ios">
+        <preference name="WKWebViewOnly" value="true" />
+        <feature name="CDVWKWebViewEngine">
+            <param name="ios-package" value="CDVWKWebViewEngine" />
+        </feature>
+        <preference name="CordovaWebViewEngine" value="CDVWKWebViewEngine" />
+    </platform>
     <platform name="android">
     	<icon qualifier="ldpi" src="res/icons/android/drawable-ldpi-icon.png" />
     	<icon qualifier="mdpi" src="res/icons/android/drawable-mdpi-icon.png" />
