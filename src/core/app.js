@@ -6,6 +6,7 @@ import App from './App.vue'; // eslint-disable-line import/extensions
 import './bootstrap-simplex.min.css';
 import './vars.css';
 import utils from '../utils';
+import createFieldModule from '../utils/createFieldModule';
 import components from '../components';
 
 Vue.config.productionTip = false;
@@ -25,10 +26,12 @@ if (window.farmOS.modules === undefined) {
 // any other component on the root Vue instance.
 components.forEach((c) => { Vue.component(c.name, c); });
 
-export default (el, plugins) => {
-  // Load build-time plugins
-  if (plugins !== undefined && plugins.length > 0) {
-    plugins.forEach(p => Vue.use(p, { store, router }));
+export default (el, buildtimeMods) => {
+  // Load build-time modules
+  if (buildtimeMods !== undefined && buildtimeMods.length > 0) {
+    buildtimeMods
+      .map(createFieldModule)
+      .forEach(p => Vue.use(p, { store, router }));
   }
 
   // Fetch and load field modules at runtime
@@ -47,7 +50,7 @@ export default (el, plugins) => {
         script.async = true;
         script.onload = () => {
           const config = window.farmOS.modules[module.name];
-          const plugin = utils.createFieldModule(config);
+          const plugin = createFieldModule(config);
           Vue.use(plugin, { store, router });
         };
         script.onerror = () => console.error(`Error installing ${module.label} module`);
