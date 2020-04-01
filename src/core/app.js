@@ -26,6 +26,23 @@ if (window.farmOS.modules === undefined) {
 // any other component on the root Vue instance.
 components.forEach((c) => { Vue.component(c.name, c); });
 
+const loadFieldModule = (module) => {
+  const script = document.createElement('script');
+  script.src = `${localStorage.getItem('host')}/${module.js}`;
+  script.id = `field-module-${module.name}`;
+  script.type = 'module';
+  script.async = true;
+  script.crossOrigin = 'anonymous';
+  script.onload = () => {
+    const config = window.farmOS.modules[module.name];
+    const plugin = createFieldModule(config);
+    Vue.use(plugin, { store, router });
+  };
+  // eslint-disable-next-line no-console
+  script.onerror = () => console.error(`Error installing ${module.label} module`);
+  document.body.appendChild(script);
+};
+
 export default (el, buildtimeMods) => {
   // Load build-time modules
   if (buildtimeMods !== undefined && buildtimeMods.length > 0) {
@@ -42,20 +59,13 @@ export default (el, buildtimeMods) => {
   );
   farm.info()
     .then((res) => {
-      Object.values(res.client.modules).forEach((module) => {
-        const script = document.createElement('script');
-        script.src = `${localStorage.getItem('host')}/${module.js}`;
-        script.id = `field-module-${module.name}`;
-        script.type = 'module';
-        script.async = true;
-        script.onload = () => {
-          const config = window.farmOS.modules[module.name];
-          const plugin = createFieldModule(config);
-          Vue.use(plugin, { store, router });
-        };
-        script.onerror = () => console.error(`Error installing ${module.label} module`);
-        document.body.appendChild(script);
-      });
+      Object.values(res.client.modules).forEach(loadFieldModule);
+      localStorage.setItem('modules', JSON.stringify(res.client.modules));
+    })
+    // If the request fails, we can still load modules from cache.
+    .catch(() => {
+      Object.values(JSON.parse(localStorage.getItem('modules')))
+        .forEach(loadFieldModule);
     })
     .finally(() => new Vue({
       el,

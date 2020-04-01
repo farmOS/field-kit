@@ -67,7 +67,12 @@ const webpackConfig = merge(baseWebpackConfig, {
     // enable scope hoisting
     new webpack.optimize.ModuleConcatenationPlugin(),
 
-    new WorkboxPlugin.GenerateSW(),
+    new WorkboxPlugin.GenerateSW({
+      runtimeCaching: [{
+        urlPattern: /.*\.(?:js|css)$/,
+        handler: 'StaleWhileRevalidate'
+      }]
+    }),
 
     // copy custom static assets
     new CopyWebpackPlugin([
