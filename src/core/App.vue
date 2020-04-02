@@ -13,7 +13,7 @@
             </div>
             <div v-if="isLoggedIn" class="user-info">
               <h2>{{ farmName }}</h2>
-              <p>{{ farmUrl.replace(/(^\w+:|^)\/\//, '') }}</p>
+              <p>{{ farmUrl }}</p>
               <p>{{ username}}</p>
             </div>
             <div v-else class="user-info">
@@ -98,11 +98,11 @@
 <script>
 import Vue from 'vue';
 import { mapState, mapGetters } from 'vuex';
-import { version } from '../../package.json';
 import IconMenu from '@/components/icons/icon-menu';
 import IconArrowBack from '@/components/icons/icon-arrow-back';
 import DrawerList from '@/components/DrawerList';
 import DrawerListItem from '@/components/DrawerListItem';
+import { version } from '../../package.json';
 
 const removeMetaData = entities => entities
   .map(entity => Object.fromEntries(
@@ -178,7 +178,7 @@ export default {
       // Provide an example url for the dev server environment
       farmUrl: state => ((state.shell.farmInfo.url === '')
         ? 'example.farmos.net'
-        : state.shell.farmInfo.url),
+        : state.shell.farmInfo.url?.replace(/(^\w+:|^)\/\//, '')),
       modules: state => state.shell.modules,
 
       /**

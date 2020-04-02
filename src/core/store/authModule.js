@@ -7,14 +7,6 @@ const lazyFarm = () => {
   return farmOS(host, user, password);
 };
 
-const safeSetLS = (key, value) => {
-  if (value) {
-    localStorage.setItem(key, value);
-  } else {
-    localStorage.removeItem(key);
-  }
-};
-
 export default {
   actions: {
 
@@ -105,23 +97,41 @@ export default {
       if (username) {
         // Request user and site info if the user is logged in
         lazyFarm().info().then((res) => {
-          commit('changeFarmName', res.name);
-          commit('changeFarmUrl', res.url);
-          commit('changeUsername', res.user.name);
-          commit('changeEmail', res.user.mail);
-          commit('changeUid', res.user.uid);
-          commit('changeMapboxAPIKey', res.mapbox_api_key);
-          commit('changeSystemOfMeasurement', res.system_of_measurement);
-          commit('changeLogTypes', res.resources.log);
-          commit('setLoginStatus', true);
-          localStorage.setItem('farmName', res.name);
-          localStorage.setItem('username', res.user.name);
-          localStorage.setItem('email', res.user.mail);
-          localStorage.setItem('uid', res.user.uid);
-          safeSetLS('mapboxAPIKey', res.mapbox_api_key);
-          localStorage.setItem('systemOfMeasurement', res.system_of_measurement);
-          localStorage.setItem('logTypes', JSON.stringify(res.resources.log));
-          localStorage.setItem('isLoggedIn', true);
+          const safeSet = (key, mutation, response) => {
+            let value;
+            if (typeof response === 'string') {
+              value = response;
+            }
+            if (typeof response === 'object'
+              || typeof response === 'number'
+              || typeof response === 'boolean') {
+              value = JSON.stringify(response);
+            }
+            // Explicit reassignment here b/c `typeof null === 'object'`.
+            if (response === null) {
+              value = undefined;
+            }
+            if (value) {
+              localStorage.setItem(key, value);
+              commit(mutation, response);
+            }
+          };
+
+          safeSet('farmName', 'changeFarmName', res.name);
+          safeSet('username', 'changeUsername', res.user?.name);
+          safeSet('email', 'changeEmail', res.user?.mail);
+          safeSet('uid', 'changeUid', res.user?.uid);
+          safeSet('mapboxAPIKey', 'changeMapboxAPIKey', res.mapbox_api_key);
+          safeSet('systemOfMeasurement', 'changeSystemOfMeasurement', res.system_of_measurement);
+          safeSet('logTypes', 'changeLogTypes', res.resources?.log);
+          safeSet('isLoggedIn', 'setLoginStatus', true);
+
+          // Just add the url to store so the main menu can display it correctly,
+          // but don't overwrite localStorage b/c that url needs to be set by the
+          // login procedure, otherwise login breaks in the dev env.
+          if (res.url) {
+            commit('changeFarmUrl', res.url);
+          }
         });
       }
     },
