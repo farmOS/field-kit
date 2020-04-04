@@ -64,8 +64,10 @@ export default (el, buildtimeMods) => {
     })
     // If the request fails, we can still load modules from cache.
     .catch(() => {
-      Object.values(JSON.parse(localStorage.getItem('modules')))
-        .forEach(loadFieldModule);
+      const modules = JSON.parse(localStorage.getItem('modules'));
+      if (modules) {
+        Object.values(modules).forEach(loadFieldModule);
+      }
     })
     .finally(() => new Vue({
       el,
