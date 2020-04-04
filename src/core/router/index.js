@@ -11,7 +11,7 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      redirect: '/logs',
+      redirect: '/home',
     },
     {
       path: '/login',
@@ -24,7 +24,7 @@ const router = new Router({
       component: Logout,
     },
     {
-      path: '/homescreen',
+      path: '/home',
       name: 'Homescreen',
       components: {
         default: Homescreen,

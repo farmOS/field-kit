@@ -22,11 +22,13 @@
             </div>
           </div>
         </header>
-        <module-menu-items :modules="modules" @click.native="showDrawer = !showDrawer"/>
         <farm-drawer-list>
-          <router-link to="/homescreen" @click.native="showDrawer = !showDrawer">
+          <router-link to="/home" @click.native="showDrawer = !showDrawer">
             <farm-drawer-list-item>Home</farm-drawer-list-item>
           </router-link>
+        </farm-drawer-list>
+        <module-menu-items :modules="modules" @click.native="showDrawer = !showDrawer"/>
+        <farm-drawer-list>
           <farm-drawer-list-item :clickable="false">
             <farm-toggle-check
               label="Share My Location"
