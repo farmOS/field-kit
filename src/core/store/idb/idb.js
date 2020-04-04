@@ -1,5 +1,5 @@
 import config from './idb.config';
-import { filterAndSort, runUpgrades } from '@/utils/runUpgrades';
+import { filterAndSort, runUpgrades } from '../../../utils/runUpgrades';
 
 /**
  * Initialize a global counter for each store, eg:

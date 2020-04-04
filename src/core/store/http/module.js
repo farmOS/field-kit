@@ -1,7 +1,7 @@
 import farm from '@/core/store/farmClient';
 import Promise from 'core-js-pure/features/promise';
-import router from '@/core/router';
-import farmLog from '@/utils/farmLog';
+import router from '../../router';
+import farmLog from '../../../utils/farmLog';
 import {
   SyncError, createSyncReducer,
 } from './sync';

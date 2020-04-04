@@ -1,6 +1,6 @@
 // A Vuex module for modelling the attributes of the farm itself.
 
-import farmLog from '@/utils/farmLog';
+import farmLog from '../../utils/farmLog';
 
 // A function for updating an existing array of objects with an array of new
 // objects. An identifier is provided to determine if each new object is an

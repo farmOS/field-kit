@@ -38,7 +38,6 @@ module.exports = {
     extensions: ['.js', '.vue', '.json'],
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
-      '@': resolve('src'),
     },
     // Necessary to properly resolve `farmos-client` as an npm module, if using `npm link`
     symlinks: false

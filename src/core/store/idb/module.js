@@ -1,4 +1,4 @@
-import farmLog from '@/utils/farmLog';
+import farmLog from '../../../utils/farmLog';
 import {
   openDatabase,
   getRecords,
