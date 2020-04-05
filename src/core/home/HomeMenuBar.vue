@@ -11,7 +11,7 @@
 
 <script>
 export default {
-  name: 'HomescreenMenuBar',
+  name: 'HomeMenuBar',
 };
 </script>
 

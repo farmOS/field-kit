@@ -1,6 +1,6 @@
 <template>
-  <div id="homescreen">
-    <homescreen-widgets :modules="modules"/>
+  <div id="home">
+    <home-widgets :modules="modules"/>
   </div>
 </template>
 
@@ -8,7 +8,7 @@
 import Vue from 'vue';
 import { mapState } from 'vuex';
 
-const HomescreenWidgets = Vue.component('homescreen-widgets', { // eslint-disable-line no-unused-vars
+const HomeWidgets = Vue.component('home-widgets', { // eslint-disable-line no-unused-vars
   render(createElement) {
     const self = this;
     return createElement(
@@ -53,6 +53,7 @@ const HomescreenWidgets = Vue.component('homescreen-widgets', { // eslint-disabl
 });
 
 export default {
+  name: 'Home',
   computed: mapState({
     modules: state => state.shell.modules,
   }),
@@ -61,7 +62,7 @@ export default {
 </script>
 
 <style scoped>
-  #homescreen {
+  #home {
     background-color: #eee;
   }
 </style>

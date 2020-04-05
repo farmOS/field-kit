@@ -2,8 +2,8 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Login from '../login/Login';
 import Logout from '../login/Logout';
-import Homescreen from '../homescreen/Homescreen';
-import HomescreenMenuBar from '../homescreen/HomescreenMenuBar';
+import Home from '../home/Home';
+import HomeMenuBar from '../home/HomeMenuBar';
 
 Vue.use(Router);
 
@@ -25,10 +25,10 @@ const router = new Router({
     },
     {
       path: '/home',
-      name: 'Homescreen',
+      name: 'Home',
       components: {
-        default: Homescreen,
-        menubar: HomescreenMenuBar,
+        default: Home,
+        menubar: HomeMenuBar,
       },
     },
   ],
