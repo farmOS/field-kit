@@ -1,7 +1,6 @@
 <template>
 
-  <farm-widget>
-    <h4 class="card-title">My Logs Widget</h4>
+  <div>
     <h5
       @click="openMyLogs"
       class="clickable">
@@ -14,17 +13,19 @@
       Filter Logs
       <IconFilter class="inline-svg"/>
     </h5>
-  </farm-widget>
+  </div>
 
 </template>
 
 <script>
 export default {
   methods: {
-    openMyLogs() {
+    openMyLogs(e) {
+      e.stopPropagation();
       this.$router.push({ path: '/logs' });
     },
-    openFilter() {
+    openFilter(e) {
+      e.stopPropagation();
       this.$router.push({ name: 'filter-logs' });
     },
   },

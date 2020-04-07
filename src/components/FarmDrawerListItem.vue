@@ -1,7 +1,8 @@
 <template functional>
   <li
     class="list-group-item"
-    :class="{ clickable: props.clickable !== undefined ? props.clickable : true }">
+    :class="{ clickable: props.clickable !== undefined ? props.clickable : true }"
+    v-on="listeners">
     <slot></slot>
   </li>
 </template>

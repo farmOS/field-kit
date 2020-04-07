@@ -27,7 +27,14 @@
             <farm-drawer-list-item>Home</farm-drawer-list-item>
           </router-link>
         </farm-drawer-list>
-        <module-menu-items :modules="modules" @click.native="showDrawer = !showDrawer"/>
+        <farm-drawer-list>
+          <farm-drawer-list-item
+            v-for="module in modules"
+            :key="`${module.name}-menu-link`"
+            @click="handleModuleClick(module)">
+            {{module.label}}
+          </farm-drawer-list-item>
+        </farm-drawer-list>
         <farm-drawer-list>
           <farm-drawer-list-item :clickable="false">
             <farm-toggle-check
@@ -100,7 +107,6 @@
 </template>
 
 <script>
-import Vue from 'vue';
 import { mapState, mapGetters } from 'vuex';
 import { version } from '../../package.json';
 
@@ -113,35 +119,8 @@ const removeMetaData = entities => entities
     )),
   ));
 
-const ModuleMenuItems = Vue.component('module-menu-items', {
-  render(createElement) {
-    const self = this;
-    return createElement('div', this.modules.map(module => createElement(
-      `${module.name}-drawer-items`,
-      {
-        nativeOn: {
-          click() {
-            self.$store.commit('setCurrentModule', module.name);
-            self.$store.commit('filterLogs', log => log.modules.includes(module.name));
-            self.$store.dispatch('loadCachedLogs');
-          },
-        },
-      },
-    )));
-  },
-  props: {
-    modules: {
-      type: Array,
-      required: true,
-    },
-  },
-});
-
 export default {
   name: 'App',
-  components: {
-    ModuleMenuItems,
-  },
   data() {
     return {
       showDrawer: false,
@@ -152,7 +131,6 @@ export default {
     this.$store.commit('setCurrentModule', this.$route.meta.module);
     this.$store.dispatch('loadCachedUserAndSiteInfo');
     this.$store.dispatch('updateUserAndSiteInfo');
-    this.$store.dispatch('loadCachedLogs');
     this.$store.dispatch('loadCachedAssets');
     this.$store.dispatch('loadCachedAreas');
     this.$store.dispatch('loadCachedUnits');
@@ -211,6 +189,12 @@ export default {
       this.$store.commit('setUseGeolocation', checked);
     },
     removeMetaData,
+    handleModuleClick(module) {
+      if (module.routes[0].path !== this.$route.path) {
+        this.$router.push(module.routes[0].path);
+      }
+      this.showDrawer = !this.showDrawer;
+    },
   },
 };
 </script>

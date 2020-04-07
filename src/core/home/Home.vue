@@ -1,6 +1,8 @@
 <template>
   <div id="home">
-    <home-widgets :modules="modules"/>
+    <div class="container-fluid">
+      <home-widgets :modules="modules"/>
+    </div>
   </div>
 </template>
 
@@ -13,34 +15,23 @@ const HomeWidgets = Vue.component('home-widgets', { // eslint-disable-line no-un
     const self = this;
     return createElement(
       'div',
-      {
-        style: {
-          display: 'flex',
-          flexFlow: 'row wrap',
-          maxWidth: '700px',
-          minHeight: 'calc(100vh - 3rem)',
-          margin: 'auto',
-          backgroundColor: '#fff',
-        },
-      },
+      { class: 'card-deck' },
       this.modules.map(module => createElement(
-        `${module.name}-widget`,
+        'farm-card',
         {
-          style: {
-            flex: '0 0 50%',
-            height: '50vw',
-            maxHeight: '350px',
-            backgroundColor: '#fff',
-            border: '1px solid #eee',
-          },
           nativeOn: {
             click() {
-              self.$store.commit('setCurrentModule', module.name);
-              self.$store.commit('filterLogs', log => log.modules.includes(module.name));
-              self.$store.dispatch('loadCachedLogs');
+              self.$router.push(module.routes[0].path);
             },
           },
         },
+        [createElement(
+          'farm-card-body',
+          [
+            createElement('h4', module.label),
+            createElement(`${module.name}-widget`),
+          ],
+        )],
       )),
     );
   },
@@ -64,5 +55,13 @@ export default {
 <style scoped>
   #home {
     background-color: #eee;
+  }
+
+  .container-fluid {
+    max-width: 700px;
+    min-height: calc(100vh - 3rem);
+    margin: auto;
+    background-color: #eee;
+    padding: 15px;
   }
 </style>

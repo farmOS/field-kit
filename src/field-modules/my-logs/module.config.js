@@ -1,10 +1,9 @@
 import routes from './routes';
-import DrawerItems from './components/DrawerItems';
 import Widget from './components/Widget';
 
 export default {
   name: 'my-logs',
-  drawer: DrawerItems,
+  label: 'My Logs',
   widget: Widget,
   filters: {
     log: {

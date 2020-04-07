@@ -1,5 +1,7 @@
 // Shared Component Library
 import FarmAutocomplete from './FarmAutocomplete';
+import FarmCard from './FarmCard';
+import FarmCardBody from './FarmCardBody';
 import FarmDateTimeForm from './FarmDateTimeForm';
 import FarmDrawerList from './FarmDrawerList';
 import FarmDrawerListItem from './FarmDrawerListItem';
@@ -7,7 +9,6 @@ import FarmMap from './FarmMap';
 import FarmMenuBar from './FarmMenuBar';
 import FarmSelectBox from './FarmSelectBox';
 import FarmToggleCheck from './FarmToggleCheck';
-import FarmWidget from './FarmWidget';
 
 // Icon Library
 import IconAddCircle from './icons/icon-add-circle';
@@ -32,6 +33,8 @@ import IconSync from './icons/icon-sync';
 
 export default [
   FarmAutocomplete,
+  FarmCard,
+  FarmCardBody,
   FarmDateTimeForm,
   FarmDrawerList,
   FarmDrawerListItem,
@@ -39,7 +42,6 @@ export default [
   FarmMenuBar,
   FarmSelectBox,
   FarmToggleCheck,
-  FarmWidget,
   IconAddCircle,
   IconArrowBack,
   IconAssignmentDone,

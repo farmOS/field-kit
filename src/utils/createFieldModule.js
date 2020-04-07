@@ -1,6 +1,6 @@
 // A recursive function for initializing a field module's route components and
 // child components, as well as adding the proper module meta tags.
-const createRoutes = (Vue, modName, routes) => (
+const createRoutes = (Vue, modName, routes, store) => (
   !Array.isArray(routes) ? undefined : routes.map(({
     path,
     name,
@@ -28,6 +28,14 @@ const createRoutes = (Vue, modName, routes) => (
     params,
     props,
     query,
+    beforeEnter(to, from, next) {
+      if (store && store.state.shell.currentModule !== modName) {
+        store.commit('setCurrentModule', modName);
+        store.commit('filterLogs', log => log.modules.includes(modName));
+        store.dispatch('loadCachedLogs');
+      }
+      next();
+    },
   }))
 );
 
@@ -41,8 +49,14 @@ const createFieldModule = modConfig => ({
       filters,
       name,
       routes,
+      label,
     } = modConfig;
-    store.commit('updateModule', { name, filters });
+    store.commit('updateModule', {
+      name,
+      label,
+      filters,
+      routes: routes.map(r => ({ name: r.name, path: r.path })),
+    });
     Vue.component(
       `${name}-drawer-items`,
       { ...drawer, name: `${name}-drawer-items` },
@@ -51,7 +65,7 @@ const createFieldModule = modConfig => ({
       `${name}-widget`,
       { ...widget, name: `${name}-widget` },
     );
-    router.addRoutes(createRoutes(Vue, name, routes));
+    router.addRoutes(createRoutes(Vue, name, routes, store));
   },
 });
 
