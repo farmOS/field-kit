@@ -14,8 +14,13 @@ const HomeWidgets = Vue.component('home-widgets', { // eslint-disable-line no-un
   render(createElement) {
     const self = this;
     return createElement(
-      'div',
-      { class: 'card-deck' },
+      'farm-tiles',
+      {
+        props: {
+          columns: [1, 2, 3],
+          breakpoints: [0, 600, 900],
+        },
+      },
       this.modules.map(module => createElement(
         'farm-card',
         {
@@ -25,13 +30,10 @@ const HomeWidgets = Vue.component('home-widgets', { // eslint-disable-line no-un
             },
           },
         },
-        [createElement(
-          'farm-card-body',
-          [
-            createElement('h4', module.label),
-            createElement(`${module.name}-widget`),
-          ],
-        )],
+        [
+          createElement('h4', module.label),
+          createElement(`${module.name}-widget`),
+        ],
       )),
     );
   },
@@ -58,10 +60,10 @@ export default {
   }
 
   .container-fluid {
-    max-width: 700px;
+    max-width: 1200px;
     min-height: calc(100vh - 3rem);
     margin: auto;
     background-color: #eee;
-    padding: 15px;
+    padding: 1rem;
   }
 </style>

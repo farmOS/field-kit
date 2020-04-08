@@ -1,13 +1,13 @@
 // Shared Component Library
 import FarmAutocomplete from './FarmAutocomplete';
 import FarmCard from './FarmCard';
-import FarmCardBody from './FarmCardBody';
 import FarmDateTimeForm from './FarmDateTimeForm';
 import FarmDrawerList from './FarmDrawerList';
 import FarmDrawerListItem from './FarmDrawerListItem';
 import FarmMap from './FarmMap';
 import FarmMenuBar from './FarmMenuBar';
 import FarmSelectBox from './FarmSelectBox';
+import FarmTiles from './FarmTiles';
 import FarmToggleCheck from './FarmToggleCheck';
 
 // Icon Library
@@ -34,13 +34,13 @@ import IconSync from './icons/icon-sync';
 export default [
   FarmAutocomplete,
   FarmCard,
-  FarmCardBody,
   FarmDateTimeForm,
   FarmDrawerList,
   FarmDrawerListItem,
   FarmMap,
   FarmMenuBar,
   FarmSelectBox,
+  FarmTiles,
   FarmToggleCheck,
   IconAddCircle,
   IconArrowBack,
