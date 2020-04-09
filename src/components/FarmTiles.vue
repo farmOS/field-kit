@@ -41,22 +41,29 @@ export default {
         ? this.space[this.bpIndex]
         : this.space;
     },
-    style() {
+    style0() {
+      return {
+        marginTop: `-${this._space}`,
+        marginLeft: `-${this._space}`,
+      };
+    },
+    style1() {
       return {
         display: 'flex',
         flexFlow: 'row wrap',
-        justifyContent: this.$slots.default.length < this._columns
-          ? 'center'
-          : 'space-between',
+        justifyContent: 'start',
       };
     },
-    childStyle() {
+    style2() {
       return {
-        flex: `0 0 calc(${100 / this._columns}% - calc(${(this._columns - 1) / this._columns} * ${this._space}))`,
-        marginBottom: this._space,
-        marginRight: this.$slots.default.length < this._columns
-          ? this._space
-          : undefined,
+        flex: `0 0 ${100 / this._columns}%`,
+      };
+    },
+    style3() {
+      return {
+        paddingTop: `${this._space}`,
+        paddingLeft: `${this._space}`,
+        height: '100%',
       };
     },
   },
@@ -70,9 +77,20 @@ export default {
   render(h) {
     return h(
       'div',
-      { class: 'farm-tiles', style: this.style },
-      this.$slots.default
-        .map(node => h('div', { style: this.childStyle }, [node])),
+      { style: this.style0 },
+      [h(
+        'div',
+        { style: this.style1 },
+        this.$slots.default.map(node => h(
+          'div',
+          { style: this.style2 },
+          [h(
+            'div',
+            { style: this.style3 },
+            [node],
+          )],
+        )),
+      )],
     );
   },
 };
