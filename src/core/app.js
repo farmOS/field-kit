@@ -3,8 +3,10 @@ import farmConnect from 'farmos';
 import router from './router';
 import store from './store';
 import App from './App.vue'; // eslint-disable-line import/extensions
+import './normalize.css';
 import './bootstrap-simplex.min.css';
 import './vars.css';
+import './main.css';
 import utils from '../utils';
 import createFieldModule from '../utils/createFieldModule';
 import components from '../components';
