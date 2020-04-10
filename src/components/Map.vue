@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import 'farmOS-map/src/main';
 import { mapState } from 'vuex';
 
 export default {

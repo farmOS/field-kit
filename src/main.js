@@ -1,6 +1,6 @@
 import 'farmOS-map/src/main';
-import app from '@/core/app';
-import logs from '@/field-modules/my-logs';
+import app from './core/app';
+import logs from './field-modules/my-logs/module.config';
 
 app('#app', [
   logs,
