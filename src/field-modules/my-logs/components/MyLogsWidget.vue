@@ -13,19 +13,19 @@
     <div class="scroll-container">
       <div class="scroll-x" :style="scrollStyle">
         <svg-filter-dropshadow id="btn-shadow" :opacity=".25" :blur="3" :x="1" :y="2"/>
-        <div id="activity" class="add-btn">
+        <div id="activity" class="add-btn" @click="addLog('farm_activity', $event)">
           <icon-add-circle :style="{ filter: 'url(#btn-shadow)' }"/>
           <div>Activity</div>
         </div>
-        <div id="observation" class="add-btn">
+        <div id="observation" class="add-btn" @click="addLog('farm_observation', $event)">
           <icon-add-circle :style="{ filter: 'url(#btn-shadow)' }"/>
           <div>Observation</div>
         </div>
-        <div id="harvest" class="add-btn">
+        <div id="harvest" class="add-btn" @click="addLog('farm_harvest', $event)">
           <icon-add-circle :style="{ filter: 'url(#btn-shadow)' }"/>
           <div>Harvest</div>
         </div>
-        <div id="input" class="add-btn">
+        <div id="input" class="add-btn" @click="addLog('farm_input', $event)">
           <icon-add-circle :style="{ filter: 'url(#btn-shadow)' }"/>
           <div>Input</div>
         </div>
@@ -55,6 +55,11 @@ export default {
       this.scrollStyle = { paddingBottom };
     },
     addLog(type, e) {
+      e.stopPropagation();
+      const props = { modules: ['my-logs'], type, done: true };
+      this.$store.dispatch('initializeLog', props)
+        .then(id => this.$router.push(`/logs/${id}`));
+    },
   },
 };
 </script>
