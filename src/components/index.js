@@ -30,6 +30,7 @@ import IconRaindrops from './icons/icon-raindrops';
 import IconSnowflake from './icons/icon-snowflake';
 import IconSpinner from './icons/icon-spinner';
 import IconSync from './icons/icon-sync';
+import SvgFilterDropshadow from './icons/svg-filter-dropshadow';
 
 export default [
   FarmAutocomplete,
@@ -61,4 +62,5 @@ export default [
   IconSnowflake,
   IconSpinner,
   IconSync,
+  SvgFilterDropshadow,
 ];

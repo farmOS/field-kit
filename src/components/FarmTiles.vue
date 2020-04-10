@@ -17,6 +17,10 @@ export default {
         return [0, 740, 992];
       },
     },
+    overflow: {
+      type: String,
+      default: 'visible',
+    },
   },
   data() {
     return {
@@ -57,6 +61,7 @@ export default {
     style2() {
       return {
         flex: `0 0 ${100 / this._columns}%`,
+        overflow: this.overflow,
       };
     },
     style3() {

@@ -1,10 +1,10 @@
 import routes from './routes';
-import Widget from './components/Widget';
+import MyLogsWidget from './components/MyLogsWidget';
 
 export default {
   name: 'my-logs',
   label: 'My Logs',
-  widget: Widget,
+  widget: MyLogsWidget,
   filters: {
     log: {
       log_owner: 'SELF',
