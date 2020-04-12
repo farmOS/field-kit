@@ -36,6 +36,7 @@
 
 <script>
 export default {
+  props: ['logs'],
   data() {
     return {
       scrollStyle: {

@@ -1,7 +1,7 @@
 <template>
   <div id="home">
     <div class="container-fluid">
-      <home-widgets :modules="modules"/>
+      <home-widgets :modules="modules" :logs="logs"/>
     </div>
   </div>
 </template>
@@ -21,6 +21,16 @@ const fadeStyle = {
 };
 
 const HomeWidgets = Vue.component('home-widgets', { // eslint-disable-line no-unused-vars
+  props: {
+    modules: {
+      type: Array,
+      required: true,
+    },
+    logs: {
+      type: Object,
+      required: true,
+    },
+  },
   render(createElement) {
     const self = this;
     return createElement(
@@ -49,16 +59,13 @@ const HomeWidgets = Vue.component('home-widgets', { // eslint-disable-line no-un
         [
           createElement('div', { style: fadeStyle }),
           createElement('h4', module.label),
-          createElement(`${module.name}-widget`),
+          createElement(
+            `${module.name}-widget`,
+            { props: { logs: this.logs[module.name] } },
+          ),
         ],
       )),
     );
-  },
-  props: {
-    modules: {
-      type: Array,
-      required: true,
-    },
   },
 });
 
@@ -69,6 +76,16 @@ export default {
   },
   computed: mapState({
     modules: state => state.shell.modules,
+    logs: state => state.farm.logs
+      .reduce((logs, curLog) => ({
+        ...logs,
+        ...state.shell.modules.reduce((modLogs, curMod) => ({
+          ...modLogs,
+          [curMod.name]: curLog.modules.includes(curMod.name)
+            ? logs[curMod.name]?.concat(curLog) || [curLog]
+            : logs[curMod.name],
+        }), {}),
+      }), {}),
   }),
 };
 
