@@ -66,6 +66,94 @@ export default {
         .catch(console.error); // eslint-disable-line no-console
     },
 
+    // Specifically for loading logs for the Home screen widgets to use.
+    loadHomeCachedLogs({ commit, rootState }) {
+      const { updateLog } = farmLog(rootState.shell.logTypes);
+      // We're going to build our own object to store arrays of results for each
+      // module, and discard the result returned by getRecords. We won't worry
+      // about duplicates across modules because the addLogs mutation doesn't
+      // add duplicates (by localID). The initial results object will look like:
+      // {
+      //   'my-logs': [],
+      //   precipitation: [],
+      //   // etc...
+      // }
+      const results = rootState.shell.modules
+        .reduce((acc, cur) => ({ ...acc, [cur.name]: [] }), {});
+      // Store the present time in a constant, which will be the same for
+      // every iteration of the .sort() function.
+      const present = Math.floor(Date.now() / 1000);
+      const compare = (a, b) => {
+        // Log A's possible states.
+        const aIsLate = !a.done.data && a.timestamp.data < present;
+        const aIsUpcoming = !a.done.data && a.timestamp.data > present;
+        const aIsDone = a.done.data;
+
+        // Log B's possible states.
+        const bIsLate = !b.done.data && b.timestamp.data < present;
+        const bIsUpcoming = !b.done.data && b.timestamp.data > present;
+        const bIsDone = b.done.data;
+
+        // Getters for return values, which will determine how A and B are
+        // sorted relative to each other.
+        const sortAscending = () => a.timestamp.data - b.timestamp.data;
+        const sortDescending = () => b.timestamp.data - a.timestamp.data;
+        const aBeforeB = () => -1;
+        const bBeforeA = () => 1;
+
+        if (aIsLate && bIsLate) {
+          return sortAscending();
+        }
+        if (aIsLate && bIsUpcoming) {
+          return aBeforeB();
+        }
+        if (aIsLate && bIsDone) {
+          return aBeforeB();
+        }
+        if (aIsUpcoming && bIsLate) {
+          return bBeforeA();
+        }
+        if (aIsUpcoming && bIsUpcoming) {
+          return sortAscending();
+        }
+        if (aIsUpcoming && bIsDone) {
+          return aBeforeB();
+        }
+        if (aIsDone && bIsLate) {
+          return bBeforeA();
+        }
+        if (aIsDone && bIsUpcoming) {
+          return bBeforeA();
+        }
+        if (aIsDone && bIsDone) {
+          return sortDescending();
+        }
+        return 0;
+      };
+      const query = (log) => {
+        rootState.shell.modules.forEach((mod) => {
+          if (log.modules.includes(mod.name)) {
+            results[mod.name].push(log);
+            results[mod.name].sort(compare);
+            if (results[mod.name].length > 10) {
+              results[mod.name].pop();
+            }
+          }
+          // Always return false, because we're not using these results.
+          return false;
+        });
+      };
+      openDatabase()
+        .then(db => getRecords(db, logStore.name, query))
+        .then(() => {
+          const cachedLogs = Object.values(results).flat().map(log => (
+            updateLog(log, { isCachedLocally: true })
+          ));
+          commit('addLogs', cachedLogs);
+        })
+        .catch(console.error); // eslint-disable-line no-console
+    },
+
     generateLogID() {
       return openDatabase()
         .then(db => generateLocalID(db, logStore.name))

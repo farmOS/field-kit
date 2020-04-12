@@ -64,6 +64,9 @@ const HomeWidgets = Vue.component('home-widgets', { // eslint-disable-line no-un
 
 export default {
   name: 'Home',
+  created() {
+    this.$store.dispatch('loadHomeCachedLogs');
+  },
   computed: mapState({
     modules: state => state.shell.modules,
   }),
