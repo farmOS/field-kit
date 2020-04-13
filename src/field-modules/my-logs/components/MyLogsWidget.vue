@@ -2,14 +2,22 @@
   <div class="main-container">
     <div class="fade-right"></div>
     <ul>
-      <li class="heading">LATE</li>
-      <li class="log late">Harvest 8/10/2020 - 10:30AM North Field Soy</li>
+      <li class="heading" v-if="lateLogs.length > 0">LATE</li>
+      <li class="log late" v-for="(log, i) in lateLogs" :key="`late-log-${i}`">
+        {{log.name}}
+      </li>
     </ul>
     <ul>
-      <li class="heading">UPCOMING</li>
-      <li class="log">Harvest 8/11/2020 - 10:30AM East Field Corn</li>
-      <li class="log">Harvest 8/11/2020 - 1:00PM West Field Soy</li>
-      <li class="log">Spray 8/12/2020 - 8:00AM South Field Corn</li>
+      <li class="heading" v-if="upcomingLogs.length > 0">UPCOMING</li>
+      <li class="log" v-for="(log, i) in upcomingLogs" :key="`upcoming-log-${i}`">
+        {{log.name}}
+      </li>
+    </ul>
+    <ul>
+      <li class="heading" v-if="doneLogs.length > 0">DONE</li>
+      <li class="log" v-for="(log, i) in doneLogs" :key="`done-log-${i}`">
+        {{log.name}}
+      </li>
     </ul>
     <div class="scroll-container">
       <div class="scroll-x" :style="scrollStyle">
@@ -47,6 +55,27 @@ export default {
   },
   mounted() {
     this.calcScrollStyle();
+  },
+  computed: {
+    lateLogs() {
+      const now = Math.floor(Date.now() / 1000);
+      return this.logs
+        .filter(log => !log.done && log.timestamp < now)
+        .slice(0, 5);
+    },
+    upcomingLogs() {
+      const now = Math.floor(Date.now() / 1000);
+      const limit = 5 - this.lateLogs.length;
+      return this.logs
+        .filter(log => !log.done && log.timestamp > now)
+        .slice(0, limit);
+    },
+    doneLogs() {
+      const limit = 5 - this.lateLogs.length - this.upcomingLogs.length;
+      return this.logs
+        .filter(log => log.done)
+        .slice(0, limit);
+    },
   },
   methods: {
     // This calculates the exact padding needed to hide the scrollbar, because
