@@ -1,14 +1,13 @@
 <template>
   <div id="home">
     <div class="container-fluid">
-      <home-widgets :modules="modules" :logs="logs"/>
+      <home-widgets :modules="modules" :logs="sortedLogs"/>
     </div>
   </div>
 </template>
 
 <script>
 import Vue from 'vue';
-import { mapState } from 'vuex';
 
 const HomeWidgets = Vue.component('home-widgets', { // eslint-disable-line no-unused-vars
   props: {
@@ -56,22 +55,23 @@ const HomeWidgets = Vue.component('home-widgets', { // eslint-disable-line no-un
 
 export default {
   name: 'Home',
+  props: ['modules', 'logs'],
   created() {
     this.$store.dispatch('loadHomeCachedLogs');
   },
-  computed: mapState({
-    modules: state => state.shell.modules,
-    logs: state => state.farm.logs
-      .reduce((logs, curLog) => ({
+  computed: {
+    sortedLogs() {
+      return this.logs.reduce((logs, curLog) => ({
         ...logs,
-        ...state.shell.modules.reduce((modLogs, curMod) => ({
+        ...this.modules.reduce((modLogs, curMod) => ({
           ...modLogs,
           [curMod.name]: curLog.modules.includes(curMod.name)
             ? logs[curMod.name]?.concat(curLog) || [curLog]
             : logs[curMod.name],
         }), {}),
-      }), {}),
-  }),
+      }), {});
+    },
+  },
 };
 
 </script>

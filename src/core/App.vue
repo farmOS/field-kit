@@ -88,6 +88,7 @@
               :userId='userId'
               :systemOfMeasurement='systemOfMeasurement'
               :logTypes='logTypes'
+              :modules="modules"
               :logs='removeMetaData(logs)'
               :areas='areas'
               :assets='assets'
