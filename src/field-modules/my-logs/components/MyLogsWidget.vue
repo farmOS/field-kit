@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <div class="main-container">
+    <div class="fade-right"></div>
     <ul>
       <li class="heading">LATE</li>
       <li class="log late">Harvest 8/10/2020 - 10:30AM North Field Soy</li>
@@ -66,6 +67,20 @@ export default {
 </script>
 
 <style scoped>
+
+.main-container {
+  position: relative;
+  white-space: nowrap;
+}
+.fade-right {
+  position: absolute;
+  top: 0px;
+  right: -1rem;
+  height: 100%;
+  width: 2rem;
+  z-index: 10;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 50%);
+}
 
 ul {
   margin-bottom: .5rem;

@@ -10,16 +10,6 @@
 import Vue from 'vue';
 import { mapState } from 'vuex';
 
-const fadeStyle = {
-  position: 'absolute',
-  top: '0px',
-  right: '0px',
-  height: '100%',
-  width: '2rem',
-  zIndex: '10',
-  background: 'linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 50%)',
-};
-
 const HomeWidgets = Vue.component('home-widgets', { // eslint-disable-line no-unused-vars
   props: {
     modules: {
@@ -51,13 +41,8 @@ const HomeWidgets = Vue.component('home-widgets', { // eslint-disable-line no-un
               self.$router.push(module.routes[0].path);
             },
           },
-          style: {
-            whiteSpace: 'nowrap',
-            position: 'relative',
-          },
         },
         [
-          createElement('div', { style: fadeStyle }),
           createElement('h4', module.label),
           createElement(
             `${module.name}-widget`,
