@@ -86,15 +86,18 @@ export default {
       [h(
         'div',
         { style: this.style1 },
-        this.$slots.default.map(node => h(
-          'div',
-          { style: this.style2 },
-          [h(
+        this.$slots.default
+          // Filtering out undefined tags removes unwanted whitespace nodes.
+          .filter(node => node.tag !== undefined)
+          .map(node => h(
             'div',
-            { style: this.style3 },
-            [node],
-          )],
-        )),
+            { style: this.style2 },
+            [h(
+              'div',
+              { style: this.style3 },
+              [node],
+            )],
+          )),
       )],
     );
   },
