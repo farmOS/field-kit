@@ -19,7 +19,7 @@ export default {
     },
     overflow: {
       type: String,
-      default: 'visible',
+      default: 'hidden',
     },
   },
   data() {
