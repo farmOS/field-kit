@@ -14,10 +14,6 @@ export default {
       type: [String, Array],
       default: '1rem',
     },
-    overflow: {
-      type: String,
-      default: 'hidden',
-    },
   },
   computed: {
     ...mapResponsiveProps({
@@ -40,7 +36,8 @@ export default {
     style2() {
       return {
         flex: `0 0 ${100 / this._columns}%`,
-        overflow: this.overflow,
+        // B/c setting flex basis doesn't seem to be enough to contain contents:
+        width: `${100 / this._columns}%`,
       };
     },
     style3() {
