@@ -17,7 +17,7 @@ export default {
       default: '#fff',
     },
     boxShadow: {
-      type: String,
+      type: [String, Array],
       default: '1px 2px 3px #ccc',
     },
     height: {
@@ -35,6 +35,7 @@ export default {
   },
   computed: {
     ...mapResponsiveProps({
+      _boxShadow: 'boxShadow',
       _height: 'height',
       _space: 'space',
       _width: 'width',
@@ -42,7 +43,7 @@ export default {
     style() {
       return {
         backgroundColor: this.backgroundColor,
-        boxShadow: this.boxShadow,
+        boxShadow: this._boxShadow,
         height: this._height,
         padding: this._space,
         width: this._width,
