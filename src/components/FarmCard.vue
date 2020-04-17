@@ -1,15 +1,16 @@
 <template>
-
   <div :style="style">
     <slot></slot>
   </div>
-
 </template>
 
 <script>
 /* eslint-disable no-underscore-dangle */
+import { responsiveProps, mapResponsiveProps } from './responsiveProps';
+
 export default {
   name: 'FarmCard',
+  mixins: [responsiveProps],
   props: {
     backgroundColor: {
       type: String,
@@ -18,12 +19,6 @@ export default {
     boxShadow: {
       type: String,
       default: '1px 2px 3px #ccc',
-    },
-    breakpoints: {
-      type: Array,
-      default() {
-        return [0, 740, 992];
-      },
     },
     height: {
       type: [String, Array],
@@ -38,34 +33,12 @@ export default {
       default: 'auto',
     },
   },
-  data() {
-    return {
-      bpIndex: 0,
-    };
-  },
-  created() {
-    window.addEventListener('resize', this.calcBpIndex);
-    this.calcBpIndex();
-  },
-  beforeDestroy() {
-    window.removeEventListener('resize', this.calcBpIndex);
-  },
   computed: {
-    _height() {
-      return Array.isArray(this.height)
-        ? this.height[this.bpIndex]
-        : this.height;
-    },
-    _space() {
-      return Array.isArray(this.space)
-        ? this.space[this.bpIndex]
-        : this.space;
-    },
-    _width() {
-      return Array.isArray(this.width)
-        ? this.width[this.bpIndex]
-        : this.width;
-    },
+    ...mapResponsiveProps({
+      _height: 'height',
+      _space: 'space',
+      _width: 'width',
+    }),
     style() {
       return {
         backgroundColor: this.backgroundColor,
@@ -74,13 +47,6 @@ export default {
         padding: this._space,
         width: this._width,
       };
-    },
-  },
-  methods: {
-    calcBpIndex() {
-      const bpMatches = bp => window.innerWidth >= bp;
-      const breakpoint = Math.max(...this.breakpoints.filter(bpMatches));
-      this.bpIndex = this.breakpoints.indexOf(breakpoint);
     },
   },
 };

@@ -1,7 +1,10 @@
 <script>
 /* eslint-disable no-underscore-dangle */
+import { responsiveProps, mapResponsiveProps } from './responsiveProps';
+
 export default {
   name: 'FarmTiles',
+  mixins: [responsiveProps],
   props: {
     columns: {
       type: [Number, Array],
@@ -11,40 +14,16 @@ export default {
       type: [String, Array],
       default: '1rem',
     },
-    breakpoints: {
-      type: Array,
-      default() {
-        return [0, 740, 992];
-      },
-    },
     overflow: {
       type: String,
       default: 'hidden',
     },
   },
-  data() {
-    return {
-      bpIndex: 0,
-    };
-  },
-  created() {
-    window.addEventListener('resize', this.calcBpIndex);
-    this.calcBpIndex();
-  },
-  beforeDestroy() {
-    window.removeEventListener('resize', this.calcBpIndex);
-  },
   computed: {
-    _columns() {
-      return Array.isArray(this.columns)
-        ? this.columns[this.bpIndex]
-        : this.columns;
-    },
-    _space() {
-      return Array.isArray(this.space)
-        ? this.space[this.bpIndex]
-        : this.space;
-    },
+    ...mapResponsiveProps({
+      _columns: 'columns',
+      _space: 'space',
+    }),
     style0() {
       return {
         marginTop: `-${this._space}`,
@@ -70,13 +49,6 @@ export default {
         paddingLeft: `${this._space}`,
         height: '100%',
       };
-    },
-  },
-  methods: {
-    calcBpIndex() {
-      const bpMatches = bp => window.innerWidth >= bp;
-      const breakpoint = Math.max(...this.breakpoints.filter(bpMatches));
-      this.bpIndex = this.breakpoints.indexOf(breakpoint);
     },
   },
   render(h) {
