@@ -1,19 +1,31 @@
 <template lang="html">
   <div>
-    <label v-if="label && labelPosition=== 'before'">{{ label }}&nbsp;</label>
+    <label v-if="label && labelPosition === 'before'">{{ label }}&nbsp;</label>
     <input
       class="toggle-check"
       type="checkbox"
       :checked="checked"
       @input="$emit('input', $event.target.checked)"/>
-    <label v-if="label && labelPosition=== 'after'">{{ label }}&nbsp;</label>
+    <label v-if="label && labelPosition === 'after'">{{ label }}&nbsp;</label>
   </div>
 </template>
 
 <script>
 export default {
   name: 'FarmToggleCheck',
-  props: ['label', 'labelPosition', 'checked'],
+  props: {
+    label: {
+      type: String,
+      required: false,
+    },
+    labelPosition: {
+      validator: val => !val || ['after', 'before'].includes(val),
+    },
+    checked: {
+      type: Boolean,
+      required: true,
+    },
+  },
 };
 </script>
 
