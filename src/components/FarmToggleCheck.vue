@@ -3,6 +3,7 @@
     <label v-if="label && labelPosition === 'before'">{{ label }}&nbsp;</label>
     <input
       class="toggle-check"
+      :class="{ large: size === 'large' }"
       type="checkbox"
       :checked="checked"
       @input="$emit('input', $event.target.checked)"/>
@@ -24,6 +25,9 @@ export default {
     checked: {
       type: Boolean,
       required: true,
+    },
+    size: {
+      validator: val => !val || ['small', 'large'].includes(val),
     },
   },
 };
@@ -62,5 +66,24 @@ export default {
   input.toggle-check:checked:after {
     left: 0.6667rem;
     box-shadow: -1px 0px 2px rgba(0,0,0,0.05);
+  }
+
+  input.toggle-check.large {
+    height: 2rem;
+    width: 3.3333rem;
+  }
+
+  input.toggle-check.large:after {
+    height: 1.7333rem;
+    width: 1.7333rem;
+  }
+
+  input.toggle-check.large:checked {
+    box-shadow: inset 1.3333rem 0 0 0 var(--cyan);
+    border-color: var(--cyan);
+  }
+
+  input.toggle-check.large:checked:after {
+    left: 1.3333
   }
 </style>
