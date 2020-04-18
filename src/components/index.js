@@ -7,6 +7,7 @@ import FarmDrawerListItem from './FarmDrawerListItem';
 import FarmMap from './FarmMap';
 import FarmMenuBar from './FarmMenuBar';
 import FarmSelectBox from './FarmSelectBox';
+import FarmTabs from './FarmTabs';
 import FarmTiles from './FarmTiles';
 import FarmToggleCheck from './FarmToggleCheck';
 
@@ -41,6 +42,7 @@ export default [
   FarmMap,
   FarmMenuBar,
   FarmSelectBox,
+  FarmTabs,
   FarmTiles,
   FarmToggleCheck,
   IconAddCircle,
