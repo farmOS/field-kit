@@ -98,6 +98,7 @@ export default {
   color: white;
   transition: color .5s;
   text-align: center;
+  text-transform: uppercase;
   padding-top: 1rem;
 }
 
