@@ -1,13 +1,21 @@
 <template lang="html">
   <div>
-    <label v-if="label && labelPosition === 'before'">{{ label }}&nbsp;</label>
+    <label
+      v-if="label && ['above', 'before'].includes(labelPosition)"
+      :class="{ above: labelPosition === 'above' }">
+      {{ label }}&nbsp;
+    </label>
     <input
       class="toggle-check"
       :class="{ large: size === 'large' }"
       type="checkbox"
       :checked="checked"
       @input="$emit('input', $event.target.checked)"/>
-    <label v-if="label && labelPosition === 'after'">{{ label }}&nbsp;</label>
+    <label
+      v-if="label && ['after', 'below'].includes(labelPosition)"
+      :class="{ below: labelPosition === 'below' }">
+      {{ label }}&nbsp;
+    </label>
   </div>
 </template>
 
@@ -20,7 +28,7 @@ export default {
       required: false,
     },
     labelPosition: {
-      validator: val => !val || ['after', 'before'].includes(val),
+      validator: val => !val || ['above', 'after', 'before', 'below'].includes(val),
     },
     checked: {
       type: Boolean,
@@ -34,6 +42,11 @@ export default {
 </script>
 
 <style lang="css" scoped>
+  label.above, label.below {
+    display: block;
+    margin-bottom: .25rem;
+  }
+
   input.toggle-check {
     position: relative;
     -webkit-appearance: none;
