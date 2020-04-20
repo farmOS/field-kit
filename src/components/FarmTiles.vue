@@ -1,5 +1,4 @@
 <script>
-/* eslint-disable no-underscore-dangle */
 import { responsiveProps, mapResponsiveProps } from './responsiveProps';
 
 export default {
