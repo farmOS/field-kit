@@ -6,6 +6,7 @@ import FarmDrawerList from './FarmDrawerList';
 import FarmDrawerListItem from './FarmDrawerListItem';
 import FarmMap from './FarmMap';
 import FarmMenuBar from './FarmMenuBar';
+import FarmRow from './FarmRow';
 import FarmSelectBox from './FarmSelectBox';
 import FarmTabs from './FarmTabs';
 import FarmTiles from './FarmTiles';
@@ -41,6 +42,7 @@ export default [
   FarmDrawerListItem,
   FarmMap,
   FarmMenuBar,
+  FarmRow,
   FarmSelectBox,
   FarmTabs,
   FarmTiles,
