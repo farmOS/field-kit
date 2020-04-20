@@ -4,6 +4,7 @@ import FarmCard from './FarmCard';
 import FarmDateTimeForm from './FarmDateTimeForm';
 import FarmDrawerList from './FarmDrawerList';
 import FarmDrawerListItem from './FarmDrawerListItem';
+import FarmLogMainInfo from './FarmLogMainInfo';
 import FarmMap from './FarmMap';
 import FarmMenuBar from './FarmMenuBar';
 import FarmRow from './FarmRow';
@@ -40,6 +41,7 @@ export default [
   FarmDateTimeForm,
   FarmDrawerList,
   FarmDrawerListItem,
+  FarmLogMainInfo,
   FarmMap,
   FarmMenuBar,
   FarmRow,
