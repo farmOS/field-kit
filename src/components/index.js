@@ -4,11 +4,12 @@ import FarmCard from './FarmCard';
 import FarmDateTimeForm from './FarmDateTimeForm';
 import FarmDrawerList from './FarmDrawerList';
 import FarmDrawerListItem from './FarmDrawerListItem';
+import FarmInline from './FarmInline';
 import FarmLogMainInfo from './FarmLogMainInfo';
 import FarmMap from './FarmMap';
 import FarmMenuBar from './FarmMenuBar';
-import FarmRow from './FarmRow';
 import FarmSelectBox from './FarmSelectBox';
+import FarmStack from './FarmStack';
 import FarmTabs from './FarmTabs';
 import FarmTiles from './FarmTiles';
 import FarmToggleCheck from './FarmToggleCheck';
@@ -41,11 +42,12 @@ export default [
   FarmDateTimeForm,
   FarmDrawerList,
   FarmDrawerListItem,
+  FarmInline,
   FarmLogMainInfo,
   FarmMap,
   FarmMenuBar,
-  FarmRow,
   FarmSelectBox,
+  FarmStack,
   FarmTabs,
   FarmTiles,
   FarmToggleCheck,

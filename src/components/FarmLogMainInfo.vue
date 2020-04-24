@@ -3,26 +3,28 @@
     class="main-info"
     :breakpoints="breakpoints"
     :boxShadow="_boxShadow">
-    <farm-row space="1rem">
-      <div class="name-container">
-        <h3>{{name}}</h3>
-      </div>
-      <div class="done-container">
-        <farm-toggle-check
-          :label="done? 'Done' : 'Not Done'"
-          labelPosition="above"
-          size="large"
-          :checked="done"/>
-      </div>
-    </farm-row>
-    <farm-row space="1rem">
-      <div class="timestamp-container">
-        <p>{{timestamp}}</p>
-      </div>
-      <div class="type-container">
-        <p>{{type}}</p>
-      </div>
-    </farm-row>
+    <farm-stack space="1rem">
+      <farm-inline space="1rem">
+        <div class="name-container" :style="{ flex: '0 0 80%'}">
+          <h3>{{name}}</h3>
+        </div>
+        <div class="done-container" :style="{ flex: '0 0 20%'}">
+          <farm-toggle-check
+            :label="done? 'Done' : 'Not Done'"
+            labelPosition="above"
+            size="large"
+            :checked="done"/>
+        </div>
+      </farm-inline>
+      <farm-inline space="1rem" justifyContent="space-between">
+        <div class="timestamp-container" :style="{ flex: '1 1 auto' }">
+          <p>{{timestamp}}</p>
+        </div>
+        <div class="type-container" :style="{ flex: '1 1 auto' }">
+          <p>{{type}}</p>
+        </div>
+      </farm-inline>
+    </farm-stack>
   </farm-card>
 </template>
 
@@ -79,24 +81,17 @@ h3, p {
   margin-bottom: 0;
 }
 
-.name-container {
-  flex: 0 0 80%;
-}
 .name-container h3 {
   font-size: 1.5rem;
 }
 .done-container {
   display: flex;
   justify-content: flex-end;
-  flex: 0 0 20%;
   text-align: center;
   font-size: .75rem;
 }
 .done-container div {
   flex: 0 0 auto;
-}
-.timestamp-container, .type-container {
-  flex: 1 1 auto;
 }
 .timestamp-container p, .type-container p {
   font-size: 1rem;
