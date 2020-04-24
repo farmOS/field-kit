@@ -11,10 +11,10 @@
         @click="tabSelected = i">
         <h5>{{tab}}</h5>
       </div>
+      <div
+        class="tab-indicator"
+        :style="indicatorStyle"/>
     </div>
-    <div
-      class="tab-indicator"
-      :style="indicatorStyle"/>
 
     <div
       class="tab-content-container"
@@ -22,7 +22,7 @@
       <div
         v-for="(tab, i) in tabs"
         :key="`tab-content-${i}`"
-        class="tab-content first?"
+        class="tab-content"
         :style="contentStyle"
         :class="{ selected: tabSelected === i }">
         <slot :name="tab.toLowerCase()"></slot>
@@ -108,7 +108,7 @@ export default {
 }
 
 .tab-indicator {
-  position: relative;
+  position: absolute;
   top: calc(3rem - 2px);
   transition: left .5s;
   z-index: 1001;
