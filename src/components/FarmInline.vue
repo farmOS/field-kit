@@ -42,7 +42,7 @@ export default {
         .filter(node => node.tag !== undefined)
         .map(node => h(
           'div',
-          { style: { ...this.itemStyle, ...node.data?.style } },
+          { style: { ...this.itemStyle, flex: node.data?.attrs?.flex } },
           [node],
         )),
     );

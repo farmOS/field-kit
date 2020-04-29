@@ -5,10 +5,10 @@
     :boxShadow="_boxShadow">
     <farm-stack space="1rem">
       <farm-inline space="1rem">
-        <div class="name-container" :style="{ flex: '0 0 80%'}">
+        <div class="name-container" flex="0 0 calc(100% - 5rem)">
           <h3>{{name}}</h3>
         </div>
-        <div class="done-container" :style="{ flex: '0 0 20%'}">
+        <div class="done-container" flex="0 0 5rem">
           <farm-toggle-check
             :label="done? 'Done' : 'Not Done'"
             labelPosition="above"
@@ -17,10 +17,10 @@
         </div>
       </farm-inline>
       <farm-inline space="1rem" justifyContent="space-between">
-        <div class="timestamp-container" :style="{ flex: '1 1 auto' }">
+        <div class="timestamp-container" flex="1 1 auto">
           <p>{{timestamp}}</p>
         </div>
-        <div class="type-container" :style="{ flex: '1 1 auto' }">
+        <div class="type-container" flex="1 1 auto">
           <p>{{type}}</p>
         </div>
       </farm-inline>
@@ -97,7 +97,6 @@ h3, p {
   font-size: 1rem;
 }
 .type-container {
-  flex: 0 0 20%;
   text-align: right;
   text-transform: uppercase;
 }
