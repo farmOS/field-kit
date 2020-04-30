@@ -68,7 +68,7 @@ const addLeadZero = d => ((d < 10) ? `0${d}` : d);
 export default {
   name: 'FarmDateTimeForm',
   props: ['timestamp'],
-  data: () => {
+  data() {
     return {
       time: {
         date: '',
@@ -80,7 +80,7 @@ export default {
   },
   created() {
     this.time.date = this.unixToDateString(this.timestamp);
-    const date = new Date(this.timestamp * 1000)
+    const date = new Date(this.timestamp * 1000);
     const hours = date.getHours();
     this.time.hour = (hours === 12 || hours === 24)
       ? 12
@@ -91,7 +91,6 @@ export default {
   methods: {
     unixToDateString(unixTimestamp) {
       const date = new Date(unixTimestamp * 1000);
-      const dateFix = d => ((d < 10) ? `0${d}` : d);
       const mm = addLeadZero(date.getMonth() + 1);
       const dd = addLeadZero(date.getDate());
       return `${date.getFullYear()}-${mm}-${dd}`;
@@ -127,7 +126,7 @@ export default {
           dateString,
           this.time.hour,
           this.time.minute,
-          this.time.am
+          this.time.am,
         );
         this.$emit('input', timestamp);
       }
@@ -137,7 +136,7 @@ export default {
         this.time.date,
         hour,
         this.time.minute,
-        this.time.am
+        this.time.am,
       );
       this.$emit('input', timestamp);
     },
@@ -146,7 +145,7 @@ export default {
         this.time.date,
         this.time.hour,
         minute,
-        this.time.am
+        this.time.am,
       );
       this.$emit('input', timestamp);
     },
@@ -155,7 +154,7 @@ export default {
         this.time.date,
         this.time.hour,
         this.time.minute,
-        am
+        am,
       );
       this.$emit('input', timestamp);
     },
@@ -163,7 +162,7 @@ export default {
   watch: {
     timestamp(newTimestamp) {
       this.time.date = this.unixToDateString(newTimestamp);
-      const date = new Date(newTimestamp * 1000)
+      const date = new Date(newTimestamp * 1000);
       const hours = date.getHours();
       this.time.hour = (hours === 12 || hours === 24)
         ? 12

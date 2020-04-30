@@ -25,7 +25,7 @@ export default {
     more: {
       type: Boolean,
       default: true,
-    }
+    },
   },
   data() {
     return {

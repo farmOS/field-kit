@@ -7,7 +7,7 @@
       :checked="selected">
     <label
       :for="id"
-      @click="$emit('input', checkChecked(id))"
+      @click="$emit('input', checkChecked())"
       :class="[{selected: selected}, {small: small}]">
       {{label}}
     </label>
@@ -24,11 +24,11 @@ export default {
     small: Boolean,
   },
   methods: {
-    checkChecked(id) {
+    checkChecked() {
       return !document.getElementById(this.id).checked;
     },
   },
-}
+};
 </script>
 
 <style lang="css" scoped>
