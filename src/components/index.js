@@ -3,9 +3,9 @@ import FarmAutocomplete from './FarmAutocomplete';
 import FarmCard from './FarmCard';
 import FarmChip from './FarmChip';
 import FarmDateTimeForm from './FarmDateTimeForm';
-import FarmDrawerList from './FarmDrawerList';
-import FarmDrawerListItem from './FarmDrawerListItem';
 import FarmInline from './FarmInline';
+import FarmList from './FarmList';
+import FarmListItem from './FarmListItem';
 import FarmLogMainInfo from './FarmLogMainInfo';
 import FarmMap from './FarmMap';
 import FarmMenuBar from './FarmMenuBar';
@@ -44,9 +44,9 @@ export default [
   FarmCard,
   FarmChip,
   FarmDateTimeForm,
-  FarmDrawerList,
-  FarmDrawerListItem,
   FarmInline,
+  FarmList,
+  FarmListItem,
   FarmLogMainInfo,
   FarmMap,
   FarmMenuBar,

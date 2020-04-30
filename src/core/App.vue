@@ -22,35 +22,35 @@
             </div>
           </div>
         </header>
-        <farm-drawer-list>
+        <farm-list>
           <router-link to="/home" @click.native="showDrawer = !showDrawer">
-            <farm-drawer-list-item>Home</farm-drawer-list-item>
+            <farm-list-item>Home</farm-list-item>
           </router-link>
-        </farm-drawer-list>
-        <farm-drawer-list>
-          <farm-drawer-list-item
+        </farm-list>
+        <farm-list>
+          <farm-list-item
             v-for="module in modules"
             :key="`${module.name}-menu-link`"
             @click="handleModuleClick(module)">
             {{module.label}}
-          </farm-drawer-list-item>
-        </farm-drawer-list>
-        <farm-drawer-list>
-          <farm-drawer-list-item :clickable="false">
+          </farm-list-item>
+        </farm-list>
+        <farm-list>
+          <farm-list-item :clickable="false">
             <farm-toggle-check
               label="Share My Location"
               labelPosition="before"
               :checked="useGeolocation"
               @input="setUseGeolocation($event)"/>
-          </farm-drawer-list-item>
-          <farm-drawer-list-item :clickable="false">Version: {{version}}</farm-drawer-list-item>
+          </farm-list-item>
+          <farm-list-item :clickable="false">Version: {{version}}</farm-list-item>
           <router-link to="/login" v-if="!isLoggedIn" @click.native="showDrawer = !showDrawer">
-            <farm-drawer-list-item >Login</farm-drawer-list-item>
+            <farm-list-item >Login</farm-list-item>
           </router-link>
           <router-link to="/logout" v-if="isLoggedIn" @click.native="showDrawer = !showDrawer">
-            <farm-drawer-list-item>Logout</farm-drawer-list-item>
+            <farm-list-item>Logout</farm-list-item>
           </router-link>
-        </farm-drawer-list>
+        </farm-list>
 
       </div>
     </transition>

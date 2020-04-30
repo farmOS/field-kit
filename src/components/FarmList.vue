@@ -1,12 +1,12 @@
 <template functional>
-  <ul class="row list-group drawer">
+  <ul class="farm-list row list-group">
     <slot></slot>
   </ul>
 </template>
 
 <script>
 export default {
-  name: 'FarmDrawerList',
+  name: 'FarmList',
 };
 </script>
 
