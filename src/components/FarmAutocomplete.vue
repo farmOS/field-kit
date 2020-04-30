@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="form-item form-item-name form-group">
+  <div class="farm-autocomplete form-item form-item-name form-group">
     <label for="search" class="control-label">{{ label }}</label>
     <input
       :value="search"

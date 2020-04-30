@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="form-check">
+  <div class="farm-select-box form-check">
     <input
       type="checkbox"
       :id="id"

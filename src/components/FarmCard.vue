@@ -1,5 +1,5 @@
 <template>
-  <div :style="style">
+  <div class="farm-card" :style="style">
     <slot></slot>
   </div>
 </template>

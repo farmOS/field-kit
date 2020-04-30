@@ -1,5 +1,5 @@
 <template>
-  <header class="navbar navbar-light fixed-top">
+  <header class="farm-menu-bar navbar navbar-light fixed-top">
     <ul class="left-menu">
       <slot name="left-menu"></slot>
     </ul>

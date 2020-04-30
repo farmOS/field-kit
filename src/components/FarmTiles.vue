@@ -50,7 +50,7 @@ export default {
   render(h) {
     return h(
       'div',
-      { style: this.style0 },
+      { class: 'farm-tiles', style: this.style0 },
       [h(
         'div',
         { style: this.style1 },

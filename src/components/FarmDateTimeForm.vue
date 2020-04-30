@@ -1,5 +1,5 @@
 <template>
-  <div class="form-row">
+  <div class="farm-date-time-form form-row">
     <div id="date-form" class="form-item form-group col">
       <label for="date" class="control-label">Date</label>
       <input

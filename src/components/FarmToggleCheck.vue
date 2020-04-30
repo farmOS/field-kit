@@ -1,5 +1,5 @@
 <template lang="html">
-  <div>
+  <div class="farm-toggle-check">
     <label
       v-if="label && ['above', 'before'].includes(labelPosition)"
       :class="{ above: labelPosition === 'above' }">

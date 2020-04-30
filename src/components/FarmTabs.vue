@@ -1,5 +1,5 @@
 <template>
-  <div class="tab-container">
+  <div class="farm-tabs">
 
     <div class="tab-bar">
       <div
@@ -73,7 +73,7 @@ export default {
 </script>
 
 <style scoped>
-.tab-container {
+.farm-tabs {
   position: relative;
   height: 100%;
   width: 100%;

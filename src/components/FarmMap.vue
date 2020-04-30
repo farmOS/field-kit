@@ -1,5 +1,6 @@
 <template>
   <div
+    class="farm-map"
     :id="id"
     :style="[defaultStyles, overrideStyles]">
   </div>
