@@ -1,6 +1,7 @@
 // Shared Component Library
 import FarmAutocomplete from './FarmAutocomplete';
 import FarmCard from './FarmCard';
+import FarmChip from './FarmChip';
 import FarmDateTimeForm from './FarmDateTimeForm';
 import FarmDrawerList from './FarmDrawerList';
 import FarmDrawerListItem from './FarmDrawerListItem';
@@ -15,11 +16,13 @@ import FarmTiles from './FarmTiles';
 import FarmToggleCheck from './FarmToggleCheck';
 
 // Icon Library
+import IconAddCircleOutline from './icons/icon-add-circle-outline';
 import IconAddCircle from './icons/icon-add-circle';
 import IconArrowBack from './icons/icon-arrow-back';
 import IconAssignmentDone from './icons/icon-assignment-done';
 import IconAssignmentLate from './icons/icon-assignment-late';
 import IconAssignment from './icons/icon-assignment';
+import IconCancel from './icons/icon-cancel';
 import IconCloudDone from './icons/icon-cloud-done';
 import IconCloudUpload from './icons/icon-cloud-upload';
 import IconDelete from './icons/icon-delete';
@@ -39,6 +42,7 @@ import SvgFilterDropshadow from './icons/svg-filter-dropshadow';
 export default [
   FarmAutocomplete,
   FarmCard,
+  FarmChip,
   FarmDateTimeForm,
   FarmDrawerList,
   FarmDrawerListItem,
@@ -51,11 +55,13 @@ export default [
   FarmTabs,
   FarmTiles,
   FarmToggleCheck,
+  IconAddCircleOutline,
   IconAddCircle,
   IconArrowBack,
   IconAssignmentDone,
   IconAssignmentLate,
   IconAssignment,
+  IconCancel,
   IconCloudDone,
   IconCloudUpload,
   IconDelete,
