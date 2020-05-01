@@ -8,7 +8,7 @@
         class="tab"
         :class="{ selected: tabSelected === i }"
         :style="tabStyle"
-        @click="tabSelected = i">
+        @click="switchTab(i)">
         <h5>{{tab}}</h5>
       </div>
       <div
@@ -44,6 +44,7 @@ export default {
   data() {
     return {
       tabSelected: 0,
+      tabScrollPositions: this.tabs.map(() => 0),
     };
   },
   computed: {
@@ -67,6 +68,17 @@ export default {
       return {
         flex: `0 0 ${100 / this.tabs.length}%`,
       };
+    },
+  },
+  methods: {
+    switchTab(index) {
+      const curTabPosition = this.$el.scrollTop;
+      const nextTabPosition = this.tabScrollPositions[index];
+      this.tabScrollPositions[this.tabSelected] = curTabPosition;
+      this.tabSelected = index;
+      setTimeout(() => {
+        this.$el.scrollTo({ top: nextTabPosition, behavior: 'smooth' });
+      }, 500);
     },
   },
 };
