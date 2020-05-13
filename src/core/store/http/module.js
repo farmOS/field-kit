@@ -8,48 +8,58 @@ import {
 
 export default {
   getters: {
-    logFilters: (state, getters, rootState) => rootState.shell.modules
-      .filter(mod => mod.name === rootState.shell.currentModule)
-      .reduce((_, cur) => {
-        // A nullish value represents the case where no request should be made.
-        if (!cur.filters || !cur.filters.log) { return null; }
+    logFilters: (state, getters, rootState) => {
+      const filters = rootState.shell.modules
+        .filter(mod => mod.name === rootState.shell.currentModule)[0]?.filters.log;
 
-        // If any of these var's gets set to undefined, its corresponding query
-        // parameter will be ommitted in the ultimate GET request to the server.
-        let logOwner; let type; let done;
+      if (!filters) { return null; }
 
-        // Return undefined for all values if the 'ALL' keyword is provided.
-        if (cur.filters.log === 'ALL') {
-          return { log_owner: logOwner, type, done };
-        }
+      const { type, done } = filters;
+      let logOwner; let area; let asset; let logCategory;
 
-        // LOG_OWNER
-        if (cur.filters.log.log_owner === 'SELF' && rootState.shell.user.uid) {
-          logOwner = rootState.shell.user.uid;
-        } else if (typeof cur.filters.log.log_owner === 'number') {
-          logOwner = cur.filters.log.log_owner;
-        } else {
-          logOwner = undefined;
-        }
+      // LOG_OWNER
+      if (filters.log_owner === 'SELF' && rootState.shell.user.uid) {
+        logOwner = rootState.shell.user.uid;
+      } else {
+        logOwner = filters.log_owner;
+      }
 
-        // TYPE
-        if (cur.filters && cur.filters.log && Array.isArray(cur.filters.log.type)) {
-          type = cur.filters.log.type; // eslint-disable-line prefer-destructuring
-        } else {
-          type = undefined;
-        }
+      // AREA
+      if (typeof filters.area === 'function') {
+        area = rootState.farm.areas
+          .filter(filters.area)
+          .map(({ tid }) => ({ tid }));
+      } else {
+        area = filters.area;
+      }
 
-        // DONE
-        if (cur.filters.log.done === 0 || cur.filters.log.done === false) {
-          done = 0;
-        } else if (cur.filters.log.done === 1 || cur.filters.log.done === true) {
-          done = 1;
-        } else {
-          done = undefined;
-        }
+      // ASSET
+      if (typeof filters.asset === 'function') {
+        asset = rootState.farm.asset
+          .filter(filters.asset)
+          .map(({ id }) => ({ id }));
+      } else {
+        asset = filters.asset;
+      }
 
-        return { log_owner: logOwner, done, type };
-      }, {}),
+      // LOG_CATEGORY
+      if (typeof filters.log_category === 'function') {
+        logCategory = rootState.farm.categories
+          .filter(filters.log_category)
+          .map(({ tid }) => ({ tid }));
+      } else {
+        logCategory = filters.log_category;
+      }
+
+      return {
+        type,
+        done,
+        log_owner: logOwner,
+        area,
+        asset,
+        log_category: logCategory,
+      };
+    },
   },
   actions: {
     updateAreas({ commit }) {

@@ -33,27 +33,43 @@ export default {
         .catch(console.error); // eslint-disable-line no-console
     },
 
-    loadCachedLogs({ commit, getters, rootState }) {
-      const filters = getters.logFilters;
+    loadCachedLogs({ commit, rootState }) {
       const { updateLog } = farmLog(rootState.shell.logTypes);
+      const filters = rootState.shell.modules
+        .filter(mod => mod.name === rootState.shell.currentModule)[0]?.filters.log;
       const query = (log) => {
-        let passesAllFilters;
-        if (filters === null) {
-          passesAllFilters = false;
-        } else {
-          const { type, done } = filters;
-          const passesOwnerFilter = filters.log_owner === undefined
-            || log.log_owner.data === null
-            || log.log_owner.data.length === 0
-            || log.log_owner.data.some(owner => +owner.id === +filters.log_owner);
-          const passesTypeFilter = type === undefined || type.includes(log.type.data);
-          const passesDoneFilter = done === undefined || log.done.data === !!done;
-          passesAllFilters = passesOwnerFilter && passesTypeFilter && passesDoneFilter;
+        // Return early and add this log if it belongs to the module.
+        const isMatchingModule = log.modules?.includes(rootState.shell.currentModule);
+        if (isMatchingModule) {
+          return true;
         }
-        const isMatchingModule = !log.modules
-          ? false
-          : log.modules.includes(rootState.shell.currentModule);
-        return isMatchingModule || passesAllFilters;
+        // Don't add the log if no filters are provided.
+        if (!filters) {
+          return false;
+        }
+        // Otherwise check that the log satisfies each field's filter, if provided.
+        const {
+          type, done, log_owner, area, asset, log_category, // eslint-disable-line camelcase
+        } = filters;
+        // The next two functions keep things a little more DRY, but also ensure
+        // lazy evaluation so filters will not be applied needlessly.
+        const applyFilter = (filter, ...conditions) => (filter === undefined)
+          || conditions.every(condition => condition);
+        const applyEntityFilter = (filter, refs, entities, identifier) => (Array.isArray(filter)
+          ? filter.includes(refs.map(r => r.id))
+          : entities
+            .filter(e => refs.some(r => r.id === e[identifier]))
+            .some(filter));
+        return applyFilter(type, type.includes(log.type.data))
+          && applyFilter(done, log.done.data === !!done)
+          && applyFilter(log_owner,
+            log.log_owner.data.some(owner => +owner.id === +filters.log_owner))
+          && applyFilter(area,
+            applyEntityFilter(area, log.area.data, rootState.farm.areas, 'tid'))
+          && applyFilter(asset,
+            applyEntityFilter(asset, log.asset.data, rootState.farm.assets, 'id'))
+          && applyFilter(log_category,
+            applyEntityFilter(log_category, log.log_category.data, rootState.farm.categories, 'tid'));
       };
       openDatabase()
         .then(db => getRecords(db, logStore.name, query))
