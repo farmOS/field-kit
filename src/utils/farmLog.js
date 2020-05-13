@@ -1,3 +1,18 @@
+const makeDefault = (schema) => {
+  if (schema === null) {
+    return null;
+  }
+  if (Array.isArray(schema)) {
+    return [];
+  }
+  if (typeof schema === 'object') {
+    const entries = Object.entries(schema)
+      .map(([key, val]) => ([key, makeDefault(val)]));
+    return Object.fromEntries(entries);
+  }
+  return schema;
+};
+
 const farmLog = (logTypes, syncDate) => ({
   createLog(props = {}) {
     const changed = Math.floor(Date.now() / 1000);
@@ -13,8 +28,8 @@ const farmLog = (logTypes, syncDate) => ({
       modules = [],
     } = props;
     const schema = logTypes[type.data].fields;
-    const entries = Object.entries(schema).map(([key, { default_value: def }]) => {
-      const data = props[key] || def;
+    const entries = Object.entries(schema).map(([key, { data_schema: dataSchema }]) => {
+      const data = props[key] || makeDefault(dataSchema);
       return [key, { changed, data, conflicts: [] }];
     });
     return {
@@ -32,7 +47,7 @@ const farmLog = (logTypes, syncDate) => ({
   },
   updateLog(log, props = {}) {
     const changed = Math.floor(Date.now() / 1000);
-    const updateProp = (key, def) => {
+    const updateProp = (key, def, schema) => {
       let prop;
       if (props[key] !== undefined) {
         prop = {
@@ -47,7 +62,7 @@ const farmLog = (logTypes, syncDate) => ({
           conflicts: log[key].conflicts || [],
         };
       } else {
-        prop = { changed, data: def, conflicts: [] };
+        prop = { changed, data: def || makeDefault(schema), conflicts: [] };
       }
       return prop;
     };
@@ -59,8 +74,8 @@ const farmLog = (logTypes, syncDate) => ({
     // If the schema is missing for this log type, b/c it hasn't come from the
     // server yet or was modified, just work with the log's existing key-value pairs.
     const entries = schema ? Object.entries(schema) : Object.entries(log);
-    const updatedEntries = entries.map(([key, { default_value: def = null }]) => {
-      const value = updateProp(key, def);
+    const updatedEntries = entries.map(([key, { data_schema: dataSchema = null }]) => {
+      const value = updateProp(key, undefined, dataSchema);
       return [key, value];
     });
     const updateMetaData = (key, def) => {
@@ -91,7 +106,9 @@ const farmLog = (logTypes, syncDate) => ({
   },
   formatLogForServer(log) {
     const changed = Math.floor(Date.now() / 1000);
-    const updateProp = (key, def) => (log[key].data !== undefined ? log[key].data : def);
+    const updateProp = (key, def, schema) => (
+      log[key].data !== undefined ? log[key].data : def || makeDefault(schema)
+    );
     const name = updateProp('name', '');
     const type = updateProp('type', 'farm_activity');
     const timestamp = updateProp('timestamp', changed);
@@ -100,13 +117,13 @@ const farmLog = (logTypes, syncDate) => ({
     // If the schema is missing for this log type, b/c it hasn't come from the
     // server yet or was modified, just work with the log's existing key-value pairs.
     const entries = schema ? Object.entries(schema) : Object.entries(log);
-    const updatedEntries = entries.map(([key, { default_value: def = null }]) => {
+    const updatedEntries = entries.map(([key, { data_schema: dataSchema = null }]) => {
       // We've got to hardcode this logic re: notes for now b/c the server does
       // not give us a valid default value. :/
       const isInvalidNotesProp = (key === 'notes' && log.notes.data === null);
       const value = isInvalidNotesProp
         ? { value: '', format: 'farm_format' }
-        : updateProp(key, def);
+        : updateProp(key, undefined, dataSchema);
       return [key, value];
     });
     const newLog = {
@@ -133,13 +150,13 @@ const farmLog = (logTypes, syncDate) => ({
     // Supply a function for updating props based on certain conditions...
     const updateProp = (!localLog)
       // If there's no local log provided, use the server log's value for all props.
-      ? (key, def) => (
+      ? (key, def, schema) => (
         serverLog[key]
           ? { changed, data: props[key] || serverLog[key], conflicts: [] }
-          : { changed, data: def, conflicts: [] }
+          : { changed, data: def || makeDefault(schema), conflicts: [] }
       )
       // Otherwise we need to compare key-by-key...
-      : (key, def) => {
+      : (key, def, schema) => {
         let prop;
         if (props[key] !== undefined) {
           prop = {
@@ -176,7 +193,7 @@ const farmLog = (logTypes, syncDate) => ({
         } else {
           prop = {
             changed: localLog[key].changed || changed,
-            data: localLog[key].data || def,
+            data: localLog[key].data || def || makeDefault(schema),
             conflicts: localLog[key].conflicts || [],
           };
         }
@@ -190,7 +207,7 @@ const farmLog = (logTypes, syncDate) => ({
     // server yet or was modified, just work with the log's existing key-value pairs.
     const schema = logTypes[type.data]?.fields;
     const entries = schema ? Object.entries(schema) : Object.entries(serverLog);
-    const updatedEntries = entries.map(([key, { default_value: def, type: fieldType }]) => {
+    const updatedEntries = entries.map(([key, { data_schema: dataSchema, type: fieldType }]) => {
       // Due to a bug on the server, notes and other text_long fields sometimes
       // come from the server with value of [], which gets rejected if sent back
       // to the server, so we're reassigning the function parameter (oh no!)
@@ -198,7 +215,7 @@ const farmLog = (logTypes, syncDate) => ({
       if (fieldType === 'text_long' && Array.isArray(serverLog[key])) {
         serverLog[key] = null; // eslint-disable-line no-param-reassign
       }
-      const value = updateProp(key, def);
+      const value = updateProp(key, undefined, dataSchema);
       return [key, value];
     });
     const updateMetaData = (key, def) => {
