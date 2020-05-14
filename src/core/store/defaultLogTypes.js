@@ -295,7 +295,7 @@ export default {
         label: 'Date purchased',
         type: 'datestamp',
         required: 0,
-        data_schema: '',
+        data_schema: null,
       },
       inventory: {
         label: 'Inventory adjustments',
