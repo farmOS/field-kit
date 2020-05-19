@@ -6,11 +6,23 @@ import {
   SyncError, createSyncReducer,
 } from './sync';
 
+function tokenUpdater(token) {
+  localStorage.setItem('token', JSON.stringify(token));
+};
+
+let client = null;
+
 const farm = () => {
-  const host = localStorage.getItem('host');
-  const user = localStorage.getItem('username');
-  const password = localStorage.getItem('password');
-  return farmOS(host, user, password);
+  if (!client) {
+    const host = localStorage.getItem('host');
+    const token = localStorage.getItem('token');
+    client = farmOS(host, 'farm_client', tokenUpdater);
+    if (token == null) {
+      throw new Error('farm not authorized');
+    }
+    client.useToken(JSON.parse(token));
+  }
+  return client;
 };
 
 export default {
@@ -210,6 +222,7 @@ export default {
             router.push('/login');
           } else if (response.status === undefined) {
             // If there's no status code, it's probably a Network Error; print as is.
+            console.log(response);
             errMsg += response.message;
           } else if (response.index === undefined) {
             // If response.index is undefined, the error was thrown by a getServerLogs request

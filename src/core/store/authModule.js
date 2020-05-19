@@ -1,10 +1,18 @@
 import farmOS from 'farmos';
 
+function tokenUpdater(token) {
+  localStorage.setItem('token', JSON.stringify(token));
+};
+
 const lazyFarm = () => {
   const host = localStorage.getItem('host');
-  const user = localStorage.getItem('username');
-  const password = localStorage.getItem('password');
-  return farmOS(host, user, password);
+  const token = localStorage.getItem('token');
+  const farm = farmOS(host, 'farm_client', tokenUpdater);
+  if (token == null) {
+    throw new Error('farm not authorized');
+  }
+  farm.useToken(JSON.parse(token));
+  return farm;
 };
 
 export default {
@@ -18,10 +26,25 @@ export default {
       const storage = window.localStorage;
 
       function handleLoginError(error) {
-        if (error.status === 403) {
+        if (error.status === 401) {
           const resetUrl = `${url}/user/password`;
           const errorPayload = {
             message: `The username or password you entered was incorrect. Please try again, or <a href="${resetUrl}">reset your password</a>.`,
+            errorCode: error.statusText,
+            level: 'warning',
+            show: true,
+          };
+          commit('logError', errorPayload);
+        } else if (error.status === 400) {
+          let errorMessage = `The OAuth Password Authorization flow failed. Error message: ${error.data.error_description}`;
+
+          if (error.data.error === 'invalid_client') {
+            const oauthConfigUrl = `${url}/admin/config/farm/oauth`;
+            errorMessage = `The OAuth client for farmOS Field Kit is not enabled on your farmOS server. Enable it <a href=${oauthConfigUrl}>here</a>.`;
+          }
+          // Other OAuth related errors.
+          const errorPayload = {
+            message: errorMessage,
             errorCode: error.statusText,
             level: 'warning',
             show: true,
@@ -40,14 +63,12 @@ export default {
 
       // Return a promise so the component knows when the action completes.
       return new Promise((resolve) => {
-        const farm = farmOS(url, username, password);
-        farm.authenticate()
+        const farm = farmOS(url, 'farm_client');
+        farm.authorize(username, password)
           .then((tokenResponse) => {
             // Save our username, password & token to the persistant store
             storage.setItem('host', url);
-            storage.setItem('username', username);
-            storage.setItem('password', password);
-            storage.setItem('token', tokenResponse);
+            storage.setItem('token', JSON.stringify(tokenResponse));
 
             // Go back 1 page, or reroute to home page
             if (window.history.length > 1) {
@@ -61,14 +82,12 @@ export default {
           .catch(() => {
             // Check if the login attempt failed b/c it's http://, not https://
             const noSslUrl = `http://${payload.farmosUrl}`;
-            const noSslfarm = farmOS(noSslUrl, username, password);
-            noSslfarm.authenticate() // eslint-disable-line
+            const noSslfarm = farmOS(noSslUrl, 'farm_client');
+            noSslfarm.authorize(username, password) // eslint-disable-line
               .then((tokenResponse) => {
                 // Save our username, password & token to the persistant store
                 storage.setItem('host', noSslUrl);
-                storage.setItem('username', username);
-                storage.setItem('password', password);
-                storage.setItem('token', tokenResponse);
+                storage.setItem('token', JSON.stringify(tokenResponse));
 
                 // Go back 1 page, or reroute to home page
                 if (window.history.length > 1) {
@@ -79,7 +98,8 @@ export default {
                 router.push('/');
                 resolve();
               }).catch((error) => {
-                handleLoginError(error);
+                const err = error.response ? error.response : error;
+                handleLoginError(err);
                 resolve();
               });
           });
@@ -89,12 +109,13 @@ export default {
     logout() {
       lazyFarm().logout().then(() => {
         // Currently farmOS.js returns no response to logout requests
+        // This should delete the farm client. 
       });
     },
 
     updateUserAndSiteInfo({ commit }) {
-      const username = localStorage.getItem('username');
-      if (username) {
+      const token = localStorage.getItem('token');
+      if (token) {
         // Request user and site info if the user is logged in
         lazyFarm().info().then((res) => {
           const safeSet = (key, mutation, response) => {
