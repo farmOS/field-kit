@@ -107,9 +107,16 @@ export default {
     },
 
     logout() {
-      lazyFarm().logout().then(() => {
-        // Currently farmOS.js returns no response to logout requests
-        // This should delete the farm client. 
+      lazyFarm().revokeTokens().then((success) => {
+        if (!success) {
+          const errorPayload = {
+            message: `Unable to reach the server. Access tokens have been cleared locally, but were not revoked fromt the farmOS server.`,
+            errorCode: 'Revoke Error',
+            level: 'warning',
+            show: true,
+          };
+          commit('logError', errorPayload);
+        }
       });
     },
 
