@@ -1,19 +1,5 @@
+import farm, { setHost } from '@/core/store/farmClient';
 import farmOS from 'farmos';
-
-function tokenUpdater(token) {
-  localStorage.setItem('token', JSON.stringify(token));
-};
-
-const lazyFarm = () => {
-  const host = localStorage.getItem('host');
-  const token = localStorage.getItem('token');
-  const farm = farmOS(host, 'farm_client', tokenUpdater);
-  if (token == null) {
-    throw new Error('farm not authorized');
-  }
-  farm.useToken(JSON.parse(token));
-  return farm;
-};
 
 export default {
   actions: {
@@ -63,10 +49,11 @@ export default {
 
       // Return a promise so the component knows when the action completes.
       return new Promise((resolve) => {
-        const farm = farmOS(url, 'farm_client');
+        const farm = farmOS(url, {clientId: 'farm_client'});
         farm.authorize(username, password)
           .then((tokenResponse) => {
-            // Save our username, password & token to the persistant store
+            // Save our host and token to the persistant store.
+            setHost(url);
             storage.setItem('host', url);
             storage.setItem('token', JSON.stringify(tokenResponse));
 
@@ -82,10 +69,11 @@ export default {
           .catch(() => {
             // Check if the login attempt failed b/c it's http://, not https://
             const noSslUrl = `http://${payload.farmosUrl}`;
-            const noSslfarm = farmOS(noSslUrl, 'farm_client');
+            const noSslfarm = farmOS(noSslUrl, {clientId: 'farm_client'} );
             noSslfarm.authorize(username, password) // eslint-disable-line
               .then((tokenResponse) => {
-                // Save our username, password & token to the persistant store
+                // Save our host and token to the persistant store.
+                setHost(noSslUrl);
                 storage.setItem('host', noSslUrl);
                 storage.setItem('token', JSON.stringify(tokenResponse));
 
@@ -107,7 +95,7 @@ export default {
     },
 
     logout() {
-      lazyFarm().revokeTokens().then((success) => {
+      farm().revokeTokens().then((success) => {
         if (!success) {
           const errorPayload = {
             message: `Unable to reach the server. Access tokens have been cleared locally, but were not revoked fromt the farmOS server.`,
@@ -124,7 +112,7 @@ export default {
       const token = localStorage.getItem('token');
       if (token) {
         // Request user and site info if the user is logged in
-        lazyFarm().info().then((res) => {
+        farm().info().then((res) => {
           const safeSet = (key, mutation, response) => {
             let value;
             if (typeof response === 'string') {

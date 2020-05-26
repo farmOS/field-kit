@@ -1,29 +1,10 @@
-import farmOS from 'farmos';
+import farm from '@/core/store/farmClient';
 import Promise from 'core-js-pure/features/promise';
 import router from '@/core/router';
 import farmLog from '@/utils/farmLog';
 import {
   SyncError, createSyncReducer,
 } from './sync';
-
-function tokenUpdater(token) {
-  localStorage.setItem('token', JSON.stringify(token));
-};
-
-let client = null;
-
-const farm = () => {
-  if (!client) {
-    const host = localStorage.getItem('host');
-    const token = localStorage.getItem('token');
-    client = farmOS(host, 'farm_client', tokenUpdater);
-    if (token == null) {
-      throw new Error('farm not authorized');
-    }
-    client.useToken(JSON.parse(token));
-  }
-  return client;
-};
 
 export default {
   getters: {
