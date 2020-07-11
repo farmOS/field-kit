@@ -49,7 +49,7 @@ export default {
 
       // Return a promise so the component knows when the action completes.
       return new Promise((resolve) => {
-        const farm = farmOS(url, {clientId: 'farm_client'});
+        const farm = farmOS(url, { clientId: 'farm_client' });
         farm.authorize(username, password)
           .then((tokenResponse) => {
             // Save our host and token to the persistant store.
@@ -69,7 +69,7 @@ export default {
           .catch(() => {
             // Check if the login attempt failed b/c it's http://, not https://
             const noSslUrl = `http://${payload.farmosUrl}`;
-            const noSslfarm = farmOS(noSslUrl, {clientId: 'farm_client'} );
+            const noSslfarm = farmOS(noSslUrl, { clientId: 'farm_client' });
             noSslfarm.authorize(username, password) // eslint-disable-line
               .then((tokenResponse) => {
                 // Save our host and token to the persistant store.
@@ -94,11 +94,11 @@ export default {
       });
     },
 
-    logout() {
+    logout({ commit }) {
       farm().revokeTokens().then((success) => {
         if (!success) {
           const errorPayload = {
-            message: `Unable to reach the server. Access tokens have been cleared locally, but were not revoked fromt the farmOS server.`,
+            message: 'Unable to reach the server. Access tokens have been cleared locally, but were not revoked fromt the farmOS server.',
             errorCode: 'Revoke Error',
             level: 'warning',
             show: true,

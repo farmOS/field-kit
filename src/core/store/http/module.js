@@ -203,7 +203,6 @@ export default {
             router.push('/login');
           } else if (response.status === undefined) {
             // If there's no status code, it's probably a Network Error; print as is.
-            console.log(response);
             errMsg += response.message;
           } else if (response.index === undefined) {
             // If response.index is undefined, the error was thrown by a getServerLogs request
