@@ -84,6 +84,7 @@
               :units='units'
               :categories='categories'
               :equipment='equipment'
+              :areaGeoJSON='areaGeoJSON'
               @toggleDrawer="showDrawer = !showDrawer"
             />
 
@@ -180,6 +181,7 @@ export default {
         ? 'example.farmos.net'
         : state.shell.farmInfo.url?.replace(/(^\w+:|^)\/\//, '')),
       modules: state => state.shell.modules,
+      areaGeoJSON: state => state.shell.areaGeoJSON,
 
       /**
        * FARM STATE

@@ -526,7 +526,7 @@
         :wkt=mapLayers
         :geojson="{
           title: 'areas',
-          url: areaGeoJSON,
+          geojson: areaGeoJSON,
           color: 'grey',
         }"/>
     </router-link>
@@ -597,6 +597,7 @@ export default {
     'units',
     'categories',
     'equipment',
+    'areaGeoJSON',
   ],
 
   beforeMount() {
@@ -966,11 +967,6 @@ export default {
         return equipNames;
       }
       return [];
-    },
-    areaGeoJSON() {
-      return (process.env.NODE_ENV === 'development')
-        ? 'http://localhost:8080/farm/areas/geojson/all'
-        : `${localStorage.getItem('host')}/farm/areas/geojson/all`;
     },
     isNative() {
       if (process.env.PLATFORM === 'native' || process.env.PLATFORM === 'dev') {

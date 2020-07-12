@@ -108,29 +108,28 @@ export default {
 
     updateUserAndSiteInfo({ commit }) {
       const token = localStorage.getItem('token');
+      const safeSet = (key, mutation, response) => {
+        let value;
+        if (typeof response === 'string') {
+          value = response;
+        }
+        if (typeof response === 'object'
+          || typeof response === 'number'
+          || typeof response === 'boolean') {
+          value = JSON.stringify(response);
+        }
+        // Explicit reassignment here b/c `typeof null === 'object'`.
+        if (response === null) {
+          value = undefined;
+        }
+        if (value) {
+          localStorage.setItem(key, value);
+          commit(mutation, response);
+        }
+      };
       if (token) {
         // Request user and site info if the user is logged in
         farm().info().then((res) => {
-          const safeSet = (key, mutation, response) => {
-            let value;
-            if (typeof response === 'string') {
-              value = response;
-            }
-            if (typeof response === 'object'
-              || typeof response === 'number'
-              || typeof response === 'boolean') {
-              value = JSON.stringify(response);
-            }
-            // Explicit reassignment here b/c `typeof null === 'object'`.
-            if (response === null) {
-              value = undefined;
-            }
-            if (value) {
-              localStorage.setItem(key, value);
-              commit(mutation, response);
-            }
-          };
-
           safeSet('farmName', 'changeFarmName', res.name);
           safeSet('username', 'changeUsername', res.user?.name);
           safeSet('email', 'changeEmail', res.user?.mail);
@@ -146,6 +145,9 @@ export default {
           if (res.url) {
             commit('changeFarmUrl', res.url);
           }
+        });
+        farm().area.geojson().then((geojson) => {
+          safeSet('areaGeoJSON', 'setAreaGeoJSON', geojson);
         });
       }
     },
@@ -174,6 +176,7 @@ export default {
       safeLoad('changeFarmUrl', 'host');
       safeLoad('changeLogTypes', 'logTypes');
       safeLoad('setUseGeolocation', 'useGeolocation');
+      safeLoad('setAreaGeoJSON', 'areaGeoJSON');
     },
 
     deleteCachedUserAndSiteInfo({ commit }) {
@@ -185,6 +188,7 @@ export default {
       commit('changeMapboxAPIKey', '');
       commit('changeSystemOfMeasurement', 'metric');
       commit('setLoginStatus', false);
+      commit('setAreaGeoJSON', { type: 'FeatureCollection', features: [] });
       localStorage.clear();
     },
   },

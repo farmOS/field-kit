@@ -11,7 +11,7 @@
     :wkt=mapLayers
     :geojson="{
       title: 'areas',
-      url: areaGeoJSON,
+      geojson: areaGeoJSON,
       color: 'grey',
     }"/>
 </template>
@@ -23,17 +23,15 @@ import { mergeGeometries } from '@/utils/geometry';
 export default {
   name: 'EditMap',
   components: { Map },
-  props: ['logs',
+  props: [
+    'logs',
     'assets',
     'id',
-    'systemOfMeasurement'],
+    'systemOfMeasurement',
+    'areaGeoJSON',
+  ],
 
   computed: {
-    areaGeoJSON() {
-      return (process.env.NODE_ENV === 'development')
-        ? 'http://localhost:8080/farm/areas/geojson/all'
-        : `${localStorage.getItem('host')}/farm/areas/geojson/all`;
-    },
     currentLog() {
       return this.logs.find(log => log.localID === +this.id) || this.logs[0];
     },

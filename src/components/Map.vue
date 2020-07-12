@@ -53,7 +53,7 @@ export default {
     },
     geojson: {
       title: String,
-      url: String,
+      geojson: Object,
       color: String,
       visible: Boolean,
     },
@@ -63,7 +63,7 @@ export default {
   }),
   mounted() {
     this.map = window.farmOS.map.create(this.id, this.options);
-    if (this.geojson.url) {
+    if (this.geojson) {
       this.layers.geojson = this.map.addLayer('geojson', this.geojson);
     }
     let hasLayers = false;
@@ -117,7 +117,7 @@ export default {
       });
     }
     if (!hasLayers) {
-      this.layers.geojson.getSource().once('change', () => { this.map.zoomToVectors(); });
+      this.map.zoomToVectors();
     }
     if (this.mapboxAPIKey) {
       const mapboxOpts = {

@@ -26,6 +26,7 @@
       :userId='userId'
       :logDisplayFilters='logDisplayFilters'
       :systemOfMeasurement='systemOfMeasurement'
+      :areaGeoJSON='areaGeoJSON'
     />
 
     <div
@@ -106,6 +107,7 @@ export default {
     'units',
     'categories',
     'equipment',
+    'areaGeoJSON',
   ],
   created() {
     this.clearDisplayFilters();

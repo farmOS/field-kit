@@ -22,6 +22,10 @@ export default {
     settings: {
       useGeolocation: true,
     },
+    areaGeoJSON: {
+      type: 'FeatureCollection',
+      features: [],
+    },
   },
   mutations: {
     logError(state, error) {
@@ -63,6 +67,9 @@ export default {
     },
     setUseGeolocation(state, bool) {
       state.settings.useGeolocation = bool;
+    },
+    setAreaGeoJSON(state, geojson) {
+      state.areaGeoJSON = geojson;
     },
     updateModule(state, module) {
       const matchIndex = state.modules.findIndex(mod => mod.name === module.name);
