@@ -1,5 +1,4 @@
 import farm, { setHost } from '@/core/store/farmClient';
-import farmOS from 'farmos';
 
 export default {
   actions: {
@@ -10,6 +9,7 @@ export default {
         : `https://${payload.farmosUrl}`;
       const { username, password, router } = payload;
       const storage = window.localStorage;
+      setHost(url);
 
       function handleLoginError(error) {
         if (error.status === 401) {
@@ -49,8 +49,7 @@ export default {
 
       // Return a promise so the component knows when the action completes.
       return new Promise((resolve) => {
-        const farm = farmOS(url, { clientId: 'farm_client' });
-        farm.authorize(username, password)
+        farm().authorize(username, password)
           .then((tokenResponse) => {
             // Save our host and token to the persistant store.
             setHost(url);
@@ -69,11 +68,10 @@ export default {
           .catch(() => {
             // Check if the login attempt failed b/c it's http://, not https://
             const noSslUrl = `http://${payload.farmosUrl}`;
-            const noSslfarm = farmOS(noSslUrl, { clientId: 'farm_client' });
-            noSslfarm.authorize(username, password) // eslint-disable-line
+            setHost(noSslUrl);
+            farm().authorize(username, password) // eslint-disable-line
               .then((tokenResponse) => {
                 // Save our host and token to the persistant store.
-                setHost(noSslUrl);
                 storage.setItem('host', noSslUrl);
                 storage.setItem('token', JSON.stringify(tokenResponse));
 
