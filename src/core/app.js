@@ -45,6 +45,24 @@ const loadFieldModule = (module) => {
   document.body.appendChild(script);
 };
 
+const rerouteToMyLogsIfNoOtherModules = (modules) => {
+  if (!modules || modules.length < 1) {
+    router.addRoutes([
+      {
+        path: '/',
+        redirect: '/logs',
+      },
+    ]);
+  } else {
+    router.addRoutes([
+      {
+        path: '/',
+        redirect: '/home',
+      },
+    ]);
+  }
+};
+
 export default (el, buildtimeMods) => {
   // Load build-time modules
   if (buildtimeMods !== undefined && buildtimeMods.length > 0) {
@@ -61,8 +79,11 @@ export default (el, buildtimeMods) => {
   );
   farm.info()
     .then((res) => {
-      Object.values(res.client.modules).forEach(loadFieldModule);
-      localStorage.setItem('modules', JSON.stringify(res.client.modules));
+      if (res?.client?.modules) {
+        Object.values(res.client.modules).forEach(loadFieldModule);
+        localStorage.setItem('modules', JSON.stringify(res.client.modules));
+      }
+      rerouteToMyLogsIfNoOtherModules(res?.client?.modules);
     })
     // If the request fails, we can still load modules from cache.
     .catch(() => {
@@ -70,6 +91,7 @@ export default (el, buildtimeMods) => {
       if (modules) {
         Object.values(modules).forEach(loadFieldModule);
       }
+      rerouteToMyLogsIfNoOtherModules(modules);
     })
     .finally(() => new Vue({
       el,
