@@ -197,8 +197,8 @@ export default {
         let errMsg = '';
         // Build a message from sendLogs errors, which have an index
         syncError.responses.forEach((response) => {
-          if (response.status === 401
-            || response.status === 403) {
+          if (response.status >= 400
+            && response.status <= 403) {
             // 401 and 403 errors indicate bad credentials - push to login
             router.push('/login');
           } else if (response.status === undefined) {
