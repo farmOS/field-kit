@@ -18,15 +18,13 @@ module.exports = {
       ],
       target: 'http://localhost:80',
       changeOrigin: true,
-      secure: false
+      secure: false,
+      // Overwrite the cookie in the header so POST and PUT req's don't 403.
+      // See https://www.drupal.org/project/restws_oauth2_server/issues/3159405
+      onProxyReq(proxyReq, req, res) {
+        req.headers.cookie = ''
+      }
     }],
-    // Add headers to all http requests (for CORS)
-    headers: {
-      // 'Access-Control-Allow-Origin': '*',
-      // "Access-Control-Allow-Credentials": "true",
-      // "Access-Control-Allow-Headers": "Content-Type, Authorization, x-id, Content-Length, X-Requested-With",
-      // "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS"
-    },
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
