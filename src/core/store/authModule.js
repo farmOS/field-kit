@@ -65,29 +65,10 @@ export default {
             router.push('/');
             resolve();
           })
-          .catch(() => {
-            // Check if the login attempt failed b/c it's http://, not https://
-            const noSslUrl = `http://${payload.farmosUrl}`;
-            setHost(noSslUrl);
-            farm().authorize(username, password) // eslint-disable-line
-              .then((tokenResponse) => {
-                // Save our host and token to the persistant store.
-                storage.setItem('host', noSslUrl);
-                storage.setItem('token', JSON.stringify(tokenResponse));
-
-                // Go back 1 page, or reroute to home page
-                if (window.history.length > 1) {
-                  window.history.back();
-                  resolve();
-                  return;
-                }
-                router.push('/');
-                resolve();
-              }).catch((error) => {
-                const err = error.response ? error.response : error;
-                handleLoginError(err);
-                resolve();
-              });
+          .catch((error) => {
+            const err = error.response ? error.response : error;
+            handleLoginError(err);
+            resolve();
           });
       });
     },
