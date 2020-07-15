@@ -3,7 +3,7 @@ import farm, { setHost } from '@/core/store/farmClient';
 export default {
   actions: {
 
-    didSubmitCredentials({ commit }, payload) {
+    authorize({ commit }, payload) {
       const url = (process.env.NODE_ENV === 'development')
         ? ''
         : `https://${payload.farmosUrl}`;

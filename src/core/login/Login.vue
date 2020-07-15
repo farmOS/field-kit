@@ -94,9 +94,7 @@ export default {
 
       this.authPending = true;
 
-      // Call didSubmitCredentials action, which will initiate the login process
-      // and return a promise; when it resolves, reset authPending.
-      this.$store.dispatch('didSubmitCredentials', payload)
+      this.$store.dispatch('authorize', payload)
         .then(() => {
           this.authPending = false;
           this.$store.commit('setLoginStatus', true);
