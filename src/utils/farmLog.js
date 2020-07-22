@@ -145,13 +145,13 @@ const farmLog = (logTypes, syncDate) => ({
     // sends them as strings. :/
     serverLog.changed = +serverLog.changed; // eslint-disable-line no-param-reassign
     serverLog.timestamp = +serverLog.timestamp; // eslint-disable-line no-param-reassign
-    serverLog.done = +serverLog.done; // eslint-disable-line no-param-reassign
+    serverLog.done = !!+serverLog.done; // eslint-disable-line no-param-reassign
 
     // Supply a function for updating props based on certain conditions...
     const updateProp = (!localLog)
       // If there's no local log provided, use the server log's value for all props.
       ? (key, def, schema) => (
-        serverLog[key]
+        serverLog[key] !== undefined
           ? { changed, data: props[key] || serverLog[key], conflicts: [] }
           : { changed, data: def || makeDefault(schema), conflicts: [] }
       )
