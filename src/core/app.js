@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import farmConnect from 'farmos';
+import farm from './store/farmClient';
 import router from './router';
 import store from './store';
 import App from './App.vue'; // eslint-disable-line import/extensions
@@ -71,13 +71,7 @@ export default (el, buildtimeMods) => {
       .forEach(p => Vue.use(p, { store, router }));
   }
 
-  // Fetch and load field modules at runtime
-  const farm = farmConnect(
-    localStorage.getItem('host'),
-    localStorage.getItem('username'),
-    localStorage.getItem('password'),
-  );
-  farm.info()
+  farm().info()
     .then((res) => {
       if (res?.client?.modules) {
         Object.values(res.client.modules).forEach(loadFieldModule);
