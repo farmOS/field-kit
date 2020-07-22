@@ -1,5 +1,5 @@
-import farm from '@/core/store/farmClient';
 import Promise from 'core-js-pure/features/promise';
+import farm from '../farmClient';
 import router from '../../router';
 import farmLog from '../../../utils/farmLog';
 import {

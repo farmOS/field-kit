@@ -16,8 +16,7 @@
       </div>
       <div
         class="card"
-        v-if="logs.length > 0 && passesFilters(log)"
-        v-for="(log, i) in logs"
+        v-for="(log, i) in logs.filter(passesFilters)"
         :key="`card-${i}`"
       >
         <router-link :to="{ path: `/logs/${log.localID}` }">

@@ -167,7 +167,7 @@
           No Category
         </label>
       </div>
-      <div class="form-check" v-for="category in categories">
+      <div class="form-check" v-for="category in categories" :key="`category-${category.tid}`">
         <input
           type="checkbox"
           :id="`category-${category.tid}`"
@@ -189,24 +189,22 @@
 <script>
 export default {
   name: 'FilterLogs',
-  props: [ 'categories', 'logDisplayFilters' ],
+  props: ['categories', 'logDisplayFilters'],
   methods: {
     // NOTE: We're tracking which types/categiries to EXCLUDE from My Logs
     updateExcludedLogType(type, checked) {
       if (!checked) {
         this.$emit('addToExcludedTypes', type);
-        return;
+      } else {
+        this.$emit('removeFromExcludedTypes', type);
       }
-      this.$emit('removeFromExcludedTypes', type);
-      return;
     },
     updateExcludedLogCategory(cat, checked) {
       if (!checked) {
         this.$emit('addToExcludedCategories', cat);
-        return;
+      } else {
+        this.$emit('removeFromExcludedCategories', cat);
       }
-      this.$emit('removeFromExcludedCategories', cat);
-      return;
     },
     setDateFilter(value) {
       this.$emit('setDateFilter', value);

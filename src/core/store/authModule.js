@@ -1,4 +1,4 @@
-import farm, { setHost } from '@/core/store/farmClient';
+import farm, { setHost } from './farmClient';
 
 export default {
   actions: {

@@ -86,14 +86,14 @@ export default {
     },
     onArrowDown() {
       if (this.counter < (this.searchResults.length - 1)) {
-        this.counter = this.counter + 1;
+        this.counter += 1;
       }
     },
     onArrowUp(evt) {
       // Use preventDefault so cursor doesn't return to the beginning
       evt.preventDefault();
       if (this.counter > 0) {
-        this.counter = this.counter - 1;
+        this.counter -= 1;
       }
     },
     onEnter() {

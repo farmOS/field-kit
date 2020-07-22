@@ -21,7 +21,6 @@ const { mergeGeometries } = window.farmOS.utils;
 
 export default {
   name: 'EditMap',
-  components: { Map },
   props: [
     'logs',
     'assets',

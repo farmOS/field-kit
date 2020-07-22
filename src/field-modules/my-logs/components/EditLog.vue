@@ -732,7 +732,7 @@ export default {
 
     removeQuant(index) {
       if (this.currentQuant >= index) {
-        this.currentQuant = this.currentQuant - 1;
+        this.currentQuant -= 1;
       }
       const newQuant = [
         ...this.currentLog.quantity.slice(0, index),
