@@ -109,7 +109,8 @@
       "cordova-plugin-network-information": {},
       "cordova-plugin-camera": {
         "CAMERA_USAGE_DESCRIPTION": "farmOS would like access to the camera",
-        "PHOTOLIBRARY_USAGE_DESCRIPTION": "farmOS would like access to the camera"
+        "PHOTOLIBRARY_USAGE_DESCRIPTION": "farmOS would like access to the camera",
+        "ANDROID_SUPPORT_V4_VERSION": "27.+"
       },
       "cordova-plugin-ios-camera-permissions": {
         "CAMERA_USAGE_DESCRIPTION": "This app needs camera access",
