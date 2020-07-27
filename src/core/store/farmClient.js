@@ -7,7 +7,6 @@ try {
     throw new Error('Invalid token in localStorage.');
   }
 } catch (e) {
-  console.error(e);
   localStorage.removeItem('token');
 }
 
