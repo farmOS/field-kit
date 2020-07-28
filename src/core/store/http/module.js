@@ -194,32 +194,37 @@ export default {
         // First set all logs to not ready to sync so their spinners stops spinning
         commit('updateAllLogs', log => ({ ...log, isReadyToSync: false }));
         // Create a message string that we will build out as we go.
-        let errMsg = '';
+        let loginRequired = false;
         // Build a message from sendLogs errors, which have an index
-        syncError.responses.forEach((response) => {
-          if (response.status >= 400
-            && response.status <= 403) {
-            // 401 and 403 errors indicate bad credentials - push to login
-            router.push('/login');
-          } else if (response.status === undefined) {
-            // If there's no status code, it's probably a Network Error; print as is.
-            errMsg += response.message;
-          } else if (response.index === undefined) {
-            // If response.index is undefined, the error was thrown by a getServerLogs request
-            errMsg += `${response.status} error: ${response.message}`;
-          } else if (response.status !== 404) {
-            /*
-              Otherwise, either the error was thrown by a sendLogs request, or it is a 404.
-              If the error was thrown by sendLogs, display the log name and error message.
-              If the error is a 404, this means the log was deleted on the server.
-              We are keeping 404 errors silent for now.
-            */
-            const logName = rootState.farm.logs[response.index].name.data;
-            errMsg += `Error while syncing "${logName}": ${response.message} <br>`;
+        const errMsg = syncError.responses.reduce((msg, res) => {
+          // 400, 401 and 403 errors indicate bad credentials - login is required
+          if (res.status >= 400
+            && res.status <= 403) {
+            loginRequired = true;
+            return `${msg}${res.status} error: ${res.message}<br>`;
           }
-        });
+          // If there's no status code, it's probably a Network Error; print as is.
+          if (res.status === undefined) {
+            return `${msg}${res.message}<br>`;
+          }
+          // If res.index is undefined, the error was thrown by a getServerLogs request
+          if (res.index === undefined) {
+            return `${msg}${res.status} error: ${res.message}<br>`;
+          }
+          /*
+            Otherwise, either the error was thrown by a sendLogs request, or it is a 404.
+            If the error was thrown by sendLogs, display the log name and error message.
+            If the error is a 404, this means the log was deleted on the server.
+            We are keeping 404 errors silent for now.
+          */
+          if (res.status !== 404) {
+            const logName = rootState.farm.logs[res.index].name.data;
+            return `${msg}Error while syncing "${logName}": ${res.message}<br>`;
+          }
+          return msg;
+        }, '');
+        // Display an error if there is message text
         if (errMsg !== '') {
-          // Display an error if there is message text
           const errorPayload = {
             message: errMsg,
             errorCode: '',
@@ -227,6 +232,9 @@ export default {
             show: true,
           };
           commit('logError', errorPayload);
+        }
+        if (loginRequired) {
+          router.push('/login');
         }
       }
 
