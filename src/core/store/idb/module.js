@@ -36,7 +36,7 @@ export default {
     loadCachedLogs({ commit, rootState }) {
       const { updateLog } = farmLog(rootState.shell.logTypes);
       const filters = rootState.shell.modules
-        .filter(mod => mod.name === rootState.shell.currentModule)[0]?.filters.log;
+        .filter(mod => mod.name === rootState.shell.currentModule)[0]?.filters?.log;
       const query = (log) => {
         // Return early and add this log if it belongs to the module.
         const isMatchingModule = log.modules?.includes(rootState.shell.currentModule);
@@ -60,7 +60,7 @@ export default {
           : entities
             .filter(e => refs.some(r => r.id === e[identifier]))
             .some(filter));
-        return applyFilter(type, type.includes(log.type.data))
+        return applyFilter(type, type?.includes(log.type.data))
           && applyFilter(done, log.done.data === !!done)
           && applyFilter(log_owner,
             log.log_owner.data.some(owner => +owner.id === +filters.log_owner))
