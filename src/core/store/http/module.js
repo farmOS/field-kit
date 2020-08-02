@@ -213,15 +213,15 @@ export default {
           }
           /*
             Otherwise, either the error was thrown by a sendLogs request, or it is a 404.
-            If the error was thrown by sendLogs, display the log name and error message.
-            If the error is a 404, this means the log was deleted on the server.
-            We are keeping 404 errors silent for now.
+            If the error is a 404, this means the log was deleted on the server. We are
+            keeping 404 errors silent for now. If the error was thrown by sendLogs,
+            display the log name and error message.
           */
-          if (res.status !== 404) {
-            const logName = rootState.farm.logs[res.index].name.data;
-            return `${msg}Error while syncing "${logName}": ${res.message}<br>`;
+          if (res.status === 404) {
+            return msg;
           }
-          return msg;
+          const logName = rootState.farm.logs[res.index].name.data;
+          return `${msg}Error while syncing "${logName}": ${res.message}<br>`;
         }, '');
         // Display an error if there is message text
         if (errMsg !== '') {
