@@ -87,46 +87,50 @@ export default {
       });
     },
 
-    updateUserAndSiteInfo({ commit }) {
+    updateUserAndSiteInfo({ commit }, response) {
       const token = localStorage.getItem('token');
-      const safeSet = (key, mutation, response) => {
+      const safeSet = (key, mutation, res) => {
         let value;
-        if (typeof response === 'string') {
-          value = response;
+        if (typeof res === 'string') {
+          value = res;
         }
-        if (typeof response === 'object'
-          || typeof response === 'number'
-          || typeof response === 'boolean') {
-          value = JSON.stringify(response);
+        if (typeof res === 'object'
+          || typeof res === 'number'
+          || typeof res === 'boolean') {
+          value = JSON.stringify(res);
         }
         // Explicit reassignment here b/c `typeof null === 'object'`.
-        if (response === null) {
+        if (res === null) {
           value = undefined;
         }
         if (value) {
           localStorage.setItem(key, value);
-          commit(mutation, response);
+          commit(mutation, res);
+        }
+      };
+      const setResponseProps = (res) => {
+        safeSet('farmName', 'changeFarmName', res.name);
+        safeSet('username', 'changeUsername', res.user?.name);
+        safeSet('email', 'changeEmail', res.user?.mail);
+        safeSet('uid', 'changeUid', res.user?.uid);
+        safeSet('mapboxAPIKey', 'changeMapboxAPIKey', res.mapbox_api_key);
+        safeSet('systemOfMeasurement', 'changeSystemOfMeasurement', res.system_of_measurement);
+        safeSet('logTypes', 'changeLogTypes', res.resources?.log);
+        safeSet('isLoggedIn', 'setLoginStatus', true);
+
+        // Just add the url to store so the main menu can display it correctly,
+        // but don't overwrite localStorage b/c that url needs to be set by the
+        // login procedure, otherwise login breaks in the dev env.
+        if (res.url) {
+          commit('changeFarmUrl', res.url);
         }
       };
       if (token) {
-        // Request user and site info if the user is logged in
-        farm().info().then((res) => {
-          safeSet('farmName', 'changeFarmName', res.name);
-          safeSet('username', 'changeUsername', res.user?.name);
-          safeSet('email', 'changeEmail', res.user?.mail);
-          safeSet('uid', 'changeUid', res.user?.uid);
-          safeSet('mapboxAPIKey', 'changeMapboxAPIKey', res.mapbox_api_key);
-          safeSet('systemOfMeasurement', 'changeSystemOfMeasurement', res.system_of_measurement);
-          safeSet('logTypes', 'changeLogTypes', res.resources?.log);
-          safeSet('isLoggedIn', 'setLoginStatus', true);
-
-          // Just add the url to store so the main menu can display it correctly,
-          // but don't overwrite localStorage b/c that url needs to be set by the
-          // login procedure, otherwise login breaks in the dev env.
-          if (res.url) {
-            commit('changeFarmUrl', res.url);
-          }
-        });
+        if (response) {
+          setResponseProps(response);
+        } else {
+          farm().info().then(setResponseProps);
+        }
         farm().area.geojson().then((geojson) => {
           safeSet('areaGeoJSON', 'setAreaGeoJSON', geojson);
         });

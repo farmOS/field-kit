@@ -93,8 +93,9 @@ export default {
         .then(() => {
           this.authPending = false;
           this.$store.commit('setLoginStatus', true);
-          this.$store.dispatch('updateUserAndSiteInfo');
-        });
+          return this.$store.dispatch('updateFieldModules', this.$router);
+        })
+        .then(res => this.$store.dispatch('updateUserAndSiteInfo', res));
     },
     onDeviceReady() {
       this.loadUserInfo();

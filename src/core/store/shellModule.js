@@ -1,5 +1,7 @@
 // A Vuex module for holding state for the application shell.
 import defaultLogTypes from './defaultLogTypes';
+import farm from './farmClient';
+import { createModuleLoader, setRootRoute } from '../../utils/fieldModules';
 
 export default {
   state: {
@@ -81,6 +83,35 @@ export default {
     },
     setCurrentModule(state, module) {
       state.currentModule = module;
+    },
+  },
+  actions: {
+    updateFieldModules({ rootState, commit, dispatch }, router) {
+      const deps = {
+        state: rootState,
+        commit,
+        dispatch,
+        router,
+      };
+      const loadFieldModule = createModuleLoader(deps);
+
+      return farm().info()
+        .then((res) => {
+          if (res?.client?.modules) {
+            Object.values(res.client.modules).forEach(loadFieldModule);
+            localStorage.setItem('modules', JSON.stringify(res.client.modules));
+          }
+          setRootRoute(res?.client?.modules, router);
+          return res;
+        })
+        // If the request fails, we can still load modules from cache.
+        .catch(() => {
+          const modules = JSON.parse(localStorage.getItem('modules'));
+          if (modules) {
+            Object.values(modules).forEach(loadFieldModule);
+          }
+          setRootRoute(modules, router);
+        });
     },
   },
 };
