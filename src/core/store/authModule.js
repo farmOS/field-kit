@@ -88,7 +88,7 @@ export default {
     },
 
     updateUserAndSiteInfo({ commit }, response) {
-      const token = localStorage.getItem('token');
+      const token = JSON.parse(localStorage.getItem('token'));
       const safeSet = (key, mutation, res) => {
         let value;
         if (typeof res === 'string') {
