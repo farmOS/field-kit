@@ -11,6 +11,7 @@ import './main.css';
 import utils from '../utils';
 import { createFieldModule, loadFieldModule, setRootRoute } from '../utils/fieldModules';
 import components from '../components';
+import t from '../components/t';
 
 Vue.config.productionTip = false;
 
@@ -27,6 +28,8 @@ window.farmOS.lib = {
 // any other component on the root Vue instance.
 components.forEach((c) => { Vue.component(c.name, c); });
 
+// Globally apply the t mixin, which provides translations along with the l10n module
+Vue.mixin(t);
 
 // Provide a global function for mounting Field Modules with all its dependencies.
 const deps = { ...store, state: store.state, router };

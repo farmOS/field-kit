@@ -43,6 +43,21 @@
               :checked="useGeolocation"
               @input="setUseGeolocation($event)"/>
           </farm-list-item>
+          <farm-list-item>
+            <label>{{$t('Select Language')}}</label><br>
+            <div class="form-check">
+              <input
+                type="radio"
+                class="form-check-input"
+                name="language"
+                id="lang1"
+                value="en"
+                @input="setLocale"
+                :checked="isLocale('en')"/>
+              <label for="lang1"  class="form-check-label">English</label>
+            </div>
+            <div class="form-check">
+          </farm-list-item>
           <farm-list-item :clickable="false">Version: {{version}}</farm-list-item>
           <router-link to="/login" v-if="!isLoggedIn" @click.native="showDrawer = !showDrawer">
             <farm-list-item >Login</farm-list-item>
@@ -157,6 +172,7 @@ export default {
         : state.shell.farmInfo.url?.replace(/(^\w+:|^)\/\//, '')),
       modules: state => state.shell.modules,
       areaGeoJSON: state => state.shell.areaGeoJSON,
+      locale: state => state.l10n.locale,
 
       /**
        * FARM STATE
@@ -197,6 +213,12 @@ export default {
         this.$router.push(module.routes[0].path);
       }
       this.showDrawer = !this.showDrawer;
+    },
+    setLocale(e) {
+      this.$store.commit('setLocale', e.target.value);
+    },
+    isLocale(locale) {
+      return this.locale === locale;
     },
   },
 };
