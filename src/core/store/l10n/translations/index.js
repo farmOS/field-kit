@@ -1,5 +1,5 @@
-// import translations here.
+import pt from './pt';
 
 export default {
-  // Place translations here.
+  pt,
 };
