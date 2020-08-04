@@ -17,14 +17,14 @@
               <p>{{ username}}</p>
             </div>
             <div v-else class="user-info">
-              <h2>Welcome to farmOS</h2>
-              <p>Login for more options.</p>
+              <h2>{{ $t('Welcome to farmOS') }}</h2>
+              <p>{{ $t('Login for more options.') }}</p>
             </div>
           </div>
         </header>
         <farm-list>
           <router-link to="/home" @click.native="showDrawer = !showDrawer">
-            <farm-list-item>Home</farm-list-item>
+            <farm-list-item>{{ $t('Home') }}</farm-list-item>
           </router-link>
         </farm-list>
         <farm-list>
@@ -38,12 +38,12 @@
         <farm-list>
           <farm-list-item :clickable="false">
             <farm-toggle-check
-              label="Share My Location"
+              :label="$t('Share My Location')"
               labelPosition="before"
               :checked="useGeolocation"
               @input="setUseGeolocation($event)"/>
           </farm-list-item>
-          <farm-list-item>
+          <farm-list-item v-if="langs.length > 0">
             <label>{{$t('Select Language')}}</label><br>
             <div class="form-check">
               <input
@@ -54,16 +54,33 @@
                 value="en"
                 @input="setLocale"
                 :checked="isLocale('en')"/>
-              <label for="lang1"  class="form-check-label">English</label>
+              <label for="lang1"  class="form-check-label">
+                {{ $t('English') }}
+              </label>
             </div>
-            <div class="form-check">
+            <div
+              v-for="(lang, i) in langs"
+              :key="`lang-${i}`"
+              class="form-check">
+              <input
+                type="radio"
+                class="form-check-input"
+                name="language"
+                :id="`lang-${i}`"
+                :value="lang.code"
+                @input="setLocale"
+                :checked="isLocale(lang.code)"/>
+              <label :for="`lang-${i}`"  class="form-check-label">
+                {{ $t(lang.name) }}
+              </label>
+            </div>
           </farm-list-item>
           <farm-list-item :clickable="false">Version: {{version}}</farm-list-item>
           <router-link to="/login" v-if="!isLoggedIn" @click.native="showDrawer = !showDrawer">
-            <farm-list-item >Login</farm-list-item>
+            <farm-list-item >{{ $t('Login') }}</farm-list-item>
           </router-link>
           <router-link to="/logout" v-if="isLoggedIn" @click.native="showDrawer = !showDrawer">
-            <farm-list-item>Logout</farm-list-item>
+            <farm-list-item>{{ $t('Logout') }}</farm-list-item>
           </router-link>
         </farm-list>
 
@@ -173,6 +190,7 @@ export default {
       modules: state => state.shell.modules,
       areaGeoJSON: state => state.shell.areaGeoJSON,
       locale: state => state.l10n.locale,
+      translations: state => state.l10n.translations,
 
       /**
        * FARM STATE
@@ -187,6 +205,10 @@ export default {
     ...mapGetters([
       'equipment',
     ]),
+    langs() {
+      return Object.entries(this.translations)
+        .map(([code, { name }]) => ({ code, name }));
+    },
   },
   watch: {
     showDrawer(currentShowDrawer) {

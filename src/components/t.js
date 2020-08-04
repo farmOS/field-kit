@@ -8,7 +8,7 @@ export default {
   }),
   methods: {
     $t(str) {
-      const translation = this._translations[this._locale]?.[str];
+      const translation = this._translations[this._locale]?.strings?.[str];
       if (translation) { return translation; }
       return str;
     },
