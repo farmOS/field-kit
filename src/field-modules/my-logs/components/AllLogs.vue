@@ -7,10 +7,10 @@
         <div class="card-body">
           <h4 class="card-title">Let's Get Started!</h4>
           <p class="card-text">
-            You don't have any logs to display yet. Logs are records of events
-            in farmOS. You can add some by clicking the <IconAddCircle class="inline-svg"/>
-            icon below, or you can get uncompleted tasks from the server by
-            clicking the <IconCloudUpload class="inline-svg"/> icon above.
+            {{ $t('You don\'t have any logs to display yet. Logs are records of events') }}
+            {{ $t('in farmOS. You can add some by clicking the') }} <IconAddCircle class="inline-svg"/>
+            {{ $t('icon below, or you can get uncompleted tasks from the server by') }}
+            {{ $t('clicking the') }} <IconCloudUpload class="inline-svg"/> {{ $t('icon above.') }}
           </p>
         </div>
       </div>
