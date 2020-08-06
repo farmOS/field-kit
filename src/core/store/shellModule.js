@@ -1,7 +1,7 @@
 // A Vuex module for holding state for the application shell.
 import defaultLogTypes from './defaultLogTypes';
 import farm from './farmClient';
-import { createModuleLoader, setRootRoute } from '../../utils/fieldModules';
+import { createFieldModule, loadFieldModule, setRootRoute } from '../../utils/fieldModules';
 
 export default {
   state: {
@@ -93,7 +93,9 @@ export default {
         dispatch,
         router,
       };
-      const loadFieldModule = createModuleLoader(deps);
+
+      // Overwrite the mounting function so it has the most recent state.
+      window.farmOS.mountFieldModule = mod => createFieldModule(mod, deps);
 
       return farm().info()
         .then((res) => {

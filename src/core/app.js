@@ -8,7 +8,7 @@ import './bootstrap-simplex.min.css';
 import './vars.css';
 import './main.css';
 import utils from '../utils';
-import { createModuleLoader, createFieldModule, setRootRoute } from '../utils/fieldModules';
+import { createFieldModule, loadFieldModule, setRootRoute } from '../utils/fieldModules';
 import components from '../components';
 
 Vue.config.productionTip = false;
@@ -19,17 +19,14 @@ if (window.farmOS === undefined) {
 }
 window.farmOS.utils = utils;
 
-// Provide a global namespace to which modules can attach their config.
-if (window.farmOS.modules === undefined) {
-  window.farmOS.modules = {};
-}
-
 // Register the shared component library globally so they can be accessed from
 // any other component on the root Vue instance.
 components.forEach((c) => { Vue.component(c.name, c); });
 
+
+// Provide a global function for mounting Field Modules with all its dependencies.
 const deps = { ...store, state: store.state, router };
-const loadFieldModule = createModuleLoader(deps);
+window.farmOS.mountFieldModule = mod => createFieldModule(mod, deps);
 
 export default (el, buildtimeMods) => {
   // Load build-time modules

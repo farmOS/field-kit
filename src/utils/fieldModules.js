@@ -95,7 +95,7 @@ export const createFieldModule = (modConfig, deps) => {
   router.addRoutes(createRoutes(name, routes, deps));
 };
 
-export const createModuleLoader = deps => (module) => {
+export const loadFieldModule = (module) => {
   const script = document.createElement('script');
   script.src = `${localStorage.getItem('host')}/${module.js}`;
   script.id = `field-module-${module.name}`;
@@ -103,10 +103,12 @@ export const createModuleLoader = deps => (module) => {
   script.async = true;
   script.crossOrigin = 'anonymous';
   script.onload = () => {
-    const config = window.farmOS.modules[module.name];
-    createFieldModule(config, deps);
+    // eslint-disable-next-line no-console
+    console.log(`${module.label} loaded successfully!`);
   };
-  // eslint-disable-next-line no-console
-  script.onerror = () => console.error(`Error installing ${module.label} module`);
+  script.onerror = () => {
+    // eslint-disable-next-line no-console
+    console.error(`Error installing ${module.label}.`);
+  };
   document.body.appendChild(script);
 };
