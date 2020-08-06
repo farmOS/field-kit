@@ -5,7 +5,7 @@
         class="card"
         v-if="logs.length < 1">
         <div class="card-body">
-          <h4 class="card-title">{{ $t('Let\'s Get Started!) }}</h4>
+          <h4 class="card-title">{{ $t('Let\'s Get Started!')}}</h4>
           <p class="card-text">
             {{ $t('You don\'t have any logs to display yet. Logs are records of events') }}
             {{ $t('in farmOS. You can add some by clicking the') }} <IconAddCircle class="inline-svg"/>
