@@ -1,6 +1,5 @@
 import farmLog from '../../../utils/farmLog';
 import {
-  openDatabase,
   getRecords,
   generateLocalID,
   saveRecord,
@@ -23,8 +22,7 @@ export default {
   actions: {
 
     updateCachedLog({ commit, rootState }, log) {
-      openDatabase()
-        .then(db => saveRecord(db, logStore.name, log))
+      return saveRecord(logStore.name, log)
         .then(() => {
           const { updateLog } = farmLog(rootState.shell.logTypes);
           const newLog = updateLog(log, { isCachedLocally: true });
@@ -71,8 +69,7 @@ export default {
           && applyFilter(log_category,
             applyEntityFilter(log_category, log.log_category.data, rootState.farm.categories, 'tid'));
       };
-      openDatabase()
-        .then(db => getRecords(db, logStore.name, query))
+      return getRecords(logStore.name, query)
         .then((results) => {
           const cachedLogs = results.map(log => (
             updateLog(log, { isCachedLocally: true })
@@ -159,8 +156,7 @@ export default {
           return false;
         });
       };
-      openDatabase()
-        .then(db => getRecords(db, logStore.name, query))
+      return getRecords(logStore.name, query)
         .then(() => {
           const cachedLogs = Object.values(results).flat().map(log => (
             updateLog(log, { isCachedLocally: true })
@@ -171,45 +167,38 @@ export default {
     },
 
     generateLogID() {
-      return openDatabase()
-        .then(db => generateLocalID(db, logStore.name))
+      return generateLocalID(logStore.name)
         .catch(console.error); // eslint-disable-line no-console
     },
 
     deleteCachedLog(_, localID) { // eslint-disable-line camelcase
-      openDatabase()
-        .then(db => deleteRecord(db, logStore.name, localID))
+      return deleteRecord(logStore.name, localID)
         .catch(console.error); // eslint-disable-line no-console
     },
 
     deleteAllCachedLogs() {
-      openDatabase()
-        .then(db => clearStore(db, logStore.name))
+      return clearStore(logStore.name)
         .catch(console.error); // eslint-disable-line no-console
     },
 
     createCachedAsset(_, newAsset) {
-      openDatabase()
-        .then(db => saveRecord(db, assetStore.name, newAsset))
+      return saveRecord(assetStore.name, newAsset)
         .catch(console.error); // eslint-disable-line no-console
     },
 
     // TODO: Remove duplication with createCachedAsset
     updateCachedAsset(context, asset) {
-      openDatabase()
-        .then(db => saveRecord(db, assetStore.name, asset))
+      return saveRecord(assetStore.name, asset)
         .catch(console.error); // eslint-disable-line no-console
     },
 
     deleteAllCachedAssets() {
-      openDatabase()
-        .then(db => clearStore(db, assetStore.name))
+      return clearStore(assetStore.name)
         .catch(console.error); // eslint-disable-line no-console
     },
 
     loadCachedAssets({ commit }) {
-      openDatabase()
-        .then(db => getRecords(db, assetStore.name))
+      return getRecords(assetStore.name)
         .then((results) => {
           commit('addAssets', results);
         })
@@ -217,27 +206,23 @@ export default {
     },
 
     createCachedArea(_, newArea) {
-      openDatabase()
-        .then(db => saveRecord(db, areaStore.name, newArea))
+      return saveRecord(areaStore.name, newArea)
         .catch(console.error); // eslint-disable-line no-console
     },
 
     // TODO: Remove duplication with createCachedArea
     updateCachedArea(context, area) {
-      openDatabase()
-        .then(db => saveRecord(db, areaStore.name, area))
+      return saveRecord(areaStore.name, area)
         .catch(console.error); // eslint-disable-line no-console
     },
 
     deleteAllCachedAreas() {
-      openDatabase()
-        .then(db => clearStore(db, areaStore.name))
+      return clearStore(areaStore.name)
         .catch(console.error); // eslint-disable-line no-console
     },
 
     loadCachedAreas({ commit }) {
-      openDatabase()
-        .then(db => getRecords(db, areaStore.name))
+      return getRecords(areaStore.name)
         .then((results) => {
           commit('addAreas', results);
         })
@@ -245,27 +230,23 @@ export default {
     },
 
     createCachedUnit(_, newUnit) {
-      openDatabase()
-        .then(db => saveRecord(db, unitStore.name, newUnit))
+      return saveRecord(unitStore.name, newUnit)
         .catch(console.error); // eslint-disable-line no-console
     },
 
     // TODO: Remove duplication with createCachedUnit
     updateCachedUnit(context, unit) {
-      openDatabase()
-        .then(db => saveRecord(db, unitStore.name, unit))
+      return saveRecord(unitStore.name, unit)
         .catch(console.error); // eslint-disable-line no-console
     },
 
     deleteAllCachedUnits() {
-      openDatabase()
-        .then(db => clearStore(db, unitStore.name))
+      return clearStore(unitStore.name)
         .catch(console.error); // eslint-disable-line no-console
     },
 
     loadCachedUnits({ commit }) {
-      openDatabase()
-        .then(db => getRecords(db, unitStore.name))
+      return getRecords(unitStore.name)
         .then((results) => {
           commit('addUnits', results);
         })
@@ -273,27 +254,23 @@ export default {
     },
 
     createCachedCategory(_, newCat) {
-      openDatabase()
-        .then(db => saveRecord(db, catStore.name, newCat))
+      return saveRecord(catStore.name, newCat)
         .catch(console.error); // eslint-disable-line no-console
     },
 
     // TODO: Remove duplication with createCachedCategory
     updateCachedCategory(context, cat) {
-      openDatabase()
-        .then(db => saveRecord(db, catStore.name, cat))
+      return saveRecord(catStore.name, cat)
         .catch(console.error); // eslint-disable-line no-console
     },
 
     deleteAllCachedCategories() {
-      openDatabase()
-        .then(db => clearStore(db, catStore.name))
+      return clearStore(catStore.name)
         .catch(console.error); // eslint-disable-line no-console
     },
 
     loadCachedCategories({ commit }) {
-      openDatabase()
-        .then(db => getRecords(db, catStore.name))
+      return getRecords(catStore.name)
         .then((results) => {
           commit('addCategories', results);
         })

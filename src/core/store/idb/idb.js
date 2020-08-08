@@ -23,8 +23,8 @@ function openDatabase() {
   });
 }
 
-function getRecords(db, storeName, predicate) {
-  return new Promise((resolve, reject) => {
+export function getRecords(storeName, predicate) {
+  return openDatabase.then(db => new Promise((resolve, reject) => {
     const store = db.transaction(storeName, 'readonly').objectStore(storeName);
     if (!predicate) {
       const request = store.getAll();
@@ -46,13 +46,13 @@ function getRecords(db, storeName, predicate) {
         }
       };
     }
-  });
+  }));
 }
 
-function generateLocalID(db, storeName) {
+export function generateLocalID(storeName) {
   // Set a local counter so we don't increment the store counter more than once.
   let i = 1;
-  return new Promise((resolve, reject) => {
+  return openDatabase().then(db => new Promise((resolve, reject) => {
     const store = db.transaction(storeName, 'readonly').objectStore(storeName);
     const request = store.openCursor(null, 'prev');
     request.onerror = event => reject(new Error(event.target.erorr));
@@ -75,41 +75,32 @@ function generateLocalID(db, storeName) {
       i += 1;
       resolve(newID);
     };
-  });
+  }));
 }
 
-function saveRecord(db, storeName, record) {
-  return new Promise((resolve, reject) => {
+export function saveRecord(storeName, record) {
+  return openDatabase().then(db => new Promise((resolve, reject) => {
     const store = db.transaction(storeName, 'readwrite').objectStore(storeName);
     const request = store.put(record);
     request.onerror = event => reject(new Error(event.target.error));
     request.onsuccess = event => resolve(event.target.result);
-  });
+  }));
 }
 
-function deleteRecord(db, storeName, key) {
-  return new Promise((resolve, reject) => {
+export function deleteRecord(storeName, key) {
+  return openDatabase().then(db => new Promise((resolve, reject) => {
     const store = db.transaction(storeName, 'readwrite').objectStore(storeName);
     const request = store.delete(key);
     request.onsuccess = event => resolve(event.target.result);
     request.onerror = event => reject(event.target.error);
-  });
+  }));
 }
 
-function clearStore(db, storeName) {
-  return new Promise((resolve, reject) => {
+export function clearStore(storeName) {
+  return openDatabase().then(db => new Promise((resolve, reject) => {
     const store = db.transaction(storeName, 'readwrite').objectStore(storeName);
     const request = store.clear();
     request.onsuccess = event => resolve(event.target.result);
     request.onerror = event => reject(event.target.error);
-  });
+  }));
 }
-
-export {
-  openDatabase,
-  getRecords,
-  saveRecord,
-  deleteRecord,
-  clearStore,
-  generateLocalID,
-};
