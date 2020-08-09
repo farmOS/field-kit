@@ -1,5 +1,6 @@
 import farmLog from '../../../utils/farmLog';
 import {
+  getAllKeys,
   getRecords,
   generateLocalID,
   saveRecord,
@@ -15,6 +16,7 @@ const [
   areaStore,
   unitStore,
   catStore,
+  resStore,
 ] = config.stores;
 
 export default {
@@ -277,5 +279,21 @@ export default {
         .catch(console.error); // eslint-disable-line no-console
     },
 
+    cacheFarmResources(_, resources) {
+      return Promise.all(Object.entries(resources)
+        .map(([key, resource]) => saveRecord(resStore.name, resource, key)
+          .catch(console.error))); // eslint-disable-line no-console
+    },
+
+    loadCachedResources({ commit }) {
+      return getAllKeys(resStore.name)
+        .then(keys => getRecords(resStore.name, keys))
+        .then((results) => {
+          if (Object.keys(results).length > 0) {
+            commit('setFarmResources', results);
+          }
+        })
+        .catch(console.error); // eslint-disable-line no-console
+    },
   },
 };

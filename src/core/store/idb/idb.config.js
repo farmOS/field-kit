@@ -3,10 +3,10 @@ import assetUpgrades from './upgrades/assets';
 import areaUpgrades from './upgrades/areas';
 import unitUpgrades from './upgrades/units';
 import categoryUpgrades from './upgrades/categories';
-import equipmentUpgrades from './upgrades/equipment';
+import resourceUpgrades from './upgrades/resources';
 
 export default {
-  version: 4,
+  version: 5,
   name: 'farmos',
   stores: [
     {
@@ -40,10 +40,14 @@ export default {
       upgrades: categoryUpgrades,
     },
     {
-      name: 'equipment',
-      keyPath: 'id',
+      // Resources have no keypath, so the keys will be "out-of-line".
+      // This means a key must be provided on each transaction.
+      // We'll be breaking down the resources object that comes from
+      // /farm.json according to its object keys, and using those as
+      // the store keys.
+      name: 'resources',
       autoIncrement: false,
-      upgrades: equipmentUpgrades,
+      upgrades: resourceUpgrades,
     },
   ],
 };

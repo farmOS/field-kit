@@ -1,3 +1,4 @@
+import { head, tail } from 'ramda';
 import config from './idb.config';
 import { filterAndSort, runUpgrades } from '../../../utils/runUpgrades';
 
@@ -23,21 +24,52 @@ function openDatabase() {
   });
 }
 
-export function getRecords(storeName, predicate) {
-  return openDatabase.then(db => new Promise((resolve, reject) => {
+export function getAllKeys(storeName) {
+  return openDatabase().then(db => new Promise((resolve, reject) => {
     const store = db.transaction(storeName, 'readonly').objectStore(storeName);
-    if (!predicate) {
+    const request = store.getAllKeys();
+    request.onerror = event => reject(event.target.error);
+    request.onsuccess = event => resolve(event.target.result);
+  }));
+}
+
+export function getRecords(storeName, query) {
+  return openDatabase().then(db => new Promise((resolve, reject) => {
+    const store = db.transaction(storeName, 'readonly').objectStore(storeName);
+    const getRecord = key => new Promise((res, rej) => {
+      const request = store.get(key);
+      request.onerror = event => rej(
+        new Error(`Could not retrieve record by key ${key}: ${event.target.error}`),
+      );
+      request.onsuccess = event => res([key, event.target.result]);
+    });
+    const getRecordsByKeys = (keys, results = {}) => {
+      if (keys.length === 0) {
+        return Promise.resolve(results);
+      }
+      if (keys.length === 1) {
+        return getRecord(head(keys))
+          .then(([key, val]) => ({ ...results, [key]: val }));
+      }
+      return getRecord(head(keys))
+        .then(([key, val]) => (getRecordsByKeys(tail(keys), { ...results, [key]: val })));
+    };
+    if (!query) {
       const request = store.getAll();
       request.onerror = event => reject(event.target.error);
       request.onsuccess = event => resolve(event.target.result);
-    } else {
+    } else if (Array.isArray(query)) {
+      getRecordsByKeys(query)
+        .then(resolve)
+        .catch(reject);
+    } else if (typeof query === 'function') {
       const request = store.openCursor();
       const results = [];
       request.onerror = event => reject(event);
       request.onsuccess = (event) => {
         const cursor = event.target.result;
         if (cursor) {
-          if (predicate(cursor.value)) {
+          if (query(cursor.value)) {
             results.push(cursor.value);
           }
           cursor.continue();
@@ -45,6 +77,8 @@ export function getRecords(storeName, predicate) {
           resolve(results);
         }
       };
+    } else {
+      getRecord(query).then(resolve).catch(reject);
     }
   }));
 }
@@ -78,10 +112,10 @@ export function generateLocalID(storeName) {
   }));
 }
 
-export function saveRecord(storeName, record) {
+export function saveRecord(storeName, record, key = null) {
   return openDatabase().then(db => new Promise((resolve, reject) => {
     const store = db.transaction(storeName, 'readwrite').objectStore(storeName);
-    const request = store.put(record);
+    const request = key ? store.put(record, key) : store.put(record);
     request.onerror = event => reject(new Error(event.target.error));
     request.onsuccess = event => resolve(event.target.result);
   }));
