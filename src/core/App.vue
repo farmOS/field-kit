@@ -131,7 +131,9 @@ export default {
   created() {
     this.$store.commit('setCurrentModule', this.$route.meta.module);
     this.$store.dispatch('loadCachedUserAndSiteInfo');
-    this.$store.dispatch('updateUserAndSiteInfo');
+    this.$store.dispatch('loadCachedResources');
+    this.$store.dispatch('updateUserAndSiteInfo')
+      .then(res => this.$store.dispatch('updateFarmResources', res));
     this.$store.dispatch('loadCachedAssets');
     this.$store.dispatch('loadCachedAreas');
     this.$store.dispatch('loadCachedUnits');
@@ -148,7 +150,6 @@ export default {
       isLoggedIn: state => state.shell.user.isLoggedIn,
       useGeolocation: state => state.shell.settings.useGeolocation,
       systemOfMeasurement: state => state.shell.systemOfMeasurement,
-      logTypes: state => state.shell.logTypes,
       farmName: state => state.shell.farmInfo.name,
       // Provide an example url for the dev server environment
       farmUrl: state => ((state.shell.farmInfo.url === '')
@@ -165,6 +166,7 @@ export default {
       assets: state => state.farm.assets,
       units: state => state.farm.units,
       categories: state => state.farm.categories,
+      logTypes: state => state.farm.resources.log,
     }),
     ...mapGetters([
       'equipment',

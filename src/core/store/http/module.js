@@ -1,3 +1,4 @@
+import { mergeDeepRight } from 'ramda';
 import Promise from 'core-js-pure/features/promise';
 import farm from '../farmClient';
 import router from '../../router';
@@ -62,6 +63,20 @@ export default {
     },
   },
   actions: {
+    updateFarmResources({ commit, dispatch, rootState }, response) {
+      const mergeResources = (res) => {
+        const oldResources = rootState.farm.resources;
+        const newResources = res.resources;
+        const mergedResources = mergeDeepRight(oldResources, newResources);
+        commit('setFarmResources', mergedResources);
+        dispatch('cacheFarmResources', mergedResources);
+        return res;
+      };
+      if (response) {
+        return mergeResources(response);
+      }
+      return farm().info().then(mergeResources);
+    },
     updateAreas({ commit }) {
       return farm().area.get().then((res) => {
         // If a successful response is received, delete and replace all areas
@@ -96,7 +111,7 @@ export default {
 
     // SEND LOGS TO SERVER (step 2 of sync)
     sendLogs({ commit, rootState }, indices) {
-      const { updateLog, formatLogForServer } = farmLog(rootState.shell.logTypes);
+      const { updateLog, formatLogForServer } = farmLog(rootState.farm.resources.log);
       // Update logs in the database and local store after send completes
       function handleSyncResponse(response, index) {
         const props = {
@@ -142,7 +157,7 @@ export default {
       commit, getters, dispatch, rootState,
     }) {
       const syncDate = JSON.parse(localStorage.getItem('syncDate'));
-      const { mergeLogFromServer } = farmLog(rootState.shell.logTypes, syncDate);
+      const { mergeLogFromServer } = farmLog(rootState.farm.resources.log, syncDate);
       return farm().log.get(getters.logFilters)
         .then((res) => {
           // Filter over the response to eliminate server logs that haven't
@@ -195,7 +210,7 @@ export default {
         });
     },
     syncAllLogs({ rootState, commit, dispatch }) {
-      const { updateLog } = farmLog(rootState.shell.logTypes);
+      const { updateLog } = farmLog(rootState.farm.resources.log);
       /*
         This handles the custom error type defined in ./sync.js,
         thrown by getServerLogs and sendLogs
@@ -258,7 +273,7 @@ export default {
             // Save the current time as the most recent syncDate
             localStorage.setItem('syncDate', (Date.now() / 1000).toFixed(0));
             const syncReducer = createSyncReducer({
-              logTypes: rootState.shell.logTypes,
+              logTypes: rootState.farm.resources.log,
             });
             // Process and sort the logs into syncable and unsyncable logs,
             // as well as updates needed before syncing.

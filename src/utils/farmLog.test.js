@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import fromEntries from 'object.fromentries';
 import farmLog from './farmLog';
-import defaultLogTypes from '../core/store/defaultLogTypes';
+import defaultResources from '../core/store/defaultResources';
 
 // Shim fromEntries for testing b/c it's not supported in Node.
 if (!Object.fromEntries) {
@@ -15,7 +15,7 @@ const {
   updateLog,
   formatLogForServer,
   mergeLogFromServer,
-} = farmLog(defaultLogTypes, syncDate);
+} = farmLog(defaultResources.log, syncDate);
 
 describe('createLog', () => {
   it('creates a new log w/o initial props', () => {

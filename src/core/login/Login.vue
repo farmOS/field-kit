@@ -95,25 +95,13 @@ export default {
           this.$store.commit('setLoginStatus', true);
           return this.$store.dispatch('updateFieldModules', this.$router);
         })
-        .then(res => this.$store.dispatch('updateUserAndSiteInfo', res));
-    },
-    onDeviceReady() {
-      this.loadUserInfo();
-    },
-
-    // This will autofill the form with the url and username; the regext strips the protocol.
-    loadUserInfo() {
-      this.farmosUrl = window.localStorage.getItem('host').replace(/(^\w+:|^)\/\//, '');
-      this.username = window.localStorage.getItem('username');
-      this.password = window.localStorage.getItem('password');
-      this.checkValues();
+        .then(res => this.$store.dispatch('updateUserAndSiteInfo', res))
+        .then(res => this.$store.dispatch('updateFarmResources', res));
     },
 
   },
   created() {
-    // Listens for deviceReady event emitted by Cordova
-    document.addEventListener('deviceready', this.onDeviceReady(), false);
-    this.loadUserInfo();
+    this.farmosUrl = localStorage.getItem('host')?.replace(/(^\w+:|^)\/\//, '') || '';
   },
 };
 

@@ -1,6 +1,7 @@
 // A Vuex module for modelling the attributes of the farm itself.
 
 import farmLog from '../../utils/farmLog';
+import defaultResources from './defaultResources';
 
 // A function for updating an existing array of objects with an array of new
 // objects. An identifier is provided to determine if each new object is an
@@ -53,6 +54,7 @@ export default {
     areas: [],
     units: [],
     categories: [],
+    resources: defaultResources,
   },
   getters: {
     equipment(state) {
@@ -92,10 +94,13 @@ export default {
       const filteredLogs = state.logs.filter(predicate);
       state.logs = filteredLogs;
     },
+    setFarmResources(state, res) {
+      state.resources = res;
+    },
   },
   actions: {
     initializeLog({ commit, dispatch, rootState }, initProps = {}) {
-      const { createLog, updateLog } = farmLog(rootState.shell.logTypes);
+      const { createLog, updateLog } = farmLog(rootState.farm.resources.log);
       const modules = initProps.modules || [rootState.shell.currentModule];
       return new Promise((resolve, reject) => {
         dispatch('generateLogID').then((localID) => {
@@ -115,7 +120,7 @@ export default {
     // **It should NOT be used by Field Kit Core!**
     // Core should use the addLogs mutation instead.
     updateLog({ commit, rootState }, props) {
-      const { updateLog } = farmLog(rootState.shell.logTypes);
+      const { updateLog } = farmLog(rootState.farm.resources.log);
       const oldLog = rootState.farm.logs.find(log => props.localID === log.localID);
       if (oldLog === undefined) {
         throw new Error('The updateLog action requires a localID among the '

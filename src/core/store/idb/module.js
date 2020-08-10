@@ -26,7 +26,7 @@ export default {
     updateCachedLog({ commit, rootState }, log) {
       return saveRecord(logStore.name, log)
         .then(() => {
-          const { updateLog } = farmLog(rootState.shell.logTypes);
+          const { updateLog } = farmLog(rootState.farm.resources.log);
           const newLog = updateLog(log, { isCachedLocally: true });
           commit('addLogs', newLog);
         })
@@ -34,7 +34,7 @@ export default {
     },
 
     loadCachedLogs({ commit, rootState }) {
-      const { updateLog } = farmLog(rootState.shell.logTypes);
+      const { updateLog } = farmLog(rootState.farm.resources.log);
       const filters = rootState.shell.modules
         .filter(mod => mod.name === rootState.shell.currentModule)[0]?.filters?.log;
       const query = (log) => {
@@ -83,7 +83,7 @@ export default {
 
     // Specifically for loading logs for the Home screen widgets to use.
     loadHomeCachedLogs({ commit, rootState }) {
-      const { updateLog } = farmLog(rootState.shell.logTypes);
+      const { updateLog } = farmLog(rootState.farm.resources.log);
       // We're going to build our own object to store arrays of results for each
       // module, and discard the result returned by getRecords. We won't worry
       // about duplicates across modules because the addLogs mutation doesn't

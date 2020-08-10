@@ -1,5 +1,4 @@
 // A Vuex module for holding state for the application shell.
-import defaultLogTypes from './defaultLogTypes';
 import farm from './farmClient';
 import { createFieldModule, loadFieldModule, setRootRoute } from '../../utils/fieldModules';
 
@@ -17,7 +16,6 @@ export default {
       url: '',
     },
     systemOfMeasurement: 'metric',
-    logTypes: defaultLogTypes,
     currentModule: '',
     modules: [],
     mapboxAPIKey: '',
@@ -60,9 +58,6 @@ export default {
     },
     changeSystemOfMeasurement(state, name) {
       state.systemOfMeasurement = name;
-    },
-    changeLogTypes(state, types) {
-      state.logTypes = types;
     },
     setLoginStatus(state, bool) {
       state.user.isLoggedIn = bool;

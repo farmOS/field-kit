@@ -115,7 +115,6 @@ export default {
         safeSet('uid', 'changeUid', res.user?.uid);
         safeSet('mapboxAPIKey', 'changeMapboxAPIKey', res.mapbox_api_key);
         safeSet('systemOfMeasurement', 'changeSystemOfMeasurement', res.system_of_measurement);
-        safeSet('logTypes', 'changeLogTypes', res.resources?.log);
         safeSet('isLoggedIn', 'setLoginStatus', true);
 
         // Just add the url to store so the main menu can display it correctly,
@@ -124,17 +123,19 @@ export default {
         if (res.url) {
           commit('changeFarmUrl', res.url);
         }
+        // Return the response so it's passed to successive chained actions.
+        return res;
       };
       if (token) {
-        if (response) {
-          setResponseProps(response);
-        } else {
-          farm().info().then(setResponseProps);
-        }
         farm().area.geojson().then((geojson) => {
           safeSet('areaGeoJSON', 'setAreaGeoJSON', geojson);
         });
+        if (response) {
+          return setResponseProps(response);
+        }
+        return farm().info().then(setResponseProps);
       }
+      return null;
     },
 
     loadCachedUserAndSiteInfo({ commit }) {
@@ -159,7 +160,6 @@ export default {
       safeLoad('setLoginStatus', 'isLoggedIn');
       safeLoad('changeFarmName', 'farmName');
       safeLoad('changeFarmUrl', 'host');
-      safeLoad('changeLogTypes', 'logTypes');
       safeLoad('setUseGeolocation', 'useGeolocation');
       safeLoad('setAreaGeoJSON', 'areaGeoJSON');
     },
