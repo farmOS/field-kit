@@ -5,13 +5,13 @@
       class="tab"
       :class="{ selected: tabSelected === 'FIRST' }"
       @click="tabSelected = 'FIRST'">
-      <h5>GENERAL</h5>
+      <h5>{{ $t('GENERAL') }}</h5>
     </div>
     <div
       class="tab"
       :class="{ selected: tabSelected === 'SECOND' }"
       @click="tabSelected = 'SECOND'">
-      <h5>MOVEMENT</h5>
+      <h5{{ $t('>MOVEMENT') }}</h5>
     </div>
   </div>
   <div
@@ -35,11 +35,11 @@
     </div>
 
     <div class="form-item form-item-name form-group">
-      <label for="name" class="control-label">Name</label>
+      <label for="name" class="control-label">{{ $t('Name') }}</label>
       <input
         :value="currentLog.name"
         @input="updateCurrentLog('name', $event.target.value)"
-        placeholder="Enter name"
+        :placeholder="$t('Enter name')"
         type="text"
         class="form-control"
         autofocus>
