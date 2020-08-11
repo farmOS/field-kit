@@ -11,7 +11,7 @@
       class="tab"
       :class="{ selected: tabSelected === 'SECOND' }"
       @click="tabSelected = 'SECOND'">
-      <h5>{{ $t('>MOVEMENT') }}</h5>
+      <h5>{{ $t('MOVEMENT') }}</h5>
     </div>
   </div>
   <div
@@ -28,7 +28,7 @@
     <br>
     <div class="form-item form-group">
       <farm-toggle-check
-        label="Done"
+        :label="$t('Done')"
         labelPosition="after"
         :checked="currentLog.done"
         @input="updateCurrentLog('done', $event)"/>
@@ -52,7 +52,7 @@
     <!-- Allow users to change type for logs that have not yet been sent to the server
     For logs currently on the server, display type as text -->
     <div class="form-item form-item-name form-group">
-      <label for="type" class="control-label ">Log Type</label>
+      <label for="type" class="control-label ">{{ $t('Log Type') }}</label>
       <div class="input-group" v-if="(currentLog.id === undefined)">
         <select
           :value="currentLog.type"
@@ -74,22 +74,22 @@
 
 
     <div class="form-item form-item-name form-group">
-      <label for="notes" class="control-label ">Notes</label>
+      <label for="notes" class="control-label ">{{ $t('Notes') }}</label>
       <textarea
         :value="parseNotes(currentLog.notes)"
         @input="updateNotes($event.target.value)"
-        placeholder="Enter notes"
+        :placeholder="$t('Enter notes')"
         type="text"
         class="form-control">
       </textarea>
     </div>
 
-    <h4>Log Categories</h4>
+    <h4>{{ $t('Log Categories') }}</h4>
     <div id="categories" class="form-item form-group">
       <p v-if="!showAllCategories
         && (!currentLog.log_category
         || currentLog.log_category.length < 1)">
-        No categories selected
+        {{ $t('No categories selected') }}
       </p>
       <farm-select-box
         small
@@ -107,17 +107,17 @@
         />
       <div class="show-hide">
         <div v-if="!showAllCategories" @click="showAllCategories = !showAllCategories">
-          <p><icon-expand-more/>Show More</p>
+          <p><icon-expand-more/>{{ $t('Show More') }}</p>
         </div>
         <div v-if="showAllCategories" @click="showAllCategories = !showAllCategories">
-          <p><icon-expand-less/>Show Less</p>
+          <p><icon-expand-less/>{{ $t('Show Less') }}</p>
         </div>
       </div>
     </div>
 
     <div v-if="currentLog.quantity !== undefined">
-      <h4>Quantities</h4>
-      <label for="quantity" class="control-label ">Add new or edit existing quantity</label>
+      <h4>{{ $t('Quantities')}}</h4>
+      <label for="quantity" class="control-label ">{{ $t('Add new or edit existing quantity')}}</label>
       <div v-if="currentQuant >= 0" class="form-item form-item-name form-group">
         <!-- To display a placeholder value ONLY when there are no existing quantities,
         we must add the placeholder with an <option> tag and select it using the :value option -->
@@ -200,7 +200,7 @@
           class="btn btn-success"
           @click="updateQuantity(null, null, -1)"
           name="addNewQuantity">
-          Add another quantity
+          {{ $t('Add another quantity')}}
         </button>
       </div>
     </div>
