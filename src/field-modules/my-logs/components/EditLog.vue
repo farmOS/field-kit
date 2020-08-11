@@ -11,7 +11,7 @@
       class="tab"
       :class="{ selected: tabSelected === 'SECOND' }"
       @click="tabSelected = 'SECOND'">
-      <h5{{ $t('>MOVEMENT') }}</h5>
+      <h5>{{ $t('>MOVEMENT') }}</h5>
     </div>
   </div>
   <div
