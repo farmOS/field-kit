@@ -447,7 +447,7 @@
       :objects="filteredAssets"
       searchKey="name"
       searchId="id"
-      :label="assetsRequired() ? 'Seedings must include assets!' : 'Add assets to be moved'"
+      :label="assetsRequired() ? $t('Seedings must include assets!') : $t('Add assets to be moved')"
       :class="{ invalid: assetsRequired() }"
       v-on:results="addAsset($event)">
       <template slot="empty">
@@ -483,7 +483,7 @@
       :objects="filteredMovementAreas"
       searchKey="name"
       searchId="tid"
-      label="Movement to"
+      :label="$t('Movement to')"
       v-on:results="addMovementArea($event)">
       <template slot="empty">
         <div class="empty-slot">
