@@ -26,6 +26,12 @@ export default {
     'clicking the':'clicar no',
     'icon above.':'ícone acima',
     // AllLogsMenuBar.vue
+    //EditLog.vue
+    'GENERAL':'Geral',
+    'MOVEMENT':'Movimento',
+    'Name':'Nome',
+    'Enter name':'Digite seu nome',
+
     // etc...
   },
 };
