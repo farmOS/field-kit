@@ -31,6 +31,15 @@ export default {
     'MOVEMENT':'Movimento',
     'Name':'Nome',
     'Enter name':'Digite seu nome',
+    'Log Type':'Tipo de registro',
+    'Notes':'Notas',
+    'Enter notes':'Digitar notas',
+    'No categories selected':'Nenhuma categoria selecionada',
+    'Log Categories':'Categorias de registros',
+    'Show More':'Mostrar mais',
+    'Show Less':'Mostrar menos',
+    'Quantities':'Quantidades',
+    'Add new or edit existing quantity':'Adicionar uma nova ou editar uma quantidade existente',
 
     // etc...
   },
