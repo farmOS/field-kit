@@ -129,7 +129,7 @@
             : 'Select measure'"
           @input="updateQuantity('measure', $event.target.value, currentQuant)"
           class="custom-select col-sm-3 ">
-            <option>Select measure</option>
+            <option>{{ $t('Select measure')}}</option>
             <option
               v-for="(measure, i) in quantMeasures"
               :value="measure"
@@ -143,7 +143,7 @@
             ? currentLog.quantity[currentQuant].value
             : null"
           @input="updateQuantity('value', $event.target.value, currentQuant)"
-          placeholder="Enter value"
+          :placeholder="$t('Enter value')"
           type="number"
           class="form-control"/>
         <select
@@ -154,7 +154,7 @@
             : 'Select unit'"
           @input="updateQuantity('unit', $event.target.value, currentQuant)"
           class="custom-select col-sm-3 ">
-            <option>Select unit</option>
+            <option>{{ $t('Select unit')}}</option>
             <option
               v-for="(unit, i) in units"
               :value="unit.tid"
@@ -168,7 +168,7 @@
             ? currentLog.quantity[currentQuant].label
             : null"
           @input="updateQuantity('label', $event.target.value, currentQuant)"
-          placeholder="Enter label"
+          :placeholder="$t('Enter label')"
           type="text"
           class="form-control"/>
       </div>
@@ -200,29 +200,29 @@
           class="btn btn-success"
           @click="updateQuantity(null, null, -1)"
           name="addNewQuantity">
-          {{ $t('Add another quantity')}}
+          {{$t('Add another quantity')}}
         </button>
       </div>
     </div>
 
-    <h4>Assets</h4>
+    <h4>{{ $t('Assets')}}</h4>
     <farm-autocomplete
       :objects="filteredAssets"
       searchKey="name"
       searchId="id"
-      :label="assetsRequired() ? 'Seedings must include assets!' : 'Add assets to the log'"
+      :label="assetsRequired() ? $t('Seedings must include assets!') : $t('Add assets to the log')"
       :class="{ invalid: assetsRequired() }"
       v-on:results="addAsset($event)">
       <template slot="empty">
         <div class="empty-slot">
-          <em>No assets found.</em>
+          <em>{{ $t('No assets found.')}}</em>
           <br>
           <button
             type="button"
             class="btn btn-light"
             @click="forceSync"
             name="button">
-            Sync Now
+            {{ $t('Sync Now')}}
           </button>
         </div>
       </template>
@@ -243,7 +243,7 @@
     </div>
 
     <div class="form-item form-item-name form-group">
-      <label for="type" class="control-label ">Equipment</label>
+      <label for="type" class="control-label ">{{ $t('Equipment')}}</label>
       <div class="input-group">
         <select
           @input="addEquipment($event.target.value)"
@@ -275,7 +275,7 @@
     <div
       v-if="!(currentLog.type === 'farm_seeding')"
       id="areas-and-location">
-      <h4>Areas &amp; Location</h4>
+      <h4>{{ $t('Areas')}} &amp; {{ $t('Location')}}</h4>
 
       <!-- We're using a radio button to choose whether areas are selected
       automatically based on device location, or using an autocomplete.
@@ -290,7 +290,7 @@
           name="geoRadioGroup"
           v-bind:value="false"
           checked>
-          <label class="form-check-label" for="dontUseGeo">Search areas</label>
+          <label class="form-check-label" for="dontUseGeo">{{ $t('Search areas')}}</label>
         </div>
         <div class="form-check">
           <input
@@ -301,13 +301,13 @@
           name="geoRadioGroup"
           v-bind:value="true"
           >
-          <label class="form-check-label" for="doUseGeo">Use my location</label>
+          <label class="form-check-label" for="doUseGeo">{{ $t('Use my location')}}</label>
         </div>
       </div>
 
       <!-- If using the user's, show a select menu of nearby locations -->
       <div v-if="useLocalAreas" class="form-group">
-        <label for="areaSelector">Farm areas near your current location</label>
+        <label for="areaSelector">{{ $t('Farm areas near your current location')}}</label>
         <select
           @input="addArea($event.target.value)"
           class="form-control"
@@ -329,18 +329,18 @@
         :objects="filteredAreas"
         searchKey="name"
         searchId="tid"
-        label="Add areas to the log"
+        :label="$t('Add areas to the log')"
         v-on:results="addArea($event)">
         <template slot="empty">
           <div class="empty-slot">
-            <em>No areas found.</em>
+            <em>{{ $t('No areas found.')}}</em>
             <br>
             <button
               type="button"
               class="btn btn-light"
               @click="forceSync"
               name="button">
-              Sync Now
+             {{ $t('Sync Now')}}
             </button>
           </div>
         </template>
@@ -372,7 +372,7 @@
           @click="addLocation"
           type="button"
           class="btn btn-success btn-navbar">
-          Add my GPS location to the log
+          {{ $t('Add my GPS location to the log')}}
         </button>
       </div>
 
@@ -395,7 +395,7 @@
       </div>
     </div>
 
-    <h4>Images</h4>
+    <h4>{{ $t('Images')}}</h4>
 
     <div
       v-if="isNative"
@@ -406,7 +406,7 @@
         @click="getPhoto"
         class="btn btn-info btn-navbar navbar-right"
         type="button">
-        Take picture with camera
+        {{ $t('Take picture with camera')}}
       </button>
     </div>
 
@@ -415,7 +415,7 @@
         <label
           class="custom-file-label"
           for="customFile">
-          Select photo from file
+          {{ $t('Select photo from file')}}
         </label>
         <input
           type="file"
@@ -452,14 +452,14 @@
       v-on:results="addAsset($event)">
       <template slot="empty">
         <div class="empty-slot">
-          <em>No assets found.</em>
+          <em>{{ $t('No assets found.')}}</em>
           <br>
           <button
             type="button"
             class="btn btn-light"
             @click="forceSync"
             name="button">
-            Sync Now
+            {{ $t('Sync Now')}}
           </button>
         </div>
       </template>
@@ -487,14 +487,14 @@
       v-on:results="addMovementArea($event)">
       <template slot="empty">
         <div class="empty-slot">
-          <em>No areas found.</em>
+          <em>{{ $t('No areas found.')}}</em>
           <br>
           <button
             type="button"
             class="btn btn-light"
             @click="forceSync"
             name="button">
-            Sync Now
+            {{ $t('Sync Now')}}
           </button>
         </div>
       </template>
