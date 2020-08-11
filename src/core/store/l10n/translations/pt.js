@@ -27,6 +27,7 @@ export default {
     'icon above.':'ícone acima',
     // AllLogsMenuBar.vue
     //EditLog.vue
+    'Done':'Feito',
     'GENERAL':'Geral',
     'MOVEMENT':'Movimento',
     'Name':'Nome',
@@ -47,6 +48,7 @@ export default {
     'Assets':'Ativos',
     'Seedings must include assets!':'Semeaduras devem incluir ativos',
     'Add assets to the log':'Adicionar ativos ao registro',
+    'Add assets to be moved':'Adicionar ativos a serem movidos',
     'No assets found.':'Nenhum ativo encontrado',
     'Sync Now':'Sincronizar agora',
     'Equipment':'Equipamento',
@@ -61,6 +63,7 @@ export default {
     'Images':'Imagens',
     'Take picture with camera':'Tire uma fotografia',
     'Select photo from file':'Selecionar foto do arquivo',
+    'Movement to':'Movimento para'
 
 
 
