@@ -3,7 +3,7 @@ import MyLogsWidget from './components/MyLogsWidget';
 
 export default {
   name: 'my-logs',
-  label: "$t('My Logs')",
+  label: $t('My Logs'),
   widget: MyLogsWidget,
   filters: {
     log: {
