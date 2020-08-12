@@ -4,7 +4,7 @@
       <li @click="$emit('toggleDrawer')">
         <icon-menu/>
       </li>
-      <li>My Logs</li>
+      <li>{{ $t('My Logs')}}</li>
     </template>
     <template #right-menu>
       <router-link :to="{ name: 'filter-logs' }" tag="li" class="filter">
@@ -16,7 +16,7 @@
       </li>
     </template>
     <template #more-menu>
-      <li @click="$emit('syncAll')">Sync all logs</li>
+      <li @click="$emit('syncAll')">{{ $t('Sync all logs')}}</li>
       <router-link :to="{ name: 'filter-logs' }" tag="li" class="filter">
         Filter logs
       </router-link>

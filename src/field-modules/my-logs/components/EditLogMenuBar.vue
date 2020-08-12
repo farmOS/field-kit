@@ -4,7 +4,7 @@
       <router-link :to="{ name: 'logs' }" tag="li">
         <icon-arrow-back/>
       </router-link>
-      <li>Edit Log</li>
+      <li>{{ $t('Edit Log')}}</li>
     </template>
     <template #right-menu>
       <a
@@ -22,10 +22,10 @@
       <a
         v-if="currentLog.url !==''"
         :href="currentLog.url">
-        <li>Open in browser</li>
+        <li>{{ $t('Open in browser')}}</li>
       </a>
       <li @click="$emit('deleteCurrentLog')">
-        Delete from device
+       {{ $t(' Delete from device')}}
       </li>
     </template>
   </farm-menu-bar>
