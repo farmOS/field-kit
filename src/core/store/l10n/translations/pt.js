@@ -88,8 +88,38 @@ export default {
     'Seeding':'Semeadura',
     'Log Category':'Categoria do registro',
     'No Category':'Nenhuma categoria',
-       
-
+    //MyLogsWidget.vue
+    'Observation':'Observação',
+    'Harvest':'Colheita',
+    'Harvests':'Colheitas',
+    'Input':'Entrada',
+    //defaultLogTypes.jpg
+    'Activity':'Atividade',
+    'Activities':'Atividades',
+    'Areas':'Áreas',
+    'Assets':'Ativos',
+    'Files':'Arquivos',
+    'Geometry':'Geometria',
+    'Photos':'Fotos',
+    'Notes':'Notas',
+    'Movement':'Movimento',
+    'Log category':'Categoria de registro',
+    'Assigned to':'Atribuído a',
+    'Harvest lot number':'Número do lote da colheita',
+    'Inventory adjustments':'Ajuste inventário',
+    'Flags':'Marcações',
+    'Data':'Dados',
+    'Equipment used':'Equipamentos usados',
+    'Input':'Entrada',
+    'Inputs':'Entradas',
+    'Observations':'Observações',
+    'Application method':'Método de aplicação',
+    'Purpose':'Objetivo',
+    'Source/manufacturer':'Fornecedor/fabricante',
+    'Materials':'Materiais',
+    'Input lot number':'Número do lote de entrada',
+    'Date purchased':'Data da compra',
+    'Equipment used':'Equipamento usado'
     // etc...
   },
 };
