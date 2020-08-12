@@ -63,9 +63,27 @@ export default {
     'Images':'Imagens',
     'Take picture with camera':'Tire uma fotografia',
     'Select photo from file':'Selecionar foto do arquivo',
-    'Movement to':'Movimento para'
-
-
+    'Movement to':'Movimento para',
+    //FarmAutocomplete.vue
+    'Enter text to search':'Entre o texto a ser buscado',
+    'No Results':'Nenhum resultado',
+    //FarmDateTimeForm.vue
+    'Date':'Data',
+    'Hour':'Hora',
+    'Min':'Min',
+    //FilterLogs.vue
+    'Today':'Hoje',
+    'This Week':'Essa semana',
+    'This Month':'Este mês',
+    'This Year':'Este ano',
+    'All Time':'Todo o tempo',
+    'Log Type':'Tipo de Registro',
+    'Activity':'Atividade',
+    'Harvest':'Colheita',
+    'Seeding':'Semeadura'
+    'Log Category':'Categoria do registro',
+    'No Category':'Nenhuma categoria',
+       
 
     // etc...
   },
