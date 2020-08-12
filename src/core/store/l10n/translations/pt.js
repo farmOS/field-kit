@@ -124,7 +124,7 @@ export default {
     'My Logs':'Meus registros',
     // Logs.vue
     'Confirm Deletion':"Confirme a exclusão",
-    'Deleting it on this device will not remove the log from the server.':'Apagar o registro deste dispositivo não o removerá do servidor'
+    'Deleting it on this device will not remove the log from the server.':'Apagar o registro deste dispositivo não o removerá do servidor',
     'It has not yet been synced to the server and cannot be recovered after it\'s deleted.':'Este ainda não foi sincronizado com o servidor e não poderá ser recuperado após apagado',
     // etc...
   },
