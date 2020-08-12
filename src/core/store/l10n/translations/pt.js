@@ -126,6 +126,14 @@ export default {
     'Confirm Deletion':"Confirme a exclusão",
     'Deleting it on this device will not remove the log from the server.':'Apagar o registro deste dispositivo não o removerá do servidor',
     'It has not yet been synced to the server and cannot be recovered after it\'s deleted.':'Este ainda não foi sincronizado com o servidor e não poderá ser recuperado após apagado',
+    // Logout.vue
+    'Warning':'Atenção',
+    'Logging out will permanently delete all logs stored on this device.':'Sair ira permanentemente apagar todos os registros salvos neste dispositivo',
+    'You will not be able to recover logs which have not been synced with':'Você não poderá recuperar os registros que nãop foram sincronizados com',
+    'your farmOS server. Go back to sync any unsaved logs, or proceed to':'seu servidor farmOS. Retorne e sincronize qualquer registro não salvo, ou continue para',
+    'logout and clear all data from this device.':'sair e apagar todos os dados deste sispositivo',
+    'Go Back':'Retornar',
+    'Logout':'Sair',
     // etc...
   },
 };
