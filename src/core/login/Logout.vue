@@ -5,12 +5,12 @@
       <div class="col">
         <div class="card text-primary border-primary mb-3">
           <div class="card-body">
-            <h4 class="card-title">WARNING!</h4>
+            <h4 class="card-title">{{ $t('WARNING!')}}</h4>
             <p class="card-text">
-              Logging out will permanently delete all logs stored on this device.
-              You will not be able to recover logs which have not been synced with
-              your farmOS server. Go back to sync any unsaved logs, or proceed to
-              logout and clear all data from this device.
+              {{ $t('Logging out will permanently delete all logs stored on this device.')}}
+              {{ $t('You will not be able to recover logs which have not been synced with')}}
+              {{ $t('your farmOS server. Go back to sync any unsaved logs, or proceed to')}}
+              {{ $t('logout and clear all data from this device.')}}
             </p>
           </div>
         </div>
@@ -24,7 +24,7 @@
           class="btn btn-lg btn-success"
           type="button"
           name="button">
-          Go Back
+          {{ $t('Go Back')}}
         </button>
       </div>
       <div class="col col-sm-auto">
@@ -33,7 +33,7 @@
           class="btn btn-lg btn-primary"
           type="button"
           name="button">
-          Logout
+          {{ $t('Logout')}}
         </button>
       </div>
     </div>
