@@ -48,7 +48,7 @@
 
             <div class="card-row-3">
               <div class="date-and-type">
-                <span class="log-type">{{logTypes[log.type].label.toUpperCase()}}</span>
+                <span class="log-type">{{$t(logTypes[log.type].label).toUpperCase()}}</span>
                 <span>{{showDate(log.timestamp)}}</span>
               </div>
               <div class="tags">

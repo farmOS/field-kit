@@ -63,12 +63,12 @@
               v-for="(type, typeKey) in logTypes"
               :value="typeKey"
               :key="`${type.label}-${typeKey}`">
-              {{ type.label }}
+              {{ $t(type.label) }}
             </option>
         </select>
       </div>
       <div class="form-item" v-if="!(currentLog.id === undefined)">
-        <p> {{ logTypes[currentLog.type].label }} </p>
+        <p> {{ $t(logTypes[currentLog.type].label) }} </p>
       </div>
     </div>
 
@@ -117,7 +117,9 @@
 
     <div v-if="currentLog.quantity !== undefined">
       <h4>{{ $t('Quantities')}}</h4>
-      <label for="quantity" class="control-label ">{{ $t('Add new or edit existing quantity')}}</label>
+      <label for="quantity" class="control-label ">
+        {{ $t('Add new or edit existing quantity')}}
+      </label>
       <div v-if="currentQuant >= 0" class="form-item form-item-name form-group">
         <!-- To display a placeholder value ONLY when there are no existing quantities,
         we must add the placeholder with an <option> tag and select it using the :value option -->
