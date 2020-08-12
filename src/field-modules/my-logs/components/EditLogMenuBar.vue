@@ -25,7 +25,7 @@
         <li>{{ $t('Open in browser')}}</li>
       </a>
       <li @click="$emit('deleteCurrentLog')">
-       {{ $t(' Delete from device')}}
+       {{ $t('Delete from device')}}
       </li>
     </template>
   </farm-menu-bar>
