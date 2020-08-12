@@ -26,6 +26,11 @@ export default {
     'clicking the':'clicar no',
     'icon above.':'ícone acima',
     // AllLogsMenuBar.vue
+    'My Logs':'Meus registros',
+    // EditLogMenuBar.vue
+    'Edit Log':'Editar Registro',
+    'Delete from device':'Apagar do Dispostivio',
+    'Open in browser':'Abrir no navegador',
     //EditLog.vue
     'Done':'Feito',
     'GENERAL':'Geral',
