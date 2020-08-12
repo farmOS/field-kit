@@ -1,7 +1,7 @@
 <template>
   <div class="farm-date-time-form form-row">
     <div :id="id + '-date-form'" class="form-item form-group col">
-      <label :for="id + '-date'" class="control-label">{{ dateLabel }}</label>
+      <label :for="id + '-date'" class="control-label">{{ $t(dateLabel) }}</label>
       <input
         :id="id + '-date'"
         type="date"
@@ -11,7 +11,7 @@
         class="form-control">
     </div>
     <div :id="id + '-hour-form'" class="form-item form-group col">
-      <label :for="id + '-hour'" class="control-label">Hour</label>
+      <label :for="id + '-hour'" class="control-label">{{ $t('Hour') }}</label>
       <input
         :id="id + '-hour'"
         type="number"
@@ -23,7 +23,7 @@
         class="form-control">
     </div>
     <div :id="id + '-minute-form'" class="form-item form-group col">
-      <label :for="id + '-minute'" class="control-label">Min</label>
+      <label :for="id + '-minute'" class="control-label">{{ $t('Min') }}</label>
       <input
         :id="id + '-minute'"
         type="number"
@@ -46,7 +46,7 @@
             :checked="time.am"
             @input="updateAmPm($event.target.checked)"
             class="form-check-input">
-          <label :for="id + '-is-am'" class="form-check-label">AM</label>
+          <label :for="id + '-is-am'" class="form-check-label">{{ $t('AM') }}</label>
         </div>
         <div class="form-check">
           <input
@@ -57,7 +57,7 @@
             :checked="!time.am"
             @input="updateAmPm(!$event.target.checked)"
             class="form-check-input">
-          <label :for="id + '-is-pm'" class="form-check-label">PM</label>
+          <label :for="id + '-is-pm'" class="form-check-label">{{ $t('PM') }}</label>
         </div>
       </div>
     </div>

@@ -3,7 +3,7 @@
 
     <br>
 
-    <h4>Date</h4>
+    <h4>{{ $t('Date')}}</h4>
     <div class="form-item form-group">
       <div class="form-check">
         <input
@@ -16,7 +16,7 @@
           for="date"
           @click="setDateFilter('TODAY')"
           :class="{selected: logDisplayFilters.date === 'TODAY'}">
-          Today
+          {{ $t('Today')}}
         </label>
       </div>
       <div class="form-check">
@@ -30,7 +30,7 @@
           for="date"
           @click="setDateFilter('THIS_WEEK')"
           :class="{selected: logDisplayFilters.date === 'THIS_WEEK'}">
-          This Week
+          {{ $t('This Week')}}
         </label>
       </div>
       <div class="form-check">
@@ -44,7 +44,7 @@
           for="date"
           @click="setDateFilter('THIS_MONTH')"
           :class="{selected: logDisplayFilters.date === 'THIS_MONTH'}">
-          This Month
+          {{ $t('This Month')}}
         </label>
       </div>
       <div class="form-check">
@@ -58,7 +58,7 @@
           for="date"
           @click="setDateFilter('THIS_YEAR')"
           :class="{selected: logDisplayFilters.date === 'THIS_YEAR'}">
-          This Year
+          {{ $t('This Year')}}
         </label>
       </div>
       <div class="form-check">
@@ -72,12 +72,12 @@
           for="date"
           @click="setDateFilter('ALL_TIME')"
           :class="{selected: logDisplayFilters.date === 'ALL_TIME'}">
-          All Time
+          {{ $t('All Time')}}
         </label>
       </div>
     </div>
 
-    <h4>Log Type</h4>
+    <h4>{{ $t('Log Type')}}</h4>
     <div class="form-item form-group">
       <div class="form-check">
         <input
@@ -90,7 +90,7 @@
           for="log-types"
           @click="updateExcludedLogType('farm_activity', checkChecked('type-farm-activity'))"
           :class="{selected: !logDisplayFilters.excludedTypes.includes('farm_activity')}">
-          Activity
+          {{ $t('Activity')}}
         </label>
       </div>
       <div class="form-check">
@@ -104,7 +104,7 @@
           for="log-types"
           @click="updateExcludedLogType('farm_harvest', checkChecked('type-farm-harvest'))"
           :class="{selected: !logDisplayFilters.excludedTypes.includes('farm_harvest')}">
-          Harvest
+          {{ $t('Harvest')}}
         </label>
       </div>
       <div class="form-check">
@@ -132,7 +132,7 @@
           for="log-types"
           @click="updateExcludedLogType('farm_observation', checkChecked('type-farm-observation'))"
           :class="{selected: !logDisplayFilters.excludedTypes.includes('farm_observation')}">
-          Observation
+          {{ $t('Observation')}}
         </label>
       </div>
       <div class="form-check">
@@ -146,12 +146,12 @@
           for="log-types"
           @click="updateExcludedLogType('farm_seeding', checkChecked('type-farm-seeding'))"
           :class="{selected: !logDisplayFilters.excludedTypes.includes('farm_seeding')}">
-          Seeding
+          {{ $t('Seeding')}}
         </label>
       </div>
     </div>
 
-    <h4>Log Category</h4>
+    <h4>{{ $t('Log Category')}}</h4>
     <div class="form-item form-group">
       <div class="form-check">
         <input
@@ -164,7 +164,7 @@
           for="log-categories"
           @click="updateExcludedLogCategory(-1, checkChecked('category-none'))"
           :class="{selected: !logDisplayFilters.excludedCategories.includes(-1)}">
-          No Category
+          {{ $t('No Category')}}
         </label>
       </div>
       <div class="form-check" v-for="category in categories" :key="`category-${category.tid}`">
