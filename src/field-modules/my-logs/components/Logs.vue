@@ -40,7 +40,7 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Confirm Deletion</h5>
+            <h5 class="modal-title" id="exampleModalLabel">{{ $t('Confirm Deletion')}}</h5>
             <button
               type="button"
               class="close"
@@ -50,13 +50,13 @@
             </button>
           </div>
           <div class="modal-body">
-            Are sure you'd like to delete the log "{{logToDelete.name}}"?&nbsp;
+            {{ $t('Are sure you'd like to delete the log')}} "{{logToDelete.name}}"?&nbsp;
             <span
               v-if='logToDelete.wasPushedToServer'>
-              Deleting it on this device will not remove the log from the server.
+              {{ $t('Deleting it on this device will not remove the log from the server.')}}
             </span>
             <span v-else>
-              It has not yet been synced to the server and cannot be recovered after it's deleted.
+              {{ $t('It has not yet been synced to the server and cannot be recovered after it\'s deleted.')}}
             </span>
           </div>
           <div class="modal-footer">
