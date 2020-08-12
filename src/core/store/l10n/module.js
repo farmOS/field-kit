@@ -1,6 +1,7 @@
 import translations from './translations';
 import { setLocale, setTranslations } from './t';
 
+setTranslations(translations);
 const locales = Object.keys(translations);
 const languages = Object.entries(translations)
   .map(([code, { name }]) => ({ code, name }));
