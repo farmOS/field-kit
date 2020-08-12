@@ -24,19 +24,19 @@
         <svg-filter-dropshadow id="btn-shadow" :opacity=".25" :blur="3" :x="1" :y="2"/>
         <div id="activity" class="add-btn" @click="addLog('farm_activity', $event)">
           <icon-add-circle :style="{ filter: 'url(#btn-shadow)' }"/>
-          <div>Activity</div>
+          <div>{{ $t('Activity')}}</div>
         </div>
         <div id="observation" class="add-btn" @click="addLog('farm_observation', $event)">
           <icon-add-circle :style="{ filter: 'url(#btn-shadow)' }"/>
-          <div>Observation</div>
+          <div>{{ $t('Observation')}}</div>
         </div>
         <div id="harvest" class="add-btn" @click="addLog('farm_harvest', $event)">
           <icon-add-circle :style="{ filter: 'url(#btn-shadow)' }"/>
-          <div>Harvest</div>
+          <div>{{ $t('Harvest')}}</div>
         </div>
         <div id="input" class="add-btn" @click="addLog('farm_input', $event)">
           <icon-add-circle :style="{ filter: 'url(#btn-shadow)' }"/>
-          <div>Input</div>
+          <div>{{ $t('Input')}}</div>
         </div>
       </div>
     </div>
