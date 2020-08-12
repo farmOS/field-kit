@@ -126,6 +126,8 @@ export default {
     'Confirm Deletion':"Confirme a exclusão",
     'Deleting it on this device will not remove the log from the server.':'Apagar o registro deste dispositivo não o removerá do servidor',
     'It has not yet been synced to the server and cannot be recovered after it\'s deleted.':'Este ainda não foi sincronizado com o servidor e não poderá ser recuperado após apagado',
+    //Login.vue
+    'Need a server? Check out':'Precisa de um servidor? Confira',
     // Logout.vue
     'Warning':'Atenção',
     'Logging out will permanently delete all logs stored on this device.':'Sair ira permanentemente apagar todos os registros salvos neste dispositivo',
