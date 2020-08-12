@@ -3,7 +3,7 @@
     <label for="search" class="control-label">{{ label }}</label>
     <input
       :value="search"
-      placeholder="Enter text to search"
+      :placeholder="$t('Enter text to search')"
       type="text"
       class="form-control"
       @focus="openResults"
@@ -17,7 +17,7 @@
       <li
         v-if="searchResults.length === 0"
         class="list-group-item empty">
-        <slot name="empty">No Results</slot>
+        <slot name="empty">{{ $t('No Results')}}</slot>
       </li>
       <li
         v-else

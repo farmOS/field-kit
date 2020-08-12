@@ -80,7 +80,7 @@ export default {
     'Log Type':'Tipo de Registro',
     'Activity':'Atividade',
     'Harvest':'Colheita',
-    'Seeding':'Semeadura'
+    'Seeding':'Semeadura',
     'Log Category':'Categoria do registro',
     'No Category':'Nenhuma categoria',
        
