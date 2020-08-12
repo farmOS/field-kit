@@ -50,7 +50,7 @@
             </button>
           </div>
           <div class="modal-body">
-            {{ $t('Are sure you'd like to delete the log')}} "{{logToDelete.name}}"?&nbsp;
+            {{ $t('Are sure you\'d like to delete the log')}} "{{logToDelete.name}}"?&nbsp;
             <span
               v-if='logToDelete.wasPushedToServer'>
               {{ $t('Deleting it on this device will not remove the log from the server.')}}
