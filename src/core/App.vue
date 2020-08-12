@@ -32,7 +32,7 @@
             v-for="module in modules"
             :key="`${module.name}-menu-link`"
             @click="handleModuleClick(module)">
-            {{module.label}}
+            {{$t(module.label)}}
           </farm-list-item>
         </farm-list>
         <farm-list>
