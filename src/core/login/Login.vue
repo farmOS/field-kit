@@ -53,7 +53,7 @@
       </button>
     </div>
     <br>
-    <p>Need a server? Check out <a href="https://farmos.org/hosting/">hosting options</a>.</p>
+    <p>{{ $t('Need a server? Check out')}} <a href="https://farmos.org/hosting/">hosting options</a>.</p>
   </div>
 </template>
 
