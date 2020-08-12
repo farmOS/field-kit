@@ -11,7 +11,7 @@ import './main.css';
 import utils from '../utils';
 import { createFieldModule, loadFieldModule, setRootRoute } from '../utils/fieldModules';
 import components from '../components';
-import t from '../components/t';
+import t from './mixins/t';
 
 Vue.config.productionTip = false;
 

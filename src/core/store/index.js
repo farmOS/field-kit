@@ -7,7 +7,7 @@ import makeIDBSubscriber from './idb/subscriber';
 import httpModule from './http/module';
 import authModule from './authModule';
 import camModule from './camModule';
-import l10n from './l10n/module';
+import l10nModule from './l10n/module';
 
 Vue.use(Vuex);
 
@@ -19,7 +19,7 @@ const store = new Vuex.Store({
     http: httpModule,
     auth: authModule,
     cam: camModule,
-    l10n,
+    l10n: l10nModule,
   },
 });
 

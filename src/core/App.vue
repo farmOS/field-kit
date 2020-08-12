@@ -189,8 +189,12 @@ export default {
         : state.shell.farmInfo.url?.replace(/(^\w+:|^)\/\//, '')),
       modules: state => state.shell.modules,
       areaGeoJSON: state => state.shell.areaGeoJSON,
+
+      /**
+       * L10N STATE
+       */
       locale: state => state.l10n.locale,
-      translations: state => state.l10n.translations,
+      langs: state => state.l10n.languages,
 
       /**
        * FARM STATE
@@ -205,10 +209,6 @@ export default {
     ...mapGetters([
       'equipment',
     ]),
-    langs() {
-      return Object.entries(this.translations)
-        .map(([code, { name }]) => ({ code, name }));
-    },
   },
   watch: {
     showDrawer(currentShowDrawer) {
