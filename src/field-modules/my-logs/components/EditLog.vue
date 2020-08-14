@@ -607,7 +607,7 @@ export default {
         [key]: val,
         localID: +this.id,
       };
-      this.$store.dispatch('updateLog', props);
+      this.$store.commit('updateLog', props);
     },
 
     updateNotes(value) {

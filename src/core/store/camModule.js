@@ -4,27 +4,27 @@ export default {
     /*
     called when the get photo button is tapped
     */
-    getPhotoFromCamera({ dispatch }, log) {
+    getPhotoFromCamera({ commit }, log) {
       function handleResponse(photoLoc) {
         const dataURL = `data:image/jpeg;base64,${photoLoc}`;
         const props = {
           images: log.images.concat(dataURL),
           localID: log.localID,
         };
-        dispatch('updateLog', props);
+        commit('updateLog', props);
       }
       function handleError(error) { // eslint-disable-line no-unused-vars
       }
       getPhotoFromCamera() // eslint-disable-line no-use-before-define
         .then(handleResponse, handleError);
     },
-    loadPhotoBlob({ dispatch }, { file, log }) {
+    loadPhotoBlob({ commit }, { file, log }) {
       readFileData(file).then((data) => { // eslint-disable-line no-use-before-define
         const props = {
           images: log.images.concat(data),
           localID: log.localID,
         };
-        dispatch('updateLog', props);
+        commit('updateLog', props);
       });
     },
   },

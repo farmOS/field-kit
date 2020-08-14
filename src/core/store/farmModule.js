@@ -67,6 +67,24 @@ export default {
     addAreas: makeEntityAdder('areas', 'tid'),
     addUnits: makeEntityAdder('units', 'tid'),
     addCategories: makeEntityAdder('categories', 'tid'),
+    // This action is intended as the main API for field modules to modify log
+    // properties. By default it sets the log's metadata to reflect that the log
+    // has not been cached locally, nor pushed to the server.
+    updateLog(state, props) {
+      const { updateLog } = farmLog(state.resources.log);
+      const i = state.logs.findIndex(l => l.localID === props.localID);
+      if (i < 0) {
+        throw new Error('The updateLog action requires a localID among the '
+          + 'props supplied as the payload. If the log does not have a localID '
+          + 'yet, use the initializeLog action instead.');
+      }
+      const newLog = updateLog(state.logs[i], {
+        // Set wasPushedToServer to false, but allow it to be overwritten by props.
+        wasPushedToServer: false,
+        ...props,
+      });
+      state.logs.splice(i, 1, newLog);
+    },
     // Takes a function as payload and applies it to each log object
     updateAllLogs(state, fn) {
       state.logs = state.logs.map(log => fn(log));
@@ -113,26 +131,6 @@ export default {
           resolve(localID);
         }).catch(reject);
       });
-    },
-    // This action is intended as the main API for field modules to modify log
-    // properties. By default it sets the log's metadata to reflect that the log
-    // has not been cached locally, nor pushed to the server.
-    // **It should NOT be used by Field Kit Core!**
-    // Core should use the addLogs mutation instead.
-    updateLog({ commit, rootState }, props) {
-      const { updateLog } = farmLog(rootState.farm.resources.log);
-      const oldLog = rootState.farm.logs.find(log => props.localID === log.localID);
-      if (oldLog === undefined) {
-        throw new Error('The updateLog action requires a localID among the '
-          + 'props supplied as the payload. If the log does not have a localID '
-          + 'yet, use the initializeLog action instead.');
-      }
-      const newLog = updateLog(oldLog, {
-        // Set wasPushedToServer to false, but allow it to be overwritten by props.
-        wasPushedToServer: false,
-        ...props,
-      });
-      commit('addLogs', newLog);
     },
   },
 };

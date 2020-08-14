@@ -73,7 +73,7 @@ export default {
         },
         localID: +this.id,
       };
-      this.$store.dispatch('updateLog', props);
+      this.$store.commit('updateLog', props);
     },
   },
 };
