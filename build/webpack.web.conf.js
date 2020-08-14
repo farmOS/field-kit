@@ -75,30 +75,27 @@ const webpackConfig = merge(baseWebpackConfig, {
     }),
 
     // copy custom static assets
-    new CopyWebpackPlugin([
-      {
-        from: path.resolve(__dirname, '../static'),
-        to: config.web.assetsSubDirectory,
-        ignore: ['.*']
-      },
-      {
-        from: 'favicon.ico',
-        to: config.web.assetsRoot
-      },
-      {
-        from: 'CNAME',
-        to: config.web.assetsRoot
-      },
-      {
-        from: 'manifest.json',
-        to: config.web.assetsRoot
-      },
-      {
-        from: 'res/icons/web/**',
-        to: config.web.assetsRoot + '/icons',
-        flatten: true
-      }
-    ])
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, '../static'),
+          to: config.web.assetsSubDirectory,
+        },
+        {
+          from: 'favicon.ico',
+          to: config.web.assetsRoot
+        },
+        {
+          from: 'manifest.json',
+          to: config.web.assetsRoot
+        },
+        {
+          from: 'res/icons/web/**',
+          to: config.web.assetsRoot + '/icons',
+          flatten: true
+        }
+      ]
+    })
   ],
   optimization: {
     splitChunks: {

@@ -70,37 +70,38 @@ const webpackConfig = merge(baseWebpackConfig, {
     new webpack.optimize.ModuleConcatenationPlugin(),
 
     // copy custom static assets
-    new CopyWebpackPlugin([
-      {
-        from: path.resolve(__dirname, '../static'),
-        to: config.native.assetsSubDirectory,
-        ignore: ['.*']
-      },
-      {
-        from: 'package.json',
-        to: `${config.native.assetsRoot}/package.json`
-      },
-      {
-        from: 'res/icons/android/**',
-        to: config.native.assetsRoot
-      },
-      {
-        from: 'res/icons/ios/**',
-        to: config.native.assetsRoot
-      },
-      {
-        from: 'res/screens/**',
-        to: config.native.assetsRoot
-      },
-      {
-        from: 'icon.png',
-        to: config.native.assetsRoot
-      },
-      {
-        from: 'splash.png',
-        to: config.native.assetsRoot
-      }
-    ])
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, '../static'),
+          to: config.native.assetsSubDirectory,
+        },
+        {
+          from: 'package.json',
+          to: `${config.native.assetsRoot}/package.json`
+        },
+        {
+          from: 'res/icons/android/**',
+          to: config.native.assetsRoot
+        },
+        {
+          from: 'res/icons/ios/**',
+          to: config.native.assetsRoot
+        },
+        {
+          from: 'res/screens/**',
+          to: config.native.assetsRoot
+        },
+        {
+          from: 'icon.png',
+          to: config.native.assetsRoot
+        },
+        {
+          from: 'splash.png',
+          to: config.native.assetsRoot
+        }
+      ]
+    })
   ],
   optimization: {
     splitChunks: {
