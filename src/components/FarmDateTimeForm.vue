@@ -19,6 +19,7 @@
         max="12"
         :value="time.hour"
         @input="updateHour($event.target.value)"
+        @blur="updateHour($event.target.value, true)"
         class="form-control">
     </div>
     <div id="minute-form" class="form-item form-group col">
@@ -30,6 +31,7 @@
         max="59"
         :value="time.minute"
         @input="updateMinute($event.target.value)"
+        @blur="updateMinute($event.target.value, true)"
         class="form-control">
     </div>
     <div id="am-pm-form" class="form-item form-group col">
@@ -79,16 +81,19 @@ export default {
     };
   },
   created() {
-    this.time.date = this.unixToDateString(this.timestamp);
-    const date = new Date(this.timestamp * 1000);
-    const hours = date.getHours();
-    this.time.hour = (hours === 12 || hours === 24)
-      ? 12
-      : addLeadZero(hours % 12);
-    this.time.minute = addLeadZero(date.getMinutes());
-    this.time.am = hours < 12;
+    this.updateInputFields(this.timestamp);
   },
   methods: {
+    updateInputFields(timestamp) {
+      this.time.date = this.unixToDateString(timestamp);
+      const date = new Date(timestamp * 1000);
+      const hours = date.getHours();
+      this.time.hour = (hours === 0 || hours === 12)
+        ? 12
+        : addLeadZero(hours % 12);
+      this.time.minute = addLeadZero(date.getMinutes());
+      this.time.am = hours < 12;
+    },
     unixToDateString(unixTimestamp) {
       const date = new Date(unixTimestamp * 1000);
       const mm = addLeadZero(date.getMonth() + 1);
@@ -105,9 +110,20 @@ export default {
         hourOutOf24 = 0;
       } else if (am || +hourOutOf12 === 12) {
         hourOutOf24 = +hourOutOf12;
-      } else {
+      } else if (
+        Number.isInteger(+hourOutOf12)
+        && +hourOutOf12 > 0
+        && +hourOutOf12 < 12) {
         hourOutOf24 = +hourOutOf12 + 12;
+      } else {
+        hourOutOf24 = 0;
       }
+
+      const validMinute = Number.isInteger(+minute)
+        && +minute >= 0
+        && +minute < 60
+        ? minute
+        : 0;
 
       if (year > 1970) {
         return Math.floor(new Date(
@@ -115,7 +131,7 @@ export default {
           monthIndex,
           day,
           hourOutOf24,
-          minute,
+          validMinute,
         ).getTime() / 1000).toString();
       }
       return (this.timestamp).toString();
@@ -131,23 +147,27 @@ export default {
         this.$emit('input', timestamp);
       }
     },
-    updateHour(hour) {
-      const timestamp = this.dateAndTimeToUnix(
-        this.time.date,
-        hour,
-        this.time.minute,
-        this.time.am,
-      );
-      this.$emit('input', timestamp);
+    updateHour(hour, skipValidation = false) {
+      if (hour.length === 2 || skipValidation) {
+        const timestamp = this.dateAndTimeToUnix(
+          this.time.date,
+          hour,
+          this.time.minute,
+          this.time.am,
+        );
+        this.$emit('input', timestamp);
+      }
     },
-    updateMinute(minute) {
-      const timestamp = this.dateAndTimeToUnix(
-        this.time.date,
-        this.time.hour,
-        minute,
-        this.time.am,
-      );
-      this.$emit('input', timestamp);
+    updateMinute(minute, skipValidation = false) {
+      if (minute.length === 2 || skipValidation) {
+        const timestamp = this.dateAndTimeToUnix(
+          this.time.date,
+          this.time.hour,
+          minute,
+          this.time.am,
+        );
+        this.$emit('input', timestamp);
+      }
     },
     updateAmPm(am) {
       const timestamp = this.dateAndTimeToUnix(
@@ -161,14 +181,7 @@ export default {
   },
   watch: {
     timestamp(newTimestamp) {
-      this.time.date = this.unixToDateString(newTimestamp);
-      const date = new Date(newTimestamp * 1000);
-      const hours = date.getHours();
-      this.time.hour = (hours === 12 || hours === 24)
-        ? 12
-        : addLeadZero(hours % 12);
-      this.time.minute = addLeadZero(date.getMinutes());
-      this.time.am = hours < 12;
+      this.updateInputFields(newTimestamp);
     },
   },
 };
