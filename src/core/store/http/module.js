@@ -1,4 +1,3 @@
-import { mergeDeepRight } from 'ramda';
 import Promise from 'core-js-pure/features/promise';
 import farm from '../farmClient';
 import router from '../../router';
@@ -63,19 +62,18 @@ export default {
     },
   },
   actions: {
-    updateFarmResources({ commit, dispatch, rootState }, response) {
-      const mergeResources = (res) => {
-        const oldResources = rootState.farm.resources;
-        const newResources = res.resources;
-        const mergedResources = mergeDeepRight(oldResources, newResources);
-        commit('setFarmResources', mergedResources);
-        dispatch('cacheFarmResources', mergedResources);
+    updateFarmResources({ commit, dispatch }, response) {
+      const replaceResources = (res) => {
+        if (res.resources) {
+          commit('setFarmResources', res.resources);
+          dispatch('cacheFarmResources', res.resources);
+        }
         return res;
       };
       if (response) {
-        return mergeResources(response);
+        return replaceResources(response);
       }
-      return farm().info().then(mergeResources);
+      return farm().info().then(replaceResources);
     },
     updateAreas({ commit }) {
       return farm().area.get().then((res) => {
