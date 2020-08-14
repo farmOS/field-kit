@@ -1,5 +1,5 @@
 function translator(translations, locale) {
-  let _translations = translations;
+  const _translations = translations || {};
   let _locale = locale;
 
   return {
@@ -8,8 +8,8 @@ function translator(translations, locale) {
       if (translation) { return translation; }
       return str;
     },
-    setTranslations(t) {
-      _translations = t;
+    setTranslations(code, t) {
+      _translations[code] = t;
     },
     setLocale(l) {
       _locale = l;

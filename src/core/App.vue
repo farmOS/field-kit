@@ -164,8 +164,10 @@ export default {
     this.$store.commit('setCurrentModule', this.$route.meta.module);
     this.$store.dispatch('loadCachedUserAndSiteInfo');
     this.$store.dispatch('loadCachedResources');
+    this.$store.dispatch('loadCachedLanguages');
     this.$store.dispatch('updateUserAndSiteInfo')
-      .then(res => this.$store.dispatch('updateFarmResources', res));
+      .then(res => this.$store.dispatch('updateFarmResources', res))
+      .then(res => this.$store.dispatch('updateLanguages', res));
     this.$store.dispatch('loadCachedAssets');
     this.$store.dispatch('loadCachedAreas');
     this.$store.dispatch('loadCachedUnits');

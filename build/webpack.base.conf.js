@@ -30,6 +30,7 @@ module.exports = {
       ? config.native.assetsRoot
       : config.web.assetsRoot,
     filename: '[name].js',
+    chunkFilename: '[name].js',
     publicPath: process.env.PLATFORM === 'native'
       ? config.native.assetsPublicPath
       : config.web.assetsPublicPath

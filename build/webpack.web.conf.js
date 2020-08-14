@@ -26,7 +26,7 @@ const webpackConfig = merge(baseWebpackConfig, {
   output: {
     path: config.web.assetsRoot,
     filename: utils.assetsPath('js/[name].[chunkhash].js'),
-    chunkFilename: utils.assetsPath('js/[id].[chunkhash].js')
+    chunkFilename: utils.assetsPath('js/[name].[id].[chunkhash].js')
   },
   plugins: [
     // extract css into its own file
