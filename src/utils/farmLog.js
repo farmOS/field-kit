@@ -22,7 +22,6 @@ const farmLog = (logTypes, syncDate) => ({
     const done = { changed, data: props.done || false, conflicts: [] };
     const {
       localID = null,
-      isCachedLocally = false,
       wasPushedToServer = false,
       isReadyToSync = false,
       modules = [],
@@ -39,7 +38,6 @@ const farmLog = (logTypes, syncDate) => ({
       timestamp,
       done,
       localID,
-      isCachedLocally,
       wasPushedToServer,
       isReadyToSync,
       modules,
@@ -98,7 +96,6 @@ const farmLog = (logTypes, syncDate) => ({
       url: props.url || log.url,
       id: props.id || log.id,
       localID: props.localID || log.localID,
-      isCachedLocally: updateMetaData('isCachedLocally', false),
       wasPushedToServer: updateMetaData('wasPushedToServer', false),
       isReadyToSync: updateMetaData('isReadyToSync', false),
       modules: props.modules || log.modules || [],
@@ -238,7 +235,6 @@ const farmLog = (logTypes, syncDate) => ({
       localID: localLog?.localID,
       url: serverLog.url,
       id: serverLog.id,
-      isCachedLocally: updateMetaData('isCachedLocally', false),
       wasPushedToServer: updateMetaData('wasPushedToServer', true),
       isReadyToSync: updateMetaData('isReadyToSync', false),
       modules: updateMetaData('modules', []),

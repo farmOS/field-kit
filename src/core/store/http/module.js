@@ -117,7 +117,6 @@ export default {
           url: response.uri,
           wasPushedToServer: true,
           isReadyToSync: false,
-          isCachedLocally: false,
         };
         const updatedLog = updateLog(rootState.farm.logs[index], props);
         commit('addLogs', updatedLog);
@@ -166,7 +165,7 @@ export default {
               const modules = Array.from(
                 new Set(localLog.modules.concat(rootState.shell.currentModule)),
               );
-              const props = { modules, isCachedLocally: false };
+              const props = { modules };
               const mergedLog = mergeLogFromServer(serverLog, localLog, props);
               commit('addLogs', mergedLog);
             } else {

@@ -44,7 +44,6 @@ export const createSyncReducer = deps => ([syncables, unsyncables, updates], log
       and log is ready to sync
     */
     const updatesRequired = Object.values(newUpdates.props).length > 0;
-    if (updatesRequired) { newUpdates.props.isCachedLocally = false; }
     return [
       syncables.concat(index),
       unsyncables,

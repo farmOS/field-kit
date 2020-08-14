@@ -1,4 +1,3 @@
-import farmLog from '../../../utils/farmLog';
 import {
   getAllKeys,
   getRecords,
@@ -23,18 +22,12 @@ export default {
 
   actions: {
 
-    updateCachedLog({ commit, rootState }, log) {
+    updateCachedLog(_, log) {
       return saveRecord(logStore.name, log)
-        .then(() => {
-          const { updateLog } = farmLog(rootState.farm.resources.log);
-          const newLog = updateLog(log, { isCachedLocally: true });
-          commit('addLogs', newLog);
-        })
         .catch(console.error); // eslint-disable-line no-console
     },
 
     loadCachedLogs({ commit, rootState }) {
-      const { updateLog } = farmLog(rootState.farm.resources.log);
       const filters = rootState.shell.modules
         .filter(mod => mod.name === rootState.shell.currentModule)[0]?.filters?.log;
       const query = (log) => {
@@ -73,17 +66,13 @@ export default {
       };
       return getRecords(logStore.name, query)
         .then((results) => {
-          const cachedLogs = results.map(log => (
-            updateLog(log, { isCachedLocally: true })
-          ));
-          commit('addLogs', cachedLogs);
+          commit('addLogs', results);
         })
         .catch(console.error); // eslint-disable-line no-console
     },
 
     // Specifically for loading logs for the Home screen widgets to use.
     loadHomeCachedLogs({ commit, rootState }) {
-      const { updateLog } = farmLog(rootState.farm.resources.log);
       // We're going to build our own object to store arrays of results for each
       // module, and discard the result returned by getRecords. We won't worry
       // about duplicates across modules because the addLogs mutation doesn't
@@ -160,9 +149,7 @@ export default {
       };
       return getRecords(logStore.name, query)
         .then(() => {
-          const cachedLogs = Object.values(results).flat().map(log => (
-            updateLog(log, { isCachedLocally: true })
-          ));
+          const cachedLogs = Object.values(results).flat();
           commit('addLogs', cachedLogs);
         })
         .catch(console.error); // eslint-disable-line no-console

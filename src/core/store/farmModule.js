@@ -128,9 +128,7 @@ export default {
           + 'yet, use the initializeLog action instead.');
       }
       const newLog = updateLog(oldLog, {
-        // Set isCahchedLocally & wasPushedToServer to false, but allow them
-        // to be overwritten by props.
-        isCachedLocally: false,
+        // Set wasPushedToServer to false, but allow it to be overwritten by props.
         wasPushedToServer: false,
         ...props,
       });

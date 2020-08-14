@@ -1,6 +1,10 @@
 const makeIDBSubscriber = store => ({ type, payload }) => {
-  if (type === 'addLogs' && payload.isCachedLocally === false) {
-    store.dispatch('updateCachedLog', payload);
+  if (type === 'addLogs') {
+    if (Array.isArray(payload)) {
+      payload.forEach((log) => { store.dispatch('updateCachedLog', log); });
+    } else {
+      store.dispatch('updateCachedLog', payload);
+    }
   }
   if (type === 'deleteLog') {
     store.dispatch('deleteCachedLog', payload);
