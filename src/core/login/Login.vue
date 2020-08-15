@@ -18,7 +18,7 @@
     <div class="input-group">
       <input
         v-model="username"
-        placeholder="$t('Enter your username')"
+        :placeholder="$t('Enter your username')"
         type="text"
         autocomplete="username"
         class="form-control"
@@ -29,7 +29,7 @@
     <div class="input-group">
       <input
         v-model="password"
-        placeholder="$t('Enter your password')"
+        :placeholder="$t('Enter your password')"
         type="password"
         autocomplete="current-password"
         class="form-control"
