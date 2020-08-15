@@ -138,7 +138,7 @@ export default {
     'Submit credentials':'Envie suas credenciais',
     'Need a server? Check out':'Precisa de um servidor? Confira',
     'hosting options':'opções de hospedagem',
-    'Enter your  farmOS URL':'Digite o endereço da sua URL',
+    'Enter your farmOS URL':'Digite o endereço da sua URL',
     'Enter your username':'Digite o seu nome de usuário',
     'Enter your password':'Digite a sua senha',
     // Logout.vue
