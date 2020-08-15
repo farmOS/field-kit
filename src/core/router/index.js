@@ -1,7 +1,9 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Login from '../login/Login';
+import LoginMenuBar from '../login/LoginMenuBar';
 import Logout from '../login/Logout';
+import LogoutMenuBar from '../login/LogoutMenuBar';
 import Home from '../home/Home';
 import HomeMenuBar from '../home/HomeMenuBar';
 
@@ -12,12 +14,18 @@ const router = new Router({
     {
       path: '/login',
       name: 'Login',
-      component: Login,
+      components: {
+        default: Login,
+        menubar: LoginMenuBar,
+      },
     },
     {
       path: '/logout',
       name: 'Logout',
-      component: Logout,
+      components: {
+        default: Logout,
+        menubar: LogoutMenuBar,
+      },
     },
     {
       path: '/home',
