@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import wellknown from 'wellknown';
 import farm from './store/farmClient';
 import router from './router';
 import store from './store';
@@ -18,6 +19,9 @@ if (window.farmOS === undefined) {
   window.farmOS = {};
 }
 window.farmOS.utils = utils;
+window.farmOS.lib = {
+  wellknown,
+};
 
 // Register the shared component library globally so they can be accessed from
 // any other component on the root Vue instance.

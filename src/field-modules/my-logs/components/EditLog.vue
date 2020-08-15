@@ -377,13 +377,13 @@
       </div>
 
       <!-- Display a spinner while getting geolocation, then display the location -->
-      <div class="form-item form-item-name form-group">
+      <div v-if="currentLog.geofield" class="form-item form-item-name form-group">
         <ul class="list-group">
           <li
             class="list-group-item"
-            v-for="(geofield, i) in filteredGeofields"
+            v-for="(point, i) in geofieldAsArrayOfWktPoints"
             :key="`geofield-${i}`">
-            {{ geofield.geom }}
+            {{ point }}
             <span class="remove-list-item" @click="removeLocation(i)">
               &#x2715;
             </span>
@@ -544,6 +544,7 @@ const {
   removeGeometry,
   isNearby,
 } = window.farmOS.utils;
+const { parse } = window.farmOS.lib.wellknown;
 
 export default {
   name: 'EditLog',
@@ -770,11 +771,9 @@ export default {
     addLocation() {
       let props;
       function addGeofield(position) {
-        const geom = `POINT (${position.coords.longitude} ${position.coords.latitude})`;
-        const oldGeofield = this.currentLog.geofield;
-        props = oldGeofield
-          ? oldGeofield.concat({ geom })
-          : [{ geom }];
+        const oldGeom = this.currentLog.geofield?.[0]?.geom;
+        const newGeom = `POINT (${position.coords.longitude} ${position.coords.latitude})`;
+        props = [{ geom: mergeGeometries([oldGeom, newGeom]) }];
       }
       function onError({ message }) {
         const errorPayload = { message, level: 'warning', show: false };
@@ -801,12 +800,13 @@ export default {
     },
 
     removeLocation(index) {
-      const oldGeofield = this.currentLog.geofield;
-      const newGeofield = [
-        ...oldGeofield.slice(0, index),
-        ...oldGeofield.slice(index + 1),
-      ];
-      this.updateCurrentLog('geofield', newGeofield);
+      const geofield = [{
+        geom: mergeGeometries([
+          ...this.geofieldAsArrayOfWktPoints.slice(0, index),
+          ...this.geofieldAsArrayOfWktPoints.slice(index + 1),
+        ]),
+      }];
+      this.updateCurrentLog('geofield', geofield);
     },
 
     getAttached(attribute, resources, resId) {
@@ -876,11 +876,19 @@ export default {
       }
       return [];
     },
-    filteredGeofields() {
-      const geofields = this.currentLog.geofield;
-      return this.currentLog.geofield
-        ? geofields.filter(g => g.geom?.includes('POINT'))
-        : [];
+    geofieldAsArrayOfWktPoints() {
+      const geom = this.currentLog.geofield?.[0]?.geom;
+      if (geom) {
+        const geojson = parse(geom);
+        if (geojson.type === 'Point') {
+          return [`POINT (${geojson.coordinates[0]} ${geojson.coordinates[1]})`];
+        }
+        if (geojson.type === 'GeometryCollection') {
+          return geojson.geometries
+            .map(g => `POINT (${g.coordinates[0]} ${g.coordinates[1]})`);
+        }
+      }
+      return [];
     },
     selectedAssets() {
       if (this.currentLog.asset) {
