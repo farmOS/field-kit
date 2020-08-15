@@ -18,7 +18,7 @@
     <template #more-menu>
       <li @click="$emit('syncAll')">{{ $t('Sync all logs')}}</li>
       <router-link :to="{ name: 'filter-logs' }" tag="li" class="filter">
-        Filter logs
+        {{ $t('Filter logs')}}
       </router-link>
     </template>
   </farm-menu-bar>

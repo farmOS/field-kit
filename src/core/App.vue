@@ -75,7 +75,7 @@
               </label>
             </div>
           </farm-list-item>
-          <farm-list-item :clickable="false">Version: {{version}}</farm-list-item>
+          <farm-list-item :clickable="false">{{ $t('Version')}}: {{version}}</farm-list-item>
           <router-link to="/login" v-if="!isLoggedIn" @click.native="showDrawer = !showDrawer">
             <farm-list-item >{{ $t('Login') }}</farm-list-item>
           </router-link>
