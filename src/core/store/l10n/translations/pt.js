@@ -142,7 +142,7 @@ export default {
     'Enter your username':'Digite o seu nome de usuário',
     'Enter your password':'Digite a sua senha',
     // Logout.vue
-    'Warning':'Atenção',
+    'WARNING!':'ATENÇÃO!',
     'Logging out will permanently delete all logs stored on this device.':'Sair irá permanentemente apagar todos os registros salvos neste dispositivo',
     'You will not be able to recover logs which have not been synced with':'Você não poderá recuperar os registros que nãop foram sincronizados com',
     'your farmOS server. Go back to sync any unsaved logs, or proceed to':'seu servidor farmOS. Retorne e sincronize qualquer registro não salvo, ou continue para',
