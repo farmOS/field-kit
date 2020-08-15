@@ -13,8 +13,10 @@ export default {
     'Portuguese': 'Portugues',
     'Login':'Entrar',
     'Logout':'Sair',
+    'Version':'Versão',
     // Home.vue
     // HomeMenuBar.vue
+    'Home':'Início',
     // Login.vue
     // Logout.vue
     // DIRECTORY: field-modules/my-logs/
@@ -27,6 +29,8 @@ export default {
     'icon above.':'ícone acima',
     // AllLogsMenuBar.vue
     'My Logs':'Meus registros',
+    'Sync all logs':'Sincronizar todos os registros',
+    'Filter logs':'Filtrar registros',
     // EditLogMenuBar.vue
     'Edit Log':'Editar Registro',
     'Delete from device':'Apagar do Dispostivio',
@@ -72,7 +76,7 @@ export default {
     //FarmAutocomplete.vue
     'Enter text to search':'Entre o texto a ser buscado',
     'No Results':'Nenhum resultado',
-    //FarmDateTimeForm.vue
+    //FarmDateTimeForm.vuegit branch -a
     'Date':'Data',
     'Hour':'Hora',
     'Min':'Min',
@@ -81,13 +85,16 @@ export default {
     'This Week':'Essa semana',
     'This Month':'Este mês',
     'This Year':'Este ano',
-    'All Time':'Todo o tempo',
+    'All Time':'O tempo todo',
     'Log Type':'Tipo de Registro',
     'Activity':'Atividade',
     'Harvest':'Colheita',
     'Seeding':'Semeadura',
     'Log Category':'Categoria do registro',
     'No Category':'Nenhuma categoria',
+    //FilterLogsMenuBar.vue
+    'Log Filters':'Filtros do Log',
+    'Reset filters':'Limpar filtros',
     //MyLogsWidget.vue
     'Observation':'Observação',
     'Harvest':'Colheita',
@@ -128,13 +135,18 @@ export default {
     'Deleting it on this device will not remove the log from the server.':'Apagar o registro deste dispositivo não o removerá do servidor',
     'It has not yet been synced to the server and cannot be recovered after it\'s deleted.':'Este ainda não foi sincronizado com o servidor e não poderá ser recuperado após apagado',
     //Login.vue
+    'Submit credentials':'Envie suas credenciais',
     'Need a server? Check out':'Precisa de um servidor? Confira',
+    'hosting options':'opções de hospedagem',
+    'Enter your  farmOS URL':'Digite o endereço da sua URL',
+    'Enter your username':'Digite o seu nome de usuário',
+    'Enter your password':'Digite a sua senha',
     // Logout.vue
     'Warning':'Atenção',
-    'Logging out will permanently delete all logs stored on this device.':'Sair ira permanentemente apagar todos os registros salvos neste dispositivo',
+    'Logging out will permanently delete all logs stored on this device.':'Sair irá permanentemente apagar todos os registros salvos neste dispositivo',
     'You will not be able to recover logs which have not been synced with':'Você não poderá recuperar os registros que nãop foram sincronizados com',
     'your farmOS server. Go back to sync any unsaved logs, or proceed to':'seu servidor farmOS. Retorne e sincronize qualquer registro não salvo, ou continue para',
-    'logout and clear all data from this device.':'sair e apagar todos os dados deste sispositivo',
+    'logout and clear all data from this device.':'sair e apagar todos os dados deste dispositivo',
     'Go Back':'Retornar',
     'Logout':'Sair',
     // etc...
