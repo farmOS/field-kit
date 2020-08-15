@@ -4,7 +4,7 @@
       <li @click="$emit('toggleDrawer')">
         <icon-menu/>
       </li>
-      <li>Home</li>
+      <li>{{ $t('Home')}}</li>
     </template>
   </farm-menu-bar>
 </template>

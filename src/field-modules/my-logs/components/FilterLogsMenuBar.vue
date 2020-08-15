@@ -4,10 +4,10 @@
       <router-link :to="{ name: 'logs' }" tag="li">
         <icon-arrow-back/>
       </router-link>
-      <li>Log Filters</li>
+      <li>{{ $t('Log Filters')}}</li>
     </template>
     <template #more-menu>
-      <li @click="resetDisplayFilters">Reset filters</li>
+      <li @click="resetDisplayFilters">{{ $t('Reset filters')}}</li>
     </template>
   </farm-menu-bar>
 </template>

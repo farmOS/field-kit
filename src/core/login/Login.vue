@@ -6,7 +6,7 @@
       </div>
       <input
         v-model="farmosUrl"
-        placeholder="Enter your farmOS URL"
+        :placeholder="$t('Enter your farmOS URL')"
         autofocus
         type="url"
         autocomplete="url"
@@ -18,7 +18,7 @@
     <div class="input-group">
       <input
         v-model="username"
-        placeholder="Enter your username"
+        placeholder="$t('Enter your username')"
         type="text"
         autocomplete="username"
         class="form-control"
@@ -29,7 +29,7 @@
     <div class="input-group">
       <input
         v-model="password"
-        placeholder="Enter your password"
+        placeholder="$t('Enter your password')"
         type="password"
         autocomplete="current-password"
         class="form-control"
@@ -49,11 +49,11 @@
         class="btn btn-success btn-navbar"
         type="button"
       >
-        Submit credentials
+        {{ $t('Submit credentials')}}
       </button>
     </div>
     <br>
-    <p>{{ $t('Need a server? Check out')}} <a href="https://farmos.org/hosting/">hosting options</a>.</p>
+    <p>{{ $t('Need a server? Check out')}} <a href="https://farmos.org/hosting/">{{ $t('hosting options')}}</a>.</p>
   </div>
 </template>
 
