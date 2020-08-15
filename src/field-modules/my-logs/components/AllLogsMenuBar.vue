@@ -11,7 +11,8 @@
         <icon-filter/>
       </router-link>
       <li @click="$emit('syncAll')">
-        <icon-cloud-upload/>
+        <icon-cloud-upload v-if="!isSyncing"/>
+        <icon-sync-spin v-if="isSyncing"/>
       </li>
     </template>
     <template #more-menu>
@@ -26,6 +27,7 @@
 <script>
 export default {
   name: 'AllLogsMenuBar',
+  props: ['isSyncing'],
 };
 </script>
 

@@ -36,12 +36,9 @@
                 <h5>{{log.name}}</h5>
               </div>
               <icon-cloud-done v-if="log.wasPushedToServer" class="sync-status"/>
-              <div
-                class="spin sync-status"
-                v-else-if="log.isReadyToSync"
-                aria-hidden="true">
-                <icon-sync/>
-              </div>
+              <icon-sync-spin
+                class="sync-status"
+                v-else-if="log.isReadyToSync"/>
               <icon-cloud-upload v-else class="sync-status"/>
             </div>
 
@@ -284,46 +281,6 @@ export default {
     .card-group .card {
       flex: 0 0 576px;
     }
-  }
-
-  .spin {
-      -webkit-animation-name: spin;
-      -webkit-animation-duration: 4000ms;
-      -webkit-animation-iteration-count: infinite;
-      -webkit-animation-timing-function: linear;
-      -moz-animation-name: spin;
-      -moz-animation-duration: 4000ms;
-      -moz-animation-iteration-count: infinite;
-      -moz-animation-timing-function: linear;
-      -ms-animation-name: spin;
-      -ms-animation-duration: 4000ms;
-      -ms-animation-iteration-count: infinite;
-      -ms-animation-timing-function: linear;
-
-      animation-name: spin;
-      animation-duration: 4000ms;
-      animation-iteration-count: infinite;
-      animation-timing-function: linear;
-  }
-  @-ms-keyframes spin {
-      from { -ms-transform: rotate(0deg); }
-      to { -ms-transform: rotate(-360deg); }
-  }
-  @-moz-keyframes spin {
-      from { -moz-transform: rotate(0deg); }
-      to { -moz-transform: rotate(-360deg); }
-  }
-  @-webkit-keyframes spin {
-      from { -webkit-transform: rotate(0deg); }
-      to { -webkit-transform: rotate(-360deg); }
-  }
-  @keyframes spin {
-      from {
-          transform: rotate(0deg);
-      }
-      to {
-          transform: rotate(-360deg);
-      }
   }
 
   .add-circle {

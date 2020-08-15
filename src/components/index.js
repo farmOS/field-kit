@@ -37,6 +37,7 @@ import IconRaindrops from './icons/icon-raindrops';
 import IconSnowflake from './icons/icon-snowflake';
 import IconSpinner from './icons/icon-spinner';
 import IconSync from './icons/icon-sync';
+import IconSyncSpin from './icons/icon-sync-spin';
 import SvgFilterDropshadow from './icons/svg-filter-dropshadow';
 
 export default [
@@ -76,5 +77,6 @@ export default [
   IconSnowflake,
   IconSpinner,
   IconSync,
+  IconSyncSpin,
   SvgFilterDropshadow,
 ];

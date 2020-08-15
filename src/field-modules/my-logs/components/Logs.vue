@@ -7,6 +7,7 @@
       @syncAll="syncAll"
       @resetDisplayFilters="resetDisplayFilters"
       :logs='logs'
+      :isSyncing="isSyncing"
     />
     <router-view
       @deleteLog="openDeleteDialog($event)"
@@ -94,6 +95,7 @@ export default {
         excludedTypes: [],
         excludedCategories: [],
       },
+      isSyncing: false,
     };
   },
   props: [
@@ -141,7 +143,9 @@ export default {
      * SYNCING
      */
     syncAll() {
-      this.$store.dispatch('syncAllLogs');
+      this.isSyncing = true;
+      this.$store.dispatch('syncAllLogs')
+        .finally(() => { this.isSyncing = false; });
       this.$store.dispatch('updateAssets');
       this.$store.dispatch('updateAreas');
       this.$store.dispatch('updateUnits');

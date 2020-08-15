@@ -265,7 +265,7 @@ export default {
         // First set all local logs ready to sync
         commit('updateAllLogs', log => ({ ...log, isReadyToSync: true }));
         // Get and process logs from the server in httpModule
-        dispatch('getServerLogs')
+        return dispatch('getServerLogs')
           .then(() => {
             // Save the current time as the most recent syncDate
             localStorage.setItem('syncDate', (Date.now() / 1000).toFixed(0));
@@ -304,9 +304,9 @@ export default {
           .finally(() => {
             commit('updateAllLogs', log => ({ ...log, isReadyToSync: false }));
           });
-      } else {
-        router.push('/login');
       }
+      router.push('/login');
+      return Promise.reject();
     },
   },
 };
