@@ -12,7 +12,7 @@
     "lint-files": "node --eval 'process.argv.reduce((acc, cur) => `${acc} ${cur}`, ``)' | eslint --color",
     "build:web": "node build/build.js",
     "build:native": "node build/build.js --native",
-    "test": "mocha-webpack --webpack-config build/webpack.test.conf.js --require test-setup.js src/**/*.test.js --watch"
+    "test": "mocha-webpack --webpack-config build/webpack.test.conf.js --require test-setup.js 'src/**/*.test.js' --watch"
   },
   "dependencies": {
     "@turf/turf": "^5.1.6",

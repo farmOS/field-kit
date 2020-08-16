@@ -1,12 +1,25 @@
+import { cachingCriteria, evictionCriteria } from './criteria';
 import farmLog from '../../../utils/farmLog';
 
 const makeIDBSubscriber = store => ({ type, payload }) => {
   if (type === 'addLogs') {
-    if (Array.isArray(payload)) {
-      payload.forEach((log) => { store.dispatch('updateCachedLog', log); });
-    } else {
-      store.dispatch('updateCachedLog', payload);
-    }
+    const logs = Array.isArray(payload) ? payload : [payload];
+    const current = Math.floor(Date.now() / 1000);
+    logs
+      .filter(cachingCriteria(current))
+      .forEach((log) => {
+        store.dispatch('updateCachedLog', log);
+      });
+    logs
+      .filter(evictionCriteria(current))
+      .forEach((log) => {
+        store.dispatch('countCachedLogs', log.localID)
+          .then((num) => {
+            if (num > 0) {
+              store.dispatch('deleteCachedLog', log.localID);
+            }
+          });
+      });
   }
   if (type === 'updateLog' && payload.localID) {
     const { updateLog } = farmLog(store.state.farm.resources.log);

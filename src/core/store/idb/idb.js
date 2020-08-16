@@ -112,6 +112,15 @@ export function generateLocalID(storeName) {
   }));
 }
 
+export function count(storeName, key) {
+  return openDatabase().then(db => new Promise((resolve, reject) => {
+    const store = db.transaction(storeName, 'readonly').objectStore(storeName);
+    const request = store.count(key);
+    request.onerror = event => reject(new Error(event.target.error));
+    request.onsuccess = event => resolve(event.target.result);
+  }));
+}
+
 export function saveRecord(storeName, record, key = null) {
   return openDatabase().then(db => new Promise((resolve, reject) => {
     const store = db.transaction(storeName, 'readwrite').objectStore(storeName);

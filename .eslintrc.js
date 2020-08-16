@@ -7,6 +7,7 @@ module.exports = {
   },
   env: {
     browser: true,
+    jest: true,
   },
   extends: [
     // https://github.com/vuejs/eslint-plugin-vue#priority-a-essential-error-prevention
@@ -52,5 +53,6 @@ module.exports = {
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'arrow-parens': ['error', 'as-needed', { "requireForBlockBody": true }],
     'no-underscore-dangle': 'off',
+    'implicit-arrow-linebreak': 'off',
   }
 }

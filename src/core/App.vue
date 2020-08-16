@@ -172,6 +172,7 @@ export default {
     this.$store.dispatch('loadCachedAreas');
     this.$store.dispatch('loadCachedUnits');
     this.$store.dispatch('loadCachedCategories');
+    this.$store.dispatch('purgeLogs');
   },
   computed: {
     ...mapState({

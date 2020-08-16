@@ -2,11 +2,13 @@ import {
   getAllKeys,
   getRecords,
   generateLocalID,
+  count,
   saveRecord,
   deleteRecord,
   clearStore,
 } from './idb';
 import config from './idb.config';
+import { evictionCriteria } from './criteria';
 
 // Destructure the store configs so their names are easier to access
 const [
@@ -167,6 +169,19 @@ export default {
 
     deleteAllCachedLogs() {
       return clearStore(logStore.name)
+        .catch(console.error); // eslint-disable-line no-console
+    },
+
+    countCachedLogs(_, query) {
+      return count(logStore.name, query)
+        .catch(console.error); // eslint-disable-line no-console
+    },
+
+    purgeLogs() {
+      return getRecords(logStore.name, evictionCriteria(Math.floor(Date.now() / 1000)))
+        .then(results => Promise.all(
+          results.map(({ localID }) => deleteRecord(logStore.name, localID)),
+        ))
         .catch(console.error); // eslint-disable-line no-console
     },
 
