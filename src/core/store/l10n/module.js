@@ -2,8 +2,15 @@ import { setLocale, setTranslations } from './t';
 import farm from '../farmClient';
 
 const enabledLocales = [
-  'pt',
+  {
+    code: 'pt',
+    aliases: ['pt-br', 'pt-pt'],
+  },
 ];
+
+const getCode = locale => enabledLocales.find(l => (
+  l.code === locale || l.aliases.includes(locale)
+))?.code;
 
 export default {
   state: {
@@ -12,11 +19,11 @@ export default {
   },
   mutations: {
     setLocale(state, locale) {
-      if (locale === 'en' || enabledLocales.includes(locale)) {
-        state.locale = locale;
-        setLocale(locale);
-        localStorage.setItem('locale', locale);
-      } else {
+      const code = getCode(locale) || 'en';
+      state.locale = code;
+      setLocale(code);
+      localStorage.setItem('locale', code);
+      if (locale !== 'en' && !getCode(locale)) {
         // eslint-disable-next-line no-console
         console.warn(`No translation provided for language code ${locale}.`);
       }
@@ -29,22 +36,21 @@ export default {
     updateLanguages({ commit, state }, response) {
       const token = JSON.parse(localStorage.getItem('token'));
       const setLangs = (res) => {
-        const locale = res.user?.language;
-        const isEnabled = enabledLocales.includes(locale);
-        const isNotInLanuages = !state.languages.some(l => l.code === locale);
-        if (isEnabled && isNotInLanuages) {
-          import(/* webpackChunkName: "l10n" */ `./translations/${locale}.js`)
+        const code = getCode(res.user?.language);
+        const isNotInLanuages = !state.languages.some(l => l.code === code);
+        if (code && isNotInLanuages) {
+          import(/* webpackChunkName: "l10n" */ `./translations/${code}.js`)
             .then(({ default: translations }) => {
-              setTranslations(locale, translations);
+              setTranslations(code, translations);
               const langs = state.languages.concat({
-                code: locale,
+                code,
                 name: translations.name,
               });
               commit('setLanguages', langs);
               localStorage.setItem('languages', JSON.stringify(langs));
             });
         }
-        if (locale === 'en') {
+        if (res.user?.language === 'en') {
           commit('setLanguages', []);
           localStorage.setItem('languages', JSON.stringify([]));
         }
