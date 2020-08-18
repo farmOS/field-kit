@@ -1,7 +1,7 @@
 <template>
   <div class="farm-date-time-form form-row">
     <div id="date-form" class="form-item form-group col">
-      <label for="date" class="control-label">Date</label>
+      <label for="date" class="control-label">{{ dateLabel }}</label>
       <input
         id="date"
         type="date"
@@ -69,7 +69,15 @@ const addLeadZero = d => ((d < 10) ? `0${d}` : d);
 
 export default {
   name: 'FarmDateTimeForm',
-  props: ['timestamp'],
+  props: {
+    timestamp: {
+      default: '',
+    },
+    dateLabel: {
+      default: 'Date',
+      type: String,
+    },
+  },
   data() {
     return {
       time: {
