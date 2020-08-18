@@ -7,7 +7,7 @@
         type="date"
         :value="time.date"
         @input="updateDate($event.target.value)"
-        required
+        :required="!!timestamp"
         class="form-control">
     </div>
     <div :id="id + '-hour-form'" class="form-item form-group col">
