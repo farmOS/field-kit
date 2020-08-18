@@ -93,6 +93,13 @@ export default {
   },
   methods: {
     updateInputFields(timestamp) {
+      if (!timestamp) {
+        this.time.date = '';
+        this.time.hour = '';
+        this.time.minute = '';
+        this.time.am = '';
+        return;
+      }
       this.time.date = this.unixToDateString(timestamp);
       const date = new Date(timestamp * 1000);
       const hours = date.getHours();
