@@ -1,19 +1,19 @@
 <template>
   <div class="farm-date-time-form form-row">
-    <div id="date-form" class="form-item form-group col">
-      <label for="date" class="control-label">{{ dateLabel }}</label>
+    <div :id="id + '-date-form'" class="form-item form-group col">
+      <label :for="id + '-date'" class="control-label">{{ dateLabel }}</label>
       <input
-        id="date"
+        :id="id + '-date'"
         type="date"
         :value="time.date"
         @input="updateDate($event.target.value)"
         required
         class="form-control">
     </div>
-    <div id="hour-form" class="form-item form-group col">
-      <label for="hour" class="control-label">Hour</label>
+    <div :id="id + '-hour-form'" class="form-item form-group col">
+      <label :for="id + '-hour'" class="control-label">Hour</label>
       <input
-        id="hour"
+        :id="id + '-hour'"
         type="number"
         min="1"
         max="12"
@@ -22,10 +22,10 @@
         @blur="updateHour($event.target.value, true)"
         class="form-control">
     </div>
-    <div id="minute-form" class="form-item form-group col">
-      <label for="minute" class="control-label">Min</label>
+    <div :id="id + '-minute-form'" class="form-item form-group col">
+      <label :for="id + '-minute'" class="control-label">Min</label>
       <input
-        id="minute"
+        :id="id + '-minute'"
         type="number"
         min="00"
         max="59"
@@ -34,30 +34,30 @@
         @blur="updateMinute($event.target.value, true)"
         class="form-control">
     </div>
-    <div id="am-pm-form" class="form-item form-group col">
-      <label for="am-pm" class="control-label"></label>
-      <div id="am-pm" class="form-item form-group">
+    <div :id="id + '-am-pm-form'" class="form-item form-group col">
+      <label :for="id + '-am-pm'" class="control-label"></label>
+      <div :id="id + '-am-pm'" class="form-item form-group">
         <div class="form-check">
           <input
-            id="is-am"
-            name="am-pm"
+            :id="id + '-is-am'"
+            :name="id + '-am-pm'"
             type="radio"
             value="am"
             :checked="time.am"
             @input="updateAmPm($event.target.checked)"
             class="form-check-input">
-          <label for="is-am" class="form-check-label">AM</label>
+          <label :for="id + '-is-am'" class="form-check-label">AM</label>
         </div>
         <div class="form-check">
           <input
-            id="is-pm"
-            name="am-pm"
+            :id="id + '-is-pm'"
+            :name="id + '-am-pm'"
             type="radio"
             value="pm"
             :checked="!time.am"
             @input="updateAmPm(!$event.target.checked)"
             class="form-check-input">
-          <label for="is-pm" class="form-check-label">PM</label>
+          <label :for="id + '-is-pm'" class="form-check-label">PM</label>
         </div>
       </div>
     </div>
@@ -75,6 +75,10 @@ export default {
     },
     dateLabel: {
       default: 'Date',
+      type: String,
+    },
+    id: {
+      default: 'date',
       type: String,
     },
   },
