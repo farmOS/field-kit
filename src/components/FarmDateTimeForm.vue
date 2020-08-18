@@ -7,7 +7,7 @@
         type="date"
         :value="time.date"
         @input="updateDate($event.target.value)"
-        :required="!!timestamp"
+        :required="required"
         class="form-control">
     </div>
     <div :id="id + '-hour-form'" class="form-item form-group col">
@@ -80,6 +80,10 @@ export default {
     id: {
       default: 'date',
       type: String,
+    },
+    required: {
+      default: true,
+      type: Boolean,
     },
   },
   data() {
