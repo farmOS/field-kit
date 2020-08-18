@@ -37,6 +37,11 @@
         </button>
       </div>
     </div>
+    <div class="row justify-content-center" style="margin-top: 6rem">
+      <p>
+        Need to login again? <a href="/login">Login here</a>
+      </p>
+    </div>
 
 
   </div>
@@ -81,5 +86,10 @@ export default {
 
   #go-back {
     text-align: right;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: underline;
   }
 </style>
