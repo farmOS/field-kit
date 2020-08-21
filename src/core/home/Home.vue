@@ -1,7 +1,7 @@
 <template>
   <div id="home">
     <div class="container-fluid">
-      <home-widgets :modules="modules" :logs="sortedLogs"/>
+      <home-widgets :modules="modules" :logs="sortedLogs" :assets="assets"/>
     </div>
   </div>
 </template>
@@ -17,6 +17,10 @@ const HomeWidgets = Vue.component('home-widgets', { // eslint-disable-line no-un
     },
     logs: {
       type: Object,
+      required: true,
+    },
+    assets: {
+      type: Array,
       required: true,
     },
   },
@@ -44,7 +48,7 @@ const HomeWidgets = Vue.component('home-widgets', { // eslint-disable-line no-un
           createElement('h4', module.label),
           createElement(
             `${module.name}-widget`,
-            { props: { logs: this.logs[module.name] || [] } },
+            { props: { logs: this.logs[module.name] || [], assets: this.assets } },
           ),
         ],
       )),
@@ -54,7 +58,7 @@ const HomeWidgets = Vue.component('home-widgets', { // eslint-disable-line no-un
 
 export default {
   name: 'Home',
-  props: ['modules', 'logs'],
+  props: ['modules', 'logs', 'assets'],
   created() {
     this.$store.dispatch('loadHomeCachedLogs');
   },
