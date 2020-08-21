@@ -48,7 +48,7 @@ const HomeWidgets = Vue.component('home-widgets', { // eslint-disable-line no-un
           createElement('h4', module.label),
           createElement(
             `${module.name}-widget`,
-            { props: { logs: this.logs[module.name] || [], assets: this.assets } },
+            { props: { logs: this.logs[module.name] || [], assets: this.assets || [] } },
           ),
         ],
       )),
