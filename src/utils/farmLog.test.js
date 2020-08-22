@@ -17,7 +17,7 @@ const {
   mergeLogFromServer,
 } = farmLog(defaultResources.log, syncDate);
 
-describe('createLog', () => {
+describe.skip('createLog', () => {
   it('creates a new log w/o initial props', () => {
     expect(createLog())
       .toMatchObject({
@@ -233,7 +233,7 @@ const isInt = string => /^[-+]?(\d+|Infinity)$/.test(string);
 const reviver = (key, val) => (typeof val === 'string' && isInt(val) ? +val : val);
 const parser = log => JSON.parse(JSON.stringify(log), reviver);
 
-describe('updateLog', () => {
+describe.skip('updateLog', () => {
   it('can reformat old logs', () => {
     expect(updateLog(parser({
       log_owner: {
@@ -541,7 +541,7 @@ describe('updateLog', () => {
   });
 });
 
-describe('formatLogForServer', () => {
+describe.skip('formatLogForServer', () => {
   it('formats a newly created log for the server', () => {
     expect(formatLogForServer(createLog()))
       .toMatchObject(
@@ -570,7 +570,7 @@ describe('formatLogForServer', () => {
   });
 });
 
-describe('mergeLogFromServer', () => {
+describe.skip('mergeLogFromServer', () => {
   it('merges a log from the server with its local copy', () => {
     expect(mergeLogFromServer(
       {
