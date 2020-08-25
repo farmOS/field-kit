@@ -2,7 +2,7 @@
 
 import farmLog from '../../utils/farmLog';
 import defaultResources from './defaultResources';
-import { getRemoteLogs, sendRemoteLogs } from './http/sync';
+import { getRemoteLogs, sendRemoteLogs } from './http';
 import createQuery from '../../utils/createQuery';
 import farm from './farmClient';
 

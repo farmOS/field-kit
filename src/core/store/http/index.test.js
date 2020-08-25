@@ -1,4 +1,4 @@
-import { partitionResponses, flattenResponses } from './sync';
+import { partitionResponses, flattenResponses } from './index';
 
 describe('flattenResponses', () => {
   it('flattens all the promises', () => {
