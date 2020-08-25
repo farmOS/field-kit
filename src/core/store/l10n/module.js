@@ -12,6 +12,9 @@ const enabledLocales = [
   {
     code: 'de',
     aliases: ['de-de', 'de-at'],
+    language: 'de',
+    name: 'German',
+    native: 'Deutsch',
   },
 ];
 
