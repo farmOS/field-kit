@@ -67,11 +67,11 @@
                 class="form-check-input"
                 name="language"
                 :id="`lang-${i}`"
-                :value="lang.code"
+                :value="lang.language"
                 @input="setLocale"
-                :checked="isLocale(lang.code)"/>
+                :checked="isLocale(lang.language)"/>
               <label :for="`lang-${i}`"  class="form-check-label">
-                {{ $t(lang.name) }}
+                {{ lang.native }}
               </label>
             </div>
           </farm-list-item>

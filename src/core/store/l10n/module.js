@@ -5,6 +5,9 @@ const enabledLocales = [
   {
     code: 'pt',
     aliases: ['pt-br', 'pt-pt'],
+    language: 'pt',
+    name: 'Portuguese, International',
+    native: 'Português, Internacional',
   },
 ];
 
@@ -33,27 +36,33 @@ export default {
     },
   },
   actions: {
-    updateLanguages({ commit, state }, response) {
+    updateLanguages({ commit }, response) {
       const token = JSON.parse(localStorage.getItem('token'));
       const setLangs = (res) => {
-        const code = getCode(res.user?.language);
-        const isNotInLanuages = !state.languages.some(l => l.code === code);
-        if (code && isNotInLanuages) {
+        const locale = res.user?.language;
+        if (locale) {
+          commit('setLocale', locale);
+        }
+        const langs = Object.values(res?.languages || {})
+          .reduce((ls, lang, i, arr) => {
+            const code = getCode(lang.language);
+            if (code && code === lang.language) {
+              return ls.concat(lang);
+            }
+            if (code && !arr.some(l => l.language === lang.language)) {
+              return ls.concat(enabledLocales.find(l => l.code === code));
+            }
+            return ls;
+          }, []);
+        commit('setLanguages', langs);
+        localStorage.setItem('languages', JSON.stringify(langs));
+        langs.forEach(({ language }) => {
+          const code = getCode(language);
           import(/* webpackChunkName: "l10n" */ `./translations/${code}.js`)
             .then(({ default: translations }) => {
               setTranslations(code, translations);
-              const langs = state.languages.concat({
-                code,
-                name: translations.name,
-              });
-              commit('setLanguages', langs);
-              localStorage.setItem('languages', JSON.stringify(langs));
             });
-        }
-        if (res.user?.language === 'en') {
-          commit('setLanguages', []);
-          localStorage.setItem('languages', JSON.stringify([]));
-        }
+        });
         return res;
       };
       if (response) {
@@ -72,7 +81,8 @@ export default {
       const langs = JSON.parse(localStorage.getItem('languages'));
       if (langs) {
         commit('setLanguages', langs);
-        langs.forEach(({ code }) => {
+        langs.forEach(({ language }) => {
+          const code = getCode(language);
           import(/* webpackChunkName: "l10n" */ `./translations/${code}.js`)
             .then(({ default: translations }) => {
               setTranslations(code, translations);
