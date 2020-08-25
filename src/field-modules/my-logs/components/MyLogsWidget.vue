@@ -45,13 +45,19 @@
 
 <script>
 export default {
-  props: ['logs'],
+  props: ['logs', 'userId'],
   data() {
     return {
       scrollStyle: {
         paddingBottom: '15px',
       },
     };
+  },
+  created() {
+    this.$emit('load-my-logs-logs', {
+      log_owner: this.userId,
+      done: false,
+    });
   },
   mounted() {
     this.calcScrollStyle();

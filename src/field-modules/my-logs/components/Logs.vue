@@ -4,7 +4,7 @@
       name="menubar"
       @toggleDrawer="$emit('toggleDrawer')"
       @deleteCurrentLog="openDeleteDialog($event)"
-      @syncAll="syncAll"
+      @sync="sync"
       @resetDisplayFilters="resetDisplayFilters"
       :logs='logs'
       :isSyncing="isSyncing"
@@ -87,6 +87,12 @@ export default {
   name: 'Logs',
   data() {
     return {
+      filters: {
+        log: {
+          log_owner: this.userId,
+          done: false,
+        },
+      },
       showDeleteDialog: false,
       logIDToDelete: null,
       logDisplayFilters: {
@@ -115,6 +121,7 @@ export default {
   created() {
     this.clearDisplayFilters();
     this.loadCachedDisplayFilters();
+    this.$store.dispatch('loadLogs', { filters: this.filters.log });
   },
   methods: {
     sortLogsDescending(logs) {
@@ -143,9 +150,10 @@ export default {
     /**
      * SYNCING
      */
-    syncAll() {
+    sync() {
       this.isSyncing = true;
-      this.$store.dispatch('syncAllLogs')
+      const query = { filters: this.filters.log, localIDs: this.localIDs };
+      this.$store.dispatch('syncLogs', query)
         .finally(() => { this.isSyncing = false; });
       this.$store.dispatch('updateAssets');
       this.$store.dispatch('updateAreas');
@@ -216,6 +224,9 @@ export default {
   computed: {
     logToDelete() {
       return this.logs.find(log => log.localID === this.logIDToDelete);
+    },
+    localIDs() {
+      return this.logs.map(log => log.localID);
     },
   },
 };

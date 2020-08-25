@@ -2,6 +2,8 @@
 
 import farmLog from '../../utils/farmLog';
 import defaultResources from './defaultResources';
+import { getRemoteLogs, sendRemoteLogs } from './http/sync';
+import createQuery from '../../utils/createQuery';
 
 // A function for updating an existing array of objects with an array of new
 // objects. An identifier is provided to determine if each new object is an
@@ -85,9 +87,9 @@ export default {
       });
       state.logs.splice(i, 1, newLog);
     },
-    // Takes a function as payload and applies it to each log object
-    updateAllLogs(state, fn) {
-      state.logs = state.logs.map(log => fn(log));
+    filterLogs(state, predicate) {
+      const filteredLogs = state.logs.filter(predicate);
+      state.logs = filteredLogs;
     },
     deleteLog(state, localID) {
       const index = state.logs.findIndex(log => log.localID === localID);
@@ -108,10 +110,6 @@ export default {
     deleteAllCategories(state) {
       state.categories = [];
     },
-    filterLogs(state, predicate) {
-      const filteredLogs = state.logs.filter(predicate);
-      state.logs = filteredLogs;
-    },
     setFarmResources(state, res) {
       state.resources = res;
     },
@@ -131,6 +129,20 @@ export default {
           resolve(localID);
         }).catch(reject);
       });
+    },
+    loadLogs(context, payload) {
+      const { commit, dispatch } = context;
+      const { filters, localIDs } = payload;
+      const query = createQuery(filters, localIDs);
+      commit('filterLogs', query);
+      return dispatch('loadCachedLogs', payload)
+        .then(() => getRemoteLogs(context, payload))
+        .then(() => { localStorage.setItem('syncDate', Math.floor(Date.now() / 1000)); });
+    },
+    syncLogs(context, payload) {
+      return getRemoteLogs(context, payload)
+        .then(() => sendRemoteLogs(context, payload))
+        .then(() => { localStorage.setItem('syncDate', Math.floor(Date.now() / 1000)); });
     },
   },
 };

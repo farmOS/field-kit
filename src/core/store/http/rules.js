@@ -10,7 +10,7 @@
  * updated, if it's the case that the log is syncable but we need to auto-
  * generate some properties before sending to the server. Dependendencies should
  * be provided in http/module.js, when the syncReducer is instantiated under the
- * syncAllLogs action.
+ * sendRemoteLogs function.
  */
 
 // A helper that determines if a value is falsey, or is an empty array or object.

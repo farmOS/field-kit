@@ -9,6 +9,7 @@ import {
 } from './idb';
 import config from './idb.config';
 import { evictionCriteria } from './criteria';
+import createQuery from '../../../utils/createQuery';
 
 // Destructure the store configs so their names are easier to access
 const [
@@ -29,130 +30,14 @@ export default {
         .catch(console.error); // eslint-disable-line no-console
     },
 
-    loadCachedLogs({ commit, rootState }) {
-      const filters = rootState.shell.modules
-        .filter(mod => mod.name === rootState.shell.currentModule)[0]?.filters?.log;
-      const query = (log) => {
-        // Return early and add this log if it belongs to the module.
-        const isMatchingModule = log.modules?.includes(rootState.shell.currentModule);
-        if (isMatchingModule) {
-          return true;
-        }
-        // Don't add the log if no filters are provided.
-        if (!filters) {
-          return false;
-        }
-        // Otherwise check that the log satisfies each field's filter, if provided.
-        const {
-          type, done, log_owner, area, asset, log_category, // eslint-disable-line camelcase
-        } = filters;
-        // The next two functions keep things a little more DRY, but also ensure
-        // lazy evaluation so filters will not be applied needlessly.
-        const applyFilter = (filter, ...conditions) => (filter === undefined)
-          || conditions.every(condition => condition);
-        const applyEntityFilter = (filter, refs, entities, identifier) => (Array.isArray(filter)
-          ? filter.includes(refs.map(r => r.id))
-          : entities
-            .filter(e => refs.some(r => r.id === e[identifier]))
-            .some(filter));
-        return applyFilter(type, type?.includes(log.type.data))
-          && applyFilter(done, log.done.data === !!done)
-          && applyFilter(log_owner,
-            log.log_owner.data.some(owner => +owner.id === +filters.log_owner))
-          && applyFilter(area,
-            applyEntityFilter(area, log.area.data, rootState.farm.areas, 'tid'))
-          && applyFilter(asset,
-            applyEntityFilter(asset, log.asset.data, rootState.farm.assets, 'id'))
-          && applyFilter(log_category,
-            applyEntityFilter(log_category, log.log_category.data, rootState.farm.categories, 'tid'));
-      };
+    loadCachedLogs({ commit }, payload) {
+      const query = typeof payload === 'function'
+        ? payload
+        : createQuery(payload.filters, payload.localIDs);
       return getRecords(logStore.name, query)
         .then((results) => {
           commit('addLogs', results);
-        })
-        .catch(console.error); // eslint-disable-line no-console
-    },
-
-    // Specifically for loading logs for the Home screen widgets to use.
-    loadHomeCachedLogs({ commit, rootState }) {
-      // We're going to build our own object to store arrays of results for each
-      // module, and discard the result returned by getRecords. We won't worry
-      // about duplicates across modules because the addLogs mutation doesn't
-      // add duplicates (by localID). The initial results object will look like:
-      // {
-      //   'my-logs': [],
-      //   precipitation: [],
-      //   // etc...
-      // }
-      const results = rootState.shell.modules
-        .reduce((acc, cur) => ({ ...acc, [cur.name]: [] }), {});
-      // Store the present time in a constant, which will be the same for
-      // every iteration of the .sort() function.
-      const present = Math.floor(Date.now() / 1000);
-      const compare = (a, b) => {
-        // Log A's possible states.
-        const aIsLate = !a.done.data && a.timestamp.data < present;
-        const aIsUpcoming = !a.done.data && a.timestamp.data > present;
-        const aIsDone = a.done.data;
-
-        // Log B's possible states.
-        const bIsLate = !b.done.data && b.timestamp.data < present;
-        const bIsUpcoming = !b.done.data && b.timestamp.data > present;
-        const bIsDone = b.done.data;
-
-        // Getters for return values, which will determine how A and B are
-        // sorted relative to each other.
-        const sortAscending = () => a.timestamp.data - b.timestamp.data;
-        const sortDescending = () => b.timestamp.data - a.timestamp.data;
-        const aBeforeB = () => -1;
-        const bBeforeA = () => 1;
-
-        if (aIsLate && bIsLate) {
-          return sortAscending();
-        }
-        if (aIsLate && bIsUpcoming) {
-          return aBeforeB();
-        }
-        if (aIsLate && bIsDone) {
-          return aBeforeB();
-        }
-        if (aIsUpcoming && bIsLate) {
-          return bBeforeA();
-        }
-        if (aIsUpcoming && bIsUpcoming) {
-          return sortAscending();
-        }
-        if (aIsUpcoming && bIsDone) {
-          return aBeforeB();
-        }
-        if (aIsDone && bIsLate) {
-          return bBeforeA();
-        }
-        if (aIsDone && bIsUpcoming) {
-          return bBeforeA();
-        }
-        if (aIsDone && bIsDone) {
-          return sortDescending();
-        }
-        return 0;
-      };
-      const query = (log) => {
-        rootState.shell.modules.forEach((mod) => {
-          if (log.modules.includes(mod.name)) {
-            results[mod.name].push(log);
-            results[mod.name].sort(compare);
-            if (results[mod.name].length > 10) {
-              results[mod.name].pop();
-            }
-          }
-          // Always return false, because we're not using these results.
-          return false;
-        });
-      };
-      return getRecords(logStore.name, query)
-        .then(() => {
-          const cachedLogs = Object.values(results).flat();
-          commit('addLogs', cachedLogs);
+          return results;
         })
         .catch(console.error); // eslint-disable-line no-console
     },

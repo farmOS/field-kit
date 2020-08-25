@@ -33,8 +33,6 @@ const createRoutes = (modName, routes, store) => (
     beforeEnter(to, from, next) {
       if (store && store.state.shell.currentModule !== modName) {
         store.commit('setCurrentModule', modName);
-        store.commit('filterLogs', log => log.modules.includes(modName));
-        store.dispatch('loadCachedLogs');
       }
       next();
     },

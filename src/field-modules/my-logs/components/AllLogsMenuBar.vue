@@ -10,13 +10,13 @@
       <router-link :to="{ name: 'filter-logs' }" tag="li" class="filter">
         <icon-filter/>
       </router-link>
-      <li @click="$emit('syncAll')">
+      <li @click="$emit('sync')">
         <icon-cloud-upload v-if="!isSyncing"/>
         <icon-sync-spin v-if="isSyncing"/>
       </li>
     </template>
     <template #more-menu>
-      <li @click="$emit('syncAll')">{{ $t('Sync all logs')}}</li>
+      <li @click="$emit('sync')">{{ $t('Sync all logs')}}</li>
       <router-link :to="{ name: 'filter-logs' }" tag="li" class="filter">
         {{ $t('Filter logs')}}
       </router-link>

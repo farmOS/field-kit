@@ -1,13 +1,19 @@
 <template>
   <div id="home">
     <div class="container-fluid">
-      <home-widgets :modules="modules" :logs="sortedLogs" :assets="assets"/>
+      <home-widgets
+      :modules="modules"
+      :logs="filteredLogs"
+      :assets="assets"
+      :userId="userId"
+      @set-module-filters="setModuleFilters"/>
     </div>
   </div>
 </template>
 
 <script>
 import Vue from 'vue';
+import createQuery from '../../utils/createQuery';
 
 const HomeWidgets = Vue.component('home-widgets', { // eslint-disable-line no-unused-vars
   props: {
@@ -23,6 +29,7 @@ const HomeWidgets = Vue.component('home-widgets', { // eslint-disable-line no-un
       type: Array,
       required: true,
     },
+    userId: [String, Number],
   },
   render(createElement) {
     const self = this;
@@ -48,7 +55,19 @@ const HomeWidgets = Vue.component('home-widgets', { // eslint-disable-line no-un
           createElement('h4', this.$t(module.label)),
           createElement(
             `${module.name}-widget`,
-            { props: { logs: this.logs[module.name] || [], assets: this.assets || [] } },
+            {
+              props: {
+                logs: this.logs[module.name] || [],
+                assets: this.assets || [],
+                userId: this.userId,
+              },
+              on: {
+                [`load-${module.name}-logs`](filters) {
+                  self.$emit('set-module-filters', { [module.name]: filters });
+                  self.$store.dispatch('loadLogs', { filters });
+                },
+              },
+            },
           ),
         ],
       )),
@@ -58,21 +77,27 @@ const HomeWidgets = Vue.component('home-widgets', { // eslint-disable-line no-un
 
 export default {
   name: 'Home',
-  props: ['modules', 'logs', 'assets'],
-  created() {
-    this.$store.dispatch('loadHomeCachedLogs');
+  props: ['modules', 'logs', 'assets', 'userId'],
+  data() {
+    return {
+      filters: {},
+    };
   },
   computed: {
-    sortedLogs() {
-      return this.logs.reduce((logs, curLog) => ({
-        ...logs,
-        ...this.modules.reduce((modLogs, curMod) => ({
-          ...modLogs,
-          [curMod.name]: curLog.modules.includes(curMod.name)
-            ? logs[curMod.name]?.concat(curLog) || [curLog]
-            : logs[curMod.name],
-        }), {}),
-      }), {});
+    filteredLogs() {
+      return Object.entries(this.filters)
+        .reduce((logs, [name, filters]) => {
+          const query = createQuery(filters);
+          return {
+            ...logs,
+            [name]: this.logs.filter(query),
+          };
+        }, {});
+    },
+  },
+  methods: {
+    setModuleFilters(e) {
+      this.filters = { ...this.filters, ...e };
     },
   },
 };
