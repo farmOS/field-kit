@@ -74,13 +74,8 @@ const webpackConfig = merge(baseWebpackConfig, {
       }]
     }),
 
-    // copy custom static assets
     new CopyWebpackPlugin({
       patterns: [
-        {
-          from: path.resolve(__dirname, '../static'),
-          to: config.web.assetsSubDirectory,
-        },
         {
           from: 'favicon.ico',
           to: config.web.assetsRoot
