@@ -4,7 +4,6 @@ import shellModule from './shellModule';
 import farmModule from './farmModule';
 import idbModule from './idb/module';
 import makeIDBSubscriber from './idb/subscriber';
-import httpModule from './http/module';
 import authModule from './authModule';
 import camModule from './camModule';
 import l10nModule from './l10n/module';
@@ -16,7 +15,6 @@ const store = new Vuex.Store({
     shell: shellModule,
     farm: farmModule,
     idb: idbModule,
-    http: httpModule,
     auth: authModule,
     cam: camModule,
     l10n: l10nModule,
