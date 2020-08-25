@@ -56,6 +56,7 @@
               {{ $t('Deleting it on this device will not remove the log from the server.')}}
             </span>
             <span v-else>
+              <!-- eslint-disable-next-line max-len -->
               {{ $t('It has not yet been synced to the server and cannot be recovered after it\'s deleted.')}}
             </span>
           </div>
