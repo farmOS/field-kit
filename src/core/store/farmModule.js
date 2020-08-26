@@ -131,17 +131,19 @@ export default {
         }).catch(reject);
       });
     },
-    loadLogs(context, payload) {
-      const { commit, dispatch } = context;
-      const { filters, localIDs } = payload;
+    loadLogs({ commit, dispatch }, { filters, localIDs }) {
       const query = createQuery(filters, localIDs);
       commit('filterLogs', query);
-      return dispatch('loadCachedLogs', payload)
+      return dispatch('loadCachedLogs', query);
+    },
+    getLogs(context, payload) {
+      return context.dispatch('loadCachedLogs', payload)
         .then(() => getRemoteLogs(context, payload))
         .then(() => { localStorage.setItem('syncDate', Math.floor(Date.now() / 1000)); });
     },
     syncLogs(context, payload) {
-      return getRemoteLogs(context, payload)
+      return context.dispatch('loadCachedLogs', payload)
+        .then(() => getRemoteLogs(context, payload))
         .then(() => sendRemoteLogs(context, payload))
         .then(() => { localStorage.setItem('syncDate', Math.floor(Date.now() / 1000)); });
     },
