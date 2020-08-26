@@ -31,10 +31,10 @@ export default {
     },
 
     loadCachedLogs({ commit }, payload) {
-      const { filter: filters, pass: { localIDs, unsynced } = {} } = payload;
+      const { filter: _filter, pass } = payload;
       const query = typeof payload === 'function'
         ? payload
-        : createQuery(filters, localIDs, unsynced);
+        : createQuery(_filter, pass);
       return getRecords(logStore.name, query)
         .then((results) => {
           commit('addLogs', results);

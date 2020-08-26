@@ -80,16 +80,16 @@ const syncErrorHandler = ({ error, loginRequired }, { reason, localLog }) => {
 
 export function getRemoteLogs(context, payload) {
   const { commit, dispatch, rootState } = context;
-  const { filter: filters, pass: { localIDs } = {} } = payload;
+  const { filter: _filter, pass: { localIDs = [] } = {} } = payload;
   const syncDate = JSON.parse(localStorage.getItem('syncDate'));
   const { mergeLogFromServer } = farmLog(rootState.farm.resources.log, syncDate);
   const ids = localIDs
-    ?.map(localID => +rootState.farm.logs
+    .map(localID => +rootState.farm.logs
       .find(log => log.localID === localID)
       ?.id)
-    ?.filter(id => !!id);
+    .filter(id => !!id);
   const responses = []
-    .concat(filters ? farm().log.get(filters) : [])
+    .concat(_filter ? farm().log.get(_filter) : [])
     .concat((ids?.length > 0) ? farm().log.get(ids) : [])
     .map(req => req
       .then(res => ({ status: 'fulfilled', value: res }))
@@ -181,13 +181,13 @@ const createSyncReducer = deps => ([syncables, unsyncables, updates], log) => {
   return [syncables, unsyncables, updates];
 };
 
-const createGroupLogs = (filters, localIDs, logTypes) => compose(
+const createGroupLogs = (filters, pass, logTypes) => compose(
   reduce(createSyncReducer({ logTypes }), [[], [], []]),
-  filter(createQuery(filters, localIDs)),
+  filter(createQuery(filters, pass)),
 );
 export function sendRemoteLogs(context, payload) {
   const { commit, rootState } = context;
-  const { filter: filters, pass: { localIDs } = {} } = payload;
+  const { filter: _filter, pass } = payload;
   const logTypes = rootState.farm.resources.log;
   const { formatLogForServer, updateLog } = farmLog(logTypes);
 
@@ -205,7 +205,7 @@ export function sendRemoteLogs(context, payload) {
 
   // Process and sort the logs into syncable and unsyncable logs,
   // as well as updates needed before syncing.
-  const groupLogs = createGroupLogs(filters, localIDs, logTypes);
+  const groupLogs = createGroupLogs(_filter, pass, logTypes);
   const [syncables, unsyncables, updates] = groupLogs(rootState.farm.logs);
   // For all logs that are unsyncable, display an error message.
   unsyncables.forEach(({ message }) => {

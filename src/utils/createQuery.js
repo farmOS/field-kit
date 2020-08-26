@@ -26,10 +26,24 @@ const filterByLocalID = localIDs => log => localIDs.includes(log.localID);
 
 const filterBySyncStatus = enabled => log => (enabled ? !log.wasPushedToServer : false);
 
-const createQuery = (filters = {}, localIDs = [], passIfUnsynced = false) => anyPass([
-  filterBySyncStatus(passIfUnsynced),
-  filterByFilters(filters),
-  filterByLocalID(localIDs),
-]);
+const filterByTimestamp = range => (log) => {
+  if (!range || range.length < 1) { return false; }
+  const timestamp = log.timestamp.data !== undefined
+    ? log.timestamp.data
+    : log.timestamp;
+  const start = range[0] || 0;
+  const end = range[1] || Infinity;
+  return start <= timestamp && timestamp <= end;
+};
+
+const createQuery = (filters, pass = {}) => {
+  const { localIDs, unsynced, timestamp } = pass;
+  const predicates = []
+    .concat(filters ? filterByFilters(filters) : [])
+    .concat(localIDs ? filterByLocalID(localIDs) : [])
+    .concat(unsynced !== undefined ? filterBySyncStatus(unsynced) : [])
+    .concat(timestamp ? filterByTimestamp(timestamp) : []);
+  return anyPass(predicates);
+};
 
 export default createQuery;

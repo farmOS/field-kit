@@ -124,8 +124,12 @@ export default {
       log_owner: this.userId,
       done: false,
     };
+    const now = Math.floor(Date.now() / 1000);
+    const tenDaysAgo = now - (60 * 60 * 24 * 10);
+    const threeDaysFromNow = now + (60 * 60 * 24 * 3);
     const pass = {
       unsynced: true,
+      timestamp: [tenDaysAgo, threeDaysFromNow],
     };
     this.$store.dispatch('loadLogs', { filter, pass });
   },
