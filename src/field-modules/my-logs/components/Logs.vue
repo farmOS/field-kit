@@ -87,11 +87,10 @@ export default {
   name: 'Logs',
   data() {
     return {
-      filters: {
-        log: {
-          log_owner: this.userId,
-          done: false,
-        },
+      filter: {
+      },
+      pass: {
+        localIDs: this.localIDs,
       },
       showDeleteDialog: false,
       logIDToDelete: null,
@@ -121,7 +120,14 @@ export default {
   created() {
     this.clearDisplayFilters();
     this.loadCachedDisplayFilters();
-    this.$store.dispatch('loadLogs', { filters: this.filters.log });
+    const filter = {
+      log_owner: this.userId,
+      done: false,
+    };
+    const pass = {
+      unsynced: true,
+    };
+    this.$store.dispatch('loadLogs', { filter, pass });
   },
   methods: {
     sortLogsDescending(logs) {
@@ -152,8 +158,14 @@ export default {
      */
     sync() {
       this.isSyncing = true;
-      const query = { filters: this.filters.log, localIDs: this.localIDs };
-      this.$store.dispatch('syncLogs', query)
+      const filter = {
+        log_owner: this.userId,
+        done: false,
+      };
+      const pass = {
+        localIDs: this.localIDs,
+      };
+      this.$store.dispatch('syncLogs', { filter, pass })
         .finally(() => { this.isSyncing = false; });
       this.$store.dispatch('updateAssets');
       this.$store.dispatch('updateAreas');

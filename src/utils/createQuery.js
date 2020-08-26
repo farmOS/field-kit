@@ -24,7 +24,10 @@ const filterByFilters = compose(
 
 const filterByLocalID = localIDs => log => localIDs.includes(log.localID);
 
-const createQuery = (filters = {}, localIDs = []) => anyPass([
+const filterBySyncStatus = enabled => log => (enabled ? !log.wasPushedToServer : false);
+
+const createQuery = (filters = {}, localIDs = [], passIfUnsynced = false) => anyPass([
+  filterBySyncStatus(passIfUnsynced),
   filterByFilters(filters),
   filterByLocalID(localIDs),
 ]);

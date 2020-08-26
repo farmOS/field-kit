@@ -131,8 +131,8 @@ export default {
         }).catch(reject);
       });
     },
-    loadLogs({ commit, dispatch }, { filters, localIDs }) {
-      const query = createQuery(filters, localIDs);
+    loadLogs({ commit, dispatch }, { filter, pass: { localIDs, unsynced } = {} }) {
+      const query = createQuery(filter, localIDs, unsynced);
       commit('filterLogs', query);
       return dispatch('loadCachedLogs', query);
     },

@@ -78,7 +78,9 @@ const syncErrorHandler = ({ error, loginRequired }, { reason, localLog }) => {
   };
 };
 
-export function getRemoteLogs({ commit, dispatch, rootState }, { filters, localIDs }) {
+export function getRemoteLogs(context, payload) {
+  const { commit, dispatch, rootState } = context;
+  const { filter: filters, pass: { localIDs } = {} } = payload;
   const syncDate = JSON.parse(localStorage.getItem('syncDate'));
   const { mergeLogFromServer } = farmLog(rootState.farm.resources.log, syncDate);
   const ids = localIDs
@@ -183,7 +185,9 @@ const createGroupLogs = (filters, localIDs, logTypes) => compose(
   reduce(createSyncReducer({ logTypes }), [[], [], []]),
   filter(createQuery(filters, localIDs)),
 );
-export function sendRemoteLogs({ commit, rootState }, { filters, localIDs }) {
+export function sendRemoteLogs(context, payload) {
+  const { commit, rootState } = context;
+  const { filter: filters, pass: { localIDs } = {} } = payload;
   const logTypes = rootState.farm.resources.log;
   const { formatLogForServer, updateLog } = farmLog(logTypes);
 

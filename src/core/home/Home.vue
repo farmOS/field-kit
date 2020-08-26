@@ -62,9 +62,9 @@ const HomeWidgets = Vue.component('home-widgets', { // eslint-disable-line no-un
                 userId: this.userId,
               },
               on: {
-                [`load-${module.name}-logs`](filters) {
-                  self.$emit('set-module-filters', { [module.name]: filters });
-                  self.$store.dispatch('loadLogs', { filters });
+                [`load-${module.name}-logs`](filter) {
+                  self.$emit('set-module-filters', { [module.name]: filter });
+                  self.$store.dispatch('loadLogs', { filter });
                 },
               },
             },
