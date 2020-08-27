@@ -1,6 +1,14 @@
 # Field Kit / Field Modules API
 farmOS Field Kit is a not just an application but a framework for building concise user interfaces that capture specialized subsets of farm-related data. We use a [microfrontend](https://www.martinfowler.com/articles/micro-frontends.html) architecture to deliver these UI's at runtime to the Field Kit client from any farmOS server. These are called Field Modules. They make up the "kit" that farmers take to the "field".
 
+## Contents
+- [Getting started](#getting-started)
+- [Basic Requirements](#basic-requirements)
+- [Loading and syncing logs](#loading-and-syncing-logs)
+- [API reference](#api-reference)
+  - [Module object](#module-object)
+  - [Vuex actions](#vuex-actions)
+
 # Getting started
 
 [Instructions will go here once we have a template repo.]
