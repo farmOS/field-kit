@@ -1,11 +1,11 @@
 import {
-  compose, reduce, filter, partition, equals, prop, uniqBy, flatten, map,
+  compose, reduce, filter, partition, equals, prop, uniqBy, flatten, map, dissoc,
 } from 'ramda';
 import farm from '../farmClient';
 import rules from './rules';
 import router from '../../router';
 import farmLog from '../../../utils/farmLog';
-import createQuery from '../../../utils/createQuery';
+import createQuery, { filterByTimestamp } from '../../../utils/createQuery';
 
 export const partitionResponses = partition(compose(
   equals('fulfilled'),
@@ -80,7 +80,9 @@ const syncErrorHandler = ({ error, loginRequired }, { reason, localLog }) => {
 
 export function getRemoteLogs(context, payload) {
   const { commit, dispatch, rootState } = context;
-  const { filter: _filter, pass: { localIDs = [] } = {} } = payload;
+  const { pass: { localIDs = [] } = {} } = payload;
+  const filters = dissoc('timestamp', payload.filter);
+  const timeRange = prop('timestamp', payload.filter) || [];
   const syncDate = JSON.parse(localStorage.getItem('syncDate'));
   const { mergeLogFromServer } = farmLog(rootState.farm.resources.log, syncDate);
   const ids = localIDs
@@ -89,7 +91,7 @@ export function getRemoteLogs(context, payload) {
       ?.id)
     .filter(id => !!id);
   const responses = []
-    .concat(_filter ? farm().log.get(_filter) : [])
+    .concat(filters ? farm().log.get(filters) : [])
     .concat((ids?.length > 0) ? farm().log.get(ids) : [])
     .map(req => req
       .then(res => ({ status: 'fulfilled', value: res }))
@@ -98,6 +100,7 @@ export function getRemoteLogs(context, payload) {
     .then(partitionResponses)
     .then(([fulfilled, rejected]) => {
       const { updates, newLogs } = flattenResponses(fulfilled)
+        .filter(filterByTimestamp(timeRange))
         .reduce(({ updates: u, newLogs: n }, serverLog) => {
           const localLog = rootState.farm.logs
             .find(log => +log.id === +serverLog.id);

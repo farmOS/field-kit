@@ -1,5 +1,5 @@
 import {
-  compose, allPass, map, anyPass,
+  compose, allPass, map, anyPass, dissoc, prop,
 } from 'ramda';
 
 const filterByKeyValue = ([key, val]) => (log) => {
@@ -20,14 +20,14 @@ const filterByFilters = compose(
   allPass,
   map(filterByKeyValue),
   Object.entries,
+  dissoc('timestamp'),
 );
 
 const filterByLocalID = localIDs => log => localIDs.includes(log.localID);
 
 const filterBySyncStatus = enabled => log => (enabled ? !log.wasPushedToServer : false);
 
-const filterByTimestamp = range => (log) => {
-  if (!range || range.length < 1) { return false; }
+export const filterByTimestamp = range => (log) => {
   const timestamp = log.timestamp.data !== undefined
     ? log.timestamp.data
     : log.timestamp;
@@ -36,10 +36,27 @@ const filterByTimestamp = range => (log) => {
   return start <= timestamp && timestamp <= end;
 };
 
+const filterByTimestampAndFilters = (filters) => {
+  const { timestamp: range } = filters;
+  if (!range) {
+    return filterByFilters(filters);
+  }
+  if (range.length < 1) {
+    return compose(
+      filterByFilters,
+      dissoc('timestamp'),
+    )(filters);
+  }
+  return allPass([
+    filterByFilters(filters),
+    filterByTimestamp(range),
+  ]);
+};
+
 const createQuery = (filters, pass = {}) => {
   const { localIDs, unsynced, timestamp } = pass;
   const predicates = []
-    .concat(filters ? filterByFilters(filters) : [])
+    .concat(filters ? filterByTimestampAndFilters(filters) : [])
     .concat(localIDs ? filterByLocalID(localIDs) : [])
     .concat(unsynced !== undefined ? filterBySyncStatus(unsynced) : [])
     .concat(timestamp ? filterByTimestamp(timestamp) : []);

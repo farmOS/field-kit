@@ -165,6 +165,7 @@ export default {
       const filter = {
         log_owner: this.userId,
         done: false,
+        timestamp: [null, (Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 10))],
       };
       const pass = {
         localIDs: this.localIDs,
