@@ -84,3 +84,16 @@ Here we are using the `timestamp` property in the `filter` object, instead of th
 Similarly, you can use the `syncLogs` action to get and send logs, which accepts a payload with the same `filter` and `pass` properties as `getLogs` and `loadLogs`.
 
 It's worth noting that `getLogs` is essentially a composition of Field Kit's internal `loadCachedLogs` and `getRemoteLogs` functions, while `syncLogs` is a composition of `loadCachedLogs`, `getRemoteLogs` and `sendRemoteLogs` functions. It's important that these operations happen in conjunction with one another, to reduce the possibility that data may be duplicated or lost, or that conflicts arise between the server and local device. As a consequence, you shouldn't need to call both `getLogs` and `syncLogs` in quick succession; calling only `syncLogs` will achieve the same effect.
+
+## Home Widget
+
+Logs can be loaded to your Home screen widget by calling a special [Vue event emitter](https://vuejs.org/v2/guide/components.html#Emitting-a-Value-With-an-Event). Your widget's parent component will listen for the `load-[my-module-name]-logs` event, which accpets an object with `filter` and `pass` properties just like the `loadLogs` action. So if your module name was `irrigation-monitor`, you could emit an event like this from your widget component's created lifecycle hook:
+
+```js
+created() {
+  const filter = { category: 'Irrigation' };
+  this.$emit('load-irrigation-monitor-logs', { filter });
+}
+```
+
+The result of your query will then be passed down to your widget as the `logs` prop when the component is created.
