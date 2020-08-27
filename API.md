@@ -97,3 +97,51 @@ created() {
 ```
 
 The result of your query will then be passed down to your widget as the `logs` prop when the component is created.
+
+# API reference
+
+## Module object
+The module object you mount via `window.mountFieldModule()` has the following properties, all required:
+
+### name
+- Type: `String`
+
+A unique identifier for you module that Field Kit Core will use to distinguish your module from others.
+
+### label
+- Type: `String`
+
+A human-readable title for your module which will be used in the main menu to link to your module and other places.
+
+### widget
+- Type: `Object` (a [Vue component](https://vuejs.org/v2/guide/components.html))
+
+This will be rendered on the Home screen as a card with your `label` as the header.
+
+### routes
+- Type: [`Array<RouteConfig>`](https://router.vuejs.org/api/#routes)
+
+The routes for your module.
+
+## Vuex actions
+
+### loadLogs
+- Payload properties: 
+  - `filter: { <LogProperties>, timestamp: Number }`
+  - `pass: { timestamp: Number, unsynced: Boolean }`
+
+Used to load logs from the local cache; will also remove logs from the store which don't meet the criteria.
+
+### getLogs
+- Payload properties: 
+  - `filter: { <LogProperties>, timestamp: Number }`
+  - `pass: { localIDs: [<Number>], timestamp: Number }`
+
+Used to fetch logs from the server; will also load logs from the cache that meet the criteria.
+
+### syncLogs
+- Payload properties: 
+  - `filter: { <LogProperties>, timestamp: Number }`
+  - `pass: { localIDs: [<Number>], timestamp: Number }`
+
+Used to send logs to the server; will also load logs from the cache and get logs from the server that meet the criteria.
