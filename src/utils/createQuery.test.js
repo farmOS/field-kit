@@ -46,7 +46,7 @@ describe('createQuery', () => {
   ];
   it('Filters out logs by type and by localID', () => {
     const filters = { type: 'farm_observation' };
-    const localIDs = [1, 2, 4, 5];
+    const pass = { localIDs: [1, 2, 4, 5] };
     const filteredLogs = [
       {
         localID: 1,
@@ -69,12 +69,12 @@ describe('createQuery', () => {
         type: 'farm_observation',
       },
     ];
-    expect(filter(createQuery(filters, localIDs), logs))
+    expect(filter(createQuery(filters, pass), logs))
       .toMatchObject(filteredLogs);
   });
   it('Filters out logs of multiple types and by localID', () => {
     const filters = { type: ['farm_observation', 'farm_input'] };
-    const localIDs = [1, 2, 4, 5];
+    const pass = { localIDs: [1, 2, 4, 5] };
     const filteredLogs = [
       {
         localID: 1,
@@ -101,7 +101,7 @@ describe('createQuery', () => {
         type: 'farm_input',
       },
     ];
-    expect(filter(createQuery(filters, localIDs), logs))
+    expect(filter(createQuery(filters, pass), logs))
       .toMatchObject(filteredLogs);
   });
 });

@@ -1,5 +1,5 @@
 import {
-  compose, allPass, map, anyPass, dissoc, prop,
+  compose, allPass, map, anyPass, dissoc,
 } from 'ramda';
 
 const filterByKeyValue = ([key, val]) => (log) => {
