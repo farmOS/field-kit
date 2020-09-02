@@ -65,7 +65,7 @@ export default {
       if (localLog) {
         mergeLogFromServer(localLog, serverLog);
       } else {
-        state.logs.push(createLog(serverLog, Math.floor(Date.now() / 1000)));
+        state.logs.push(createLog(serverLog, Date.now()));
       }
     },
     deleteLog(state, localID) {

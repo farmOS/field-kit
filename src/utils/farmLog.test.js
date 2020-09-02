@@ -66,7 +66,7 @@ describe('farmLog', () => {
   });
 
   describe('log getters, setters and getLastChange', () => {
-    const log = createLog({ localID: 1, changed: Math.floor(Date.now() / 1000) - 3 });
+    const log = createLog({ localID: 1, changed: Date.now() - 3000 });
     it('sets and gets the name property, updates changed metadata and reads it', () => {
       log.name = 'This is a log!';
       expect(log.name).toBe('This is a log!');
@@ -97,14 +97,14 @@ describe('farmLog', () => {
     equipment: [],
   };
   describe('formatLogForServer', () => {
-    const lastSync = Math.floor(Date.now() / 1000) + 1;
+    const lastSync = Date.now() + 1;
     const log = createLog({ localID: 1, name: 'This is a log!' }, lastSync);
     it('formats a log for the server', () => {
       expect(formatLogForServer(log)).toMatchObject(formattedLog);
     });
   });
   describe('getLastSync', () => {
-    const lastSync = Math.floor(Date.now() / 1000) + 1;
+    const lastSync = Date.now() + 1;
     const log = createLog({ localID: 1, name: 'This is a log!' }, lastSync);
     it('gets timestamp of last syncing event', () => {
       expect(getLastSync(log)).toBe(lastSync);
@@ -112,7 +112,7 @@ describe('farmLog', () => {
   });
 
   describe('mergeLogFromServer', () => {
-    const lastSync = Math.floor(Date.now() / 1000) + 1;
+    const lastSync = Date.now() + 1;
     const log = createLog({ localID: 1, name: 'This is a log!' }, lastSync);
     it('merges a log with no conflicts', () => {
       const serverLog = {
@@ -126,11 +126,11 @@ describe('farmLog', () => {
   });
 
   describe('getConflicts & resolveConflict', () => {
-    const now = Math.floor(Date.now() / 1000);
-    const props = { localID: 1, name: 'This is a log!', changed: now - 3 };
+    const now = Date.now();
+    const props = { localID: 1, name: 'This is a log!', changed: now - 3000 };
     const log = createLog(props, now);
     it('create a merge conflict, gets conflicts, resolve conflict, get no conflicts', () => {
-      const serverChanged = now + 3;
+      const serverChanged = now + 3000;
       const serverLog = {
         ...formattedLog,
         changed: serverChanged,

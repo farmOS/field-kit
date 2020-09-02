@@ -70,7 +70,7 @@ function farmLog(logTypes) {
       enumerable: false,
       value: {
         [data]: val,
-        [changed]: _changed || Math.floor(Date.now() / 1000),
+        [changed]: _changed || Date.now(),
         [conflicts]: _conflicts || [],
       },
     });
@@ -81,12 +81,11 @@ function farmLog(logTypes) {
         return this[sym][data];
       },
       set: function symbolSetter(value) {
-        this[sym][changed] = Math.floor(Date.now() / 1000);
+        this[sym][changed] = Date.now();
         this[sym][data] = value;
       },
     });
   }
-
   // The type determines what other properites are included, so it requires
   // a special setter. Also, it can only be changed before it is synced with the
   // server, so it doesn't need metadata.
@@ -126,21 +125,24 @@ function farmLog(logTypes) {
       updateSymbolRegistry(_symbolRegistry, newTypes);
     },
     createLog(props = {}, _lastSync = 0) {
-      // Set a common timestamp to be used for the latest change on all properties.
-      const _changed = props.changed || Math.floor(Date.now() / 1000);
-      const log = {};
-
       // Clean up props in case they're coming from a server log.
       const _props = {
         ...props,
-        changed: +props.changed,
+        changed: props.changed > 9999999999
+          ? +props.changed
+          : props.changed * 1000,
         timestamp: +props.timestamp,
         done: !!+props.done,
       };
+      // Set a common timestamp to be used for the latest change on all properties.
+      const _changed = _props.changed || Date.now();
+      const log = {};
+
+      const timestamp = (_props.timestamp || Math.floor(_changed / 1000));
 
       // Set properties for what farmOS considers "properties" (vs "fields").
       createProperty(log, 'name', (_props.name || ''), _changed);
-      createProperty(log, 'timestamp', (_props.timestamp || _changed), _changed);
+      createProperty(log, 'timestamp', timestamp, _changed);
       createProperty(log, 'done', (_props.done || false), _changed);
       // If the log is coming from the server, freeze its type; otherwise, use
       // the special createTypeProperty function.
@@ -198,10 +200,12 @@ function farmLog(logTypes) {
     },
     mergeLogFromServer(localLog, serverLog) {
       // Clean up the server response by coercing strings to numbers, numbers
-      // to bools.
+      // to bools; also converting seconds to milliseconds.
       const _serverLog = {
         ...serverLog,
-        changed: +serverLog.changed,
+        changed: serverLog.changed > 9999999999
+          ? +serverLog.changed
+          : serverLog.changed * 1000,
         timestamp: +serverLog.timestamp,
         done: !!+serverLog.done,
       };
@@ -302,7 +306,7 @@ function farmLog(logTypes) {
     getLastSync(log) {
       return log[lastSync];
     },
-    setLastSync(log, time = Math.floor(Date.now() / 1000)) {
+    setLastSync(log, time = Date.now()) {
       log[lastSync] = time;
     },
     isUnsynced(log) {
@@ -340,7 +344,7 @@ function farmLog(logTypes) {
     resolveConflict(log, key, val) {
       const sym = _symbolRegistry[key];
       log[sym][data] = val;
-      log[sym][changed] = Math.floor(Date.now() / 1000);
+      log[sym][changed] = Date.now();
       log[sym][conflicts] = [];
     },
   };

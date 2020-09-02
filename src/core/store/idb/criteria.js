@@ -4,8 +4,8 @@ import {
 import { isUnsynced } from '../../../utils/farmLog';
 import { useData } from '../../../utils/createQuery';
 
-const tMinus = (t, x) => t - (60 * 60 * 24 * x);
-const tPlus = (t, x) => t + (60 * 60 * 24 * x);
+const tMinus = (t, x) => t - (1000 * 60 * 60 * 24 * x);
+const tPlus = (t, x) => t + (1000 * 60 * 60 * 24 * x);
 
 const isFromLast30Days = current => compose(
   ts => ts > tMinus(current, 30) && ts <= current,

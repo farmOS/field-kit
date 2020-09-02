@@ -1,4 +1,6 @@
-import { compose, dissoc, assoc } from 'ramda';
+import {
+  compose, dissoc, assoc, map, has, when, multiply, evolve,
+} from 'ramda';
 
 export default [
   {
@@ -101,17 +103,24 @@ export default [
    * - Prepare logs for use with new farmLog implementation.
    * - Replace wasPushedToServer with lastSync.
    * - Remove isReadyToSync.
+   * - Convert changed metadata to milliseconds
    */
   {
     version: 6,
     onUpgrade(event) {
-      const syncDate = JSON.parse(localStorage.getItem('syncDate'));
+      const syncDate = JSON.parse(localStorage.getItem('syncDate')) * 1000 || 0;
+      localStorage.removeItem('syncDate');
       const store = event.target.transaction.objectStore('logs');
       return new Promise((resolve, reject) => {
         const getRequest = store.getAll();
         getRequest.onsuccess = (getEvent) => {
+          const convertToMilliseconds = when(
+            has('changed'),
+            evolve({ changed: multiply(1000) }),
+          );
           const updatedLogs = getEvent.target.result
             .map(compose(
+              map(convertToMilliseconds),
               assoc('lastSync', syncDate),
               dissoc('wasPushedToServer'),
               dissoc('isReadyToSync'),
