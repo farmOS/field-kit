@@ -14,8 +14,6 @@
  */
 import { getLogTypes } from '../../../utils/farmLog';
 
-const logTypes = getLogTypes();
-
 // A helper that determines if a value is falsey, or is an empty array or object.
 const isNullish = val => (
   !val
@@ -26,6 +24,7 @@ const isNullish = val => (
 // If a log is missing a name, generate one.
 const nameRule = (log) => {
   if (!log.name) {
+    const logTypes = getLogTypes();
     const date = new Date(log.timestamp * 1000);
     const prettyDate = date.toLocaleDateString();
     const prettyTime = date.toLocaleTimeString(undefined, {
@@ -55,6 +54,7 @@ const dateRule = (log) => {
 
 // Check for required fields based on the schema for the current log's type.
 const requiredFieldsRule = (log) => {
+  const logTypes = getLogTypes();
   const schema = logTypes[log.type];
   return Object.entries(schema.fields)
     .reduce(({ syncable, reason }, [field, { required, label }]) => {

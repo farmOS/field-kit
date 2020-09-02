@@ -89,31 +89,38 @@ function farmLog(logTypes) {
   // The type determines what other properites are included, so it requires
   // a special setter. Also, it can only be changed before it is synced with the
   // server, so it doesn't need metadata.
-  function createTypeProperty(obj, val) {
-    Object.defineProperty(obj, 'type', {
-      enumerable: true,
-      configurable: true,
-      get: function typeGetter() {
-        return val;
-      },
-      set: function typeSetter(newType) {
-        const oldType = val;
-        const oldSchemaKeys = Object.keys(_logTypes[oldType].fields);
-        const newSchemaKeys = Object.keys(_logTypes[newType].fields);
-        const keysToBeAdded = without(oldSchemaKeys, newSchemaKeys);
-        const keysToBeRemoved = without(newSchemaKeys, oldSchemaKeys);
-        keysToBeAdded.forEach((key) => {
-          const value = makeDefault(_logTypes[newType].fields[key].data_schema);
-          createProperty(this, key, value);
-        });
-        keysToBeRemoved.forEach((key) => {
-          const sym = _symbolRegistry[key];
-          delete this[sym];
-          delete this[key];
-        });
-        val = newType;
-      },
-    });
+  function createTypeProperty(obj, val, _changed, writable) {
+    if (!writable) {
+      Object.defineProperty(obj, 'type', {
+        writable,
+        enumerable: true,
+        configurable: true,
+        value: val,
+      });
+    } else {
+      Object.defineProperty(obj, 'type', {
+        enumerable: true,
+        configurable: true,
+        get: function typeGetter() {
+          return val;
+        },
+        set: function typeSetter(newType) {
+          const oldType = val;
+          const oldSchemaKeys = Object.keys(_logTypes[oldType].fields);
+          const newSchemaKeys = Object.keys(_logTypes[newType].fields);
+          const keysToBeAdded = without(oldSchemaKeys, newSchemaKeys);
+          const keysToBeRemoved = without(newSchemaKeys, oldSchemaKeys);
+          keysToBeAdded.forEach((key) => {
+            const value = makeDefault(_logTypes[newType].fields[key].data_schema);
+            createProperty(this, key, value, _changed);
+          });
+          keysToBeRemoved.forEach((key) => {
+            delete this[key];
+          });
+          val = newType;
+        },
+      });
+    }
   }
 
   return {
@@ -144,16 +151,9 @@ function farmLog(logTypes) {
       createProperty(log, 'name', (_props.name || ''), _changed);
       createProperty(log, 'timestamp', timestamp, _changed);
       createProperty(log, 'done', (_props.done || false), _changed);
-      // If the log is coming from the server, freeze its type; otherwise, use
-      // the special createTypeProperty function.
-      const type = _props.type || 'farm_activity';
-      if (_props.id) {
-        setOnce(log, 'type', type);
-      } else {
-        createTypeProperty(log, type);
-      }
 
       // Set properties for "fields".
+      const type = _props.type || 'farm_activity';
       const schema = _logTypes[type]?.fields;
       Object.entries(schema).forEach(([key, { data_schema: dataSchema, type: fieldType }]) => {
         // Due to a bug on the server, notes and other text_long fields sometimes
@@ -183,10 +183,10 @@ function farmLog(logTypes) {
       // the object from being extended. Otherwise, keep the type writable and
       // allow properties to be changed depending on type.
       if (log.id) {
-        setOnce(log, 'type', type);
+        createTypeProperty(log, type, _props.created * 1000, false);
         Object.preventExtensions(log);
       } else {
-        createTypeProperty(log, type);
+        createTypeProperty(log, type, _changed, true);
       }
 
       return log;
@@ -254,7 +254,7 @@ function farmLog(logTypes) {
       if (localLog.id === undefined) {
         setOnce(localLog, 'id', _serverLog.id);
         setOnce(localLog, 'url', _serverLog.url);
-        setOnce(localLog, 'type', _serverLog.type);
+        createTypeProperty(localLog, _serverLog.type, _serverLog.created * 1000, false);
       }
     },
     serializeLog(log) {
@@ -288,7 +288,10 @@ function farmLog(logTypes) {
             value: val,
           });
         } else if (key === 'type') {
-          createTypeProperty(newLog, val);
+          const typeIsWritable = !log.id;
+          const _data = val.data || val;
+          const _changed = val.changed || 0;
+          createTypeProperty(newLog, _data, _changed, typeIsWritable);
         // Then any props that aren't in the symbol reg, like url & localID.
         } else if (!sym) {
           setOnce(newLog, key, val);

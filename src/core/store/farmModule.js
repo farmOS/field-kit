@@ -1,6 +1,8 @@
 // A Vuex module for modelling the attributes of the farm itself.
 
-import { createLog, mergeLogFromServer, setLastSync } from '../../utils/farmLog';
+import {
+  createLog, mergeLogFromServer, setLastSync, setLogTypes,
+} from '../../utils/farmLog';
 import defaultResources from './defaultResources';
 import { getRemoteLogs, sendRemoteLogs } from './http';
 import createQuery from '../../utils/createQuery';
@@ -89,6 +91,7 @@ export default {
     },
     setFarmResources(state, res) {
       state.resources = res;
+      setLogTypes(res.log);
     },
   },
   actions: {
