@@ -1,9 +1,16 @@
 import {
-  compose, allPass, map, anyPass, dissoc,
+  compose, allPass, map, anyPass, dissoc, ifElse, hasPath, path, prop,
 } from 'ramda';
+import { isUnsynced } from './farmLog';
+
+export const useData = key => ifElse(
+  hasPath([key, 'data']),
+  path([key, 'data']),
+  prop(key),
+);
 
 const filterByKeyValue = ([key, val]) => (log) => {
-  const data = log[key].data !== undefined ? log[key].data : log[key];
+  const data = useData(key)(log);
   if (Array.isArray(val)) {
     if (Array.isArray(data)) {
       return val.some(v => data.some(d => +d.id === +v));
@@ -25,16 +32,14 @@ const filterByFilters = compose(
 
 const filterByLocalID = localIDs => log => localIDs.includes(log.localID);
 
-const filterBySyncStatus = enabled => log => (enabled ? !log.wasPushedToServer : false);
+const filterBySyncStatus = enabled => log =>
+  enabled && isUnsynced(log);
 
-export const filterByTimestamp = range => (log) => {
-  const timestamp = log.timestamp.data !== undefined
-    ? log.timestamp.data
-    : log.timestamp;
-  const start = range[0] || 0;
-  const end = range[1] || Infinity;
-  return start <= timestamp && timestamp <= end;
-};
+export const filterByTimestamp = ([start = 0, end = Infinity]) =>
+  compose(
+    ts => start <= ts && ts <= end,
+    useData('timestamp'),
+  );
 
 const filterByTimestampAndFilters = (filters) => {
   const { timestamp: range } = filters;

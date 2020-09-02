@@ -1,5 +1,4 @@
 import { cachingCriteria, evictionCriteria } from './criteria';
-import farmLog from '../../../utils/farmLog';
 
 const makeIDBSubscriber = store => ({ type, payload }) => {
   if (type === 'addLogs') {
@@ -22,13 +21,19 @@ const makeIDBSubscriber = store => ({ type, payload }) => {
       });
   }
   if (type === 'updateLog' && payload.localID) {
-    const { updateLog } = farmLog(store.state.farm.resources.log);
-    const oldLog = store.state.farm.logs.find(l => l.localID === payload.localID);
-    const newLog = updateLog(oldLog, {
-      wasPushedToServer: false,
-      ...payload,
-    });
-    store.dispatch('updateCachedLog', newLog);
+    const log = store.state.farm.logs.find(l => l.localID === payload.localID);
+    store.dispatch('updateCachedLog', log);
+  }
+  if (type === 'mergeLogFromServer') {
+    const { id } = payload;
+    const localLog = store.state.farm.logs.find(log => +log.id === +id);
+    if (localLog.localID) {
+      store.dispatch('updateCachedLog', localLog);
+    } else {
+      store.dispatch('generateLogID').then((localID) => {
+        store.commit('updateLog', { id, localID });
+      });
+    }
   }
   if (type === 'deleteLog') {
     store.dispatch('deleteCachedLog', payload);

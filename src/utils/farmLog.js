@@ -1,4 +1,40 @@
-const makeDefault = (schema) => {
+/* eslint-disable no-param-reassign */
+import { uniq, zipObj, without } from 'ramda';
+import defaultResources from '../core/store/defaultResources';
+
+const data = Symbol('data');
+const changed = Symbol('changed');
+const conflicts = Symbol('conflicts');
+const lastSync = Symbol('lastSync');
+
+function createSymbolRegistry(_logTypes) {
+  const uniqueFields = uniq(Object.values(_logTypes)
+    .flatMap(({ fields }) => Object.keys(fields)));
+  const fieldSymbols = zipObj(
+    uniqueFields,
+    uniqueFields.map(f => Symbol(f)),
+  );
+  return {
+    name: Symbol('name'),
+    timestamp: Symbol('timestamp'),
+    done: Symbol('done'),
+    ...fieldSymbols,
+    // NB: We don't need to register properties that don't change once set,
+    // like id, type, and localID.
+  };
+}
+
+function updateSymbolRegistry(registry, newLogTypes) {
+  const uniqueFields = uniq(Object.values(newLogTypes)
+    .flatMap(({ fields }) => Object.keys(fields)));
+  uniqueFields.forEach((f) => {
+    if (!registry[f]) {
+      registry[f] = Symbol(f);
+    }
+  });
+}
+
+function makeDefault(schema) {
   if (schema === null) {
     return null;
   }
@@ -11,235 +47,317 @@ const makeDefault = (schema) => {
     return Object.fromEntries(entries);
   }
   return schema;
-};
+}
 
-const farmLog = (logTypes, syncDate) => ({
-  createLog(props = {}) {
-    const changed = Math.floor(Date.now() / 1000);
-    const name = { changed, data: props.name || '', conflicts: [] };
-    const type = { changed, data: props.type || 'farm_activity', conflicts: [] };
-    const timestamp = { changed, data: props.timestamp || changed, conflicts: [] };
-    const done = { changed, data: props.done || false, conflicts: [] };
-    const {
-      localID = null,
-      wasPushedToServer = false,
-      isReadyToSync = false,
-      modules = [],
-    } = props;
-    const schema = logTypes[type.data].fields;
-    const entries = Object.entries(schema).map(([key, { data_schema: dataSchema }]) => {
-      const data = props[key] || makeDefault(dataSchema);
-      return [key, { changed, data, conflicts: [] }];
+function setOnce(obj, key, value) {
+  const writable = value === undefined;
+  Object.defineProperty(obj, key, {
+    value,
+    writable,
+    configurable: true,
+    enumerable: true,
+  });
+}
+
+function farmLog(logTypes) {
+  let _logTypes = logTypes;
+  const _symbolRegistry = createSymbolRegistry(_logTypes);
+
+  function createProperty(obj, key, val, _changed, _conflicts) {
+    const sym = _symbolRegistry[key];
+    Object.defineProperty(obj, sym, {
+      writable: true,
+      enumerable: false,
+      value: {
+        [data]: val,
+        [changed]: _changed || Math.floor(Date.now() / 1000),
+        [conflicts]: _conflicts || [],
+      },
     });
-    return {
-      ...Object.fromEntries(entries),
-      name,
-      type,
-      timestamp,
-      done,
-      localID,
-      wasPushedToServer,
-      isReadyToSync,
-      modules,
-    };
-  },
-  updateLog(log, props = {}) {
-    const changed = Math.floor(Date.now() / 1000);
-    const updateProp = (key, def, schema) => {
-      let prop;
-      if (props[key] !== undefined) {
-        prop = {
-          changed,
-          data: props[key],
-          conflicts: log[key].conflicts || [],
-        };
-      } else if (log[key]?.data !== undefined) {
-        prop = {
-          changed: log[key].changed,
-          data: log[key].data,
-          conflicts: log[key].conflicts || [],
-        };
+    Object.defineProperty(obj, key, {
+      enumerable: true,
+      configurable: true,
+      get: function symbolGetter() {
+        return this[sym][data];
+      },
+      set: function symbolSetter(value) {
+        this[sym][changed] = Math.floor(Date.now() / 1000);
+        this[sym][data] = value;
+      },
+    });
+  }
+
+  // The type determines what other properites are included, so it requires
+  // a special setter. Also, it can only be changed before it is synced with the
+  // server, so it doesn't need metadata.
+  function createTypeProperty(obj, val) {
+    Object.defineProperty(obj, 'type', {
+      enumerable: true,
+      configurable: true,
+      get: function typeGetter() {
+        return val;
+      },
+      set: function typeSetter(newType) {
+        const oldType = val;
+        const oldSchemaKeys = Object.keys(_logTypes[oldType].fields);
+        const newSchemaKeys = Object.keys(_logTypes[newType].fields);
+        const keysToBeAdded = without(oldSchemaKeys, newSchemaKeys);
+        const keysToBeRemoved = without(newSchemaKeys, oldSchemaKeys);
+        keysToBeAdded.forEach((key) => {
+          const value = makeDefault(_logTypes[newType].fields[key].data_schema);
+          createProperty(this, key, value);
+        });
+        keysToBeRemoved.forEach((key) => {
+          const sym = _symbolRegistry[key];
+          delete this[sym];
+          delete this[key];
+        });
+        val = newType;
+      },
+    });
+  }
+
+  return {
+    getLogTypes() {
+      return _logTypes;
+    },
+    setLogTypes(newTypes) {
+      _logTypes = newTypes;
+      updateSymbolRegistry(_symbolRegistry, newTypes);
+    },
+    createLog(props = {}, _lastSync = 0) {
+      // Set a common timestamp to be used for the latest change on all properties.
+      const _changed = props.changed || Math.floor(Date.now() / 1000);
+      const log = {};
+
+      // Clean up props in case they're coming from a server log.
+      const _props = {
+        ...props,
+        changed: +props.changed,
+        timestamp: +props.timestamp,
+        done: !!+props.done,
+      };
+
+      // Set properties for what farmOS considers "properties" (vs "fields").
+      createProperty(log, 'name', (_props.name || ''), _changed);
+      createProperty(log, 'timestamp', (_props.timestamp || _changed), _changed);
+      createProperty(log, 'done', (_props.done || false), _changed);
+      // If the log is coming from the server, freeze its type; otherwise, use
+      // the special createTypeProperty function.
+      const type = _props.type || 'farm_activity';
+      if (_props.id) {
+        setOnce(log, 'type', type);
       } else {
-        prop = { changed, data: def || makeDefault(schema), conflicts: [] };
+        createTypeProperty(log, type);
       }
-      return prop;
-    };
-    const name = updateProp('name', '');
-    const type = updateProp('type', 'farm_activity');
-    const timestamp = updateProp('timestamp', changed);
-    const done = updateProp('done', false);
-    const schema = logTypes[type.data]?.fields;
-    // If the schema is missing for this log type, b/c it hasn't come from the
-    // server yet or was modified, just work with the log's existing key-value pairs.
-    const entries = schema ? Object.entries(schema) : Object.entries(log);
-    const updatedEntries = entries.map(([key, { data_schema: dataSchema = null }]) => {
-      const value = updateProp(key, undefined, dataSchema);
-      return [key, value];
-    });
-    const updateMetaData = (key, def) => {
-      let value;
-      if (props[key] !== undefined) {
-        value = props[key];
-      } else if (log[key] !== undefined) {
-        value = log[key];
+
+      // Set properties for "fields".
+      const schema = _logTypes[type]?.fields;
+      Object.entries(schema).forEach(([key, { data_schema: dataSchema, type: fieldType }]) => {
+        // Due to a bug on the server, notes and other text_long fields sometimes
+        // come from the server with value of [], which gets rejected if sent back
+        // to the server, so we need to reset it to null to correct the error.
+        if (fieldType === 'text_long' && Array.isArray(_props[key])) {
+          _props[key] = null;
+        }
+        const val = _props[key] !== undefined ? _props[key] : makeDefault(dataSchema);
+        createProperty(log, key, val, _changed);
+      });
+
+      // Add enumerable props directly for identifying logs; since these can't
+      // be changed once set, they need no metadata, and should only be set once.
+      setOnce(log, 'localID', _props.localID);
+      setOnce(log, 'id', _props.id);
+      setOnce(log, 'url', _props.url);
+
+      // Record metadata for the last time the log was synced (defaults to 0).
+      Object.defineProperty(log, lastSync, {
+        enumerable: false,
+        writable: true,
+        value: _lastSync,
+      });
+
+      // Once an id has been assigned by the server, freeze the type and prevent
+      // the object from being extended. Otherwise, keep the type writable and
+      // allow properties to be changed depending on type.
+      if (log.id) {
+        setOnce(log, 'type', type);
+        Object.preventExtensions(log);
       } else {
-        value = def;
+        createTypeProperty(log, type);
       }
-      return value;
-    };
-    return {
-      ...Object.fromEntries(updatedEntries),
-      name,
-      type,
-      timestamp,
-      done,
-      url: props.url || log.url,
-      id: props.id || log.id,
-      localID: props.localID || log.localID,
-      wasPushedToServer: updateMetaData('wasPushedToServer', false),
-      isReadyToSync: updateMetaData('isReadyToSync', false),
-      modules: props.modules || log.modules || [],
-    };
-  },
-  formatLogForServer(log) {
-    const changed = Math.floor(Date.now() / 1000);
-    const updateProp = (key, def, schema) => (
-      log[key].data !== undefined ? log[key].data : def || makeDefault(schema)
-    );
-    const name = updateProp('name', '');
-    const type = updateProp('type', 'farm_activity');
-    const timestamp = updateProp('timestamp', changed);
-    const done = updateProp('done', false);
-    const schema = logTypes[type]?.fields;
-    // If the schema is missing for this log type, b/c it hasn't come from the
-    // server yet or was modified, just work with the log's existing key-value pairs.
-    const entries = schema ? Object.entries(schema) : Object.entries(log);
-    const updatedEntries = entries.map(([key, { data_schema: dataSchema = null }]) => {
-      // We've got to hardcode this logic re: notes for now b/c the server does
-      // not give us a valid default value. :/
-      const isInvalidNotesProp = (key === 'notes' && log.notes.data === null);
-      const value = isInvalidNotesProp
-        ? { value: '', format: 'farm_format' }
-        : updateProp(key, undefined, dataSchema);
-      return [key, value];
-    });
-    const newLog = {
-      ...Object.fromEntries(updatedEntries),
-      name,
-      type,
-      timestamp,
-      done,
-    };
-    if (log.id) {
-      newLog.id = log.id;
-    }
-    return newLog;
-  },
-  mergeLogFromServer(serverLog, localLog, props = {}) {
-    const changed = Math.floor(Date.now() / 1000);
 
-    // Some dirty reassignment to coerce these props to numbers b/c the server
-    // sends them as strings. :/
-    serverLog.changed = +serverLog.changed; // eslint-disable-line no-param-reassign
-    serverLog.timestamp = +serverLog.timestamp; // eslint-disable-line no-param-reassign
-    serverLog.done = !!+serverLog.done; // eslint-disable-line no-param-reassign
+      return log;
+    },
+    formatLogForServer(log) {
+      const serverLog = { ...log };
+      delete serverLog.localID;
+      delete serverLog.url;
+      if (serverLog.id === undefined) { delete serverLog.id; }
+      return serverLog;
+    },
+    mergeLogFromServer(localLog, serverLog) {
+      // Clean up the server response by coercing strings to numbers, numbers
+      // to bools.
+      const _serverLog = {
+        ...serverLog,
+        changed: +serverLog.changed,
+        timestamp: +serverLog.timestamp,
+        done: !!+serverLog.done,
+      };
 
-    // Supply a function for updating props based on certain conditions...
-    const updateProp = (!localLog)
-      // If there's no local log provided, use the server log's value for all props.
-      ? (key, def, schema) => (
-        serverLog[key] !== undefined
-          ? { changed, data: props[key] || serverLog[key], conflicts: [] }
-          : { changed, data: def || makeDefault(schema), conflicts: [] }
-      )
-      // Otherwise we need to compare key-by-key...
-      : (key, def, schema) => {
-        let prop;
-        if (props[key] !== undefined) {
-          prop = {
-            changed,
-            data: props[key],
-            conflicts: localLog[key].conflicts,
-          };
-        // If the server log is more recent but the local log has already been
-        // synced, use the server log's value as prop.
-        } else if (serverLog.changed > localLog[key].changed && localLog.wasPushedToServer) {
-          prop = {
-            changed: serverLog.changed,
-            data: serverLog[key],
-            conflicts: localLog[key].conflicts,
-          };
-        // If the local log is more recent for this key, use its value as prop.
-        } else if (serverLog.changed < localLog[key].changed || syncDate > localLog[key].changed) {
-          prop = {
-            changed: localLog[key].changed,
-            data: localLog[key].data,
-            conflicts: localLog[key].conflicts,
-          };
-        // If the server log is more recent and the local log has outstanding
-        // changes that haven't been synced, we have a conflict.
-        } else if (serverLog.changed > localLog[key].changed && !localLog.wasPushedToServer) {
-          prop = {
-            changed: localLog[key].changed,
-            data: localLog[key].data,
-            conflicts: localLog[key].conflicts.concat([{
-              changed: serverLog.changed,
-              data: serverLog[key],
-            }]),
-          };
+      // Main logic for merging log properties between the server and local device.
+      function mergeProps(key) {
+        const sym = _symbolRegistry[key];
+        // If the server log changed more recently than the local log, and
+        // the local log was synced more recently than it changed,
+        // use the server log's value.
+        if (_serverLog.changed > localLog[sym][changed]
+          && localLog[lastSync] > localLog[sym][changed]) {
+          localLog[sym][changed] = _serverLog.changed;
+          localLog[sym][data] = _serverLog[key];
+          return;
+        }
+        // If the local log changed more recently than the server log, or
+        // the local log was synced more recently than the server log changed,
+        // keep the local log's value (ie, do nothing).
+        if (_serverLog.changed < localLog[sym][changed]
+          || localLog[lastSync] > localLog[sym][changed]) {
+          return;
+        }
+        // Otherwise, the server log changed since the last sync, while
+        // the local log has outstanding changes, so we have a conflict.
+        localLog[sym][conflicts].push({
+          [changed]: _serverLog.changed,
+          [data]: _serverLog[key],
+        });
+      }
+
+      // Iterate over all fields for the given log type and merge the properties.
+      Object.entries(_logTypes[localLog.type].fields).forEach(([key, { type }]) => {
+        // Due to a bug on the server, notes and other text_long fields sometimes
+        // come from the server with value of [], which gets rejected if sent back
+        // to the server, so we need to reset it to null to correct the error.
+        if (type === 'text_long' && Array.isArray(_serverLog[key])) {
+          _serverLog[key] = null;
+        }
+        mergeProps(key);
+      });
+      mergeProps('name');
+      mergeProps('timestamp');
+      mergeProps('done');
+
+      if (localLog.id === undefined) {
+        setOnce(localLog, 'id', _serverLog.id);
+        setOnce(localLog, 'url', _serverLog.url);
+        setOnce(localLog, 'type', _serverLog.type);
+      }
+    },
+    serializeLog(log) {
+      const newLog = Object.keys(log).reduce((obj, key) => {
+        const sym = _symbolRegistry[key];
+        // B/c some props, like id, aren't in the _symbolRegistry and don't have metadata.
+        if (!sym) {
+          return { ...obj, [key]: log[key] };
+        }
+        return {
+          ...obj,
+          [key]: {
+            data: log[sym][data],
+            changed: log[sym][changed],
+            conflicts: log[sym][conflicts],
+          },
+        };
+      }, {});
+      newLog.lastSync = log[lastSync];
+      return newLog;
+    },
+    deserializeLog(log) {
+      const newLog = {};
+      Object.entries(log).forEach(([key, val]) => {
+        const sym = _symbolRegistry[key];
+        // First handle the special cases of the lastSync & type props.
+        if (key === 'lastSync') {
+          Object.defineProperty(newLog, lastSync, {
+            enumerable: false,
+            writable: true,
+            value: val,
+          });
+        } else if (key === 'type') {
+          createTypeProperty(newLog, val);
+        // Then any props that aren't in the symbol reg, like url & localID.
+        } else if (!sym) {
+          setOnce(newLog, key, val);
+        // The rest should be regular props with metadata.
         } else {
-          prop = {
-            changed: localLog[key].changed || changed,
-            data: localLog[key].data || def || makeDefault(schema),
-            conflicts: localLog[key].conflicts || [],
+          createProperty(newLog, key, val.data, log[key].changed, log[key].conflicts);
+        }
+      });
+      return newLog;
+    },
+    getLastChange(log, key) {
+      const sym = _symbolRegistry[key];
+      return log[sym]?.[changed];
+    },
+    getLastSync(log) {
+      return log[lastSync];
+    },
+    setLastSync(log, time = Math.floor(Date.now() / 1000)) {
+      log[lastSync] = time;
+    },
+    isUnsynced(log) {
+      // Use the Symbol prop or string prop, so this can be used on both normal
+      // logs and serialized logs.
+      const _lastSync = log[lastSync] || log.lastSync || 0;
+      return Object.keys(log)
+        .some((key) => {
+          const sym = _symbolRegistry[key];
+          if (log[sym]) {
+            return log[sym][changed] > _lastSync;
+          }
+          // Again, check the normal string prop, too, for serialized logs.
+          if (log[key]) {
+            return log[key].changed > _lastSync;
+          }
+          // Otherwise it's a prop like id or url that doesn't track changes.
+          return false;
+        });
+    },
+    getConflicts(log) {
+      return Object.entries(_symbolRegistry).reduce((_conflicts, [key, sym]) => {
+        if (log[sym]?.[conflicts]?.length > 0) {
+          return {
+            ..._conflicts,
+            [key]: log[sym][conflicts].map(conflict => ({
+              changed: conflict[changed],
+              data: conflict[data],
+            })),
           };
         }
-        return prop;
-      };
-    const name = updateProp('name', '');
-    const type = updateProp('type', 'farm_activity');
-    const timestamp = updateProp('timestamp', changed);
-    const done = updateProp('done', false);
-    // If the schema is missing for this log type, b/c it hasn't come from the
-    // server yet or was modified, just work with the log's existing key-value pairs.
-    const schema = logTypes[type.data]?.fields;
-    const entries = schema ? Object.entries(schema) : Object.entries(serverLog);
-    const updatedEntries = entries.map(([key, { data_schema: dataSchema, type: fieldType }]) => {
-      // Due to a bug on the server, notes and other text_long fields sometimes
-      // come from the server with value of [], which gets rejected if sent back
-      // to the server, so we're reassigning the function parameter (oh no!)
-      // on that key to correct the error.
-      if (fieldType === 'text_long' && Array.isArray(serverLog[key])) {
-        serverLog[key] = null; // eslint-disable-line no-param-reassign
-      }
-      const value = updateProp(key, undefined, dataSchema);
-      return [key, value];
-    });
-    const updateMetaData = (key, def) => {
-      let value;
-      if (props[key] !== undefined) {
-        value = props[key];
-      } else if (localLog && localLog[key] !== undefined) {
-        value = localLog[key];
-      } else {
-        value = def;
-      }
-      return value;
-    };
-    return {
-      ...Object.fromEntries(updatedEntries),
-      name,
-      type,
-      timestamp,
-      done,
-      localID: localLog?.localID,
-      url: serverLog.url,
-      id: serverLog.id,
-      wasPushedToServer: updateMetaData('wasPushedToServer', true),
-      isReadyToSync: updateMetaData('isReadyToSync', false),
-      modules: updateMetaData('modules', []),
-    };
-  },
-});
+        return _conflicts;
+      }, {});
+    },
+    resolveConflict(log, key, val) {
+      const sym = _symbolRegistry[key];
+      log[sym][data] = val;
+      log[sym][changed] = Math.floor(Date.now() / 1000);
+      log[sym][conflicts] = [];
+    },
+  };
+}
 
-export default farmLog;
+export const {
+  getLogTypes,
+  setLogTypes,
+  createLog,
+  formatLogForServer,
+  mergeLogFromServer,
+  serializeLog,
+  deserializeLog,
+  getLastChange,
+  getLastSync,
+  setLastSync,
+  isUnsynced,
+  getConflicts,
+  resolveConflict,
+} = farmLog(defaultResources.log);

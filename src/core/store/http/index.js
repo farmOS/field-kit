@@ -4,7 +4,7 @@ import {
 import farm from '../farmClient';
 import rules from './rules';
 import router from '../../router';
-import farmLog from '../../../utils/farmLog';
+import { formatLogForServer, isUnsynced } from '../../../utils/farmLog';
 import createQuery, { filterByTimestamp } from '../../../utils/createQuery';
 
 export const partitionResponses = partition(compose(
@@ -79,12 +79,10 @@ const syncErrorHandler = ({ error, loginRequired }, { reason, localLog }) => {
 };
 
 export function getRemoteLogs(context, payload) {
-  const { commit, dispatch, rootState } = context;
+  const { commit, rootState } = context;
   const { pass: { localIDs = [] } = {} } = payload;
   const filters = dissoc('timestamp', payload.filter);
   const timeRange = prop('timestamp', payload.filter) || [];
-  const syncDate = JSON.parse(localStorage.getItem('syncDate'));
-  const { mergeLogFromServer } = farmLog(rootState.farm.resources.log, syncDate);
   const ids = localIDs
     .map(localID => +rootState.farm.logs
       .find(log => log.localID === localID)
@@ -99,33 +97,14 @@ export function getRemoteLogs(context, payload) {
   return Promise.all(responses)
     .then(partitionResponses)
     .then(([fulfilled, rejected]) => {
-      const { updates, newLogs } = flattenResponses(fulfilled)
+      flattenResponses(fulfilled)
         .filter(filterByTimestamp(timeRange))
-        .reduce(({ updates: u, newLogs: n }, serverLog) => {
-          const localLog = rootState.farm.logs
-            .find(log => +log.id === +serverLog.id);
-          if (localLog) {
-            return {
-              updates: u.concat(mergeLogFromServer(serverLog, localLog)),
-              newLogs: n,
-            };
-          }
-          return {
-            updates: u,
-            newLogs: n.concat(mergeLogFromServer(serverLog)),
-          };
-        }, { updates: [], newLogs: [] });
-      if (updates.length > 0) { commit('addLogs', updates); }
-      if (newLogs.length > 0) {
-        return Promise.all(newLogs.map(log => dispatch('initializeLog', log)))
-          .then(() => rejected);
-      }
-      return Promise.resolve(rejected);
-    })
-    .then((rejected) => {
+        .forEach((serverLog) => {
+          commit('mergeLogFromServer', serverLog);
+        });
       // Check for errors, log them and redirect to login screen if needed.
       // Throw so if there are any subsequent promises chained to this one,
-      // like sendRemoteLogs or an update of the syncDate, they will be aborted.
+      // like sendRemoteLogs, they will be aborted.
       if (rejected.length > 0) {
         const initError = {
           loginRequired: false,
@@ -142,34 +121,36 @@ export function getRemoteLogs(context, payload) {
 }
 
 /*
-  A factory that takes dependencies supplied by the caller and returns a reducer
-  function that separates logs into those that can and cannot be synced,
-  returning a tuple. It gets its rules from ./rules.js.
+  A reducer function that returns a tuple, separateing logs into those that can
+  and cannot be synced, as well as required updates for those logs that are
+  syncable if those updates are applied. It gets its rules from ./rules.js.
 */
-const createSyncReducer = deps => ([syncables, unsyncables, updates], log) => {
-  if (!log.wasPushedToServer) {
+const syncReducer = ([syncables, unsyncables, updates], log) => {
+  if (isUnsynced(log)) {
     const { localID } = log;
     const initialState = {
       syncable: true,
-      message: `Could not sync "${log.name.data}":`,
+      message: `Could not sync "${log.name}":`,
       update: { localID },
     };
     const { syncable, message, update } = rules.reduce((acc, rule) => {
-      const result = rule(log, deps);
+      const result = rule(log);
       if (!result.syncable) {
         return {
           syncable: false,
           message: `${acc.message}<br>- ${result.reason}`,
         };
       }
-      return !result.updateProps ? acc : { ...acc, ...result.updateProps };
+      return !result.updateProps
+        ? acc
+        : { ...acc, update: { ...acc.update, ...result.updateProps } };
     }, initialState);
     if (!syncable) {
       return [syncables, unsyncables.concat({ message }), updates];
     }
     /*
-      Add log to list of syncables if wasPushedToServer is false, and
-      add updates if there are more props than localID.
+      Add log to list of syncables, and if there are more props to update,
+      other than the localID, add those to the list.
     */
     const updatesRequired = Object.keys(update).length > 1;
     return [
@@ -179,36 +160,22 @@ const createSyncReducer = deps => ([syncables, unsyncables, updates], log) => {
     ];
   }
   /*
-    If wasPushedToServer is true, do nothing.
+    If the log has been synced, do nothing.
   */
   return [syncables, unsyncables, updates];
 };
 
-const createGroupLogs = (filters, pass, logTypes) => compose(
-  reduce(createSyncReducer({ logTypes }), [[], [], []]),
+const createGroupLogs = (filters, pass) => compose(
+  reduce(syncReducer, [[], [], []]),
   filter(createQuery(filters, pass)),
 );
 export function sendRemoteLogs(context, payload) {
   const { commit, rootState } = context;
   const { filter: _filter, pass } = payload;
-  const logTypes = rootState.farm.resources.log;
-  const { formatLogForServer, updateLog } = farmLog(logTypes);
-
-  // Handles successful network responses: a transformer that maps an array of
-  // successful network responses to an array of updates.
-  const sendResponseHandler = ({ value, localLog }) => {
-    const props = {
-      localID: localLog.localID,
-      id: value.id,
-      url: value.url,
-      wasPushedToServer: true,
-    };
-    return updateLog(localLog, props);
-  };
 
   // Process and sort the logs into syncable and unsyncable logs,
   // as well as updates needed before syncing.
-  const groupLogs = createGroupLogs(_filter, pass, logTypes);
+  const groupLogs = createGroupLogs(_filter, pass);
   const [syncables, unsyncables, updates] = groupLogs(rootState.farm.logs);
   // For all logs that are unsyncable, display an error message.
   unsyncables.forEach(({ message }) => {
@@ -243,7 +210,15 @@ export function sendRemoteLogs(context, payload) {
 
     // Handle the successful responses by updating the logs as synced.
     if (fulfilled.length > 0) {
-      commit('addLogs', fulfilled.map(sendResponseHandler));
+      fulfilled.forEach(({ value, localLog }) => {
+        const props = {
+          localID: localLog.localID,
+          id: value.id,
+          url: value.url,
+          lastSync: true,
+        };
+        commit('updateLog', props);
+      });
     }
 
     // Check for errors, log them and redirect to login screen if needed.

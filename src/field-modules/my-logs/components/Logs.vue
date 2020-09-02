@@ -52,8 +52,8 @@
           <div class="modal-body">
             {{ $t('Are sure you\'d like to delete the log')}} "{{logToDelete.name}}"?&nbsp;
             <span
-              v-if='logToDelete.wasPushedToServer'>
-              {{ $t('Deleting it on this device will not remove the log from the server.')}}
+              v-if='isUnsynced(logToDelete)'>
+              {{ $t('Deleting it on this device will not remove the log from the server.') }}
             </span>
             <span v-else>
               <!-- eslint-disable-next-line max-len -->
@@ -82,6 +82,8 @@
 
 <script>
 import sort from 'ramda/src/sort';
+
+const { isUnsynced } = window.farmOS.utils.farmLog;
 
 export default {
   name: 'Logs',
@@ -237,6 +239,7 @@ export default {
       localStorage.setItem('excludedCategories', '[]');
       localStorage.setItem('dateFilter', 'ALL_TIME');
     },
+    isUnsynced,
   },
   computed: {
     logToDelete() {

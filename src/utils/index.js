@@ -1,4 +1,4 @@
-import farmLog from './farmLog';
+import * as farmLog from './farmLog';
 import { mergeGeometries, removeGeometry, isNearby } from './geometry';
 import parseNotes from './parseNotes';
 

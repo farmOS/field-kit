@@ -1,13 +1,20 @@
-import { anyPass, allPass, complement } from 'ramda';
+import {
+  anyPass, allPass, complement, compose,
+} from 'ramda';
+import { isUnsynced } from '../../../utils/farmLog';
+import { useData } from '../../../utils/createQuery';
 
 const tMinus = (t, x) => t - (60 * 60 * 24 * x);
 const tPlus = (t, x) => t + (60 * 60 * 24 * x);
 
-const isFromLast30Days = current => log =>
-  log.timestamp.data > tMinus(current, 30) && log.timestamp.data <= current;
-const isInNext15Days = current => log =>
-  log.timestamp.data >= current && log.timestamp.data < tPlus(current, 15);
-const isUnsynced = log => !log.wasPushedToServer;
+const isFromLast30Days = current => compose(
+  ts => ts > tMinus(current, 30) && ts <= current,
+  useData('timestamp'),
+);
+const isInNext15Days = current => compose(
+  ts => ts >= current && ts < tPlus(current, 15),
+  useData('timestamp'),
+);
 
 export const cachingCriteria = current => anyPass([
   isFromLast30Days(current),

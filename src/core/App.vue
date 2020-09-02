@@ -121,7 +121,7 @@
               :systemOfMeasurement='systemOfMeasurement'
               :logTypes='logTypes'
               :modules="modules"
-              :logs='removeMetaData(logs)'
+              :logs='logs'
               :areas='areas'
               :assets='assets'
               :units='units'
@@ -142,15 +142,6 @@
 <script>
 import { mapState, mapGetters } from 'vuex';
 import { version } from '../../package.json';
-
-const removeMetaData = entities => entities
-  .map(entity => Object.fromEntries(
-    Object.entries(entity).map(([key, val]) => (
-      typeof val === 'object' && 'data' in val
-        ? [key, val.data]
-        : [key, val]
-    )),
-  ));
 
 export default {
   name: 'App',
@@ -232,7 +223,6 @@ export default {
     setUseGeolocation(checked) {
       this.$store.commit('setUseGeolocation', checked);
     },
-    removeMetaData,
     handleModuleClick(module) {
       if (module.routes[0].path !== this.$route.path) {
         this.$router.push(module.routes[0].path);

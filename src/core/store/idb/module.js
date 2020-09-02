@@ -10,6 +10,7 @@ import {
 import config from './idb.config';
 import { evictionCriteria } from './criteria';
 import createQuery from '../../../utils/createQuery';
+import { serializeLog, deserializeLog } from '../../../utils/farmLog';
 
 // Destructure the store configs so their names are easier to access
 const [
@@ -26,7 +27,7 @@ export default {
   actions: {
 
     updateCachedLog(_, log) {
-      return saveRecord(logStore.name, log)
+      return saveRecord(logStore.name, serializeLog(log))
         .catch(console.error); // eslint-disable-line no-console
     },
 
@@ -37,7 +38,7 @@ export default {
         : createQuery(_filter, pass);
       return getRecords(logStore.name, query)
         .then((results) => {
-          commit('addLogs', results);
+          commit('addLogs', results.map(deserializeLog));
           return results;
         })
         .catch(console.error); // eslint-disable-line no-console

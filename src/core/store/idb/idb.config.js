@@ -6,7 +6,7 @@ import categoryUpgrades from './upgrades/categories';
 import resourceUpgrades from './upgrades/resources';
 
 export default {
-  version: 5,
+  version: 6,
   name: 'farmos',
   stores: [
     {

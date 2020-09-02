@@ -12,6 +12,9 @@
  * be provided in http/module.js, when the syncReducer is instantiated under the
  * sendRemoteLogs function.
  */
+import { getLogTypes } from '../../../utils/farmLog';
+
+const logTypes = getLogTypes();
 
 // A helper that determines if a value is falsey, or is an empty array or object.
 const isNullish = val => (
@@ -21,15 +24,15 @@ const isNullish = val => (
 );
 
 // If a log is missing a name, generate one.
-const nameRule = (log, { logTypes }) => {
-  if (!log.name.data) {
-    const date = new Date(log.timestamp.data * 1000);
+const nameRule = (log) => {
+  if (!log.name) {
+    const date = new Date(log.timestamp * 1000);
     const prettyDate = date.toLocaleDateString();
     const prettyTime = date.toLocaleTimeString(undefined, {
       timeStyle: 'short',
       hour12: false,
     });
-    const name = `${logTypes[log.type.data].label} ${prettyDate} - ${prettyTime}`;
+    const name = `${logTypes[log.type].label} ${prettyDate} - ${prettyTime}`;
     return {
       syncable: true,
       updateProps: { name },
@@ -41,7 +44,7 @@ const nameRule = (log, { logTypes }) => {
 // Every log must have a valid date.
 const dateRule = (log) => {
   // Test if the timestamp is a number or can be coerced into one.
-  if (Number.isNaN(Number(log.timestamp.data))) {
+  if (Number.isNaN(Number(log.timestamp))) {
     return {
       syncable: false,
       reason: 'Every log must have a valid date field.',
@@ -51,11 +54,11 @@ const dateRule = (log) => {
 };
 
 // Check for required fields based on the schema for the current log's type.
-const requiredFieldsRule = (log, { logTypes }) => {
-  const schema = logTypes[log.type.data];
+const requiredFieldsRule = (log) => {
+  const schema = logTypes[log.type];
   return Object.entries(schema.fields)
     .reduce(({ syncable, reason }, [field, { required, label }]) => {
-      if (required && isNullish(log[field].data)) {
+      if (required && isNullish(log[field])) {
         return {
           syncable: false,
           reason: `${reason}${schema.label} logs must have a value in the ${label} field. `,

@@ -1,3 +1,5 @@
+import { compose, dissoc, assoc } from 'ramda';
+
 export default [
   {
     version: 1,
@@ -84,6 +86,36 @@ export default [
                 changed: log.notes.changed,
               },
             }));
+          resolve(updatedLogs);
+        };
+        getRequest.onerror = reject;
+      }).then(logs => Promise.all(logs.map(log => new Promise((resolve, reject) => {
+        const putRequest = store.put(log);
+        putRequest.onsuccess = resolve;
+        putRequest.onerror = reject;
+      }))));
+    },
+  },
+  /**
+   * VERSION 6
+   * - Prepare logs for use with new farmLog implementation.
+   * - Replace wasPushedToServer with lastSync.
+   * - Remove isReadyToSync.
+   */
+  {
+    version: 6,
+    onUpgrade(event) {
+      const syncDate = JSON.parse(localStorage.getItem('syncDate'));
+      const store = event.target.transaction.objectStore('logs');
+      return new Promise((resolve, reject) => {
+        const getRequest = store.getAll();
+        getRequest.onsuccess = (getEvent) => {
+          const updatedLogs = getEvent.target.result
+            .map(compose(
+              assoc('lastSync', syncDate),
+              dissoc('wasPushedToServer'),
+              dissoc('isReadyToSync'),
+            ));
           resolve(updatedLogs);
         };
         getRequest.onerror = reject;

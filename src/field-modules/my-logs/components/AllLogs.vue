@@ -36,11 +36,8 @@
               <div class="log-name">
                 <h5>{{log.name}}</h5>
               </div>
-              <icon-cloud-done v-if="log.wasPushedToServer" class="sync-status"/>
-              <icon-sync-spin
-                class="sync-status"
-                v-else-if="log.isReadyToSync"/>
-              <icon-cloud-upload v-else class="sync-status"/>
+              <icon-cloud-upload v-if="isUnsynced(log)" class="sync-status"/>
+              <icon-cloud-done v-else class="sync-status"/>
             </div>
 
             <div class="card-row-2">
@@ -85,6 +82,7 @@
 
 <script>
 const { parseNotes } = window.farmOS.utils;
+const { isUnsynced } = window.farmOS.utils.farmLog;
 
 export default {
   name: 'AllLogs',
@@ -174,6 +172,7 @@ export default {
         .then(id => this.$router.push({ path: `/logs/${id}` }));
     },
     parseNotes,
+    isUnsynced,
   },
 };
 

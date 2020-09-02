@@ -93,7 +93,7 @@ export default {
     },
     addLog(type, e) {
       e.stopPropagation();
-      const props = { modules: ['my-logs'], type, done: true };
+      const props = { type, done: true };
       this.$store.dispatch('initializeLog', props)
         .then(id => this.$router.push(`/logs/${id}`));
     },
