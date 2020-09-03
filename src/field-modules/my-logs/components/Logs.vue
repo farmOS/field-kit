@@ -133,7 +133,7 @@ export default {
       unsynced: true,
       timestamp: [tenDaysAgo, threeDaysFromNow],
     };
-    this.$store.dispatch('loadLogs', { filter, pass });
+    this.loadLogs({ filter, pass });
   },
   methods: {
     sortLogsDescending(logs) {
@@ -152,7 +152,7 @@ export default {
       this.showDeleteDialog = false;
     },
     confirmDelete() {
-      this.$store.commit('deleteLog', this.logIDToDelete);
+      this.deleteLog(this.logIDToDelete);
       this.showDeleteDialog = false;
       if (this.$route.name === 'edit-log') {
         this.$router.push({ path: '/logs' });
@@ -172,7 +172,7 @@ export default {
       const pass = {
         localIDs: this.localIDs,
       };
-      this.$store.dispatch('syncLogs', { filter, pass })
+      this.syncLogs({ filter, pass })
         .finally(() => { this.isSyncing = false; });
       this.$store.dispatch('updateAssets');
       this.$store.dispatch('updateAreas');

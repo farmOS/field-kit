@@ -1,4 +1,20 @@
 import Vue from 'vue';
+import { mapMutations, mapActions } from 'vuex';
+
+const mapMixin = {
+  methods: {
+    ...mapMutations([
+      'updateLog',
+      'deleteLog',
+    ]),
+    ...mapActions([
+      'initializeLog',
+      'loadLogs',
+      'getLogs',
+      'syncLogs',
+    ]),
+  },
+};
 
 // A recursive function for initializing a field module's route components and
 // child components, as well as adding the proper module meta tags.
@@ -18,12 +34,12 @@ const createRoutes = (modName, routes, store) => (
     name,
     component: typeof component !== 'object'
       ? undefined
-      : Vue.component(component.name, component),
+      : Vue.component(component.name, { ...component, mixins: [mapMixin] }),
     components: typeof components !== 'object'
       ? undefined
       : Object.entries(components).reduce((acc, [key, val]) => ({
         ...acc,
-        [key]: Vue.component(val.name, val),
+        [key]: Vue.component(val.name, { ...val, mixins: [mapMixin] }),
       }), {}),
     children: createRoutes(modName, children),
     meta: { ...meta, module: modName },

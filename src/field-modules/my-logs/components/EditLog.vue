@@ -610,7 +610,7 @@ export default {
         [key]: val,
         localID: +this.id,
       };
-      this.$store.commit('updateLog', props);
+      this.updateLog(props);
     },
 
     updateNotes(value) {

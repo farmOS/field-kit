@@ -168,7 +168,7 @@ export default {
       return false;
     },
     startNewLog() {
-      this.$store.dispatch('initializeLog', { done: true })
+      this.initializeLog({ done: true })
         .then(id => this.$router.push({ path: `/logs/${id}` }));
     },
     parseNotes,
