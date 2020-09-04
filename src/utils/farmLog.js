@@ -293,10 +293,10 @@ function farmLog(logTypes) {
           const _changed = val.changed || 0;
           createTypeProperty(newLog, _data, _changed, typeIsWritable);
         // Then any props that aren't in the symbol reg, like url & localID.
-        } else if (!sym) {
+        } else if (!sym && ['id', 'url', 'localID'].includes(key)) {
           setOnce(newLog, key, val);
         // The rest should be regular props with metadata.
-        } else {
+        } else if (sym) {
           createProperty(newLog, key, val.data, log[key].changed, log[key].conflicts);
         }
       });
