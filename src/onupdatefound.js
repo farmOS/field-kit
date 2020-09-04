@@ -71,7 +71,7 @@ const popup = (confirm) => {
 
 const onupdatefound = registration => () => {
   registration.installing.addEventListener('statechange', (e) => {
-    if (e.target.state === 'installed') {
+    if (e.target.state === 'installed' && registration.waiting) {
       popup(() => registration.waiting.postMessage({ type: 'SKIP_WAITING' }));
     }
   });
