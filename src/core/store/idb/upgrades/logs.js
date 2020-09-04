@@ -102,7 +102,7 @@ export default [
    * VERSION 6
    * - Prepare logs for use with new farmLog implementation.
    * - Replace wasPushedToServer with lastSync.
-   * - Remove isReadyToSync.
+   * - Remove isReadyToSync, isCachedLocally and modules.
    * - Convert changed metadata to milliseconds
    */
   {
@@ -124,6 +124,8 @@ export default [
               assoc('lastSync', syncDate),
               dissoc('wasPushedToServer'),
               dissoc('isReadyToSync'),
+              dissoc('isCachedLocally'),
+              dissoc('modules'),
             ));
           resolve(updatedLogs);
         };
