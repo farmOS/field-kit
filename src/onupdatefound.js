@@ -67,12 +67,22 @@ const popup = (confirm) => {
     window.location.reload();
     document.body.removeChild(banner);
   });
+
+  return function cancel() {
+    document.body.removeChild(banner);
+  };
 };
 
 const onupdatefound = registration => () => {
   registration.installing.addEventListener('statechange', (e) => {
-    if (e.target.state === 'installed' && registration.waiting) {
-      popup(() => registration.waiting.postMessage({ type: 'SKIP_WAITING' }));
+    if (e.target.state === 'installed') {
+      const confirm = () => registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+      const cancel = popup(confirm);
+      registration.waiting.addEventListener('statechange', (_e) => {
+        if (_e.target.state === 'activating') {
+          cancel();
+        }
+      });
     }
   });
 };
