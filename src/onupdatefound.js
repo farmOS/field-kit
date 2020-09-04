@@ -1,5 +1,3 @@
-import { version } from '../package.json';
-
 const html = (tag, text) => (strings) => {
   const el = document.createElement(tag);
   if (text) {
@@ -27,7 +25,7 @@ const popup = (confirm) => {
     padding: 0.75rem;
   `;
 
-  const message = html('div', `Version ${version} of Field Kit is now available.`)`
+  const message = html('div', 'A new version of Field Kit is available.')`
     flex: 0 0 auto%;
   `;
   const installBtn = html('button', 'Install')`
