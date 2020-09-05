@@ -12,7 +12,9 @@
     "lint-files": "node --eval 'process.argv.reduce((acc, cur) => `${acc} ${cur}`, ``)' | eslint --color",
     "build:web": "node build/build.js",
     "build:native": "node build/build.js --native",
-    "test": "mocha-webpack --webpack-config build/webpack.test.conf.js --require test-setup.js 'src/**/*.test.js' --watch"
+    "test": "mocha-webpack --webpack-config build/webpack.test.conf.js --require test-setup.js 'src/**/*.test.js' --watch",
+    "storybook": "NODE_PATH=src start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "dependencies": {
     "@turf/turf": "^5.1.6",
@@ -39,6 +41,10 @@
     "@babel/plugin-syntax-jsx": "^7.8.3",
     "@babel/plugin-transform-runtime": "^7.8.3",
     "@babel/preset-env": "^7.8.4",
+    "@storybook/addon-actions": "^6.0.21",
+    "@storybook/addon-essentials": "^6.0.21",
+    "@storybook/addon-links": "^6.0.21",
+    "@storybook/vue": "^6.0.21",
     "@vue/babel-helper-vue-jsx-merge-props": "^1.0.0",
     "@vue/babel-plugin-transform-vue-jsx": "^1.1.2",
     "@vue/test-utils": "^1.0.0-beta.30",
@@ -50,6 +56,7 @@
     "chalk": "^2.4.2",
     "commander": "^2.20.3",
     "copy-webpack-plugin": "^6.0.3",
+    "core-js": "^3.0.1",
     "css-loader": "^3.2.1",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.1.0",
@@ -77,6 +84,7 @@
     "postcss-import": "^11.1.0",
     "postcss-loader": "^2.1.6",
     "postcss-url": "^7.3.2",
+    "react-is": "^16.13.1",
     "rimraf": "^2.7.1",
     "semver": "^5.7.1",
     "shelljs": "^0.7.6",
