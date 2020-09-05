@@ -112,7 +112,7 @@
 
             <router-view
               name="menubar"
-              @toggleDrawer="showDrawer = !showDrawer"
+              @toggle-drawer="showDrawer = !showDrawer"
             />
 
             <router-view
@@ -128,7 +128,7 @@
               :categories='categories'
               :equipment='equipment'
               :areaGeoJSON='areaGeoJSON'
-              @toggleDrawer="showDrawer = !showDrawer"
+              @toggle-drawer="showDrawer = !showDrawer"
             />
 
           </div>

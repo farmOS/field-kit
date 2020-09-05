@@ -1,7 +1,7 @@
 <template>
   <farm-menu-bar :more="false">
     <template #left-menu>
-      <li @click="$emit('toggleDrawer')">
+      <li @click="$emit('toggle-drawer')">
         <icon-menu/>
       </li>
       <li>Logout</li>

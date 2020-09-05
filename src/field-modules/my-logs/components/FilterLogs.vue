@@ -194,20 +194,20 @@ export default {
     // NOTE: We're tracking which types/categiries to EXCLUDE from My Logs
     updateExcludedLogType(type, checked) {
       if (!checked) {
-        this.$emit('addToExcludedTypes', type);
+        this.$emit('add-to-excluded-types', type);
       } else {
-        this.$emit('removeFromExcludedTypes', type);
+        this.$emit('remove-from-excluded-types', type);
       }
     },
     updateExcludedLogCategory(cat, checked) {
       if (!checked) {
-        this.$emit('addToExcludedCategories', cat);
+        this.$emit('add-to-excluded-categories', cat);
       } else {
-        this.$emit('removeFromExcludedCategories', cat);
+        this.$emit('remove-from-excluded-categories', cat);
       }
     },
     setDateFilter(value) {
-      this.$emit('setDateFilter', value);
+      this.$emit('set-date-filter', value);
     },
     checkChecked(id) {
       return !document.getElementById(id).checked;

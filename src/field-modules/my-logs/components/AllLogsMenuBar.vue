@@ -1,7 +1,7 @@
 <template>
   <farm-menu-bar>
     <template #left-menu>
-      <li @click="$emit('toggleDrawer')">
+      <li @click="$emit('toggle-drawer')">
         <icon-menu/>
       </li>
       <li>{{ $t('My Logs')}}</li>

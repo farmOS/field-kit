@@ -2,20 +2,19 @@
   <div>
     <router-view
       name="menubar"
-      @toggleDrawer="$emit('toggleDrawer')"
-      @deleteCurrentLog="openDeleteDialog($event)"
+      @toggle-drawer="$emit('toggle-drawer')"
+      @delete-current-log="openDeleteDialog($event)"
       @sync="sync"
-      @resetDisplayFilters="resetDisplayFilters"
+      @reset-display-filters="resetDisplayFilters"
       :logs='logs'
       :isSyncing="isSyncing"
     />
     <router-view
-      @deleteLog="openDeleteDialog($event)"
-      @addToExcludedTypes="addToExcludedTypes($event)"
-      @removeFromExcludedTypes="removeFromExcludedTypes($event)"
-      @addToExcludedCategories="addToExcludedCategories($event)"
-      @removeFromExcludedCategories="removeFromExcludedCategories($event)"
-      @setDateFilter="setDateFilter($event)"
+      @add-to-excluded-types="addToExcludedTypes($event)"
+      @remove-from-excluded-types="removeFromExcludedTypes($event)"
+      @add-to-excluded-categories="addToExcludedCategories($event)"
+      @remove-from-excluded-categories="removeFromExcludedCategories($event)"
+      @set-date-filter="setDateFilter($event)"
       :logTypes='logTypes'
       :logs='sortLogsDescending(logs)'
       :areas='areas'

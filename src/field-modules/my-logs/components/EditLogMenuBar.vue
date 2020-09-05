@@ -14,7 +14,7 @@
           <icon-open-in-new/>
         </li>
       </a>
-      <li @click="$emit('deleteCurrentLog', +id)">
+      <li @click="$emit('delete-current-log', +id)">
         <icon-delete/>
       </li>
     </template>
@@ -24,7 +24,7 @@
         :href="currentLog.url">
         <li>{{ $t('Open in browser')}}</li>
       </a>
-      <li @click="$emit('deleteCurrentLog')">
+      <li @click="$emit('delete-current-log')">
        {{ $t('Delete from device')}}
       </li>
     </template>

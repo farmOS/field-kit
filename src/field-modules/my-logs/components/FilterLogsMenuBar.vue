@@ -7,7 +7,7 @@
       <li>{{ $t('Log Filters')}}</li>
     </template>
     <template #more-menu>
-      <li @click="resetDisplayFilters">{{ $t('Reset filters')}}</li>
+      <li @click="$emit('reset-display-filters')">{{ $t('Reset filters')}}</li>
     </template>
   </farm-menu-bar>
 </template>
@@ -19,11 +19,6 @@ export default {
     return {
       showMore: false,
     };
-  },
-  methods: {
-    resetDisplayFilters() {
-      this.$emit('resetDisplayFilters');
-    },
   },
 
 };
