@@ -8,3 +8,6 @@ ul {
 li {
   list-style: none;
 }
+a:-webkit-any-link {
+  fill: inherit;
+}
