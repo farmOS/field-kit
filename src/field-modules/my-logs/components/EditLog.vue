@@ -42,6 +42,7 @@
         :placeholder="$t('Enter name')"
         type="text"
         class="form-control"
+        maxlength="250"
         autofocus>
     </div>
 
