@@ -81,7 +81,7 @@ const syncErrorHandler = ({ error, loginRequired }, { reason, localLog }) => {
 export function getRemoteLogs(context, payload) {
   const { commit, rootState } = context;
   const { pass: { localIDs = [] } = {} } = payload;
-  const filters = dissoc('timestamp', payload.filter);
+  const filters = payload.filter ? dissoc('timestamp', payload.filter) : undefined;
   const timeRange = prop('timestamp', payload.filter) || [];
   const ids = localIDs
     .map(localID => +rootState.farm.logs
