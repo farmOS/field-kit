@@ -214,7 +214,7 @@ export function sendRemoteLogs(context, payload) {
         const props = {
           localID: localLog.localID,
           id: value.id,
-          url: value.url,
+          url: value.uri,
           lastSync: true,
         };
         commit('updateLog', props);
