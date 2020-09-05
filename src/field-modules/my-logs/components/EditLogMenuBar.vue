@@ -18,6 +18,10 @@
       <li @click="$emit('delete-current-log', +id)">
         <icon-delete/>
       </li>
+      <li @click="$emit('sync', +id)">
+        <icon-cloud-upload v-if="!isSyncing"/>
+        <icon-sync-spin v-if="isSyncing"/>
+      </li>
     </template>
     <template #more-menu>
       <a
@@ -29,6 +33,9 @@
       <li @click="$emit('delete-current-log')">
        {{ $t('Delete from device')}}
       </li>
+      <li @click="$emit('sync', +id)">
+        {{ $t('Sync this log') }}
+      </li>
     </template>
   </farm-menu-bar>
 </template>
@@ -36,7 +43,7 @@
 <script>
 export default {
   name: 'EditLogsMenuBar',
-  props: ['logs', 'id'],
+  props: ['logs', 'id', 'isSyncing'],
   computed: {
     currentLog() {
       return this.logs.find(log => log.localID === +this.id) || this.logs[0];

@@ -4,7 +4,8 @@
       name="menubar"
       @toggle-drawer="$emit('toggle-drawer')"
       @delete-current-log="openDeleteDialog($event)"
-      @sync="sync"
+      @sync-all="syncAll"
+      @sync="sync($event)"
       @reset-display-filters="resetDisplayFilters"
       :logs='logs'
       :isSyncing="isSyncing"
@@ -161,7 +162,13 @@ export default {
     /**
      * SYNCING
      */
-    sync() {
+    sync(localID) {
+      this.isSyncing = true;
+      const pass = { localIDs: [localID] };
+      this.syncLogs({ pass })
+        .finally(() => { this.isSyncing = false; });
+    },
+    syncAll() {
       this.isSyncing = true;
       const filter = {
         log_owner: this.userId,
