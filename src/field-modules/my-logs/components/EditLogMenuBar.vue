@@ -9,7 +9,8 @@
     <template #right-menu>
       <a
         v-if="currentLog.url"
-        :href="currentLog.url">
+        :href="currentLog.url"
+        target="_blank">
         <li>
           <icon-open-in-new/>
         </li>
@@ -21,7 +22,8 @@
     <template #more-menu>
       <a
         v-if="currentLog.url !==''"
-        :href="currentLog.url">
+        :href="currentLog.url"
+        target="_blank">
         <li>{{ $t('Open in browser')}}</li>
       </a>
       <li @click="$emit('delete-current-log')">
