@@ -37,6 +37,7 @@ export default {
   line-height: .75rem;
   font-size: .75rem;
   font-weight: bold;
+  width: fit-content;
 }
 .green {
   background: var(--green);
