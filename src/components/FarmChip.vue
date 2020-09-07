@@ -1,6 +1,13 @@
 <template>
   <div class="farm-chip" :class="colorClass">
-    <icon-cancel/>
+    <svg-filter-dropshadow
+      v-if="disableClose"
+      id="farm-chip-close-shadow"
+      :opacity=".25"
+      :blur="3"
+      :x="1"
+      :y="2"/>
+    <icon-cancel :style="{ filter: 'url(#farm-chip-close-shadow)' }"/>
     <span><slot></slot></span>
   </div>
 </template>
@@ -14,12 +21,17 @@ export default {
       default: 'cyan',
       validator: val => !val || ['cyan', 'green'].includes(val),
     },
+    disableClose: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       colorClass: {
         cyan: this.color === 'cyan',
         green: this.color === 'green',
+        disable: this.disableClose,
       },
     };
   },
@@ -47,5 +59,11 @@ export default {
 }
 .farm-chip span {
   padding: .375rem .25rem 0 .25rem;
+}
+.cyan.disable svg {
+  fill: var(--cyan);
+}
+.green.disable svg {
+  fill: var(--green);
 }
 </style>

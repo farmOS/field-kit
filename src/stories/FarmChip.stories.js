@@ -8,7 +8,7 @@ export default {
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { FarmChip },
-  template: '<farm-inline><farm-chip :color="color">Tomatoes</farm-chip></farm-inline>',
+  template: '<farm-chip :color="color" :disableClose="disableClose">Tomatoes</farm-chip>',
 });
 
 export const Primary = Template.bind({});
@@ -19,4 +19,9 @@ Primary.args = {
 export const Secondary = Template.bind({});
 Secondary.args = {
   color: 'green',
+};
+
+export const DisableClose = Template.bind({});
+DisableClose.args = {
+  disableClose: true,
 };
