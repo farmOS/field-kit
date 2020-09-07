@@ -5,7 +5,12 @@ import '../src/core/bootstrap-simplex.min.css';
 import '../src/core/vars.css';
 import '../src/core/main.css';
 
+const mockT = {
+  methods: { $t: str => str },
+};
+
 components.forEach(c => { Vue.component(c.name, c); });
+Vue.mixin(mockT);
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
