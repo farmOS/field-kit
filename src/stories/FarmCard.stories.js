@@ -6,6 +6,9 @@ export default {
   title: 'Content/FarmCard',
   component: FarmCard,
   subcomponents: { FarmStack, FarmInline },
+  argTypes: {
+    backgroundColor: { control: 'color' },
+  },
 };
 
 const Template = (args, { argTypes }) => ({

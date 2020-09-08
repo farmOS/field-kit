@@ -3,6 +3,11 @@ import FarmChip from '../components/FarmChip';
 export default {
   title: 'Content/FarmChip',
   component: FarmChip,
+  argTypes: {
+    color: {
+      control: { type: 'select', options: ['cyan', 'green'] },
+    },
+  },
 };
 
 const Template = (args, { argTypes }) => ({
