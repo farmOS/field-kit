@@ -2,6 +2,7 @@ import Vue from 'vue';
 import components from '../src/components';
 import '../src/core/normalize.css';
 import '../src/core/bootstrap-simplex.min.css';
+import './override-bootstrap.css';
 import '../src/core/vars.css';
 import '../src/core/main.css';
 
