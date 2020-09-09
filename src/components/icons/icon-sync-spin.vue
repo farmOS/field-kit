@@ -2,13 +2,23 @@
   <div
     class="spin"
     aria-hidden="true">
-    <icon-sync/>
+    <icon-sync :width="width" :height="height"/>
   </div>
 </template>
 
 <script>
 export default {
   name: 'IconSyncSpin',
+  props: {
+    width: {
+      type: Number,
+      default: 24,
+    },
+    height: {
+      type: Number,
+      default: 24,
+    },
+  },
 };
 </script>
 

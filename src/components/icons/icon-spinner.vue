@@ -1,5 +1,5 @@
 <template>
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="spinner">
+  <svg xmlns="http://www.w3.org/2000/svg" :width="width" :height="height" viewBox="0 0 24 24" class="spinner">
     <g >
       <circle class="path" cx="12" cy="12" r="10" fill="none" stroke-width="3"/>
     </g>
@@ -9,6 +9,16 @@
 <script>
 export default {
   name: 'IconSpinner',
+  props: {
+    width: {
+      type: Number,
+      default: 24,
+    },
+    height: {
+      type: Number,
+      default: 24,
+    },
+  },
 };
 </script>
 
