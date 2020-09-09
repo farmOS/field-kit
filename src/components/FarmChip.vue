@@ -7,7 +7,7 @@
       :blur="3"
       :x="1"
       :y="2"/>
-    <icon-cancel :style="{ filter: 'url(#farm-chip-close-shadow)' }"/>
+    <icon-cancel :fill="cancelFill" :style="{ filter: 'url(#farm-chip-close-shadow)' }"/>
     <span><slot></slot></span>
   </div>
 </template>
@@ -35,6 +35,11 @@ export default {
       },
     };
   },
+  computed: {
+    cancelFill() {
+      return this.disableClose ? `var(--${this.color})` : 'white';
+    },
+  },
 };
 </script>
 
@@ -59,11 +64,5 @@ export default {
 }
 .farm-chip span {
   padding: .375rem .25rem 0 .25rem;
-}
-.cyan.disable svg {
-  fill: var(--cyan);
-}
-.green.disable svg {
-  fill: var(--green);
 }
 </style>
