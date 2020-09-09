@@ -1,7 +1,7 @@
 <!-- eslint-disable -->
 <template>
   <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-      :width="width" :height="height" viewBox="0 0 437.474 437.474" style="enable-background:new 0 0 437.474 437.474;"
+      :width="width" :height="height" :fill="fill" viewBox="0 0 437.474 437.474" style="enable-background:new 0 0 437.474 437.474;"
     xml:space="preserve">
     <g>
       <g>
@@ -31,6 +31,10 @@ export default {
     height: {
       type: Number,
       default: 24,
+    },
+    fill: {
+      type: String,
+      default: 'black',
     },
   },
 };

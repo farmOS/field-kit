@@ -2,7 +2,7 @@
   <div
     class="spin"
     aria-hidden="true">
-    <icon-sync :width="width" :height="height"/>
+    <icon-sync :width="width" :height="height" :fill="fill"/>
   </div>
 </template>
 
@@ -17,6 +17,10 @@ export default {
     height: {
       type: Number,
       default: 24,
+    },
+    fill: {
+      type: String,
+      default: 'black',
     },
   },
 };

@@ -1,7 +1,7 @@
 <template>
-  <svg xmlns="http://www.w3.org/2000/svg" :width="width" :height="height" viewBox="0 0 24 24" class="spinner">
+  <svg xmlns="http://www.w3.org/2000/svg" :width="width" :height="height" :fill="fill" viewBox="0 0 24 24" class="spinner">
     <g >
-      <circle class="path" cx="12" cy="12" r="10" fill="none" stroke-width="3"/>
+      <circle class="path" cx="12" cy="12" r="10" fill="none" stroke-width="3" :stroke="fill"/>
     </g>
   </svg>
 </template>
@@ -18,6 +18,10 @@ export default {
       type: Number,
       default: 24,
     },
+    fill: {
+      type: String,
+      default: 'black',
+    },
   },
 };
 </script>
@@ -28,7 +32,6 @@ export default {
 }
 
 .spinner .path {
-  stroke: var(--dark);
   stroke-linecap: round;
   animation: dash 1.5s ease-in-out infinite;
 }
