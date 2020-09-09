@@ -17,7 +17,7 @@ export default {
     return h(
       'div',
       { class: 'farm-stack' },
-      this.$slots.default
+      (this.$slots.default || [])
         // Filtering out undefined tags removes unwanted whitespace nodes.
         .filter(node => node.tag !== undefined)
         .map((node, i, arr) => {
