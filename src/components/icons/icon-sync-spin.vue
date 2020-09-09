@@ -14,6 +14,9 @@ export default {
 
 <style>
 .spin {
+    display: inline-block;
+    width: fit-content;
+
     -webkit-animation-name: spin;
     -webkit-animation-duration: 4000ms;
     -webkit-animation-iteration-count: infinite;
