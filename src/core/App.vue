@@ -285,12 +285,11 @@ export default {
     height: 9rem;
   }
 
-  .arrow-back, .menu {
-    fill: var(--gray-dark);
+  .arrow-back svg {
+    fill: white;
   }
 
   .arrow-back {
-    fill: white;
     margin-top: 0.5rem;
   }
 

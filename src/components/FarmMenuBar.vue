@@ -55,7 +55,6 @@ export default {
   header {
     background-color: var(--farmos-green-dark);
     color: white;
-    fill: white;
     border: none;
     height: 3rem;
   }
@@ -65,6 +64,11 @@ export default {
     flex-flow: row nowrap;
     margin: 0;
     padding: 0;
+  }
+
+  /* Use Vue's "deep" selector so the style gets passed down, even through router-link's */
+  .farm-menu-bar >>> svg {
+    fill: white;
   }
 
   li {
