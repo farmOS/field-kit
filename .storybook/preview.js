@@ -15,4 +15,9 @@ Vue.mixin(mockT);
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
+  options: {
+    storySort: {
+      order: ['Intro', 'Layout', 'Content', 'Icons'], 
+    },
+  },
 }
