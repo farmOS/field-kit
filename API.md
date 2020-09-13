@@ -3,7 +3,8 @@ farmOS Field Kit is a not just an application but a framework for building conci
 
 ## Contents
 - [Getting started](#getting-started)
-- [Basic Requirements](#basic-requirements)
+- [Basic requirements](#basic-requirements)
+- [Component library](#component-library)
 - [Logs API](#logs-api)
   - [Loading and reading logs as props](#loading-and-reading-logs-as-props)
   - [Creating, updating and deleting logs](#creating-updating-and-deleting-logs)
@@ -49,6 +50,11 @@ window.farmOS.mountFieldModule(mod);
 The `name` must be a unique identifier, which is used internallay by Field Kit to distinguish your module from all others. The `label` will be displayed in the main menu with a link to your module's main route. The `widget` is a Vue component which is displayed on the home screen. It will automatically be nested in a card with your `label` as a heading, but otherwsie it can be customized to display info about your module and provide links to various routes within your module. Finally, `routes` is an array of `RouteConfig` objects, as specified in the [Vue router API](https://router.vuejs.org/api/#routes).
 
 Once your module object is complete, you can mount it by calling the global `farmOS.mountFieldModule()` method.
+
+
+# Component library
+Included in the Field Kit API is a full Vue.js component library, which should be used to render Field Modules. We use [Storybook](https://storybook.js.org/) for component documentation, which can be found at [storybook.farmos.app](https://storybook.farmos.app). Head on over there to view the full catalog components and icons that are available for module development.
+
 
 # Logs API
 ## Loading and reading logs as props
