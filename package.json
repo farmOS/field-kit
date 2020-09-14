@@ -14,7 +14,8 @@
     "build:native": "node build/build.js --native",
     "test": "mocha-webpack --webpack-config build/webpack.test.conf.js --require test-setup.js 'src/**/*.test.js' --watch",
     "storybook": "NODE_PATH=src start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "chromatic": "npx chromatic --project-token bqx60nrxuyh"
   },
   "dependencies": {
     "@turf/turf": "^5.1.6",
@@ -55,6 +56,7 @@
     "babel-loader": "^8.0.6",
     "babel-plugin-transform-vue-jsx": "^4.0.1",
     "chalk": "^2.4.2",
+    "chromatic": "^5.2.0",
     "commander": "^2.20.3",
     "copy-webpack-plugin": "^6.0.3",
     "core-js": "^3.0.1",
