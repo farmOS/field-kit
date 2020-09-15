@@ -1,7 +1,7 @@
 <template>
   <farm-menu-bar>
     <template #left-menu>
-      <router-link :to="{ name: 'logs' }" tag="li">
+      <router-link :to="{ name: 'tasks-all' }" tag="li">
         <icon-arrow-back/>
       </router-link>
       <li>{{ $t('Log Filters')}}</li>
@@ -14,7 +14,7 @@
 
 <script>
 export default {
-  name: 'AllLogsMenuBar',
+  name: 'TasksFilterMenuBar',
   data() {
     return {
       showMore: false,

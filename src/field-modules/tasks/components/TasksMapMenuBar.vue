@@ -11,12 +11,12 @@
 
 <script>
 export default {
-  name: 'EditMapMenuBar',
+  name: 'TasksMapMenuBar',
   props: ['logs', 'id'],
   computed: {
     logLink() {
       return {
-        name: 'edit-log',
+        name: 'tasks-edit',
         params: {
           id: this.id,
           tab: 'SECOND',

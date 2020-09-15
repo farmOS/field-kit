@@ -45,6 +45,7 @@
 
 <script>
 export default {
+  name: 'TasksWidget',
   props: ['logs', 'userId'],
   data() {
     return {
@@ -54,7 +55,7 @@ export default {
     };
   },
   created() {
-    this.$emit('load-my-logs-logs', {
+    this.$emit('load-tasks-logs', {
       log_owner: this.userId,
       done: false,
     });
@@ -95,7 +96,7 @@ export default {
       e.stopPropagation();
       const props = { type, done: true };
       this.initializeLog(props)
-        .then(id => this.$router.push(`/logs/${id}`));
+        .then(id => this.$router.push(`/tasks/${id}`));
     },
   },
 };

@@ -517,7 +517,7 @@
       </ul>
     </div>
 
-    <router-link :to="{ name: 'edit-map' }">
+    <router-link :to="{ name: 'tasks-map' }">
       <farm-map
         id="map"
         :overrideStyles="{ height: '90vw' }"
@@ -550,7 +550,7 @@ const {
 const { parse } = window.farmOS.lib.wellknown;
 
 export default {
-  name: 'EditLog',
+  name: 'TasksEdit',
 
   data() {
     return {

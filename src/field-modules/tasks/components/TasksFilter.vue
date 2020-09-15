@@ -188,7 +188,7 @@
 
 <script>
 export default {
-  name: 'FilterLogs',
+  name: 'TasksFilter',
   props: ['categories', 'logDisplayFilters'],
   methods: {
     // NOTE: We're tracking which types/categiries to EXCLUDE from My Logs

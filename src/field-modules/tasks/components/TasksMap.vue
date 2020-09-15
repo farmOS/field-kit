@@ -20,7 +20,7 @@
 const { mergeGeometries } = window.farmOS.utils;
 
 export default {
-  name: 'EditMap',
+  name: 'TasksMap',
   props: [
     'logs',
     'assets',

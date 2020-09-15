@@ -1,7 +1,7 @@
 <template>
   <farm-menu-bar>
     <template #left-menu>
-      <router-link :to="{ name: 'logs' }" tag="li">
+      <router-link :to="{ name: 'tasks-all' }" tag="li">
         <icon-arrow-back/>
       </router-link>
       <li>{{ $t('Edit Log')}}</li>
@@ -42,7 +42,7 @@
 
 <script>
 export default {
-  name: 'EditLogsMenuBar',
+  name: 'TasksEditMenuBar',
   props: ['logs', 'id', 'isSyncing'],
   computed: {
     currentLog() {

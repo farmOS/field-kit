@@ -86,7 +86,7 @@ import sort from 'ramda/src/sort';
 const { isUnsynced } = window.farmOS.utils.farmLog;
 
 export default {
-  name: 'Logs',
+  name: 'Tasks',
   data() {
     return {
       filter: {
@@ -154,8 +154,8 @@ export default {
     confirmDelete() {
       this.deleteLog(this.logIDToDelete);
       this.showDeleteDialog = false;
-      if (this.$route.name === 'edit-log') {
-        this.$router.push({ path: '/logs' });
+      if (this.$route.name === 'tasks-edit') {
+        this.$router.push({ path: '/tasks' });
       }
     },
 

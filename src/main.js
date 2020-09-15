@@ -1,9 +1,9 @@
 import app from './core/app';
-import logs from './field-modules/my-logs/module';
+import tasks from './field-modules/tasks/module';
 import onupdatefound from './onupdatefound';
 
 app('#app', [
-  logs,
+  tasks,
 ]);
 
 // Check that service workers are registered (for production environment only)

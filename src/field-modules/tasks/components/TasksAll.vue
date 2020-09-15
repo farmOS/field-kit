@@ -20,7 +20,7 @@
         v-for="(log, i) in logs.filter(passesFilters)"
         :key="`card-${i}`"
       >
-        <router-link :to="{ path: `/logs/${log.localID}` }">
+        <router-link :to="{ path: `/tasks/${log.localID}` }">
           <div class="card-body">
 
             <div class="card-row-1">
@@ -85,7 +85,7 @@ const { parseNotes } = window.farmOS.utils;
 const { isUnsynced } = window.farmOS.utils.farmLog;
 
 export default {
-  name: 'AllLogs',
+  name: 'TasksAll',
   props: [
     'logTypes',
     'logs',
@@ -169,7 +169,7 @@ export default {
     },
     startNewLog() {
       this.initializeLog({ done: true })
-        .then(id => this.$router.push({ path: `/logs/${id}` }));
+        .then(id => this.$router.push({ path: `/tasks/${id}` }));
     },
     parseNotes,
     isUnsynced,

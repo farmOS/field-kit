@@ -4,10 +4,10 @@
       <li @click="$emit('toggle-drawer')">
         <icon-menu/>
       </li>
-      <li>{{ $t('My Logs')}}</li>
+      <li>{{ $t('Tasks')}}</li>
     </template>
     <template #right-menu>
-      <router-link :to="{ name: 'filter-logs' }" tag="li" class="filter">
+      <router-link :to="{ name: 'tasks-filter' }" tag="li" class="filter">
         <icon-filter/>
       </router-link>
       <li @click="$emit('sync-all')">
@@ -17,7 +17,7 @@
     </template>
     <template #more-menu>
       <li @click="$emit('sync-all')">{{ $t('Sync all logs')}}</li>
-      <router-link :to="{ name: 'filter-logs' }" tag="li" class="filter">
+      <router-link :to="{ name: 'tasks-filter' }" tag="li" class="filter">
         {{ $t('Filter logs')}}
       </router-link>
     </template>
@@ -26,7 +26,7 @@
 
 <script>
 export default {
-  name: 'AllLogsMenuBar',
+  name: 'TasksAllMenuBar',
   props: ['isSyncing'],
 };
 </script>
