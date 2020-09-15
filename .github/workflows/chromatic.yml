@@ -7,7 +7,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - run: |
-        yarn && yarn build
+        npm install && npm run build:web
     - uses: chromaui/action@v1
       with: 
         projectToken: bqx60nrxuyh
