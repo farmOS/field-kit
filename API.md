@@ -5,6 +5,7 @@ farmOS Field Kit is a not just an application but a framework for building conci
 - [Getting started](#getting-started)
 - [Basic requirements](#basic-requirements)
 - [Component library](#component-library)
+- [Custom Events]()
 - [Logs API](#logs-api)
   - [Loading and reading logs as props](#loading-and-reading-logs-as-props)
   - [Creating, updating and deleting logs](#creating-updating-and-deleting-logs)
@@ -55,6 +56,19 @@ Once your module object is complete, you can mount it by calling the global `far
 # Component library
 Included in the Field Kit API is a full Vue.js component library, which should be used to render Field Modules. We use [Storybook](https://storybook.js.org/) for component documentation, which can be found at [storybook.farmos.app](https://storybook.farmos.app). Head on over there to view the full catalog components and icons that are available for module development.
 
+
+# Custom Events
+## Menu Drawer
+The main menu drawer can be triggered to open from your root component or menubar, by calling the `toggle-drawer` event.
+
+```html
+<!-- From the template: -->
+<button @click="$emit('toggle-drawer')">Menu</button>
+```
+```js
+// From a component method:
+this.$emit('toggle-drawer');
+```
 
 # Logs API
 ## Loading and reading logs as props
@@ -207,6 +221,12 @@ This will be rendered on the Home screen as a card with your `label` as the head
 - Type: [`Array<RouteConfig>`](https://router.vuejs.org/api/#routes)
 
 The routes for your module.
+
+## Vue Custom Events
+### toggle-drawer
+- Payload: none
+- Available from: any root component or menubar.
+- Description: Opens the main menu drawer.
 
 ## Vuex mutations
 Mutations are always synchronous and do not have a return value. See the [Vuex docs on mutations](https://vuex.vuejs.org/guide/mutations.html) for more info.
