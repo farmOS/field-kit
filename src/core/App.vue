@@ -87,55 +87,53 @@
       </div>
     </transition>
 
-    <main>
-      <section>
+    <div class="module-container">
 
+      <div
+        v-for="(err, index) in errors"
+        :key="`err-${errors.indexOf(err)}`">
         <div
-          v-for="(err, index) in errors"
-          :key="`err-${errors.indexOf(err)}`">
-          <div
-            v-if="err.show"
-            class="alert alert-warning alert-dismissable" >
-            <span v-html="err.message"></span>
-            <button
-              type="button"
-              @click="closeError(index)"
-              class="close"
-              aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
+          v-if="err.show"
+          class="alert alert-warning alert-dismissable" >
+          <span v-html="err.message"></span>
+          <button
+            type="button"
+            @click="closeError(index)"
+            class="close"
+            aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
+      </div>
 
-        <div class="region region-content">
-          <div class="block block-system">
+      <div class="region region-content">
+        <div class="block block-system">
 
-            <router-view
-              name="menubar"
-              @toggle-drawer="showDrawer = !showDrawer"
-            />
+          <router-view
+            name="menubar"
+            @toggle-drawer="showDrawer = !showDrawer"
+          />
 
-            <router-view
-              :useGeolocation="useGeolocation"
-              :userId='userId'
-              :systemOfMeasurement='systemOfMeasurement'
-              :logTypes='logTypes'
-              :modules="modules"
-              :logs='logs'
-              :areas='areas'
-              :assets='assets'
-              :units='units'
-              :categories='categories'
-              :equipment='equipment'
-              :areaGeoJSON='areaGeoJSON'
-              @toggle-drawer="showDrawer = !showDrawer"
-            />
+          <router-view
+            :useGeolocation="useGeolocation"
+            :userId='userId'
+            :systemOfMeasurement='systemOfMeasurement'
+            :logTypes='logTypes'
+            :modules="modules"
+            :logs='logs'
+            :areas='areas'
+            :assets='assets'
+            :units='units'
+            :categories='categories'
+            :equipment='equipment'
+            :areaGeoJSON='areaGeoJSON'
+            @toggle-drawer="showDrawer = !showDrawer"
+          />
 
-          </div>
         </div>
+      </div>
 
-      </section>
-    </main>
+    </div>
   </div>
 </template>
 
@@ -293,7 +291,7 @@ export default {
     margin-top: 0.5rem;
   }
 
-  main {
+  .module-container {
     margin-top: 3rem;
   }
 
