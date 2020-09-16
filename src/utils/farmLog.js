@@ -59,6 +59,10 @@ function setOnce(obj, key, value) {
   });
 }
 
+function areEquivalent(x, y) {
+  return JSON.stringify(x) === JSON.stringify(y);
+}
+
 function farmLog(logTypes) {
   let _logTypes = logTypes;
   const _symbolRegistry = createSymbolRegistry(_logTypes);
@@ -229,12 +233,16 @@ function farmLog(logTypes) {
           || localLog[lastSync] > localLog[sym][changed]) {
           return;
         }
-        // Otherwise, the server log changed since the last sync, while
-        // the local log has outstanding changes, so we have a conflict.
-        localLog[sym][conflicts].push({
-          [changed]: _serverLog.changed,
-          [data]: _serverLog[key],
-        });
+        // If the server log changed since the last sync, while the local log
+        // still has outstanding changes, we have a conflict, so long as the
+        // values are not equivalent.
+        if (!areEquivalent(_serverLog[key], localLog[sym][data])) {
+          localLog[sym][conflicts].push({
+            [changed]: _serverLog.changed,
+            [data]: _serverLog[key],
+          });
+        }
+        // Otherwise, they are equivalent, so do nothing.
       }
 
       // Iterate over all fields for the given log type and merge the properties.
