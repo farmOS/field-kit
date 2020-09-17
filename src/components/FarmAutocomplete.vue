@@ -128,14 +128,14 @@ export default {
   }
   .search-results li.is-active,
   .search-results li:hover:not(.empty) {
-    background-color: var(--cyan);
-    color: white;
+    background-color: var(--blue);
+    color: var(--white);
   }
 
   .invalid input {
-    border-color: red;
+    border-color: var(--red);
   }
   .invalid label {
-    color: red;
+    color: var(--red);
   }
 </style>

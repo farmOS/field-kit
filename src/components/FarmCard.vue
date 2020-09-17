@@ -13,11 +13,11 @@ export default {
   props: {
     backgroundColor: {
       type: String,
-      default: '#fff',
+      default: 'var(--white)',
     },
     boxShadow: {
       type: [String, Array],
-      default: '1px 2px 3px #ccc',
+      default: '1px 2px 3px var(--subtle-transparent)',
     },
     height: {
       type: [String, Array],

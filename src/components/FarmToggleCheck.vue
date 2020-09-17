@@ -53,10 +53,10 @@ export default {
     outline: none;
     width: 1.6667rem;
     height: 1rem;
-    background-color: #fff;
-    border: 1px solid #D9DADC;
+    background-color: var(--white);
+    border: 1px solid var(--subtle);
     border-radius: 1.6667rem;
-    box-shadow: inset -0.6667rem 0 0 0 #fff;
+    box-shadow: inset -0.6667rem 0 0 0 var(--white);
   }
 
   input.toggle-check:after {
@@ -68,12 +68,12 @@ export default {
     width: 0.8667rem;
     height: 0.8667rem;
     border-radius: 50%;
-    box-shadow: 1px 0px 2px rgba(0,0,0,0.2);
+    box-shadow: 1px 0px 2px var(--subtle);
   }
 
   input.toggle-check:checked {
-    box-shadow: inset 0.6667rem 0 0 0 var(--cyan);
-    border-color: var(--cyan);
+    box-shadow: inset 0.6667rem 0 0 0 var(--blue);
+    border-color: var(--blue);
   }
 
   input.toggle-check:checked:after {
@@ -92,8 +92,8 @@ export default {
   }
 
   input.toggle-check.large:checked {
-    box-shadow: inset 1.3333rem 0 0 0 var(--cyan);
-    border-color: var(--cyan);
+    box-shadow: inset 1.3333rem 0 0 0 var(--blue);
+    border-color: var(--blue);
   }
 
   input.toggle-check.large:checked:after {

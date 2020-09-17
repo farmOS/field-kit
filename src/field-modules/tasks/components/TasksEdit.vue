@@ -1058,14 +1058,14 @@ export default {
     height: 3rem;
     width: 100%;
     z-index: 1000;
-    background-color: var(--farmos-green-dark);
+    background-color: var(--primary);
     box-shadow: -2px 0px 15px rgba(0, 0, 0, .5);
   }
 
   .tab {
     font-size: 1rem;
     line-height: 1.5rem;
-    color: white;
+    color: var(--white);
     transition: color .5s;
     flex: 1 0 50%;
     text-align: center;
@@ -1073,7 +1073,7 @@ export default {
   }
 
   .tab:not(.selected) {
-    color: rgba(255, 255, 255, .5);
+    color: var(--white-transparent);
     transition: color .5s;
   }
 
@@ -1083,7 +1083,7 @@ export default {
     z-index: 1001;
     height: 2px;
     width: 50%;
-    background-color: white;
+    background-color: var(--white);
   }
 
   .tab-indicator.first {
@@ -1100,6 +1100,7 @@ export default {
     position: absolute;
     width: 100vw;
     top: 3rem;
+    background-color: var(--white);
   }
 
   .tab-content.selected {
@@ -1127,12 +1128,12 @@ export default {
 
   .empty-slot {
     text-align: center;
-    color: var(--gray);
+    color: var(--light);
   }
 
   .empty-slot button {
     margin: 0.5rem;
-    color: var(--gray);
+    color: var(--light);
   }
 
   .remove-list-item {

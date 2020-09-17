@@ -35,4 +35,8 @@ export default {
 </script>
 
 <style>
+main {
+  background-color: var(--light);
+  min-height: calc(100vh - 3rem);
+}
 </style>

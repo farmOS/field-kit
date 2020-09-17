@@ -53,8 +53,8 @@ export default {
 
 <style scoped>
   header {
-    background-color: var(--farmos-green-dark);
-    color: white;
+    background-color: var(--primary);
+    color: var(--white);
     border: none;
     height: 3rem;
   }
@@ -68,7 +68,7 @@ export default {
 
   /* Use Vue's "deep" selector so the style gets passed down, even through router-link's */
   .farm-menu-bar >>> svg {
-    fill: white;
+    fill: var(--white);
   }
 
   li {
@@ -98,8 +98,8 @@ export default {
     top: 3px;
     right: 3px;
     flex-flow: column;
-    background-color: white;
-    color: var(--gray-dark);
+    background-color: var(--white);
+    color: var(--text);
     box-shadow: -1px 2px 5px rgba(0, 0, 0, .25);
   }
 
@@ -109,6 +109,6 @@ export default {
   }
 
   #more-menu a {
-    color: var(--gray-dark);
+    color: var(--text);
   }
 </style>

@@ -34,7 +34,7 @@ export default {
     },
     fill: {
       type: String,
-      default: 'black',
+      default: 'var(--dark)',
     },
   },
 };

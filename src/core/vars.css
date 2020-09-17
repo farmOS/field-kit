@@ -1,5 +1,77 @@
 :root {
-  --farmos-green: #4e8b31;
-  --farmos-green-dark: #336633;
-  --farmos-green-light: #60af32;
+  /* 
+   * COLOR PRIMITVES
+   */
+  --dark: #303033;
+  --text: #505055;
+  --subtle: #A0A0AA;
+  --light: #E8E8EE;
+  --white: #F8F8FF;
+
+  --dark-transparent: rgba(48, 48, 51, 0.5);
+  --text-transparent: rgba(80, 80, 85, 0.5);
+  --subtle-transparent: rgba(160, 160, 170, 0.5);
+  --light-transparent: rgba(232, 232, 238, 0.5);
+  --white-transparent: rgba(248, 248, 255, 0.5);
+
+  --damson: #322c59;
+  --damson-bright: #6256b1;
+  --damson-light: #E6E4F5;
+
+  --alfalfa: #336633;
+  --alfalfa-bright: #5db95d;
+  --alfalfa-light: #D8EBD8;
+
+  --groundcherry: #d7cf7b;
+  --groundcherry-bright: #fff68e;
+  --groundcherry-light: #FFFAC5;
+
+  --kuri: #c05d48;
+  --kuri-bright: #ff7b5f;
+  --kuri-light: #FFD4BE;
+
+  --highbush: #177592;
+  --highbush-bright: #029acf;
+  --highbush-light: #AEE0F1;
+
+  --purple: #9B479F;
+  --red: #D9230F;
+  --orange: #D9831F;
+  --yellow: #FFC107;
+  --green: #5db95d;
+  --blue: #029acf;
+
+
+  /* 
+   * COLOR TOKENS
+   */
+
+  /* Brand Colors */
+  --primary: var(--alfalfa);
+  --secondary: var(--damson);
+  --tertiary: var(--groundcherry);
+  --aux-one: var(--kuri);
+  --aux-two: var(--highbush);
+
+  /* Accent Colors */
+  --accent-primary: var(--alfalfa-light);
+  --accent-secondary: var(--damson-light);
+  --accent-tertiary: var(--groundcherry-light);
+  --accent-aux-one: var(--kuri-light);
+  --accent-aux-two: var(--highbush-light);
+  --accent-blue: var(--highbush-light);
+  --accent-green: var(--alfalfa-light);
+
+  /* Feedback Colors */
+  --success: var(--green);
+  --error: var(--red);
+  --danger: var(--red);
+  --warning: var(--orange);
+  --info: var(--blue);
+
+  /* Control Colors */
+  --control-user: var(--damson-bright);
+  --control-area: var(--alfalfa-bright);
+  --control-term: var(--kuri);
+  --control-asset: var(--highbush-bright);
 }

@@ -37,7 +37,7 @@ export default {
   },
   computed: {
     cancelFill() {
-      return this.disableClose ? `var(--${this.color})` : 'white';
+      return this.disableClose ? `var(--${this.color})` : 'var(--white)';
     },
   },
 };
@@ -46,9 +46,9 @@ export default {
 <style>
 .farm-chip {
   display: flex;
-  fill: white;
-  background: var(--cyan);
-  color: white;
+  fill: var(--white);
+  background: var(--blue);
+  color: var(--white);
   border-radius: 1.5rem .5rem .5rem 1.5rem;
   padding: .25rem;
   line-height: .75rem;

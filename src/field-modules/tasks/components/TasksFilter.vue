@@ -231,14 +231,14 @@ export default {
   label {
     padding: 1rem;
     margin: .5rem;
-    border: solid 2px var(--cyan);
+    border: solid 2px var(--blue);
     font-size: 1rem;
     font-weight: bold;
   }
 
   .selected {
-    color: white;
-    background-color: var(--cyan);
+    color: var(--white);
+    background-color: var(--blue);
   }
 
   input {

@@ -270,8 +270,7 @@ export default {
     position: absolute;
     height: 100%;
     width: 100%;
-    background-color: #ccc;
-    opacity: .5;
+    background-color: var(--dark-transparent);
   }
   .modal-dialog {
     transform: translate(0,0);

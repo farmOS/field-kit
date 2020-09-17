@@ -15,7 +15,7 @@ export default {
 
 <style scoped>
   .clickable:hover {
-    background-color: #eee;
+    background-color: var(--light);
     cursor: pointer;
   }
 </style>

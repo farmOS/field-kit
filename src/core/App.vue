@@ -249,7 +249,7 @@ export default {
     top: 0;
     height: 100vh;
     width: 80vw;
-    background-color: white;
+    background-color: var(--white);
     z-index: 2000;
     overflow-y: auto;
   }
@@ -259,8 +259,7 @@ export default {
     top: 0;
     height: 100%;
     width: 100%;
-    background-color: #000;
-    opacity: .25;
+    background-color: var(--dark-transparent);
     z-index: 1500;
   }
 
@@ -278,13 +277,13 @@ export default {
   }
 
   .drawer header {
-    background-color: var(--farmos-green-dark);
-    color: white;
+    background-color: var(--primary);
+    color: var(--white);
     height: 9rem;
   }
 
   .arrow-back svg {
-    fill: white;
+    fill: var(--white);
   }
 
   .arrow-back {

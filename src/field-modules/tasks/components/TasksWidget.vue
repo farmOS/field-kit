@@ -115,7 +115,7 @@ export default {
   height: 100%;
   width: 2rem;
   z-index: 10;
-  background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 50%);
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), var(--white) 50%);
 }
 
 ul {
@@ -159,7 +159,7 @@ ul {
   width: auto;
 }
 #activity svg {
-  fill: var(--cyan);
+  fill: var(--blue);
 }
 #observation svg {
   fill: var(--orange);

@@ -100,14 +100,14 @@ export default {
   height: 3rem;
   width: 100%;
   z-index: 1000;
-  background-color: var(--farmos-green-dark);
+  background-color: var(--primary);
   box-shadow: -2px 0px 15px rgba(0, 0, 0, .5);
 }
 
 .tab {
   font-size: 1rem;
   line-height: 1.5rem;
-  color: white;
+  color: var(--white);
   transition: color .5s;
   text-align: center;
   text-transform: uppercase;
@@ -115,7 +115,7 @@ export default {
 }
 
 .tab:not(.selected) {
-  color: rgba(255, 255, 255, .5);
+  color: var(--white-transparent);
   transition: color .5s;
 }
 
@@ -125,7 +125,7 @@ export default {
   transition: left .5s;
   z-index: 1001;
   height: 2px;
-  background-color: white;
+  background-color: var(--white);
 }
 
 .tab-content-container {

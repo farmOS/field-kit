@@ -185,7 +185,7 @@ export default {
   }
 
   a {
-    color: var(--gray-dark);
+    color: var(--dark);
   }
 
   p, h5 {
@@ -217,7 +217,7 @@ export default {
   }
 
   .assignment.late {
-    fill: var(--orange);
+    fill: var(--warning);
   }
 
   .log-name {
@@ -261,13 +261,13 @@ export default {
   }
 
   .tag-area {
-    border: 1px solid rgba(2, 154, 207, 1);
-    background-color: rgba(2, 154, 207, .125)
+    border: 1px solid var(--blue);
+    background-color: var(--accent-blue);
   }
 
   .tag-asset {
-    border: 1px solid rgba(96, 175, 50, 1);
-    background-color: rgba(96, 175, 50, .125)
+    border: 1px solid var(--green);
+    background-color: var(--accent-green);
   }
 
   @media (min-width: 576px) {
@@ -283,7 +283,7 @@ export default {
   }
 
   .add-circle svg {
-    fill: var(--farmos-green-light);
+    fill: var(--primary);
     height: 4.5rem;
     width: 4.5rem;
   }
@@ -292,7 +292,7 @@ export default {
     height: 3.75rem;
     width: 3.75rem;
     border-radius: 2rem;
-    background-color: var(--farmos-green-dark);
+    background-color: var(--accent-primary);
     box-shadow: -1px 2px 5px rgba(0, 0, 0, .25);
     position: absolute;
     top: .375rem;

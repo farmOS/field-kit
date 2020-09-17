@@ -17,7 +17,7 @@ const popup = (confirm) => {
     bottom: 0;
     left: 0;
     z-index: 1000;
-    background-color: white;
+    background-color: var(--white);
     width: 100%;
     min-height: 3rem;
     box-shadow: 0px -1px 3px rgba(0, 0, 0, 0.125);
@@ -31,8 +31,8 @@ const popup = (confirm) => {
   const installBtn = html('button', 'Install')`
     flex: 0 0 auto;
     margin-left: 1.5rem;
-    background-color: var(--cyan);
-    color: white;
+    background-color: var(--blue);
+    color: var(--white);
     font-weight: bold;
     border: none;
     padding: 0.375rem 0.75rem;
@@ -43,8 +43,8 @@ const popup = (confirm) => {
   const dismissBtn = html('button', 'Dismiss')`
     flex: 0 0 auto;
     margin-left: 1.5rem;
-    background-color: white;
-    color: #555;
+    background-color: var(--white);
+    color: var(--text);
     font-weight: bold;
     border: none;
     padding: 0.375rem 0.75rem;

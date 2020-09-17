@@ -57,7 +57,7 @@ const IconTiles = {
     },
     fill: {
       type: String,
-      default: 'black',
+      default: 'var(--dark)',
     },
   },
   render(h) {
@@ -93,7 +93,7 @@ export default {
     },
     fill: {
       type: String,
-      default: 'black',
+      default: 'var(--dark)',
     },
   },
   components: { IconTiles },

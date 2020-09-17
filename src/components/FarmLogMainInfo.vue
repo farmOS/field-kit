@@ -75,7 +75,7 @@ export default {
 
 <style scoped>
 .main-info {
-  border: 1px solid #eee;
+  border: 1px solid var(--light);
 }
 h3, p {
   margin-bottom: 0;
