@@ -1,27 +1,24 @@
 <template lang="html">
-  <div>
-    <div class="card-group">
-      <div
-        class="card"
+  <farm-main :space="['0', '1rem']">
+    <farm-tiles :columns="[1, 2, 3]" :space="[0, '1rem']">
+      <farm-card
         v-if="logs.length < 1">
-        <div class="card-body">
-          <h4 class="card-title">{{ $t('Let\'s Get Started!')}}</h4>
-          <p class="card-text">
+        <farm-stack :space="'0.25rem'">
+          <h4>{{ $t('Let\'s Get Started!')}}</h4>
+          <p>
             {{ $t('You don\'t have any logs to display yet. Logs are records of events') }}
             {{ $t('in farmOS. You can add some by clicking the') }}
             <icon-add-circle class="inline-svg"/>
             {{ $t('icon below, or you can get uncompleted tasks from the server by') }}
             {{ $t('clicking the') }} <icon-cloud-upload class="inline-svg"/> {{ $t('icon above.') }}
           </p>
-        </div>
-      </div>
-      <div
-        class="card"
+        </farm-stack>
+      </farm-card>
+      <farm-card
         v-for="(log, i) in logs.filter(passesFilters)"
-        :key="`card-${i}`"
-      >
+        :key="`card-${i}`">
         <router-link :to="{ path: `/tasks/${log.localID}` }">
-          <div class="card-body">
+          <farm-stack :space="'0.25rem'">
 
             <div class="card-row-1">
               <icon-assignment-done
@@ -65,10 +62,10 @@
               </div>
             </div>
 
-          </div>
+          </farm-stack>
         </router-link>
-      </div>
-    </div>
+      </farm-card>
+    </farm-tiles>
 
     <div class="add-circle" @click="startNewLog">
       <div class="background-circle">
@@ -76,7 +73,7 @@
       <icon-add-circle/>
     </div>
 
-  </div>
+  </farm-main>
 
 </template>
 
@@ -187,12 +184,12 @@ export default {
     text-decoration: none;
   }
 
-  .card-group > .card {
-    margin-bottom: 0;
+  a {
+    color: var(--gray-dark);
   }
 
-  .card-body {
-    color: var(--gray-dark);
+  p, h5 {
+    margin: 0
   }
 
   .card-row-1 {
@@ -230,10 +227,6 @@ export default {
 
   .sync-status {
     flex: 0 0 auto;
-  }
-
-  .card-body p {
-    margin-bottom: 0.5rem;
   }
 
   .date-and-type {

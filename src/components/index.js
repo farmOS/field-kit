@@ -7,6 +7,7 @@ import FarmInline from './FarmInline';
 import FarmList from './FarmList';
 import FarmListItem from './FarmListItem';
 import FarmLogMainInfo from './FarmLogMainInfo';
+import FarmMain from './FarmMain';
 import FarmMap from './FarmMap';
 import FarmMenuBar from './FarmMenuBar';
 import FarmSelectBox from './FarmSelectBox';
@@ -49,6 +50,7 @@ export default [
   FarmList,
   FarmListItem,
   FarmLogMainInfo,
+  FarmMain,
   FarmMap,
   FarmMenuBar,
   FarmSelectBox,
