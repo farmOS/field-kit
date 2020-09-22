@@ -41,6 +41,10 @@
   --green: #5db95d;
   --blue: #029acf;
 
+  --red-light: #FCCAC5;
+  --green-light: #D8EBD8;
+  --blue-light: #AEE0F1;
+
 
   /* 
    * COLOR TOKENS
@@ -59,6 +63,7 @@
   --accent-tertiary: var(--groundcherry-light);
   --accent-aux-one: var(--kuri-light);
   --accent-aux-two: var(--highbush-light);
+  --accent-red: var(--red-light);
   --accent-blue: var(--highbush-light);
   --accent-green: var(--alfalfa-light);
 

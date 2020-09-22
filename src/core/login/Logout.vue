@@ -1,24 +1,17 @@
 <template lang="html">
-  <div class="container-fluid">
+  <farm-main>
 
-    <div id="first-row" class="row">
-      <div class="col">
-        <div class="card text-primary border-primary mb-3">
-          <div class="card-body">
-            <h4 class="card-title">{{ $t('WARNING!')}}</h4>
-            <p class="card-text">
-              {{ $t('Logging out will permanently delete all logs stored on this device.')}}
-              {{ $t('You will not be able to recover logs which have not been synced with')}}
-              {{ $t('your farmOS server. Go back to sync any unsaved logs, or proceed to')}}
-              {{ $t('logout and clear all data from this device.')}}
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="row justify-content-sm-center">
-      <div id="go-back" class="col col-sm-auto">
+    <farm-stack space="3rem">
+      <farm-card backgroundColor="var(--accent-red)">
+        <h4 class="card-title">{{ $t('WARNING!')}}</h4>
+        <p class="card-text">
+          {{ $t('Logging out will permanently delete all logs stored on this device.')}}
+          {{ $t('You will not be able to recover logs which have not been synced with')}}
+          {{ $t('your farmOS server. Go back to sync any unsaved logs, or proceed to')}}
+          {{ $t('logout and clear all data from this device.')}}
+        </p>
+      </farm-card>
+      <farm-inline justifyContent="center">
         <button
           @click="goBack"
           class="btn btn-lg btn-success"
@@ -26,8 +19,6 @@
           name="button">
           {{ $t('Go Back')}}
         </button>
-      </div>
-      <div class="col col-sm-auto">
         <button
           @click="logout"
           class="btn btn-lg btn-primary"
@@ -35,16 +26,13 @@
           name="button">
           {{ $t('Logout')}}
         </button>
-      </div>
-    </div>
-    <div class="row justify-content-center" style="margin-top: 6rem">
+      </farm-inline>
       <p>
-        Need to login again? <a href="/login">Login here</a>
+        Need to login again? <router-link to="/login">Login here</router-link>
       </p>
-    </div>
+    </farm-stack>
 
-
-  </div>
+  </farm-main>
 </template>
 
 <script>
@@ -80,14 +68,6 @@ export default {
 </script>
 
 <style lang="css" scoped>
-  #first-row {
-    margin-top: 6rem;
-  }
-
-  #go-back {
-    text-align: right;
-  }
-
   a {
     color: inherit;
     text-decoration: underline;
