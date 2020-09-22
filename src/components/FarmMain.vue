@@ -1,6 +1,8 @@
 <template>
   <main :style="style">
-    <slot></slot>
+    <div class="content">
+      <slot></slot>
+    </div>
   </main>
 </template>
 
@@ -34,9 +36,14 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 main {
   background-color: var(--light);
+}
+
+.content {
   min-height: calc(100vh - 3rem);
+  max-width: 1200px;
+  margin: auto;
 }
 </style>
