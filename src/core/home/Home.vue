@@ -1,14 +1,12 @@
 <template>
-  <div id="home">
-    <div class="container-fluid">
-      <home-widgets
-      :modules="modules"
-      :logs="filteredLogs"
-      :assets="assets"
-      :userId="userId"
-      @set-module-filters="setModuleFilters"/>
-    </div>
-  </div>
+  <farm-main>
+    <home-widgets
+    :modules="modules"
+    :logs="filteredLogs"
+    :assets="assets"
+    :userId="userId"
+    @set-module-filters="setModuleFilters"/>
+  </farm-main>
 </template>
 
 <script>
