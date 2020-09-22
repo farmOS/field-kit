@@ -3,6 +3,7 @@ import FarmAutocomplete from './FarmAutocomplete';
 import FarmCard from './FarmCard';
 import FarmChip from './FarmChip';
 import FarmDateTimeForm from './FarmDateTimeForm';
+import FarmDivider from './FarmDivider';
 import FarmInline from './FarmInline';
 import FarmList from './FarmList';
 import FarmListItem from './FarmListItem';
@@ -46,6 +47,7 @@ export default [
   FarmCard,
   FarmChip,
   FarmDateTimeForm,
+  FarmDivider,
   FarmInline,
   FarmList,
   FarmListItem,

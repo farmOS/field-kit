@@ -13,11 +13,16 @@ export default {
       type: [String, Array],
       default: '1rem',
     },
+    dividers: {
+      type: [String, Array],
+      default: '1rem',
+    },
   },
   computed: {
     ...mapResponsiveProps({
       _columns: 'columns',
       _space: 'space',
+      _dividers: 'dividers',
     }),
     style0() {
       return {
@@ -48,6 +53,25 @@ export default {
     },
   },
   render(h) {
+    const renderChildNodes = (node, i, arr) => {
+      // Derive the weight prop that may be passed to the farm-divider.
+      const weight = typeof this._dividers === 'string'
+        ? this._dividers
+        : 'regular';
+      // Add a divider if specified, as long as it's not the last element.
+      const children = this._dividers && i < arr.length - 1
+        ? [node, h('farm-divider', { props: { weight } })]
+        : [node];
+      return h(
+        'div',
+        { style: this.style2 },
+        [h(
+          'div',
+          { style: this.style3 },
+          children,
+        )],
+      );
+    };
     return h(
       'div',
       { class: 'farm-tiles', style: this.style0 },
@@ -57,15 +81,7 @@ export default {
         (this.$slots.default || [])
           // Filtering out undefined tags removes unwanted whitespace nodes.
           .filter(node => node.tag !== undefined)
-          .map(node => h(
-            'div',
-            { style: this.style2 },
-            [h(
-              'div',
-              { style: this.style3 },
-              [node],
-            )],
-          )),
+          .map(renderChildNodes),
       )],
     );
   },

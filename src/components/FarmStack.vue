@@ -9,9 +9,14 @@ export default {
       type: [String, Array],
       default: '0',
     },
+    dividers: {
+      type: [Boolean, String, Array],
+      default: false,
+    },
   },
   computed: mapResponsiveProps({
     _space: 'space',
+    _dividers: 'dividers',
   }),
   render(h) {
     return h(
@@ -25,7 +30,15 @@ export default {
           const style = (i < arr.length - 1)
             ? { paddingBottom: this._space }
             : {};
-          return h('div', { style }, [node]);
+          // Derive the weight prop that may be passed to the farm-divider.
+          const weight = typeof this._dividers === 'string'
+            ? this._dividers
+            : 'regular';
+          // Add a divider if specified, as long as it's not the last element.
+          const children = this._dividers && i < arr.length - 1
+            ? [node, h('farm-divider', { props: { weight } })]
+            : [node];
+          return h('div', { style }, children);
         }),
     );
   },
