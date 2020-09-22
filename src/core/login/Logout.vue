@@ -1,5 +1,5 @@
 <template lang="html">
-  <farm-main>
+  <farm-main paddingTop="calc(50vh - 12rem)" :paddingX="['10%', '20%', '30%']">
 
     <farm-stack space="3rem">
       <farm-card backgroundColor="var(--accent-red)">

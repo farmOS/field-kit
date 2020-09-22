@@ -21,15 +21,30 @@ export default {
       type: [String, Array],
       default: '1rem',
     },
+    paddingX: [String, Array],
+    paddingY: [String, Array],
+    paddingTop: [String, Array],
+    paddingRight: [String, Array],
+    paddingBottom: [String, Array],
+    paddingLeft: [String, Array],
   },
   computed: {
     ...mapResponsiveProps({
       _justifyContent: 'justifyContent',
       _space: 'space',
+      _paddingX: 'paddingX',
+      _paddingY: 'paddingY',
+      _paddingTop: 'paddingTop',
+      _paddingRight: 'paddingRight',
+      _paddingBottom: 'paddingBottom',
+      _paddingLeft: 'paddingLeft',
     }),
     style() {
       return {
-        padding: this._space,
+        paddingTop: this._paddingTop || this._paddingY || this._space,
+        paddingRight: this._paddingRight || this._paddingX || this._space,
+        paddingBottom: this._paddingBottom || this._paddingY || this._space,
+        paddingLeft: this._paddingLeft || this._paddingX || this._space,
       };
     },
   },
