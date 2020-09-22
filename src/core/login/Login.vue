@@ -1,5 +1,5 @@
 <template>
-  <div id="login" class="container-fluid">
+  <farm-main paddingTop="calc(50vh - 12rem)" :paddingX="['10%', '20%', '30%']">
     <div class="input-group">
       <div class="input-group-prepend">
         <span class="input-group-text">https://</span>
@@ -54,7 +54,7 @@
     </div>
     <br>
     <p>{{ $t('Need a server? Check out')}} <a href="https://farmos.org/hosting/">{{ $t('hosting options')}}</a>.</p>
-  </div>
+  </farm-main>
 </template>
 
 <script>
@@ -109,10 +109,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
-  #login {
-    margin-top: calc(50vh - 119px);
-  }
 
  .login-submit {
    justify-content: center;
