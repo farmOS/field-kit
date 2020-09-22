@@ -20,7 +20,7 @@ const popup = (confirm) => {
     background-color: var(--white);
     width: 100%;
     min-height: 3rem;
-    box-shadow: 0px -1px 3px rgba(0, 0, 0, 0.125);
+    box-shadow: var(--shadow-inverse);
     border-top: 1px solid rgba(0,0,0,0.125);
     padding: 0.75rem;
   `;
@@ -36,7 +36,7 @@ const popup = (confirm) => {
     font-weight: bold;
     border: none;
     padding: 0.375rem 0.75rem;
-    box-shadow: -1px -2px 3px rgba(0, 0, 0, 0.125);
+    box-shadow: var(--shadow-inverse);
     border: 1px solid rgba(0,0,0,0.125);
     border-radius: 2px;
   `;
@@ -48,7 +48,7 @@ const popup = (confirm) => {
     font-weight: bold;
     border: none;
     padding: 0.375rem 0.75rem;
-    box-shadow: -1px -2px 3px rgba(0, 0, 0, 0.125);
+    box-shadow: var(--shadow-inverse);
     border: 1px solid rgba(0,0,0,0.125);
     border-radius: 2px;
   `;

@@ -100,7 +100,7 @@ export default {
     flex-flow: column;
     background-color: var(--white);
     color: var(--text);
-    box-shadow: -1px 2px 5px rgba(0, 0, 0, .25);
+    box-shadow: var(--shadow);
   }
 
   #more-menu li {

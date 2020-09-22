@@ -17,7 +17,7 @@ export default {
     },
     boxShadow: {
       type: [String, Array],
-      default: '1px 2px 3px var(--subtle-transparent)',
+      default: 'var(--shadow)',
     },
     height: {
       type: [String, Array],

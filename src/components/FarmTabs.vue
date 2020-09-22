@@ -101,7 +101,7 @@ export default {
   width: 100%;
   z-index: 1000;
   background-color: var(--primary);
-  box-shadow: -2px 0px 15px rgba(0, 0, 0, .5);
+  box-shadow: var(--shadow-strong);
 }
 
 .tab {

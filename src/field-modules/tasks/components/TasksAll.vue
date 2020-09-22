@@ -293,7 +293,7 @@ export default {
     width: 3.75rem;
     border-radius: 2rem;
     background-color: var(--accent-primary);
-    box-shadow: -1px 2px 5px rgba(0, 0, 0, .25);
+    box-shadow: var(--shadow-strong);
     position: absolute;
     top: .375rem;
     left: .375rem;
