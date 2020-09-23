@@ -5,13 +5,13 @@
         v-if="logs.length < 1">
         <farm-stack :space="'0.25rem'">
           <h3>{{ $t('Let\'s Get Started!')}}</h3>
-          <p>
+          <farm-text size='s'>
             {{ $t('You don\'t have any logs to display yet. Logs are records of events') }}
             {{ $t('in farmOS. You can add some by clicking the') }}
             <icon-add-circle class="inline-svg"/>
             {{ $t('icon below, or you can get uncompleted tasks from the server by') }}
             {{ $t('clicking the') }} <icon-cloud-upload class="inline-svg"/> {{ $t('icon above.') }}
-          </p>
+          </farm-text>
         </farm-stack>
       </farm-card>
       <farm-card
@@ -38,7 +38,7 @@
             </div>
 
             <div class="card-row-2">
-              <p>{{parseNotes(log.notes)}}</p>
+              <farm-text size="s">{{parseNotes(log.notes)}}</farm-text>
             </div>
 
             <div class="card-row-3">
