@@ -3,7 +3,7 @@
 
     <farm-tiles :columns="[1, 2, 3]">
       <farm-card>
-        <h4>{{ $t('Date')}}</h4>
+        <h3>{{ $t('Date')}}</h3>
         <farm-inline justifyContent="space-between">
           <div>
             <input
@@ -79,7 +79,7 @@
       </farm-card>
 
       <farm-card>
-        <h4>{{ $t('Log Type')}}</h4>
+        <h3>{{ $t('Log Type')}}</h3>
         <farm-inline>
           <div>
             <input
@@ -158,7 +158,7 @@
       </farm-card>
 
       <farm-card>
-        <h4>{{ $t('Log Category')}}</h4>
+        <h3>{{ $t('Log Category')}}</h3>
         <farm-inline>
           <div>
             <input

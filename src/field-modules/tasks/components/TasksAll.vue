@@ -4,7 +4,7 @@
       <farm-card
         v-if="logs.length < 1">
         <farm-stack :space="'0.25rem'">
-          <h4>{{ $t('Let\'s Get Started!')}}</h4>
+          <h3>{{ $t('Let\'s Get Started!')}}</h3>
           <p>
             {{ $t('You don\'t have any logs to display yet. Logs are records of events') }}
             {{ $t('in farmOS. You can add some by clicking the') }}
@@ -31,7 +31,7 @@
                 class="assignment late"
                 v-if="!log.done && (log.timestamp * 1000 < new Date().valueOf())"/>
               <div class="log-name">
-                <h5>{{log.name}}</h5>
+                <h6>{{log.name}}</h6>
               </div>
               <icon-cloud-upload v-if="isUnsynced(log)" class="sync-status"/>
               <icon-cloud-done v-else class="sync-status"/>

@@ -5,13 +5,13 @@
       class="tab"
       :class="{ selected: tabSelected === 'FIRST' }"
       @click="tabSelected = 'FIRST'">
-      <h5>{{ $t('GENERAL') }}</h5>
+      <h4>{{ $t('GENERAL') }}</h4>
     </div>
     <div
       class="tab"
       :class="{ selected: tabSelected === 'SECOND' }"
       @click="tabSelected = 'SECOND'">
-      <h5>{{ $t('MOVEMENT') }}</h5>
+      <h4>{{ $t('MOVEMENT') }}</h4>
     </div>
   </div>
   <div
@@ -85,7 +85,7 @@
       </textarea>
     </div>
 
-    <h4>{{ $t('Log Categories') }}</h4>
+    <h3>{{ $t('Log Categories') }}</h3>
     <div id="categories" class="form-item form-group">
       <p v-if="!showAllCategories
         && (!currentLog.log_category
@@ -117,7 +117,7 @@
     </div>
 
     <div v-if="currentLog.quantity !== undefined">
-      <h4>{{ $t('Quantities')}}</h4>
+      <h3>{{ $t('Quantities')}}</h3>
       <label for="quantity" class="control-label ">
         {{ $t('Add new or edit existing quantity')}}
       </label>
@@ -208,7 +208,7 @@
       </div>
     </div>
 
-    <h4>{{ $t('Assets')}}</h4>
+    <h3>{{ $t('Assets')}}</h3>
     <farm-autocomplete
       :objects="filteredAssets"
       searchKey="name"
@@ -278,7 +278,7 @@
     <div
       v-if="!(currentLog.type === 'farm_seeding')"
       id="areas-and-location">
-      <h4>{{ $t('Areas')}} &amp; {{ $t('Location')}}</h4>
+      <h3>{{ $t('Areas')}} &amp; {{ $t('Location')}}</h3>
 
       <!-- We're using a radio button to choose whether areas are selected
       automatically based on device location, or using an autocomplete.
@@ -398,7 +398,7 @@
       </div>
     </div>
 
-    <h4>{{ $t('Images')}}</h4>
+    <h3>{{ $t('Images')}}</h3>
 
     <div
       v-if="isNative"

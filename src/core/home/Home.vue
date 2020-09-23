@@ -50,7 +50,7 @@ const HomeWidgets = Vue.component('home-widgets', { // eslint-disable-line no-un
           },
         },
         [
-          createElement('h4', this.$t(module.label)),
+          createElement('h3', this.$t(module.label)),
           createElement(
             `${module.name}-widget`,
             {

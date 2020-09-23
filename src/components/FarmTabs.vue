@@ -9,7 +9,7 @@
         :class="{ selected: tabSelected === i }"
         :style="tabStyle"
         @click="switchTab(i)">
-        <h5>{{tab}}</h5>
+        <h4>{{tab}}</h4>
       </div>
       <div
         class="tab-indicator"

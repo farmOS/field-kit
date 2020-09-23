@@ -3,7 +3,7 @@
 
     <farm-stack space="3rem">
       <farm-card backgroundColor="var(--accent-red)">
-        <h4 class="card-title">{{ $t('WARNING!')}}</h4>
+        <h3 class="card-title">{{ $t('WARNING!')}}</h3>
         <p class="card-text">
           {{ $t('Logging out will permanently delete all logs stored on this device.')}}
           {{ $t('You will not be able to recover logs which have not been synced with')}}

@@ -6,7 +6,7 @@
     <farm-stack space="1rem">
       <farm-inline space="1rem">
         <div class="name-container" flex="0 0 calc(100% - 5rem)">
-          <h3>{{name}}</h3>
+          <h2>{{name}}</h2>
         </div>
         <div class="done-container" flex="0 0 5rem">
           <farm-toggle-check
@@ -76,13 +76,6 @@ export default {
 <style scoped>
 .main-info {
   border: 1px solid var(--light);
-}
-h3, p {
-  margin-bottom: 0;
-}
-
-.name-container h3 {
-  font-size: 1.5rem;
 }
 .done-container {
   display: flex;

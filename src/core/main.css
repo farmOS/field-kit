@@ -11,3 +11,51 @@ li {
 a:-webkit-any-link {
   fill: inherit;
 }
+
+h1, h2, h3, h4, h5, h6,
+p {
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  font-size: 2.25rem;
+  line-height: var(--line-height-extra-large);
+  font-weight: lighter;
+}
+
+h2 {
+  font-size: 1.5rem;
+  line-height: var(--line-height-large);
+  font-weight: lighter;
+}
+
+h3 {
+  font-size: 1.25rem;
+  line-height: var(--line-height);
+  font-weight: normal;
+}
+
+h4 {
+  font-size: 1rem;
+  line-height: var(--line-height);
+  font-weight: normal;
+}
+
+h5 {
+  font-size: 1.25rem;
+  line-height: var(--line-height);
+  font-weight: bold;
+}
+
+h6 {
+  font-size: 1rem;
+  line-height: var(--line-height);
+  font-weight: bold;
+}
+
+p {
+  font-size: 1rem;
+  line-height: var(--line-height);
+  font-weight: normal;
+}

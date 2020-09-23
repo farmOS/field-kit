@@ -87,4 +87,13 @@
   --shadow: 1px 2px 3px var(--subtle-transparent);
   --shadow-strong: 2px 3px 10px var(--text-transparent);
   --shadow-inverse: -1 -2 3px var(--subtle-transparent);
+
+
+  /* 
+   * SPACE & SIZING
+   */
+  --line-height-small: 0.75rem;
+  --line-height: 1.5rem;
+  --line-height-large: 2.25rem;
+  --line-height-extra-large: 3rem;
 }
