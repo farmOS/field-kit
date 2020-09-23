@@ -14,8 +14,8 @@ export default {
       default: '1rem',
     },
     dividers: {
-      type: [String, Array],
-      default: '1rem',
+      type: [Boolean, String],
+      default: false,
     },
   },
   computed: {
@@ -58,8 +58,9 @@ export default {
       const weight = typeof this._dividers === 'string'
         ? this._dividers
         : 'regular';
-      // Add a divider if specified, as long as it's not the last element.
-      const children = this._dividers && i < arr.length - 1
+      // Add a divider if specified, and if there's only a single column, and if
+      // the node is not the last element.
+      const children = this._dividers && this._columns === 1 && i < arr.length - 1
         ? [node, h('farm-divider', { props: { weight } })]
         : [node];
       return h(
