@@ -1,5 +1,7 @@
 // https://eslint.org/docs/user-guide/configuring
 
+const { off } = require("node-notifier");
+
 module.exports = {
   root: true,
   parserOptions: {
@@ -54,5 +56,7 @@ module.exports = {
     'arrow-parens': ['error', 'as-needed', { "requireForBlockBody": true }],
     'no-underscore-dangle': 'off',
     'implicit-arrow-linebreak': 'off',
+    'no-nested-ternary': 'off',
+    'indent': [{ 'flatTernaryExpressions': true, }] 
   }
 }
