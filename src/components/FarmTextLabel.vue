@@ -1,19 +1,19 @@
 <script>
 export default {
-  name: 'FarmText',
+  name: 'FarmTextLabel',
   props: {
     as: {
       type: String,
-      default: 'p',
+      default: 'label',
       validator(val) {
-        return ['p', 'div', 'li', 'pre', 'label', 'input'].includes(val);
+        return ['label', 'p', 'div', 'li', 'pre', 'input', 'span'].includes(val);
       },
     },
     size: {
       type: String,
       default: 'm',
       validator(val) {
-        return ['s', 'm', 'l', 'xl'].includes(val);
+        return ['s', 'm', 'l'].includes(val);
       },
     },
     color: {
@@ -26,32 +26,29 @@ export default {
         ].includes(val);
       },
     },
-    weight: {
-      type: String,
-      default: 'regular',
-    },
   },
   computed: {
     style() {
       const fontSize = this.size === 's'
-        ? '0.75rem'
+        ? '0.5625rem'
         : this.size === 'l'
-          ? '1.25rem'
-          : this.size === 'xl'
-            ? '1.5rem'
-            : '1rem';
-      const lineHeight = this.size === 'xl'
-        ? 'var(--line-height-xl)'
-        : 'var(--line-height)';
-      const fontWeight = this.weight === 'strong'
-        ? 'bold'
+          ? '1rem'
+          : '0.75rem';
+      const letterSpacing = this.size === 's'
+        ? '0.15rem'
         : 'normal';
+      const lineHeight = this.size === 's'
+        ? 'var(--line-height-xs)'
+        : this.size === 'l'
+          ? 'var(--line-height)'
+          : 'var(--line-height-s)';
       const color = `var(--${this.color})`;
       return {
         fontSize,
         lineHeight,
-        fontWeight,
         color,
+        letterSpacing,
+        textTransform: 'uppercase',
       };
     },
   },

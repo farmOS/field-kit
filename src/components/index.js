@@ -15,6 +15,7 @@ import FarmSelectBox from './FarmSelectBox';
 import FarmStack from './FarmStack';
 import FarmTabs from './FarmTabs';
 import FarmText from './FarmText';
+import FarmTextLabel from './FarmTextLabel';
 import FarmTiles from './FarmTiles';
 import FarmToggleCheck from './FarmToggleCheck';
 
@@ -60,6 +61,7 @@ export default [
   FarmStack,
   FarmTabs,
   FarmText,
+  FarmTextLabel,
   FarmTiles,
   FarmToggleCheck,
   IconAddCircleOutline,
