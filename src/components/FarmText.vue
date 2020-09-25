@@ -23,7 +23,7 @@ export default {
           'text', 'dark', 'subtle', 'white',
           'primary', 'secondary', 'tertiary',
         ].includes(val);
-      }
+      },
     },
     weight: {
       type: String,

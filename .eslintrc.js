@@ -57,6 +57,6 @@ module.exports = {
     'no-underscore-dangle': 'off',
     'implicit-arrow-linebreak': 'off',
     'no-nested-ternary': 'off',
-    'indent': [{ 'flatTernaryExpressions': true, }] 
+    'indent': ['error', 2, { 'flatTernaryExpressions': true }] 
   }
 }
