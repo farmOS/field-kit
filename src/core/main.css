@@ -20,13 +20,13 @@ p {
 
 h1 {
   font-size: 2.25rem;
-  line-height: var(--line-height-extra-large);
+  line-height: var(--line-height-xxxl);
   font-weight: lighter;
 }
 
 h2 {
   font-size: 1.5rem;
-  line-height: var(--line-height-large);
+  line-height: var(--line-height-xl);
   font-weight: lighter;
 }
 

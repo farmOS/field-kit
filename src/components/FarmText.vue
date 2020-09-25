@@ -40,7 +40,7 @@ export default {
         ? '1.5rem'
         : '1rem';
       const lineHeight = this.size === 'xl'
-        ? 'var(--line-height-large)'
+        ? 'var(--line-height-xl)'
         : 'var(--line-height)';
       const fontWeight = this.weight === 'strong'
         ? 'bold'

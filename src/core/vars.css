@@ -92,8 +92,11 @@
   /* 
    * SPACE & SIZING
    */
-  --line-height-small: 0.75rem;
+  --line-height-xs: 0.75rem;
+  --line-height-s: 1.125rem;
   --line-height: 1.5rem;
-  --line-height-large: 2.25rem;
-  --line-height-extra-large: 3rem;
+  --line-height-l: 1.875rem;
+  --line-height-xl: 2.25rem;
+  --line-height-xxl: 2.625rem;
+  --line-height-xxxl: 3rem;
 }
