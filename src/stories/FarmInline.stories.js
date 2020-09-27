@@ -22,7 +22,7 @@ export const Base = Template.bind({});
 
 export const withMoreSpace = Template.bind({});
 withMoreSpace.args = {
-  space: '3rem',
+  space: 'l',
 };
 
 export const justifiedEnd = Template.bind({});

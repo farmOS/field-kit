@@ -1,6 +1,6 @@
 <template>
   <div>
-    <farm-stack space="1rem">
+    <farm-stack space="s">
       <farm-card>
         <farm-stack>
           <h1>farmOS Field Kit Icons</h1>

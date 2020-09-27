@@ -1,7 +1,7 @@
 <template lang="html">
   <farm-main paddingTop="calc(50vh - 12rem)" :paddingX="['10%', '20%', '30%']">
 
-    <farm-stack space="3rem">
+    <farm-stack space="l">
       <farm-card backgroundColor="var(--accent-red)">
         <h3 class="card-title">{{ $t('WARNING!')}}</h3>
         <p class="card-text">

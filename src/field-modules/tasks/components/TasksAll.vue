@@ -2,8 +2,9 @@
   <farm-main :space="['0', '1rem']">
     <farm-tiles :columns="[1, 2, 3]" :space="[0, '1rem']" dividers>
       <farm-card
-        v-if="logs.length < 1">
-        <farm-stack :space="'0.25rem'">
+        v-if="logs.length < 1"
+        space="var(--s)">
+        <farm-stack space="xxs">
           <h3>{{ $t('Let\'s Get Started!')}}</h3>
           <farm-text size='s'>
             {{ $t('You don\'t have any logs to display yet. Logs are records of events') }}
@@ -16,53 +17,50 @@
       </farm-card>
       <farm-card
         v-for="(log, i) in logs.filter(passesFilters)"
-        :key="`card-${i}`">
+        :key="`card-${i}`"
+        space="var(--s)">
         <router-link :to="{ path: `/tasks/${log.localID}` }">
-          <farm-stack :space="'0.25rem'">
+          <farm-stack space="xxs">
 
-            <div class="card-row-1">
-              <icon-assignment-done
-                class="assignment done"
-                v-if="log.done"/>
-              <icon-assignment
-                class="assignment"
-                v-if="!log.done && (log.timestamp * 1000 > new Date().valueOf())"/>
-              <icon-assignment-late
-                class="assignment late"
-                v-if="!log.done && (log.timestamp * 1000 < new Date().valueOf())"/>
-              <div class="log-name">
+            <farm-inline justifyContent="space-between" space="s">
+              <farm-inline justifyContent="start" space="s">
+                <icon-assignment-done
+                  v-if="log.done"/>
+                <icon-assignment
+                  v-if="!log.done && (log.timestamp * 1000 > new Date().valueOf())"/>
+                <icon-assignment-late
+                  class="late"
+                  v-if="!log.done && (log.timestamp * 1000 < new Date().valueOf())"/>
                 <h6>{{log.name}}</h6>
-              </div>
-              <icon-cloud-upload v-if="isUnsynced(log)" class="sync-status"/>
-              <icon-cloud-done v-else class="sync-status"/>
-            </div>
+              </farm-inline>
+              <icon-cloud-upload v-if="isUnsynced(log)"/>
+              <icon-cloud-done v-else/>
+            </farm-inline>
 
-            <div class="card-row-2">
-              <farm-text size="s">{{parseNotes(log.notes)}}</farm-text>
-            </div>
+            <farm-text size="s">{{parseNotes(log.notes)}}</farm-text>
 
-            <div class="card-row-3">
-              <div class="date-and-type">
+            <farm-inline justifyContent="space-between" alignItems="flex-end">
+              <farm-stack space="xs">
                 <farm-text-label as="p">
                   {{$t(logTypes[log.type].label).toUpperCase()}}
                 </farm-text-label>
-                <span>{{showDate(log.timestamp)}}</span>
-              </div>
-              <div class="tags">
-                <span
+                <farm-text size="s">{{showDate(log.timestamp)}}</farm-text>
+              </farm-stack>
+              <farm-inline space="xs" justifyContent="flex-end" flex="0 0 75%">
+                <farm-text size="s"
                   v-for="(area, i) in mapTidsToAreas(log)"
-                  class="tag tag-area"
+                  class="tag area"
                   :key="`area-${i}`">
                   {{area.name}}
-                </span>
-                <span
+                </farm-text>
+                <farm-text size="s"
                   v-for="(asset, i) in mapIdsToAssets(log)"
-                  class="tag tag-asset"
+                  class="tag asset"
                   :key="`asset-${i}`">
                   {{asset.name}}
-                </span>
-              </div>
-            </div>
+                </farm-text>
+              </farm-inline>
+            </farm-inline>
 
           </farm-stack>
         </router-link>
@@ -190,92 +188,24 @@ export default {
     color: var(--dark);
   }
 
-  p, h5 {
-    margin: 0
-  }
-
-  .card-row-1 {
-    display: flex;
-    flex-flow: row nowrap;
-  }
-
-  .card-row-1 h5 {
-    font-weight: 700;
-  }
-
-  .card-row-2 {
-    display: flex;
-    flex-flow: row nowrap;
-  }
-
-  .card-row-3 {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-between;
-  }
-
-  .assignment {
-    flex: 0 0 auto;
-  }
-
-  .assignment.late {
+  .late {
     fill: var(--warning);
   }
 
-  .log-name {
-    flex: 3 1 auto;
-    margin-left: 1rem;
-  }
-
-  .sync-status {
-    flex: 0 0 auto;
-  }
-
-  .date-and-type {
-    display: flex;
-    flex-flow: column;
-    justify-content: flex-end;
-    flex: 0 0 auto;
-  }
-
-  .date-and-type span {
-    margin-bottom: .25rem;
-    padding: .125rem 0;
-  }
-
-  .log-type {
-    font-size: .75rem;
-  }
-
-  .tags {
-    display: flex;
-    justify-content: flex-end;
-    align-items: flex-end;
-    flex-flow: row wrap;
-    flex: 0 1 auto;
-  }
-
   .tag {
-    margin-left: .25rem;
-    margin-bottom: .25rem;
-    padding: .125rem;
-    border-radius: .25rem;
+    font-size: 12px;
+    padding: 0 var(--xxs);
+    border-radius: var(--xs);
   }
 
-  .tag-area {
+  .tag.area {
     border: 1px solid var(--blue);
     background-color: var(--accent-blue);
   }
 
-  .tag-asset {
+  .tag.asset {
     border: 1px solid var(--green);
     background-color: var(--accent-green);
-  }
-
-  @media (min-width: 576px) {
-    .card-group .card {
-      flex: 0 0 576px;
-    }
   }
 
   .add-circle {

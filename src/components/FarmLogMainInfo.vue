@@ -3,8 +3,8 @@
     class="main-info"
     :breakpoints="breakpoints"
     :boxShadow="_boxShadow">
-    <farm-stack space="1rem">
-      <farm-inline space="1rem">
+    <farm-stack space="s">
+      <farm-inline space="s">
         <div class="name-container" flex="0 0 calc(100% - 5rem)">
           <h2>{{name}}</h2>
         </div>
@@ -16,7 +16,7 @@
             :checked="done"/>
         </div>
       </farm-inline>
-      <farm-inline space="1rem" justifyContent="space-between">
+      <farm-inline space="s" justifyContent="space-between">
         <div class="timestamp-container" flex="1 1 auto">
           <p>{{timestamp}}</p>
         </div>

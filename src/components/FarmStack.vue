@@ -7,7 +7,13 @@ export default {
   props: {
     space: {
       type: [String, Array],
-      default: '0',
+      default: 'none',
+      validator(val) {
+        return [
+          'none', 'xxxs', 'xxs', 'xs', 's',
+          'm', 'l', 'xl', 'xxl',
+        ].includes(val);
+      },
     },
     dividers: {
       type: [Boolean, String],
@@ -21,14 +27,14 @@ export default {
   render(h) {
     return h(
       'div',
-      { class: 'farm-stack' },
+      { class: `farm-stack ${this._space}`, style: { paddingTop: '1px' } },
       (this.$slots.default || [])
         // Filtering out undefined tags removes unwanted whitespace nodes.
         .filter(node => node.tag !== undefined)
         .map((node, i, arr) => {
           // Apply padding to all but the last element.
           const style = (i < arr.length - 1)
-            ? { paddingBottom: this._space }
+            ? { paddingTop: `var(--${this._space})` }
             : {};
           // Derive the weight prop that may be passed to the farm-divider.
           const weight = typeof this._dividers === 'string'
@@ -45,3 +51,37 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.farm-stack::before {
+  display: block;
+  content: "";
+}
+.farm-stack.none::before {
+  margin-top: calc(-1px - var(--none));
+}
+.farm-stack.xxxs::before {
+  margin-top: calc(-1px - var(--xxxs));
+}
+.farm-stack.xxs::before {
+  margin-top: calc(-1px - var(--xxs));
+}
+.farm-stack.xs::before {
+  margin-top: calc(-1px - var(--xs));
+}
+.farm-stack.s::before {
+  margin-top: calc(-1px - var(--s));
+}
+.farm-stack.m::before {
+  margin-top: calc(-1px - var(--m));
+}
+.farm-stack.l::before {
+  margin-top: calc(-1px - var(--l));
+}
+.farm-stack.xl::before {
+  margin-top: calc(-1px - var(--xl));
+}
+.farm-stack.xxl::before {
+  margin-top: calc(-1px - var(--xxl));
+}
+</style>
