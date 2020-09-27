@@ -92,6 +92,16 @@
   /* 
    * SPACE & SIZING
    */
+  --none: 0;
+  --xxxs: 0.09375rem;
+  --xxs: 0.1875rem;
+  --xs: 0.375rem;
+  --s: 0.75rem;
+  --m: 1.5rem;
+  --l: 3rem;
+  --xl: 6rem;
+  --xxl: 12rem;
+
   --line-height-xs: 0.75rem;
   --line-height-s: 1.125rem;
   --line-height: 1.5rem;
