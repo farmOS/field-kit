@@ -37,7 +37,7 @@ const HomeWidgets = Vue.component('home-widgets', { // eslint-disable-line no-un
         props: {
           columns: [1, 2, 3],
           breakpoints: [0, 600, 900],
-          space: '1rem',
+          space: 's',
         },
       },
       this.modules.map(module => createElement(

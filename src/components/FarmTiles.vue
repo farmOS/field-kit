@@ -1,5 +1,5 @@
 <script>
-import { responsiveProps, mapResponsiveProps } from './responsiveProps';
+import { responsiveProps, mapResponsiveProps, spaceValidator } from './responsiveProps';
 
 export default {
   name: 'FarmTiles',
@@ -11,7 +11,8 @@ export default {
     },
     space: {
       type: [String, Array],
-      default: '1rem',
+      default: 's',
+      validator: spaceValidator,
     },
     dividers: {
       type: [Boolean, String],
@@ -26,8 +27,8 @@ export default {
     }),
     style0() {
       return {
-        marginTop: `-${this._space}`,
-        marginLeft: `-${this._space}`,
+        marginTop: `calc(var(--${this._space}) * -1)`,
+        marginLeft: `calc(var(--${this._space}) * -1)`,
       };
     },
     style1() {
@@ -46,8 +47,8 @@ export default {
     },
     style3() {
       return {
-        paddingTop: `${this._space}`,
-        paddingLeft: `${this._space}`,
+        paddingTop: `var(--${this._space})`,
+        paddingLeft: `var(--${this._space})`,
         height: '100%',
       };
     },

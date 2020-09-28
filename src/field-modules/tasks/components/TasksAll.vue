@@ -1,6 +1,6 @@
 <template lang="html">
   <farm-main :space="['none', 's']">
-    <farm-tiles :columns="[1, 2, 3]" :space="[0, '1rem']" dividers>
+    <farm-tiles :columns="[1, 2, 3]" :space="['none', 's']" dividers>
       <farm-card
         v-if="logs.length < 1">
         <farm-stack space="xxs">
