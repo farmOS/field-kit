@@ -7,11 +7,14 @@
 </template>
 
 <script>
-import { mapResponsiveProps, responsiveProps, spaceValidator } from './responsiveProps';
+import { mapResponsiveProps, responsiveProps, responsiveValidator } from './responsiveProps';
 
 const paddingProp = {
   type: [String, Array],
-  validator: spaceValidator,
+  validator: responsiveValidator([
+    'xxxs', 'xxs', 'xs', 's',
+    'm', 'l', 'xl', 'xxl', 'none',
+  ]),
 };
 
 export default {
@@ -25,7 +28,10 @@ export default {
     space: {
       type: [String, Array],
       default: 's',
-      validator: spaceValidator,
+      validator: responsiveValidator([
+        'xxxs', 'xxs', 'xs', 's',
+        'm', 'l', 'xl', 'xxl', 'none',
+      ]),
     },
     paddingX: paddingProp,
     paddingY: paddingProp,

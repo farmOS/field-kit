@@ -5,7 +5,9 @@
 </template>
 
 <script>
-import { responsiveProps, mapResponsiveProps, spaceValidator } from './responsiveProps';
+import {
+  responsiveProps, mapResponsiveProps, responsiveValidator,
+} from './responsiveProps';
 
 export default {
   name: 'FarmCard',
@@ -26,7 +28,10 @@ export default {
     space: {
       type: [String, Array],
       default: 's',
-      validator: spaceValidator,
+      validator: responsiveValidator([
+        'xxxs', 'xxs', 'xs', 's',
+        'm', 'l', 'xl', 'xxl', 'none',
+      ]),
     },
     width: {
       type: [String, Array],

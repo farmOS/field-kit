@@ -1,5 +1,5 @@
 <script>
-import { responsiveProps, mapResponsiveProps, spaceValidator } from './responsiveProps';
+import { responsiveProps, mapResponsiveProps, responsiveValidator } from './responsiveProps';
 
 export default {
   name: 'FarmStack',
@@ -8,7 +8,10 @@ export default {
     space: {
       type: [String, Array],
       default: 'none',
-      validator: spaceValidator,
+      validator: responsiveValidator([
+        'xxxs', 'xxs', 'xs', 's',
+        'm', 'l', 'xl', 'xxl', 'none',
+      ]),
     },
     dividers: {
       type: [Boolean, String],

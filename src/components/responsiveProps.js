@@ -50,8 +50,8 @@ const spaces = [
   'm', 'l', 'xl', 'xxl', 'none',
 ];
 
-export const spaceValidator = val => (
+export const responsiveValidator = enums => val => (
   Array.isArray(val)
-    ? val.every(v => spaces.includes(v))
-    : spaces.includes(val)
+    ? val.every(v => enums.includes(v))
+    : enums.includes(val)
 );
