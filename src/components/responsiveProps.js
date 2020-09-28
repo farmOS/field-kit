@@ -45,10 +45,22 @@ export const mapResponsiveProps = props => Object.entries(props)
     },
   }), {});
 
-const spaces = [
-  'xxxs', 'xxs', 'xs', 's',
-  'm', 'l', 'xl', 'xxl', 'none',
-];
+// Maps enumerable props to their primitive values used as attrs or inline styles.
+export const mapResponsiveEnums = props => Object.entries(props)
+  .reduce((computed, [prop, enums]) => ({
+    ...computed,
+    [`_${prop}`]: (vm) => {
+      if (Array.isArray(vm[prop])) {
+        const highestIndex = vm.bpIndex > vm[prop].length - 1
+          ? vm[prop].length - 1
+          : vm.bpIndex;
+        const key = vm[prop][highestIndex];
+        return enums[key];
+      }
+      const key = vm[prop];
+      return enums[key];
+    },
+  }), {});
 
 export const responsiveValidator = enums => val => (
   Array.isArray(val)

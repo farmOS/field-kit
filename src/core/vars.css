@@ -41,7 +41,10 @@
   --green: #5db95d;
   --blue: #029acf;
 
+  --purple-light: #f4caf7;
   --red-light: #FCCAC5;
+  --orange-light: #FDEAD5;
+  --yellow-light: #fff4d2;
   --green-light: #D8EBD8;
   --blue-light: #AEE0F1;
 
@@ -61,11 +64,12 @@
   --accent-primary: var(--alfalfa-light);
   --accent-secondary: var(--damson-light);
   --accent-tertiary: var(--groundcherry-light);
-  --accent-aux-one: var(--kuri-light);
-  --accent-aux-two: var(--highbush-light);
+  --accent-purple: var(--purple-light);
   --accent-red: var(--red-light);
-  --accent-blue: var(--highbush-light);
-  --accent-green: var(--alfalfa-light);
+  --accent-orange: var(--orange-light);
+  --accent-yellow: var(--yellow-light);
+  --accent-green: var(--green-light);
+  --accent-blue: var(--blue-light);
 
   /* Feedback Colors */
   --success: var(--green);

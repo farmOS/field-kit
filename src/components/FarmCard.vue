@@ -6,7 +6,7 @@
 
 <script>
 import {
-  responsiveProps, mapResponsiveProps, responsiveValidator,
+  responsiveProps, mapResponsiveProps, mapResponsiveEnums, responsiveValidator,
 } from './responsiveProps';
 
 export default {
@@ -15,15 +15,18 @@ export default {
   props: {
     backgroundColor: {
       type: String,
-      default: 'var(--white)',
+      default: 'white',
+      validator: val => [
+        'white', 'dark', 'primary', 'secondary', 'tertiary',
+        'purple', 'red', 'orange', 'yellow', 'green', 'blue',
+      ].includes(val),
     },
     boxShadow: {
       type: [String, Array],
-      default: 'var(--shadow)',
-    },
-    height: {
-      type: [String, Array],
-      default: 'auto',
+      default: 'normal',
+      validator: responsiveValidator([
+        'normal', 'strong', 'inverse', 'none',
+      ]),
     },
     space: {
       type: [String, Array],
@@ -35,7 +38,10 @@ export default {
     },
     width: {
       type: [String, Array],
-      default: 'auto',
+      default: 'content',
+      validator: responsiveValidator([
+        's', 'm', 'l', 'content',
+      ]),
     },
   },
   computed: {
@@ -43,11 +49,37 @@ export default {
       _boxShadow: 'boxShadow',
       _height: 'height',
       _space: 'space',
-      _width: 'width',
+    }),
+    ...mapResponsiveEnums({
+      backgroundColor: {
+        white: 'var(--white)',
+        dark: 'var(--dark)',
+        primary: 'var(--accent-primary)',
+        secondary: 'var(--accent-secondary)',
+        tertiary: 'var(--accent-tertiary)',
+        purple: 'var(--accent-purple)',
+        red: 'var(--accent-red)',
+        orange: 'var(--accent-orange)',
+        yellow: 'var(--accent-yellow)',
+        green: 'var(--accent-green)',
+        blue: 'var(--accent-blue)',
+      },
+      width: {
+        s: 'var(--xxl)',
+        m: 'calc(var(--xxl) * 1.5)',
+        l: 'calc(var(--xxl) * 2)',
+        content: 'auto',
+      },
+      boxShadow: {
+        normal: 'var(--shadow)',
+        strong: 'var(--shadow-strong)',
+        inverse: 'var(--shadow-inverse)',
+        none: 'none',
+      },
     }),
     style() {
       return {
-        backgroundColor: this.backgroundColor,
+        backgroundColor: this._backgroundColor,
         boxShadow: this._boxShadow,
         height: this._height,
         padding: `var(--${this._space})`,
