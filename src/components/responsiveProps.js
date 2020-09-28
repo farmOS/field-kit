@@ -44,3 +44,14 @@ export const mapResponsiveProps = props => Object.entries(props)
       return vm[prop];
     },
   }), {});
+
+const spaces = [
+  'xxxs', 'xxs', 'xs', 's',
+  'm', 'l', 'xl', 'xxl', 'none',
+];
+
+export const spaceValidator = val => (
+  Array.isArray(val)
+    ? val.every(v => spaces.includes(v))
+    : spaces.includes(val)
+);

@@ -1,5 +1,5 @@
 <script>
-import { responsiveProps, mapResponsiveProps } from './responsiveProps';
+import { responsiveProps, mapResponsiveProps, spaceValidator } from './responsiveProps';
 
 export default {
   name: 'FarmInline',
@@ -16,12 +16,7 @@ export default {
     space: {
       type: [String, Array],
       default: 'none',
-      validator(val) {
-        return [
-          'none', 'xxxs', 'xxs', 'xs', 's',
-          'm', 'l', 'xl', 'xxl',
-        ].includes(val);
-      },
+      validator: spaceValidator,
     },
   },
   computed: {
