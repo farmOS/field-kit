@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { responsiveProps, mapResponsiveProps } from './responsiveProps';
+import { responsiveProps, mapResponsiveProps, spaceValidator } from './responsiveProps';
 
 export default {
   name: 'FarmCard',
@@ -25,7 +25,8 @@ export default {
     },
     space: {
       type: [String, Array],
-      default: '1rem',
+      default: 's',
+      validator: spaceValidator,
     },
     width: {
       type: [String, Array],
@@ -44,7 +45,7 @@ export default {
         backgroundColor: this.backgroundColor,
         boxShadow: this._boxShadow,
         height: this._height,
-        padding: this._space,
+        padding: `var(--${this._space})`,
         width: this._width,
       };
     },

@@ -2,8 +2,7 @@
   <farm-main :space="['none', 's']">
     <farm-tiles :columns="[1, 2, 3]" :space="[0, '1rem']" dividers>
       <farm-card
-        v-if="logs.length < 1"
-        space="var(--s)">
+        v-if="logs.length < 1">
         <farm-stack space="xxs">
           <h3>{{ $t('Let\'s Get Started!')}}</h3>
           <farm-text size='s'>
@@ -17,8 +16,7 @@
       </farm-card>
       <farm-card
         v-for="(log, i) in logs.filter(passesFilters)"
-        :key="`card-${i}`"
-        space="var(--s)">
+        :key="`card-${i}`">
         <router-link :to="{ path: `/tasks/${log.localID}` }">
           <farm-stack space="xxs">
 
