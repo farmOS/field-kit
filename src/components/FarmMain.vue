@@ -7,7 +7,12 @@
 </template>
 
 <script>
-import { mapResponsiveProps, responsiveProps } from './responsiveProps';
+import { mapResponsiveProps, responsiveProps, spaceValidator } from './responsiveProps';
+
+const paddingProp = {
+  type: [String, Array],
+  validator: spaceValidator,
+};
 
 export default {
   name: 'FarmMain',
@@ -19,14 +24,15 @@ export default {
     },
     space: {
       type: [String, Array],
-      default: '1rem',
+      default: 's',
+      validator: spaceValidator,
     },
-    paddingX: [String, Array],
-    paddingY: [String, Array],
-    paddingTop: [String, Array],
-    paddingRight: [String, Array],
-    paddingBottom: [String, Array],
-    paddingLeft: [String, Array],
+    paddingX: paddingProp,
+    paddingY: paddingProp,
+    paddingTop: paddingProp,
+    paddingRight: paddingProp,
+    paddingBottom: paddingProp,
+    paddingLeft: paddingProp,
   },
   computed: {
     ...mapResponsiveProps({
@@ -41,10 +47,10 @@ export default {
     }),
     style() {
       return {
-        paddingTop: this._paddingTop || this._paddingY || this._space,
-        paddingRight: this._paddingRight || this._paddingX || this._space,
-        paddingBottom: this._paddingBottom || this._paddingY || this._space,
-        paddingLeft: this._paddingLeft || this._paddingX || this._space,
+        paddingTop: `var(--${this._paddingTop || this._paddingY || this._space})`,
+        paddingRight: `var(--${this._paddingRight || this._paddingX || this._space})`,
+        paddingBottom: `var(--${this._paddingBottom || this._paddingY || this._space})`,
+        paddingLeft: `var(--${this._paddingLeft || this._paddingX || this._space})`,
       };
     },
   },
