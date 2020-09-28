@@ -32,10 +32,7 @@ export default {
         // Filtering out undefined tags removes unwanted whitespace nodes.
         .filter(node => node.tag !== undefined)
         .map((node, i, arr) => {
-          // Apply padding to all but the last element.
-          const style = (i < arr.length - 1)
-            ? { paddingTop: `var(--${this._space})` }
-            : {};
+          const style = { paddingTop: `var(--${this._space})` };
           // Derive the weight prop that may be passed to the farm-divider.
           const weight = typeof this._dividers === 'string'
             ? this._dividers
