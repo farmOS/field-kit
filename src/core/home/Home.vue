@@ -101,17 +101,3 @@ export default {
 };
 
 </script>
-
-<style scoped>
-  #home {
-    background-color: var(--light);
-  }
-
-  .container-fluid {
-    max-width: 1200px;
-    min-height: calc(100vh - 3rem);
-    margin: auto;
-    background-color: var(--light);
-    padding: 1rem;
-  }
-</style>
