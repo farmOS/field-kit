@@ -111,9 +111,9 @@ export default {
 .fade-right {
   position: absolute;
   top: 0px;
-  right: -1rem;
+  right: calc(var(--s) * -1);
   height: 100%;
-  width: 2rem;
+  width: var(--m);
   z-index: 10;
   background: linear-gradient(to right, rgba(255, 255, 255, 0), var(--white) 50%);
 }
