@@ -1,6 +1,6 @@
 <template>
-  <main :style="style">
-    <div class="content">
+  <main>
+    <div class="content" :style="style">
       <slot></slot>
     </div>
   </main>
@@ -53,6 +53,7 @@ export default {
     }),
     style() {
       return {
+        justifyContent: this._justifyContent,
         paddingTop: `var(--${this._paddingTop || this._paddingY || this._space})`,
         paddingRight: `var(--${this._paddingRight || this._paddingX || this._space})`,
         paddingBottom: `var(--${this._paddingBottom || this._paddingY || this._space})`,

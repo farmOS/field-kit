@@ -1,5 +1,5 @@
 <template>
-  <farm-main paddingTop="calc(50vh - 12rem)" :paddingX="['10%', '20%', '30%']">
+  <farm-main :paddingTop="['xl', 'xxl']" :paddingX="['m', 'xl', 'xxl']">
     <div class="input-group">
       <div class="input-group-prepend">
         <span class="input-group-text">https://</span>
@@ -53,7 +53,10 @@
       </button>
     </div>
     <br>
-    <p>{{ $t('Need a server? Check out')}} <a href="https://farmos.org/hosting/">{{ $t('hosting options')}}</a>.</p>
+    <p style="textAlign: center">
+      {{ $t('Need a server? Check out')}}
+      <a href="https://farmos.org/hosting/">{{ $t('hosting options')}}</a>.
+    </p>
   </farm-main>
 </template>
 

@@ -1,8 +1,8 @@
 <template lang="html">
-  <farm-main paddingTop="calc(50vh - 12rem)" :paddingX="['10%', '20%', '30%']">
+  <farm-main :paddingTop="['xl', 'xxl']" :paddingX="['l', 'xxl']">
 
     <farm-stack space="l">
-      <farm-card backgroundColor="var(--accent-red)">
+      <farm-card backgroundColor="red">
         <h3 class="card-title">{{ $t('WARNING!')}}</h3>
         <p class="card-text">
           {{ $t('Logging out will permanently delete all logs stored on this device.')}}
@@ -11,7 +11,7 @@
           {{ $t('logout and clear all data from this device.')}}
         </p>
       </farm-card>
-      <farm-inline justifyContent="center">
+      <farm-inline justifyContent="center" space="m">
         <button
           @click="goBack"
           class="btn btn-lg btn-success"
@@ -27,7 +27,7 @@
           {{ $t('Logout')}}
         </button>
       </farm-inline>
-      <p>
+      <p style="textAlign: center">
         Need to login again? <router-link to="/login">Login here</router-link>
       </p>
     </farm-stack>
