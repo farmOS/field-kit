@@ -6,7 +6,7 @@ export default {
       type: String,
       default: 'p',
       validator(val) {
-        return ['p', 'div', 'li', 'pre', 'label', 'input'].includes(val);
+        return ['p', 'div', 'span', 'li', 'pre', 'label', 'input'].includes(val);
       },
     },
     size: {
@@ -58,7 +58,7 @@ export default {
   render(h) {
     return h(
       this.as,
-      { style: this.style },
+      { class: 'farm-text', style: this.style },
       this.$slots.default,
     );
   },
