@@ -14,6 +14,14 @@ export default {
         ],
       },
     },
+    align: {
+      control: {
+        type: 'select',
+        options: [
+          'left', 'right', 'center',
+        ],
+      },
+    },
     dividers: {
       control: {
         type: 'select',
@@ -29,7 +37,7 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { FarmStack, FarmPlaceholder },
   template: `
-    <farm-stack :space="space" :dividers="dividers">
+    <farm-stack :space="space" :dividers="dividers" :align="align">
       <farm-placeholder/>
       <farm-placeholder height="150px" width="150px"/>
       <farm-placeholder/>
@@ -50,6 +58,11 @@ withSpace.args = {
 export const withMoreSpace = Template.bind({});
 withMoreSpace.args = {
   space: 'xl',
+};
+
+export const AlignCenter = Template.bind({});
+AlignCenter.args = {
+  align: 'center',
 };
 
 export const withDividers = Template.bind({});

@@ -1,5 +1,7 @@
 <script>
-import { responsiveProps, mapResponsiveProps, responsiveValidator } from './responsiveProps';
+import {
+  responsiveProps, mapResponsiveProps, responsiveValidator, mapResponsiveEnums,
+} from './responsiveProps';
 
 export default {
   name: 'FarmStack',
@@ -13,15 +15,31 @@ export default {
         'm', 'l', 'xl', 'xxl', 'none',
       ]),
     },
+    align: {
+      type: [String, Array],
+      default: 'left',
+      validator: responsiveValidator([
+        'left', 'right', 'center',
+      ]),
+    },
     dividers: {
       type: [Boolean, String],
       default: false,
     },
   },
-  computed: mapResponsiveProps({
-    _space: 'space',
-    _dividers: 'dividers',
-  }),
+  computed: {
+    ...mapResponsiveProps({
+      _space: 'space',
+      _dividers: 'dividers',
+    }),
+    ...mapResponsiveEnums({
+      align: {
+        left: 'flex-start',
+        right: 'flex-end',
+        center: 'center',
+      },
+    }),
+  },
   render(h) {
     return h(
       'div',
@@ -30,7 +48,12 @@ export default {
         // Filtering out undefined tags removes unwanted whitespace nodes.
         .filter(node => node.tag !== undefined)
         .map((node, i, arr) => {
-          const style = { paddingTop: `var(--${this._space})` };
+          const style = {
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: this._align,
+            paddingTop: `var(--${this._space})`,
+          };
           // Derive the props and style attributes to be passed to farm-divider.
           const dividerAttrs = {
             props: {
