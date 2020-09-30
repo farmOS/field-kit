@@ -2,7 +2,7 @@
   <div>
     <farm-stack space="s">
       <farm-card>
-        <farm-stack>
+        <farm-stack space="s">
           <h1>farmOS Field Kit Icons</h1>
           <p>
             The icon set for farmOS Field Kit is comprised mainly of icons from
@@ -67,16 +67,17 @@ const IconTiles = {
         .filter(c => c.name.startsWith('Icon'))
         .map(icon => h(
           'farm-card',
+          { props: { width: 'full' } },
           [h(
             'farm-stack',
+            { props: { align: 'center' } },
             [
               h(
                 'div',
-                { style: { textAlign: 'center' } },
                 [h(icon, { props: { width: this.height, height: this.height, fill: this.fill } })],
               ),
-              h('h4', { style: { textAlign: 'center' } }, convertNameToTitle(icon.name)),
-              h('pre', { style: { textAlign: 'center' } }, convertNameToTag(icon.name)),
+              h('h4', convertNameToTitle(icon.name)),
+              h('pre', convertNameToTag(icon.name)),
             ],
           )],
         )),

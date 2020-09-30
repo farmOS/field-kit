@@ -40,7 +40,7 @@ export default {
       type: [String, Array],
       default: 'content',
       validator: responsiveValidator([
-        's', 'm', 'l', 'content',
+        's', 'm', 'l', 'xl', 'full', 'content',
       ]),
     },
   },
@@ -65,9 +65,11 @@ export default {
         blue: 'var(--accent-blue)',
       },
       width: {
-        s: 'var(--xxl)',
-        m: 'calc(var(--xxl) * 2)',
-        l: 'calc(var(--xxl) * 4)',
+        s: 'var(--xl)',
+        m: 'calc(var(--xl) * 2)',
+        l: 'calc(var(--xl) * 3)',
+        xl: 'calc(var(--xl) * 4)',
+        full: 'auto',
         content: 'fit-content',
       },
       boxShadow: {
