@@ -38,7 +38,7 @@ export default {
     },
     width: {
       type: [String, Array],
-      default: 'content',
+      default: 'full',
       validator: responsiveValidator([
         's', 'm', 'l', 'xl', 'full', 'content',
       ]),

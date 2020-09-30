@@ -21,10 +21,6 @@ export default {
   name: 'FarmMain',
   mixins: [responsiveProps],
   props: {
-    justifyContent: {
-      type: [String, Array],
-      default: 'flex-start',
-    },
     space: {
       type: [String, Array],
       default: 's',
@@ -42,7 +38,6 @@ export default {
   },
   computed: {
     ...mapResponsiveProps({
-      _justifyContent: 'justifyContent',
       _space: 'space',
       _paddingX: 'paddingX',
       _paddingY: 'paddingY',
@@ -53,7 +48,6 @@ export default {
     }),
     style() {
       return {
-        justifyContent: this._justifyContent,
         paddingTop: `var(--${this._paddingTop || this._paddingY || this._space})`,
         paddingRight: `var(--${this._paddingRight || this._paddingX || this._space})`,
         paddingBottom: `var(--${this._paddingBottom || this._paddingY || this._space})`,
@@ -67,6 +61,7 @@ export default {
 <style scoped>
 main {
   background-color: var(--light);
+  padding-top: 3rem;
 }
 
 .content {

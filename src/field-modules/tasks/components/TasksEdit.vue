@@ -1045,7 +1045,7 @@ export default {
 <style scoped>
   .tab-container {
     position: relative;
-    height: calc(100vh - 3rem);
+    height: 100vh;
     width: 100vw;
     overflow-x: hidden;
   }
@@ -1099,7 +1099,7 @@ export default {
   .tab-content {
     position: absolute;
     width: 100vw;
-    top: 3rem;
+    top: 6rem;
     background-color: var(--white);
   }
 

@@ -290,10 +290,6 @@ export default {
     margin-top: 0.5rem;
   }
 
-  .module-container {
-    margin-top: 3rem;
-  }
-
   .drawer a, .drawer a:hover {
     text-decoration: none;
     color: inherit;

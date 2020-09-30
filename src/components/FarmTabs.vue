@@ -87,8 +87,8 @@ export default {
 <style scoped>
 .farm-tabs {
   position: relative;
-  height: 100%;
-  width: 100%;
+  height: 100vh;
+  width: 100vw;
   overflow-x: hidden;
 }
 
