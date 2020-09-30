@@ -66,6 +66,10 @@ export default {
 </script>
 
 <style scoped>
+.farm-inline {
+  width: 100%;
+}
+
 .farm-inline::before {
   display: block;
   content: "";
