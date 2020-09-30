@@ -66,9 +66,9 @@ export default {
       },
       width: {
         s: 'var(--xxl)',
-        m: 'calc(var(--xxl) * 1.5)',
-        l: 'calc(var(--xxl) * 2)',
-        content: 'auto',
+        m: 'calc(var(--xxl) * 2)',
+        l: 'calc(var(--xxl) * 4)',
+        content: 'fit-content',
       },
       boxShadow: {
         normal: 'var(--shadow)',
