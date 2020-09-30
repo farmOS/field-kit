@@ -6,7 +6,8 @@ export default {
   mixins: [responsiveProps],
   props: {
     columns: {
-      default: [1, 2, 3],
+      type: [Number, Array],
+      default: () => [1, 2, 3],
       validator: val => (
         Array.isArray(val)
           ? val.every(v => typeof v === 'number')
