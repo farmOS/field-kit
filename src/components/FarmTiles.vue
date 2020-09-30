@@ -6,8 +6,12 @@ export default {
   mixins: [responsiveProps],
   props: {
     columns: {
-      type: [Number, Array],
-      default: 3,
+      default: [1, 2, 3],
+      validator: val => (
+        Array.isArray(val)
+          ? val.every(v => typeof v === 'number')
+          : typeof val === 'number'
+      ),
     },
     space: {
       type: [String, Array],
@@ -58,14 +62,19 @@ export default {
   },
   render(h) {
     const renderChildNodes = (node, i, arr) => {
-      // Derive the weight prop that may be passed to the farm-divider.
-      const weight = typeof this._dividers === 'string'
-        ? this._dividers
-        : 'regular';
+      // Derive the props and style attributes to be passed to farm-divider.
+      const dividerAttrs = {
+        props: {
+          weight: typeof this._dividers === 'string'
+            ? this._dividers
+            : 'regular',
+        },
+        style: { paddingTop: `var(--${this._space})` },
+      };
       // Add a divider if specified, and if there's only a single column, and if
       // the node is not the last element.
       const children = this._dividers && this._columns === 1 && i < arr.length - 1
-        ? [node, h('farm-divider', { props: { weight } })]
+        ? [node, h('farm-divider', dividerAttrs)]
         : [node];
       return h(
         'div',

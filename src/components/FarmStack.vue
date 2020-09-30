@@ -31,14 +31,18 @@ export default {
         .filter(node => node.tag !== undefined)
         .map((node, i, arr) => {
           const style = { paddingTop: `var(--${this._space})` };
-          // Derive the weight prop that may be passed to the farm-divider.
-          const weight = typeof this._dividers === 'string'
-            ? this._dividers
-            : 'regular';
-          // Add a divider if specified, and if there's only a single column, and if
-          // the node is not the last element.
-          const children = this._dividers && this._columns === 1 && i < arr.length - 1
-            ? [node, h('farm-divider', { props: { weight } })]
+          // Derive the props and style attributes to be passed to farm-divider.
+          const dividerAttrs = {
+            props: {
+              weight: typeof this._dividers === 'string'
+                ? this._dividers
+                : 'regular',
+            },
+            style: { paddingTop: `var(--${this._space})` },
+          };
+          // Add a divider if specified and the node is not the last element.
+          const children = this._dividers && i < arr.length - 1
+            ? [node, h('farm-divider', dividerAttrs)]
             : [node];
           return h('div', { style }, children);
         }),

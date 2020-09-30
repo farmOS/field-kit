@@ -1,5 +1,7 @@
 <template>
-  <div :style="style"></div>
+  <div class="farm-divider">
+    <div :style="style"></div>
+  </div>
 </template>
 
 <script>
