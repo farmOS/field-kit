@@ -1,5 +1,4 @@
 import FarmAutocomplete from '../components/FarmAutocomplete';
-import FarmAutocompleteTemplate from './FarmAutocompleteTemplate';
 
 export default {
   title: 'Content/FarmAutocomplete',
@@ -8,8 +7,28 @@ export default {
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  components: { FarmAutocompleteTemplate },
-  template: '<farm-autocomplete-template :objects="objects" :searchKey="searchKey" :searchId="searchId" :label="label"/>',
+  template: `
+    <farm-stack>
+      <farm-autocomplete
+        :objects="objects"
+        :searchKey="searchKey"
+        :searchId="searchId"
+        :label="label"
+        @results="theResults.push(objects.find(obj => obj[searchId] === $event))"/>
+      <farm-inline>
+        <farm-chip
+          v-for="result in theResults"
+          :key="'result-' + result[searchId]">
+          {{ result[searchKey] }}
+        </farm-chip>
+      </farm-inline>
+    </farm-stack>
+  `,
+  data() {
+    return {
+      theResults: [],
+    };
+  },
 });
 
 export const Basic = Template.bind({});
