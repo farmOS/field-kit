@@ -29,7 +29,7 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { FarmTiles, FarmPlaceholder },
   template: `
-    <farm-tiles :space="space" :columns="columns" :dividers="dividers">
+    <farm-tiles :space="space" :columns="[1, 2, 3]" :dividers="dividers">
       <farm-placeholder/>
       <farm-placeholder height="150px" width="150px"/>
       <farm-placeholder/>
@@ -42,28 +42,22 @@ const Template = (args, { argTypes }) => ({
 
 export const Default = Template.bind({});
 
-export const withSpace = Template.bind({});
-withSpace.args = {
-  columns: [1, 2, 3],
-  space: 'm',
+export const withNoSpace = Template.bind({});
+withNoSpace.args = {
+  space: 'none',
 };
 
 export const withMoreSpace = Template.bind({});
 withMoreSpace.args = {
-  columns: [1, 2, 3],
-  space: 'xl',
+  space: 'l',
 };
 
 export const withDividers = Template.bind({});
 withDividers.args = {
-  columns: [1, 2, 3],
-  space: 'm',
   dividers: true,
 };
 
 export const withStrongDividers = Template.bind({});
 withStrongDividers.args = {
-  columns: [1, 2, 3],
-  space: 'm',
   dividers: 'strong',
 };
