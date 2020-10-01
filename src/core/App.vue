@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="html">
+  <div>
     <transition name="filter">
       <div class="modal-filter" v-if="showDrawer" @click="showDrawer = !showDrawer"/>
     </transition>
@@ -106,32 +106,26 @@
         </div>
       </div>
 
-      <div class="region region-content">
-        <div class="block block-system">
+      <router-view
+        name="menubar"
+        @toggle-drawer="showDrawer = !showDrawer"
+      />
 
-          <router-view
-            name="menubar"
-            @toggle-drawer="showDrawer = !showDrawer"
-          />
-
-          <router-view
-            :useGeolocation="useGeolocation"
-            :userId='userId'
-            :systemOfMeasurement='systemOfMeasurement'
-            :logTypes='logTypes'
-            :modules="modules"
-            :logs='logs'
-            :areas='areas'
-            :assets='assets'
-            :units='units'
-            :categories='categories'
-            :equipment='equipment'
-            :areaGeoJSON='areaGeoJSON'
-            @toggle-drawer="showDrawer = !showDrawer"
-          />
-
-        </div>
-      </div>
+      <router-view
+        :useGeolocation="useGeolocation"
+        :userId='userId'
+        :systemOfMeasurement='systemOfMeasurement'
+        :logTypes='logTypes'
+        :modules="modules"
+        :logs='logs'
+        :areas='areas'
+        :assets='assets'
+        :units='units'
+        :categories='categories'
+        :equipment='equipment'
+        :areaGeoJSON='areaGeoJSON'
+        @toggle-drawer="showDrawer = !showDrawer"
+      />
 
     </div>
   </div>
