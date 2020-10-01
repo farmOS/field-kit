@@ -25,5 +25,7 @@ export default {
 </script>
 
 <style>
-
+.farm-divider {
+  width: 100%;
+}
 </style>
