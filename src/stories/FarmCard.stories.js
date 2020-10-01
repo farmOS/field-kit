@@ -3,7 +3,7 @@ import FarmStack from '../components/FarmStack';
 import FarmInline from '../components/FarmInline';
 
 export default {
-  title: 'Content/FarmCard',
+  title: 'Layout/FarmCard',
   component: FarmCard,
   subcomponents: { FarmStack, FarmInline },
   argTypes: {
@@ -13,6 +13,31 @@ export default {
         options: [
           'white', 'dark', 'primary', 'secondary', 'tertiary',
           'purple', 'red', 'orange', 'yellow', 'green', 'blue',
+        ],
+      },
+    },
+    boxShadow: {
+      control: {
+        type: 'select',
+        options: [
+          'normal', 'strong', 'inverse', 'none',
+        ],
+      },
+    },
+    space: {
+      control: {
+        type: 'select',
+        options: [
+          'xxxs', 'xxs', 'xs', 's',
+          'm', 'l', 'xl', 'xxl', 'none',
+        ],
+      },
+    },
+    width: {
+      control: {
+        type: 'select',
+        options: [
+          's', 'm', 'l', 'xl', 'full', 'content',
         ],
       },
     },
@@ -49,9 +74,19 @@ Medium.args = {
   width: 'm',
 };
 
+export const FitContent = Template.bind({});
+FitContent.args = {
+  width: 'content',
+};
+
 export const ResponsiveWidth = Template.bind({});
 ResponsiveWidth.args = {
   width: ['s', 'm', 'l'],
+};
+
+export const StrongShadow = Template.bind({});
+StrongShadow.args = {
+  boxShadow: 'strong',
 };
 
 export const BlueBackground = Template.bind({});
