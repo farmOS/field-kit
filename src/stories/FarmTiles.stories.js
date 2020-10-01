@@ -44,22 +44,26 @@ export const Default = Template.bind({});
 
 export const withSpace = Template.bind({});
 withSpace.args = {
+  columns: [1, 2, 3],
   space: 'm',
 };
 
 export const withMoreSpace = Template.bind({});
 withMoreSpace.args = {
+  columns: [1, 2, 3],
   space: 'xl',
 };
 
 export const withDividers = Template.bind({});
 withDividers.args = {
+  columns: [1, 2, 3],
   space: 'm',
   dividers: true,
 };
 
 export const withStrongDividers = Template.bind({});
 withStrongDividers.args = {
+  columns: [1, 2, 3],
   space: 'm',
   dividers: 'strong',
 };
