@@ -40,10 +40,15 @@ export default {
       type: Array,
       required: true,
     },
+    initTab: {
+      type: String,
+    },
   },
   data() {
     return {
-      tabSelected: 0,
+      tabSelected: this.tabs.includes(this.initTab)
+        ? this.tabs.indexOf(this.initTab)
+        : 0,
       tabScrollPositions: this.tabs.map(() => 0),
     };
   },
@@ -87,7 +92,8 @@ export default {
 <style scoped>
 .farm-tabs {
   position: relative;
-  height: 100vh;
+  top: 3rem;
+  height: calc(100vh - 3rem);
   width: 100vw;
   overflow-x: hidden;
 }
@@ -133,5 +139,6 @@ export default {
   transition: left .5s;
   position: absolute;
   top: 3rem;
+  overflow-x: hidden;
 }
 </style>

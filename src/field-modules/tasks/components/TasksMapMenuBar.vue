@@ -19,7 +19,7 @@ export default {
         name: 'tasks-edit',
         params: {
           id: this.id,
-          tab: 'SECOND',
+          tab: 'Movement',
         },
       };
     },

@@ -1,339 +1,481 @@
 <template>
-<div class="tab-container">
-  <div class="tab-bar">
-    <div
-      class="tab"
-      :class="{ selected: tabSelected === 'FIRST' }"
-      @click="tabSelected = 'FIRST'">
-      <h4>{{ $t('GENERAL') }}</h4>
-    </div>
-    <div
-      class="tab"
-      :class="{ selected: tabSelected === 'SECOND' }"
-      @click="tabSelected = 'SECOND'">
-      <h4>{{ $t('MOVEMENT') }}</h4>
-    </div>
-  </div>
-  <div
-    class="tab-indicator"
-    :class="[
-      {first: tabSelected === 'FIRST' },
-      {second: tabSelected === 'SECOND' },
-    ]"/>
+<farm-tabs
+  :tabs="['General', 'Movement']"
+  :initTab="$router.currentRoute.params.tab">
 
-  <div
-    class="container-fluid tab-content first"
-    :class="{ selected: tabSelected === 'FIRST' }">
+  <template #general>
+    <div class="container-fluid">
 
-    <br>
-    <div class="form-item form-group">
-      <farm-toggle-check
-        :label="$t('Done')"
-        labelPosition="after"
-        :checked="currentLog.done"
-        @input="updateCurrentLog('done', $event)"/>
-    </div>
-
-    <div class="form-item form-item-name form-group">
-      <label for="name" class="control-label">{{ $t('Name') }}</label>
-      <input
-        :value="currentLog.name"
-        @input="updateCurrentLog('name', $event.target.value)"
-        :placeholder="$t('Enter name')"
-        type="text"
-        class="form-control"
-        maxlength="250"
-        autofocus>
-    </div>
-
-    <farm-date-time-form
-      :timestamp="currentLog.timestamp"
-      @input="updateCurrentLog('timestamp', $event)"/>
-
-    <!-- Allow users to change type for logs that have not yet been sent to the server
-    For logs currently on the server, display type as text -->
-    <div class="form-item form-item-name form-group">
-      <label for="type" class="control-label ">{{ $t('Log Type') }}</label>
-      <div class="input-group" v-if="(currentLog.id === undefined)">
-        <select
-          :value="currentLog.type"
-          @input="updateCurrentLog('type', $event.target.value)"
-          class="custom-select col-sm-3 ">
-            <!-- options are defined in the local logTypes variable -->
-            <option
-              v-for="(type, typeKey) in logTypes"
-              :value="typeKey"
-              :key="`${type.label}-${typeKey}`">
-              {{ $t(type.label) }}
-            </option>
-        </select>
-      </div>
-      <div class="form-item" v-if="!(currentLog.id === undefined)">
-        <p> {{ $t(logTypes[currentLog.type].label) }} </p>
-      </div>
-    </div>
-
-
-    <div class="form-item form-item-name form-group">
-      <label for="notes" class="control-label ">{{ $t('Notes') }}</label>
-      <textarea
-        :value="parseNotes(currentLog.notes)"
-        @input="updateNotes($event.target.value)"
-        :placeholder="$t('Enter notes')"
-        type="text"
-        class="form-control">
-      </textarea>
-    </div>
-
-    <h3>{{ $t('Log Categories') }}</h3>
-    <div id="categories" class="form-item form-group">
-      <p v-if="!showAllCategories
-        && (!currentLog.log_category
-        || currentLog.log_category.length < 1)">
-        {{ $t('No categories selected') }}
-      </p>
-      <farm-select-box
-        small
-        v-for="cat in filteredCategories"
-        :id="`category-${cat.tid}-${cat.name}`"
-        :selected="currentLog.log_category
-          && currentLog.log_category.some(_cat => cat.tid === _cat.id)"
-        :label="cat.name"
-        :key="`category-${cat.tid}-${cat.name}`"
-        @input="
-          $event
-          ? addCategory(cat.tid)
-          : removeCategory(currentLog
-            .log_category.findIndex(_cat => cat.tid === _cat.id))"
-        />
-      <div class="show-hide">
-        <div v-if="!showAllCategories" @click="showAllCategories = !showAllCategories">
-          <p><icon-expand-more/>{{ $t('Show More') }}</p>
-        </div>
-        <div v-if="showAllCategories" @click="showAllCategories = !showAllCategories">
-          <p><icon-expand-less/>{{ $t('Show Less') }}</p>
-        </div>
-      </div>
-    </div>
-
-    <div v-if="currentLog.quantity !== undefined">
-      <h3>{{ $t('Quantities')}}</h3>
-      <label for="quantity" class="control-label ">
-        {{ $t('Add new or edit existing quantity')}}
-      </label>
-      <div v-if="currentQuant >= 0" class="form-item form-item-name form-group">
-        <!-- To display a placeholder value ONLY when there are no existing quantities,
-        we must add the placeholder with an <option> tag and select it using the :value option -->
-        <select
-          :value="(currentLog.quantity
-            && currentLog.quantity.length > 0
-            && currentLog.quantity[currentQuant].measure)
-            ? currentLog.quantity[currentQuant].measure
-            : 'Select measure'"
-          @input="updateQuantity('measure', $event.target.value, currentQuant)"
-          class="custom-select col-sm-3 ">
-            <option>{{ $t('Select measure')}}</option>
-            <option
-              v-for="(measure, i) in quantMeasures"
-              :value="measure"
-              :key="`measure-${i}`">
-              {{ measure }}
-            </option>
-        </select>
-        <input
-          :value="(currentLog.quantity
-            && currentLog.quantity.length > 0)
-            ? currentLog.quantity[currentQuant].value
-            : null"
-          @input="updateQuantity('value', $event.target.value, currentQuant)"
-          :placeholder="$t('Enter value')"
-          type="number"
-          class="form-control"/>
-        <select
-        :value="(currentLog.quantity
-            && currentLog.quantity.length > 0
-            && currentLog.quantity[currentQuant].unit)
-            ? currentLog.quantity[currentQuant].unit.id
-            : 'Select unit'"
-          @input="updateQuantity('unit', $event.target.value, currentQuant)"
-          class="custom-select col-sm-3 ">
-            <option>{{ $t('Select unit')}}</option>
-            <option
-              v-for="(unit, i) in units"
-              :value="unit.tid"
-              :key="`unit-${i}`">
-              {{ (units) ? unit.name : '' }}
-            </option>
-        </select>
-        <input
-          :value="(currentLog.quantity
-            && currentLog.quantity.length > 0)
-            ? currentLog.quantity[currentQuant].label
-            : null"
-          @input="updateQuantity('label', $event.target.value, currentQuant)"
-          :placeholder="$t('Enter label')"
-          type="text"
-          class="form-control"/>
-      </div>
-
+      <br>
       <div class="form-item form-group">
-        <ul
-          v-if="currentLog.quantity
-            && currentLog.quantity.length > 0"
-          class="list-group">
+        <farm-toggle-check
+          :label="$t('Done')"
+          labelPosition="after"
+          :checked="currentLog.done"
+          @input="updateCurrentLog('done', $event)"/>
+      </div>
+
+      <div class="form-item form-item-name form-group">
+        <label for="name" class="control-label">{{ $t('Name') }}</label>
+        <input
+          :value="currentLog.name"
+          @input="updateCurrentLog('name', $event.target.value)"
+          :placeholder="$t('Enter name')"
+          type="text"
+          class="form-control"
+          maxlength="250"
+          autofocus>
+      </div>
+
+      <farm-date-time-form
+        :timestamp="currentLog.timestamp"
+        @input="updateCurrentLog('timestamp', $event)"/>
+
+      <!-- Allow users to change type for logs that have not yet been sent to the server
+      For logs currently on the server, display type as text -->
+      <div class="form-item form-item-name form-group">
+        <label for="type" class="control-label ">{{ $t('Log Type') }}</label>
+        <div class="input-group" v-if="(currentLog.id === undefined)">
+          <select
+            :value="currentLog.type"
+            @input="updateCurrentLog('type', $event.target.value)"
+            class="custom-select col-sm-3 ">
+              <!-- options are defined in the local logTypes variable -->
+              <option
+                v-for="(type, typeKey) in logTypes"
+                :value="typeKey"
+                :key="`${type.label}-${typeKey}`">
+                {{ $t(type.label) }}
+              </option>
+          </select>
+        </div>
+        <div class="form-item" v-if="!(currentLog.id === undefined)">
+          <p> {{ $t(logTypes[currentLog.type].label) }} </p>
+        </div>
+      </div>
+
+
+      <div class="form-item form-item-name form-group">
+        <label for="notes" class="control-label ">{{ $t('Notes') }}</label>
+        <textarea
+          :value="parseNotes(currentLog.notes)"
+          @input="updateNotes($event.target.value)"
+          :placeholder="$t('Enter notes')"
+          type="text"
+          class="form-control">
+        </textarea>
+      </div>
+
+      <h3>{{ $t('Log Categories') }}</h3>
+      <div id="categories" class="form-item form-group">
+        <p v-if="!showAllCategories
+          && (!currentLog.log_category
+          || currentLog.log_category.length < 1)">
+          {{ $t('No categories selected') }}
+        </p>
+        <farm-select-box
+          small
+          v-for="cat in filteredCategories"
+          :id="`category-${cat.tid}-${cat.name}`"
+          :selected="currentLog.log_category
+            && currentLog.log_category.some(_cat => cat.tid === _cat.id)"
+          :label="cat.name"
+          :key="`category-${cat.tid}-${cat.name}`"
+          @input="
+            $event
+            ? addCategory(cat.tid)
+            : removeCategory(currentLog
+              .log_category.findIndex(_cat => cat.tid === _cat.id))"
+          />
+        <div class="show-hide">
+          <div v-if="!showAllCategories" @click="showAllCategories = !showAllCategories">
+            <p><icon-expand-more/>{{ $t('Show More') }}</p>
+          </div>
+          <div v-if="showAllCategories" @click="showAllCategories = !showAllCategories">
+            <p><icon-expand-less/>{{ $t('Show Less') }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="currentLog.quantity !== undefined">
+        <h3>{{ $t('Quantities')}}</h3>
+        <label for="quantity" class="control-label ">
+          {{ $t('Add new or edit existing quantity')}}
+        </label>
+        <div v-if="currentQuant >= 0" class="form-item form-item-name form-group">
+          <!-- To display a placeholder value ONLY when there are no existing
+          quantities, we must add the placeholder with an <option> tag and
+          select it using the :value option -->
+          <select
+            :value="(currentLog.quantity
+              && currentLog.quantity.length > 0
+              && currentLog.quantity[currentQuant].measure)
+              ? currentLog.quantity[currentQuant].measure
+              : 'Select measure'"
+            @input="updateQuantity('measure', $event.target.value, currentQuant)"
+            class="custom-select col-sm-3 ">
+              <option>{{ $t('Select measure')}}</option>
+              <option
+                v-for="(measure, i) in quantMeasures"
+                :value="measure"
+                :key="`measure-${i}`">
+                {{ measure }}
+              </option>
+          </select>
+          <input
+            :value="(currentLog.quantity
+              && currentLog.quantity.length > 0)
+              ? currentLog.quantity[currentQuant].value
+              : null"
+            @input="updateQuantity('value', $event.target.value, currentQuant)"
+            :placeholder="$t('Enter value')"
+            type="number"
+            class="form-control"/>
+          <select
+          :value="(currentLog.quantity
+              && currentLog.quantity.length > 0
+              && currentLog.quantity[currentQuant].unit)
+              ? currentLog.quantity[currentQuant].unit.id
+              : 'Select unit'"
+            @input="updateQuantity('unit', $event.target.value, currentQuant)"
+            class="custom-select col-sm-3 ">
+              <option>{{ $t('Select unit')}}</option>
+              <option
+                v-for="(unit, i) in units"
+                :value="unit.tid"
+                :key="`unit-${i}`">
+                {{ (units) ? unit.name : '' }}
+              </option>
+          </select>
+          <input
+            :value="(currentLog.quantity
+              && currentLog.quantity.length > 0)
+              ? currentLog.quantity[currentQuant].label
+              : null"
+            @input="updateQuantity('label', $event.target.value, currentQuant)"
+            :placeholder="$t('Enter label')"
+            type="text"
+            class="form-control"/>
+        </div>
+
+        <div class="form-item form-group">
+          <ul
+            v-if="currentLog.quantity
+              && currentLog.quantity.length > 0"
+            class="list-group">
+            <li
+              v-for="(quant, i) in currentLog.quantity"
+              v-bind:key="`quantity-${i}-${Math.floor(Math.random() * 1000000)}`"
+              @click="currentQuant = i"
+              class="list-group-item">
+              {{ quant.measure }}&nbsp;
+              {{ quant.value }}&nbsp;
+              {{ (quantUnitNames.length > 0) ? quantUnitNames[i] : '' }}&nbsp;
+              {{ quant.label }}
+              <span class="remove-list-item" @click="removeQuant(i); $event.stopPropagation()">
+                &#x2715;
+              </span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="form-item form-group">
+          <button
+            type="button"
+            class="btn btn-success"
+            @click="updateQuantity(null, null, -1)"
+            name="addNewQuantity">
+            {{$t('Add another quantity')}}
+          </button>
+        </div>
+      </div>
+
+      <h3>{{ $t('Assets')}}</h3>
+      <farm-autocomplete
+        :objects="filteredAssets"
+        searchKey="name"
+        searchId="id"
+        :label="assetsRequired()
+          ? $t('Seedings must include assets!')
+          : $t('Add assets to the log')"
+        :class="{ invalid: assetsRequired() }"
+        v-on:results="addAsset($event)">
+        <template slot="empty">
+          <div class="empty-slot">
+            <em>{{ $t('No assets found.')}}</em>
+            <br>
+            <button
+              type="button"
+              class="btn btn-light"
+              @click="forceSync"
+              name="button">
+              {{ $t('Sync Now')}}
+            </button>
+          </div>
+        </template>
+      </farm-autocomplete>
+
+      <div class="form-item form-item-name form-group">
+        <ul class="list-group">
           <li
-            v-for="(quant, i) in currentLog.quantity"
-            v-bind:key="`quantity-${i}-${Math.floor(Math.random() * 1000000)}`"
-            @click="currentQuant = i"
+            v-for="(asset, i) in selectedAssets"
+            v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
             class="list-group-item">
-            {{ quant.measure }}&nbsp;
-            {{ quant.value }}&nbsp;
-            {{ (quantUnitNames.length > 0) ? quantUnitNames[i] : '' }}&nbsp;
-            {{ quant.label }}
-            <span class="remove-list-item" @click="removeQuant(i); $event.stopPropagation()">
+            {{ asset.name }}
+            <span class="remove-list-item" @click="removeAsset(asset)">
               &#x2715;
             </span>
           </li>
         </ul>
       </div>
 
-      <div class="form-item form-group">
-        <button
-          type="button"
-          class="btn btn-success"
-          @click="updateQuantity(null, null, -1)"
-          name="addNewQuantity">
-          {{$t('Add another quantity')}}
-        </button>
+      <div class="form-item form-item-name form-group">
+        <label for="type" class="control-label ">{{ $t('Equipment')}}</label>
+        <div class="input-group">
+          <select
+            @input="addEquipment($event.target.value)"
+            class="custom-select col-sm-3 ">
+            <option value=""></option>
+            <option
+              v-for="(equip, i) in equipment"
+              :value="equip.id"
+              :key="`equip-${i}`">
+              {{ (equip) ? equip.name : '' }}
+            </option>
+          </select>
+        </div>
       </div>
-    </div>
+      <div class="form-item form-group">
+        <ul v-if="currentLog.equipment" class="list-group">
+          <li
+            v-for="(equip, i) in currentLog.equipment"
+            v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
+            class="list-group-item">
+            {{ (equipmentNames.length > 0) ? equipmentNames[i] : '' }}
+            <span class="remove-list-item" @click="removeEquipment(i)">
+              &#x2715;
+            </span>
+          </li>
+        </ul>
+      </div>
 
-    <h3>{{ $t('Assets')}}</h3>
-    <farm-autocomplete
-      :objects="filteredAssets"
-      searchKey="name"
-      searchId="id"
-      :label="assetsRequired() ? $t('Seedings must include assets!') : $t('Add assets to the log')"
-      :class="{ invalid: assetsRequired() }"
-      v-on:results="addAsset($event)">
-      <template slot="empty">
-        <div class="empty-slot">
-          <em>{{ $t('No assets found.')}}</em>
-          <br>
+      <div
+        v-if="!(currentLog.type === 'farm_seeding')"
+        id="areas-and-location">
+        <h3>{{ $t('Areas')}} &amp; {{ $t('Location')}}</h3>
+
+        <!-- We're using a radio button to choose whether areas are selected
+        automatically based on device location, or using an autocomplete.
+        This will use the useLocalAreas conditional var -->
+        <div  v-if="useGeolocation" class="form-item form-item-name form-group">
+          <div class="form-check">
+            <input
+            v-model="useLocalAreas"
+            type="radio"
+            class="form-check-input"
+            id="dontUseGeo"
+            name="geoRadioGroup"
+            v-bind:value="false"
+            checked>
+            <label class="form-check-label" for="dontUseGeo">{{ $t('Search areas')}}</label>
+          </div>
+          <div class="form-check">
+            <input
+            v-model="useLocalAreas"
+            type="radio"
+            class="form-check-input"
+            id="doUseGeo"
+            name="geoRadioGroup"
+            v-bind:value="true"
+            >
+            <label class="form-check-label" for="doUseGeo">{{ $t('Use my location')}}</label>
+          </div>
+        </div>
+
+        <!-- If using the user's, show a select menu of nearby locations -->
+        <div v-if="useLocalAreas" class="form-group">
+          <label for="areaSelector">{{ $t('Farm areas near your current location')}}</label>
+          <select
+            @input="addArea($event.target.value)"
+            class="form-control"
+            name="areas">
+            <option v-if="localAreas.length < 1" value="">No other areas nearby</option>
+            <option v-if="localAreas.length > 0" value="" selected>-- Select an Area --</option>
+            <option
+              v-for="area in localAreas"
+              :value="area.tid"
+              v-bind:key="`area-${area.tid}`">
+              {{area.name}}
+            </option>
+          </select>
+        </div>
+
+        <!-- If not using the user's location, show a search bar -->
+        <farm-autocomplete
+          v-if="!useLocalAreas"
+          :objects="filteredAreas"
+          searchKey="name"
+          searchId="tid"
+          :label="$t('Add areas to the log')"
+          v-on:results="addArea($event)">
+          <template slot="empty">
+            <div class="empty-slot">
+              <em>{{ $t('No areas found.')}}</em>
+              <br>
+              <button
+                type="button"
+                class="btn btn-light"
+                @click="forceSync"
+                name="button">
+              {{ $t('Sync Now')}}
+              </button>
+            </div>
+          </template>
+        </farm-autocomplete>
+
+        <!-- Display the areas attached to each log -->
+        <div class="form-item form-item-name form-group">
+          <ul class="list-group">
+            <li
+              v-for="(area, i) in selectedAreas"
+              v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
+              class="list-group-item">
+              {{ area.name }}
+              <span class="remove-list-item" @click="removeArea(area)">
+                &#x2715;
+              </span>
+            </li>
+          </ul>
+        </div>
+
+
+        <!-- We're using a button to attach the current location to the log
+        as a geofield -->
+
+        <div v-if="useGeolocation" class="form-item form-item-name form-group">
           <button
+            :disabled='false'
+            title="Add my GPS location to the log"
+            @click="addLocation"
             type="button"
-            class="btn btn-light"
-            @click="forceSync"
-            name="button">
-            {{ $t('Sync Now')}}
+            class="btn btn-success btn-navbar">
+            {{ $t('Add my GPS location to the log')}}
           </button>
         </div>
-      </template>
-    </farm-autocomplete>
 
-    <div class="form-item form-item-name form-group">
-      <ul class="list-group">
-        <li
-          v-for="(asset, i) in selectedAssets"
-          v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
-          class="list-group-item">
-          {{ asset.name }}
-          <span class="remove-list-item" @click="removeAsset(asset)">
-            &#x2715;
-          </span>
-        </li>
-      </ul>
-    </div>
-
-    <div class="form-item form-item-name form-group">
-      <label for="type" class="control-label ">{{ $t('Equipment')}}</label>
-      <div class="input-group">
-        <select
-          @input="addEquipment($event.target.value)"
-          class="custom-select col-sm-3 ">
-          <option value=""></option>
-          <option
-            v-for="(equip, i) in equipment"
-            :value="equip.id"
-            :key="`equip-${i}`">
-            {{ (equip) ? equip.name : '' }}
-          </option>
-        </select>
+        <!-- Display a spinner while getting geolocation, then display the location -->
+        <div v-if="currentLog.geofield" class="form-item form-item-name form-group">
+          <ul class="list-group">
+            <li
+              class="list-group-item"
+              v-for="(point, i) in geofieldAsArrayOfWktPoints"
+              :key="`geofield-${i}`">
+              {{ point }}
+              <span class="remove-list-item" @click="removeLocation(i)">
+                &#x2715;
+              </span>
+            </li>
+            <li class="list-item-group" v-if="isWorking">
+              <icon-spinner/>
+            </li>
+          </ul>
+        </div>
       </div>
+
+      <h3>{{ $t('Images')}}</h3>
+
+      <div
+        v-if="isNative"
+        class="form-item form-item-name form-group">
+        <button
+          :disabled='false'
+          title="Take picture with camera"
+          @click="getPhoto"
+          class="btn btn-info btn-navbar navbar-right"
+          type="button">
+          {{ $t('Take picture with camera')}}
+        </button>
+      </div>
+
+      <div class="form-item form-item-name form-group">
+        <div class="input-group ">
+          <label
+            class="custom-file-label"
+            for="customFile">
+            {{ $t('Select photo from file')}}
+          </label>
+          <input
+            type="file"
+            accept="image/*"
+            class="custom-file-input"
+            ref="photo"
+            @change="loadPhoto($event.target.files)">
+        </div>
+      </div>
+      <div class="form-item form-item-name form-group">
+        <!-- NOTE: Display is set to 'none' if the img fails to load. -->
+        <img
+          v-for="(url, i) in imageUrls"
+          :src="url"
+          :key="`preview-${i}`"
+          onerror="this.style.display='none'"
+          class="preview" />
+      </div>
+
     </div>
-    <div class="form-item form-group">
-      <ul v-if="currentLog.equipment" class="list-group">
-        <li
-          v-for="(equip, i) in currentLog.equipment"
-          v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
-          class="list-group-item">
-          {{ (equipmentNames.length > 0) ? equipmentNames[i] : '' }}
-          <span class="remove-list-item" @click="removeEquipment(i)">
-            &#x2715;
-          </span>
-        </li>
-      </ul>
-    </div>
+  </template>
+
+  <template #movement>
 
     <div
-      v-if="!(currentLog.type === 'farm_seeding')"
-      id="areas-and-location">
-      <h3>{{ $t('Areas')}} &amp; {{ $t('Location')}}</h3>
+      class="container-fluid"
+      v-if="currentLog.movement !== undefined">
 
-      <!-- We're using a radio button to choose whether areas are selected
-      automatically based on device location, or using an autocomplete.
-      This will use the useLocalAreas conditional var -->
-      <div  v-if="useGeolocation" class="form-item form-item-name form-group">
-        <div class="form-check">
-          <input
-          v-model="useLocalAreas"
-          type="radio"
-          class="form-check-input"
-          id="dontUseGeo"
-          name="geoRadioGroup"
-          v-bind:value="false"
-          checked>
-          <label class="form-check-label" for="dontUseGeo">{{ $t('Search areas')}}</label>
-        </div>
-        <div class="form-check">
-          <input
-          v-model="useLocalAreas"
-          type="radio"
-          class="form-check-input"
-          id="doUseGeo"
-          name="geoRadioGroup"
-          v-bind:value="true"
-          >
-          <label class="form-check-label" for="doUseGeo">{{ $t('Use my location')}}</label>
-        </div>
-      </div>
-
-      <!-- If using the user's, show a select menu of nearby locations -->
-      <div v-if="useLocalAreas" class="form-group">
-        <label for="areaSelector">{{ $t('Farm areas near your current location')}}</label>
-        <select
-          @input="addArea($event.target.value)"
-          class="form-control"
-          name="areas">
-          <option v-if="localAreas.length < 1" value="">No other areas nearby</option>
-          <option v-if="localAreas.length > 0" value="" selected>-- Select an Area --</option>
-          <option
-            v-for="area in localAreas"
-            :value="area.tid"
-            v-bind:key="`area-${area.tid}`">
-            {{area.name}}
-          </option>
-        </select>
-      </div>
-
-      <!-- If not using the user's location, show a search bar -->
+      <br>
       <farm-autocomplete
-        v-if="!useLocalAreas"
-        :objects="filteredAreas"
+        :objects="filteredAssets"
+        searchKey="name"
+        searchId="id"
+        :label="assetsRequired()
+          ? $t('Seedings must include assets!')
+          : $t('Add assets to be moved')"
+        :class="{ invalid: assetsRequired() }"
+        v-on:results="addAsset($event)">
+        <template slot="empty">
+          <div class="empty-slot">
+            <em>{{ $t('No assets found.')}}</em>
+            <br>
+            <button
+              type="button"
+              class="btn btn-light"
+              @click="forceSync"
+              name="button">
+              {{ $t('Sync Now')}}
+            </button>
+          </div>
+        </template>
+      </farm-autocomplete>
+
+      <div class="form-item form-item-name form-group">
+        <ul class="list-group">
+          <li
+            v-for="(asset, i) in selectedAssets"
+            v-bind:key="`asset-${i}-${Math.floor(Math.random() * 1000000)}`"
+            class="list-group-item">
+            {{ asset.name }}
+            <span class="remove-list-item" @click="removeAsset(asset)">
+              &#x2715;
+            </span>
+          </li>
+        </ul>
+      </div>
+
+      <farm-autocomplete
+        :objects="filteredMovementAreas"
         searchKey="name"
         searchId="tid"
-        :label="$t('Add areas to the log')"
-        v-on:results="addArea($event)">
+        :label="$t('Movement to')"
+        v-on:results="addMovementArea($event)">
         <template slot="empty">
           <div class="empty-slot">
             <em>{{ $t('No areas found.')}}</em>
@@ -343,201 +485,50 @@
               class="btn btn-light"
               @click="forceSync"
               name="button">
-             {{ $t('Sync Now')}}
+              {{ $t('Sync Now')}}
             </button>
           </div>
         </template>
       </farm-autocomplete>
 
-      <!-- Display the areas attached to each log -->
       <div class="form-item form-item-name form-group">
         <ul class="list-group">
           <li
-            v-for="(area, i) in selectedAreas"
+            v-for="(area, i) in selectedMovementAreas"
             v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
             class="list-group-item">
             {{ area.name }}
-            <span class="remove-list-item" @click="removeArea(area)">
+            <span class="remove-list-item" @click="removeMovementArea(area)">
               &#x2715;
             </span>
           </li>
         </ul>
       </div>
 
+      <router-link :to="{ name: 'tasks-map' }">
+        <farm-map
+          id="map"
+          :overrideStyles="{ height: '90vw' }"
+          :drawing="false"
+          :options="{
+            controls: (defaults) =>
+              defaults.filter(def => def.constructor.name === 'Attribution'),
+            interactions: false,
+          }"
+          :wkt=mapLayers
+          :geojson="{
+            title: 'areas',
+            geojson: areaGeoJSON,
+            color: 'grey',
+          }"/>
+      </router-link>
 
-      <!-- We're using a button to attach the current location to the log
-      as a geofield -->
+      <br>
 
-      <div v-if="useGeolocation" class="form-item form-item-name form-group">
-        <button
-          :disabled='false'
-          title="Add my GPS location to the log"
-          @click="addLocation"
-          type="button"
-          class="btn btn-success btn-navbar">
-          {{ $t('Add my GPS location to the log')}}
-        </button>
-      </div>
-
-      <!-- Display a spinner while getting geolocation, then display the location -->
-      <div v-if="currentLog.geofield" class="form-item form-item-name form-group">
-        <ul class="list-group">
-          <li
-            class="list-group-item"
-            v-for="(point, i) in geofieldAsArrayOfWktPoints"
-            :key="`geofield-${i}`">
-            {{ point }}
-            <span class="remove-list-item" @click="removeLocation(i)">
-              &#x2715;
-            </span>
-          </li>
-          <li class="list-item-group" v-if="isWorking">
-            <icon-spinner/>
-          </li>
-        </ul>
-      </div>
     </div>
+  </template>
 
-    <h3>{{ $t('Images')}}</h3>
-
-    <div
-      v-if="isNative"
-      class="form-item form-item-name form-group">
-      <button
-        :disabled='false'
-        title="Take picture with camera"
-        @click="getPhoto"
-        class="btn btn-info btn-navbar navbar-right"
-        type="button">
-        {{ $t('Take picture with camera')}}
-      </button>
-    </div>
-
-    <div class="form-item form-item-name form-group">
-      <div class="input-group ">
-        <label
-          class="custom-file-label"
-          for="customFile">
-          {{ $t('Select photo from file')}}
-        </label>
-        <input
-          type="file"
-          accept="image/*"
-          class="custom-file-input"
-          ref="photo"
-          @change="loadPhoto($event.target.files)">
-      </div>
-    </div>
-    <div class="form-item form-item-name form-group">
-      <!-- NOTE: Display is set to 'none' if the img fails to load. -->
-      <img
-        v-for="(url, i) in imageUrls"
-        :src="url"
-        :key="`preview-${i}`"
-        onerror="this.style.display='none'"
-        class="preview" />
-    </div>
-
-  </div>
-
-  <div
-    class="container-fluid tab-content second"
-    :class="{ selected: tabSelected === 'SECOND' }"
-    v-if="currentLog.movement !== undefined">
-
-    <br>
-    <farm-autocomplete
-      :objects="filteredAssets"
-      searchKey="name"
-      searchId="id"
-      :label="assetsRequired() ? $t('Seedings must include assets!') : $t('Add assets to be moved')"
-      :class="{ invalid: assetsRequired() }"
-      v-on:results="addAsset($event)">
-      <template slot="empty">
-        <div class="empty-slot">
-          <em>{{ $t('No assets found.')}}</em>
-          <br>
-          <button
-            type="button"
-            class="btn btn-light"
-            @click="forceSync"
-            name="button">
-            {{ $t('Sync Now')}}
-          </button>
-        </div>
-      </template>
-    </farm-autocomplete>
-
-    <div class="form-item form-item-name form-group">
-      <ul class="list-group">
-        <li
-          v-for="(asset, i) in selectedAssets"
-          v-bind:key="`asset-${i}-${Math.floor(Math.random() * 1000000)}`"
-          class="list-group-item">
-          {{ asset.name }}
-          <span class="remove-list-item" @click="removeAsset(asset)">
-            &#x2715;
-          </span>
-        </li>
-      </ul>
-    </div>
-
-    <farm-autocomplete
-      :objects="filteredMovementAreas"
-      searchKey="name"
-      searchId="tid"
-      :label="$t('Movement to')"
-      v-on:results="addMovementArea($event)">
-      <template slot="empty">
-        <div class="empty-slot">
-          <em>{{ $t('No areas found.')}}</em>
-          <br>
-          <button
-            type="button"
-            class="btn btn-light"
-            @click="forceSync"
-            name="button">
-            {{ $t('Sync Now')}}
-          </button>
-        </div>
-      </template>
-    </farm-autocomplete>
-
-    <div class="form-item form-item-name form-group">
-      <ul class="list-group">
-        <li
-          v-for="(area, i) in selectedMovementAreas"
-          v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
-          class="list-group-item">
-          {{ area.name }}
-          <span class="remove-list-item" @click="removeMovementArea(area)">
-            &#x2715;
-          </span>
-        </li>
-      </ul>
-    </div>
-
-    <router-link :to="{ name: 'tasks-map' }">
-      <farm-map
-        id="map"
-        :overrideStyles="{ height: '90vw' }"
-        :drawing="false"
-        :options="{
-          controls: (defaults) => defaults.filter(def => def.constructor.name === 'Attribution'),
-          interactions: false,
-        }"
-        :wkt=mapLayers
-        :geojson="{
-          title: 'areas',
-          geojson: areaGeoJSON,
-          color: 'grey',
-        }"/>
-    </router-link>
-
-    <br>
-
-  </div>
-</div>
+</farm-tabs>
 </template>
 
 <script>
@@ -554,7 +545,6 @@ export default {
 
   data() {
     return {
-      tabSelected: 'FIRST',
       useLocalAreas: false,
       isWorking: false,
       localAreas: [],
@@ -589,12 +579,6 @@ export default {
     'equipment',
     'areaGeoJSON',
   ],
-
-  beforeMount() {
-    if (this.$router.currentRoute.params.tab) {
-      this.tabSelected = this.$router.currentRoute.params.tab;
-    }
-  },
 
   methods: {
     forceSync() {
@@ -1043,81 +1027,6 @@ export default {
 </script>
 
 <style scoped>
-  .tab-container {
-    position: relative;
-    height: 100vh;
-    width: 100vw;
-    overflow-x: hidden;
-  }
-
-  .tab-bar {
-    display: flex;
-    flex-flow: row nowrap;
-    position: fixed;
-    top: 3rem;
-    height: 3rem;
-    width: 100%;
-    z-index: 1000;
-    background-color: var(--primary);
-    box-shadow: var(--shadow-strong);
-  }
-
-  .tab {
-    font-size: 1rem;
-    line-height: 1.5rem;
-    color: var(--white);
-    transition: color .5s;
-    flex: 1 0 50%;
-    text-align: center;
-    padding-top: 1rem;
-  }
-
-  .tab:not(.selected) {
-    color: var(--white-transparent);
-    transition: color .5s;
-  }
-
-  .tab-indicator {
-    position: fixed;
-    top: calc(6rem - 2px);
-    z-index: 1001;
-    height: 2px;
-    width: 50%;
-    background-color: var(--white);
-  }
-
-  .tab-indicator.first {
-    transition: left .5s;
-    left: calc(25% - 25%);
-  }
-
-  .tab-indicator.second {
-    transition: left .5s;
-    left: calc(75% - 25%);
-  }
-
-  .tab-content {
-    position: absolute;
-    width: 100vw;
-    top: 6rem;
-    background-color: var(--white);
-  }
-
-  .tab-content.selected {
-    transition: left .5s;
-    left: 0;
-  }
-
-  .tab-content.first:not(.selected) {
-    transition: left .5s;
-    left: -100vw;
-  }
-
-  .tab-content.second:not(.selected) {
-    transition: left .5s;
-    left: 100vw;
-  }
-
   .reset-margin {
     margin: 0 0;
   }
