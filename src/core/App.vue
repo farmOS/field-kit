@@ -88,29 +88,10 @@
     </transition>
 
     <div class="module-container">
-
-      <div
-        v-for="(err, index) in errors"
-        :key="`err-${errors.indexOf(err)}`">
-        <div
-          v-if="err.show"
-          class="alert alert-warning alert-dismissable" >
-          <span v-html="err.message"></span>
-          <button
-            type="button"
-            @click="closeError(index)"
-            class="close"
-            aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-      </div>
-
       <router-view
         name="menubar"
         @toggle-drawer="showDrawer = !showDrawer"
       />
-
       <router-view
         :useGeolocation="useGeolocation"
         :userId='userId'
@@ -126,8 +107,26 @@
         :areaGeoJSON='areaGeoJSON'
         @toggle-drawer="showDrawer = !showDrawer"
       />
-
     </div>
+
+    <div
+      v-for="(err, index) in errors"
+      :key="`err-${errors.indexOf(err)}`"
+      class="error-messages">
+      <div
+        v-if="err.show"
+        class="alert alert-warning alert-dismissable" >
+        <span v-html="err.message"></span>
+        <button
+          type="button"
+          @click="closeError(index)"
+          class="close"
+          aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -287,6 +286,20 @@ export default {
   .drawer a, .drawer a:hover {
     text-decoration: none;
     color: inherit;
+  }
+
+  .error-messages {
+    position: absolute;
+    z-index: 1001;
+    bottom: var(--s);
+    right: var(--s);
+    left: var(--s);
+    text-align: center;
+  }
+
+  .alert {
+    display: inline-block;
+    box-shadow: var(--shadow-strong);
   }
 
 </style>
