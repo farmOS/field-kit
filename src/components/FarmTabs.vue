@@ -163,6 +163,7 @@ export default {
   text-align: center;
   text-transform: uppercase;
   padding-top: 1rem;
+  cursor: pointer;
 }
 
 .tab:not(.selected) {
