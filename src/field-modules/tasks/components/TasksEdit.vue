@@ -2,103 +2,105 @@
 <farm-tabs
   :tabs="['General', 'Movement']"
   :initTab="$router.currentRoute.params.tab"
-  :space="['none', 'none', 'm']">
+  :space="['none', 'none', 's']">
 
   <template #general>
-    <div class="container-fluid">
+    <farm-stack :space="['none', 'none', 's']" :dividers="true">
 
-      <br>
-      <div class="form-item form-group">
-        <farm-toggle-check
-          :label="$t('Done')"
-          labelPosition="after"
-          :checked="currentLog.done"
-          @input="updateCurrentLog('done', $event)"/>
-      </div>
-
-      <div class="form-item form-item-name form-group">
-        <label for="name" class="control-label">{{ $t('Name') }}</label>
-        <input
-          :value="currentLog.name"
-          @input="updateCurrentLog('name', $event.target.value)"
-          :placeholder="$t('Enter name')"
-          type="text"
-          class="form-control"
-          maxlength="250"
-          autofocus>
-      </div>
-
-      <farm-date-time-form
-        :timestamp="currentLog.timestamp"
-        @input="updateCurrentLog('timestamp', $event)"/>
-
-      <!-- Allow users to change type for logs that have not yet been sent to the server
-      For logs currently on the server, display type as text -->
-      <div class="form-item form-item-name form-group">
-        <label for="type" class="control-label ">{{ $t('Log Type') }}</label>
-        <div class="input-group" v-if="(currentLog.id === undefined)">
-          <select
-            :value="currentLog.type"
-            @input="updateCurrentLog('type', $event.target.value)"
-            class="custom-select col-sm-3 ">
-              <!-- options are defined in the local logTypes variable -->
-              <option
-                v-for="(type, typeKey) in logTypes"
-                :value="typeKey"
-                :key="`${type.label}-${typeKey}`">
-                {{ $t(type.label) }}
-              </option>
-          </select>
+      <farm-card>
+        <div class="form-item form-group">
+          <farm-toggle-check
+            :label="$t('Done')"
+            labelPosition="after"
+            :checked="currentLog.done"
+            @input="updateCurrentLog('done', $event)"/>
         </div>
-        <div class="form-item" v-if="!(currentLog.id === undefined)">
-          <p> {{ $t(logTypes[currentLog.type].label) }} </p>
+        <div class="form-item form-item-name form-group">
+          <label for="name" class="control-label">{{ $t('Name') }}</label>
+          <input
+            :value="currentLog.name"
+            @input="updateCurrentLog('name', $event.target.value)"
+            :placeholder="$t('Enter name')"
+            type="text"
+            class="form-control"
+            maxlength="250"
+            autofocus>
         </div>
-      </div>
-
-
-      <div class="form-item form-item-name form-group">
-        <label for="notes" class="control-label ">{{ $t('Notes') }}</label>
-        <textarea
-          :value="parseNotes(currentLog.notes)"
-          @input="updateNotes($event.target.value)"
-          :placeholder="$t('Enter notes')"
-          type="text"
-          class="form-control">
-        </textarea>
-      </div>
-
-      <h3>{{ $t('Log Categories') }}</h3>
-      <div id="categories" class="form-item form-group">
-        <p v-if="!showAllCategories
-          && (!currentLog.log_category
-          || currentLog.log_category.length < 1)">
-          {{ $t('No categories selected') }}
-        </p>
-        <farm-select-box
-          small
-          v-for="cat in filteredCategories"
-          :id="`category-${cat.tid}-${cat.name}`"
-          :selected="currentLog.log_category
-            && currentLog.log_category.some(_cat => cat.tid === _cat.id)"
-          :label="cat.name"
-          :key="`category-${cat.tid}-${cat.name}`"
-          @input="
-            $event
-            ? addCategory(cat.tid)
-            : removeCategory(currentLog
-              .log_category.findIndex(_cat => cat.tid === _cat.id))"
-          />
-        <div class="show-hide">
-          <div v-if="!showAllCategories" @click="showAllCategories = !showAllCategories">
-            <p><icon-expand-more/>{{ $t('Show More') }}</p>
+        <farm-date-time-form
+          :timestamp="currentLog.timestamp"
+          @input="updateCurrentLog('timestamp', $event)"/>
+        <!-- Allow users to change type for logs that have not yet been sent to the server
+        For logs currently on the server, display type as text -->
+        <div class="form-item form-item-name form-group">
+          <label for="type" class="control-label ">{{ $t('Log Type') }}</label>
+          <div class="input-group" v-if="(currentLog.id === undefined)">
+            <select
+              :value="currentLog.type"
+              @input="updateCurrentLog('type', $event.target.value)"
+              class="custom-select col-sm-3 ">
+                <!-- options are defined in the local logTypes variable -->
+                <option
+                  v-for="(type, typeKey) in logTypes"
+                  :value="typeKey"
+                  :key="`${type.label}-${typeKey}`">
+                  {{ $t(type.label) }}
+                </option>
+            </select>
           </div>
-          <div v-if="showAllCategories" @click="showAllCategories = !showAllCategories">
-            <p><icon-expand-less/>{{ $t('Show Less') }}</p>
+          <div class="form-item" v-if="!(currentLog.id === undefined)">
+            <p> {{ $t(logTypes[currentLog.type].label) }} </p>
           </div>
         </div>
-      </div>
+      </farm-card>
 
-      <div v-if="currentLog.quantity !== undefined">
+      <farm-card>
+        <div class="form-item form-item-name form-group">
+          <label for="notes" class="control-label ">{{ $t('Notes') }}</label>
+          <textarea
+            :value="parseNotes(currentLog.notes)"
+            @input="updateNotes($event.target.value)"
+            :placeholder="$t('Enter notes')"
+            type="text"
+            rows="4"
+            class="form-control">
+          </textarea>
+        </div>
+      </farm-card>
+
+      <farm-card>
+        <h3>{{ $t('Log Categories') }}</h3>
+        <div id="categories" class="form-item form-group">
+          <p v-if="!showAllCategories
+            && (!currentLog.log_category
+            || currentLog.log_category.length < 1)">
+            {{ $t('No categories selected') }}
+          </p>
+          <farm-select-box
+            small
+            v-for="cat in filteredCategories"
+            :id="`category-${cat.tid}-${cat.name}`"
+            :selected="currentLog.log_category
+              && currentLog.log_category.some(_cat => cat.tid === _cat.id)"
+            :label="cat.name"
+            :key="`category-${cat.tid}-${cat.name}`"
+            @input="
+              $event
+              ? addCategory(cat.tid)
+              : removeCategory(currentLog
+                .log_category.findIndex(_cat => cat.tid === _cat.id))"
+            />
+          <div class="show-hide">
+            <div v-if="!showAllCategories" @click="showAllCategories = !showAllCategories">
+              <p><icon-expand-more/>{{ $t('Show More') }}</p>
+            </div>
+            <div v-if="showAllCategories" @click="showAllCategories = !showAllCategories">
+              <p><icon-expand-less/>{{ $t('Show Less') }}</p>
+            </div>
+          </div>
+        </div>
+      </farm-card>
+
+      <farm-card v-if="currentLog.quantity !== undefined">
         <h3>{{ $t('Quantities')}}</h3>
         <label for="quantity" class="control-label ">
           {{ $t('Add new or edit existing quantity')}}
@@ -158,7 +160,6 @@
             type="text"
             class="form-control"/>
         </div>
-
         <div class="form-item form-group">
           <ul
             v-if="currentLog.quantity
@@ -179,7 +180,6 @@
             </li>
           </ul>
         </div>
-
         <div class="form-item form-group">
           <button
             type="button"
@@ -189,82 +189,79 @@
             {{$t('Add another quantity')}}
           </button>
         </div>
-      </div>
+      </farm-card>
 
-      <h3>{{ $t('Assets')}}</h3>
-      <farm-autocomplete
-        :objects="filteredAssets"
-        searchKey="name"
-        searchId="id"
-        :label="assetsRequired()
-          ? $t('Seedings must include assets!')
-          : $t('Add assets to the log')"
-        :class="{ invalid: assetsRequired() }"
-        v-on:results="addAsset($event)">
-        <template slot="empty">
-          <div class="empty-slot">
-            <em>{{ $t('No assets found.')}}</em>
-            <br>
-            <button
-              type="button"
-              class="btn btn-light"
-              @click="forceSync"
-              name="button">
-              {{ $t('Sync Now')}}
-            </button>
-          </div>
-        </template>
-      </farm-autocomplete>
-
-      <div class="form-item form-item-name form-group">
-        <ul class="list-group">
-          <li
-            v-for="(asset, i) in selectedAssets"
-            v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
-            class="list-group-item">
-            {{ asset.name }}
-            <span class="remove-list-item" @click="removeAsset(asset)">
-              &#x2715;
-            </span>
-          </li>
-        </ul>
-      </div>
-
-      <div class="form-item form-item-name form-group">
-        <label for="type" class="control-label ">{{ $t('Equipment')}}</label>
-        <div class="input-group">
-          <select
-            @input="addEquipment($event.target.value)"
-            class="custom-select col-sm-3 ">
-            <option value=""></option>
-            <option
-              v-for="(equip, i) in equipment"
-              :value="equip.id"
-              :key="`equip-${i}`">
-              {{ (equip) ? equip.name : '' }}
-            </option>
-          </select>
+      <farm-card>
+        <h3>{{ $t('Assets')}}</h3>
+        <farm-autocomplete
+          :objects="filteredAssets"
+          searchKey="name"
+          searchId="id"
+          :label="assetsRequired()
+            ? $t('Seedings must include assets!')
+            : $t('Add assets to the log')"
+          :class="{ invalid: assetsRequired() }"
+          v-on:results="addAsset($event)">
+          <template slot="empty">
+            <div class="empty-slot">
+              <em>{{ $t('No assets found.')}}</em>
+              <br>
+              <button
+                type="button"
+                class="btn btn-light"
+                @click="forceSync"
+                name="button">
+                {{ $t('Sync Now')}}
+              </button>
+            </div>
+          </template>
+        </farm-autocomplete>
+        <div class="form-item form-item-name form-group">
+          <ul class="list-group">
+            <li
+              v-for="(asset, i) in selectedAssets"
+              v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
+              class="list-group-item">
+              {{ asset.name }}
+              <span class="remove-list-item" @click="removeAsset(asset)">
+                &#x2715;
+              </span>
+            </li>
+          </ul>
         </div>
-      </div>
-      <div class="form-item form-group">
-        <ul v-if="currentLog.equipment" class="list-group">
-          <li
-            v-for="(equip, i) in currentLog.equipment"
-            v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
-            class="list-group-item">
-            {{ (equipmentNames.length > 0) ? equipmentNames[i] : '' }}
-            <span class="remove-list-item" @click="removeEquipment(i)">
-              &#x2715;
-            </span>
-          </li>
-        </ul>
-      </div>
+        <div class="form-item form-item-name form-group">
+          <label for="type" class="control-label ">{{ $t('Equipment')}}</label>
+          <div class="input-group">
+            <select
+              @input="addEquipment($event.target.value)"
+              class="custom-select col-sm-3 ">
+              <option value=""></option>
+              <option
+                v-for="(equip, i) in equipment"
+                :value="equip.id"
+                :key="`equip-${i}`">
+                {{ (equip) ? equip.name : '' }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="form-item form-group">
+          <ul v-if="currentLog.equipment" class="list-group">
+            <li
+              v-for="(equip, i) in currentLog.equipment"
+              v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
+              class="list-group-item">
+              {{ (equipmentNames.length > 0) ? equipmentNames[i] : '' }}
+              <span class="remove-list-item" @click="removeEquipment(i)">
+                &#x2715;
+              </span>
+            </li>
+          </ul>
+        </div>
+      </farm-card>
 
-      <div
-        v-if="!(currentLog.type === 'farm_seeding')"
-        id="areas-and-location">
+      <farm-card v-if="currentLog.type !== 'farm_seeding'">
         <h3>{{ $t('Areas')}} &amp; {{ $t('Location')}}</h3>
-
         <!-- We're using a radio button to choose whether areas are selected
         automatically based on device location, or using an autocomplete.
         This will use the useLocalAreas conditional var -->
@@ -292,7 +289,6 @@
             <label class="form-check-label" for="doUseGeo">{{ $t('Use my location')}}</label>
           </div>
         </div>
-
         <!-- If using the user's, show a select menu of nearby locations -->
         <div v-if="useLocalAreas" class="form-group">
           <label for="areaSelector">{{ $t('Farm areas near your current location')}}</label>
@@ -310,7 +306,6 @@
             </option>
           </select>
         </div>
-
         <!-- If not using the user's location, show a search bar -->
         <farm-autocomplete
           v-if="!useLocalAreas"
@@ -333,7 +328,6 @@
             </div>
           </template>
         </farm-autocomplete>
-
         <!-- Display the areas attached to each log -->
         <div class="form-item form-item-name form-group">
           <ul class="list-group">
@@ -348,11 +342,8 @@
             </li>
           </ul>
         </div>
-
-
         <!-- We're using a button to attach the current location to the log
         as a geofield -->
-
         <div v-if="useGeolocation" class="form-item form-item-name form-group">
           <button
             :disabled='false'
@@ -363,7 +354,6 @@
             {{ $t('Add my GPS location to the log')}}
           </button>
         </div>
-
         <!-- Display a spinner while getting geolocation, then display the location -->
         <div v-if="currentLog.geofield" class="form-item form-item-name form-group">
           <ul class="list-group">
@@ -381,60 +371,55 @@
             </li>
           </ul>
         </div>
-      </div>
+      </farm-card>
 
-      <h3>{{ $t('Images')}}</h3>
-
-      <div
-        v-if="isNative"
-        class="form-item form-item-name form-group">
-        <button
-          :disabled='false'
-          title="Take picture with camera"
-          @click="getPhoto"
-          class="btn btn-info btn-navbar navbar-right"
-          type="button">
-          {{ $t('Take picture with camera')}}
-        </button>
-      </div>
-
-      <div class="form-item form-item-name form-group">
-        <div class="input-group ">
-          <label
-            class="custom-file-label"
-            for="customFile">
-            {{ $t('Select photo from file')}}
-          </label>
-          <input
-            type="file"
-            accept="image/*"
-            class="custom-file-input"
-            ref="photo"
-            @change="loadPhoto($event.target.files)">
+      <farm-card>
+        <h3>{{ $t('Images')}}</h3>
+        <div
+          v-if="isNative"
+          class="form-item form-item-name form-group">
+          <button
+            :disabled='false'
+            title="Take picture with camera"
+            @click="getPhoto"
+            class="btn btn-info btn-navbar navbar-right"
+            type="button">
+            {{ $t('Take picture with camera')}}
+          </button>
         </div>
-      </div>
-      <div class="form-item form-item-name form-group">
-        <!-- NOTE: Display is set to 'none' if the img fails to load. -->
-        <img
-          v-for="(url, i) in imageUrls"
-          :src="url"
-          :key="`preview-${i}`"
-          onerror="this.style.display='none'"
-          class="preview" />
-      </div>
+        <div class="form-item form-item-name form-group">
+          <div class="input-group ">
+            <label
+              class="custom-file-label"
+              for="customFile">
+              {{ $t('Select photo from file')}}
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              class="custom-file-input"
+              ref="photo"
+              @change="loadPhoto($event.target.files)">
+          </div>
+        </div>
+        <div class="form-item form-item-name form-group">
+          <!-- NOTE: Display is set to 'none' if the img fails to load. -->
+          <img
+            v-for="(url, i) in imageUrls"
+            :src="url"
+            :key="`preview-${i}`"
+            onerror="this.style.display='none'"
+            class="preview" />
+        </div>
+      </farm-card>
 
-      <br>
-
-    </div>
+    </farm-stack>
   </template>
 
   <template #movement>
 
-    <div
-      class="container-fluid"
-      v-if="currentLog.movement !== undefined">
+    <farm-card v-if="currentLog.movement !== undefined">
 
-      <br>
       <farm-autocomplete
         :objects="filteredAssets"
         searchKey="name"
@@ -526,9 +511,7 @@
           }"/>
       </router-link>
 
-      <br>
-
-    </div>
+    </farm-card>
   </template>
 
 </farm-tabs>
@@ -1030,8 +1013,8 @@ export default {
 </script>
 
 <style scoped>
-  .container-fluid {
-    background-color: var(--white);
+  textarea {
+    resize: vertical;
   }
 
   .reset-margin {

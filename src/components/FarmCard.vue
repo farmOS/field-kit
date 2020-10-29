@@ -69,7 +69,7 @@ export default {
         m: 'calc(var(--xl) * 2)',
         l: 'calc(var(--xl) * 3)',
         xl: 'calc(var(--xl) * 4)',
-        full: 'auto',
+        full: '100%',
         content: 'fit-content',
       },
       boxShadow: {
