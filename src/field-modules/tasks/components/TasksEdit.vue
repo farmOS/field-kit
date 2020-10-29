@@ -1,7 +1,8 @@
 <template>
 <farm-tabs
   :tabs="['General', 'Movement']"
-  :initTab="$router.currentRoute.params.tab">
+  :initTab="$router.currentRoute.params.tab"
+  :space="['none', 'none', 'm']">
 
   <template #general>
     <div class="container-fluid">
@@ -421,6 +422,8 @@
           onerror="this.style.display='none'"
           class="preview" />
       </div>
+
+      <br>
 
     </div>
   </template>
@@ -1027,6 +1030,10 @@ export default {
 </script>
 
 <style scoped>
+  .container-fluid {
+    background-color: var(--white);
+  }
+
   .reset-margin {
     margin: 0 0;
   }

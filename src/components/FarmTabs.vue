@@ -1,40 +1,50 @@
 <template>
   <div class="farm-tabs">
 
-    <div class="tab-bar">
-      <div
-        v-for="(tab, i) in tabs"
-        :key="`tab-${i}`"
-        class="tab"
-        :class="{ selected: tabSelected === i }"
-        :style="tabStyle"
-        @click="switchTab(i)">
-        <h4>{{tab}}</h4>
+    <div class="tab-bar-container">
+      <div class="tab-bar"
+        :style="tabBarStyle">
+        <div
+          v-for="(tab, i) in tabs"
+          :key="`tab-${i}`"
+          class="tab"
+          :class="{ selected: tabSelected === i }"
+          :style="tabStyle"
+          @click="switchTab(i)">
+          <h4>{{tab}}</h4>
+        </div>
+        <div
+          class="tab-indicator"
+          :style="indicatorStyle"/>
       </div>
-      <div
-        class="tab-indicator"
-        :style="indicatorStyle"/>
     </div>
 
-    <div
-      class="tab-content-container"
-      :style="contentContainerStyle">
+    <farm-main ref="tabMain" @hook:mounted="calcTabBarMarginX" space="none">
       <div
-        v-for="(tab, i) in tabs"
-        :key="`tab-content-${i}`"
-        class="tab-content"
-        :style="contentStyle"
-        :class="{ selected: tabSelected === i }">
-        <slot :name="tab.toLowerCase()"></slot>
+        class="tab-content-container">
+        <div class="tab-content-slider"
+          :style="contentContainerStyle">
+          <div
+            v-for="(tab, i) in tabs"
+            :key="`tab-content-${i}`"
+            class="tab-content"
+            :style="contentStyle"
+            :class="{ selected: tabSelected === i }">
+            <slot :name="tab.toLowerCase()"></slot>
+          </div>
+        </div>
       </div>
-    </div>
+    </farm-main>
 
   </div>
 </template>
 
 <script>
+import { mapResponsiveProps, responsiveProps, responsiveValidator } from './responsiveProps';
+
 export default {
   name: 'FarmTabs',
+  mixins: [responsiveProps],
   props: {
     tabs: {
       type: Array,
@@ -43,6 +53,14 @@ export default {
     initTab: {
       type: String,
     },
+    space: {
+      type: [Array, String],
+      default: 'none',
+      validator: responsiveValidator([
+        'xxxs', 'xxs', 'xs', 's',
+        'm', 'l', 'xl', 'xxl', 'none',
+      ]),
+    },
   },
   data() {
     return {
@@ -50,9 +68,22 @@ export default {
         ? this.tabs.indexOf(this.initTab)
         : 0,
       tabScrollPositions: this.tabs.map(() => 0),
+      tabBarMarginX: 0,
     };
   },
+  created() {
+    window.addEventListener('resize', this.calcTabBarMarginX);
+  },
+  destroyed() {
+    window.removeEventListener('resize', this.calcTabBarMarginX);
+  },
   computed: {
+    ...mapResponsiveProps({
+      _space: 'space',
+    }),
+    tabBarStyle() {
+      return { margin: `0 ${this.tabBarMarginX}px` };
+    },
     tabStyle() {
       return { flex: `0 0 ${100 / this.tabs.length}%` };
     },
@@ -72,6 +103,7 @@ export default {
     contentStyle() {
       return {
         flex: `0 0 ${100 / this.tabs.length}%`,
+        padding: `var(--${this._space})`,
       };
     },
   },
@@ -85,6 +117,11 @@ export default {
         this.$el.scrollTo({ top: nextTabPosition, behavior: 'smooth' });
       }, 500);
     },
+    // This is necessary to take into account the scrollbar in farm-main.
+    calcTabBarMarginX() {
+      const mainWidth = document.querySelector('main')?.clientWidth || 0;
+      this.tabBarMarginX = Math.max(0, mainWidth - 1200) / 2;
+    },
   },
 };
 </script>
@@ -94,20 +131,28 @@ export default {
   position: relative;
   top: 3rem;
   height: calc(100vh - 3rem);
-  width: 100vw;
+  width: 100%;
   overflow-x: hidden;
+  background-color: var(--light);
+}
+
+.tab-bar-container {
+  position: fixed;
+  top: 3rem;
+  z-index: 1000;
+  height: 3rem;
+  width: 100%;
+  background-color: var(--primary);
+  box-shadow: var(--shadow-strong);
 }
 
 .tab-bar {
+  position: relative;
   display: flex;
   flex-flow: row nowrap;
-  position: fixed;
-  top: 3rem;
-  height: 3rem;
+  height: 100%;
   width: 100%;
-  z-index: 1000;
-  background-color: var(--primary);
-  box-shadow: var(--shadow-strong);
+  max-width: 1200px;
 }
 
 .tab {
@@ -135,10 +180,14 @@ export default {
 }
 
 .tab-content-container {
+  overflow-x: hidden;
+}
+
+.tab-content-slider {
+  position: relative;
   display: flex;
   transition: left .5s;
-  position: absolute;
-  top: 3rem;
-  overflow-x: hidden;
+  width: 100%;
+  height: 100%;
 }
 </style>
