@@ -48,7 +48,7 @@ export const setRootRoute = (modules, router) => {
       router.addRoutes([
         {
           path: '/',
-          redirect: '/logs',
+          redirect: '/tasks',
         },
       ]);
     } else {
