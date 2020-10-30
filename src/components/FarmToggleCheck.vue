@@ -48,7 +48,6 @@ export default {
   }
 
   input.toggle-check {
-    position: relative;
     -webkit-appearance: none;
     outline: none;
     width: 1.6667rem;
@@ -61,9 +60,6 @@ export default {
 
   input.toggle-check:after {
     content: "";
-    position: absolute;
-    top: 1px;
-    left: 1px;
     background: transparent;
     width: 0.8667rem;
     height: 0.8667rem;
@@ -77,7 +73,6 @@ export default {
   }
 
   input.toggle-check:checked:after {
-    left: 0.6667rem;
     box-shadow: -1px 0px 2px rgba(0,0,0,0.05);
   }
 
@@ -94,9 +89,5 @@ export default {
   input.toggle-check.large:checked {
     box-shadow: inset 1.3333rem 0 0 0 var(--blue);
     border-color: var(--blue);
-  }
-
-  input.toggle-check.large:checked:after {
-    left: 1.3333
   }
 </style>
