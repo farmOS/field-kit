@@ -22,32 +22,34 @@ export const flattenResponses = compose(
 // Handles network errors (get & send): a reducer function that reduces an array
 // of rejected network responses to a single error object that can be logged.
 const syncErrorHandler = ({ error, loginRequired }, { reason, localLog }) => {
+  const { response: { status, data } } = reason;
+  const { error_description: description } = data || {};
   // 400, 401 and 403 errors indicate bad credentials; login is required.
-  if (reason.status >= 400
-    && reason.status <= 403) {
+  if (status >= 400
+    && status <= 403) {
     return {
       loginRequired: true,
       error: {
         ...error,
-        errorCode: error.errorCode.concat(reason.status),
-        message: `${error.message}${reason.status} error: ${reason.message}<br>`,
+        errorCode: error.errorCode.concat(status),
+        message: `${error.message}${status} error: ${description || reason.message}<br>`,
       },
     };
   }
   // If the error is a 404, this means the log was deleted on the server.
   // We are keeping 404 errors silent for now.
-  if (reason.status === 404) {
+  if (status === 404) {
     return { error, loginRequired };
   }
   // If there's any status code, it's some other HTTP error, probably 406 or
   // something in the 500 range. Just print it as is with the status code.
-  if (reason.status !== undefined) {
+  if (status !== undefined) {
     return {
       loginRequired: false,
       error: {
         ...error,
-        errorCode: error.errorCode.concat(reason.status),
-        message: `${error.message}${reason.status} error: ${reason.message}.<br>`,
+        errorCode: error.errorCode.concat(status),
+        message: `${error.message}${status} error: ${description || data || reason.message}.<br>`,
       },
     };
   }
@@ -58,7 +60,7 @@ const syncErrorHandler = ({ error, loginRequired }, { reason, localLog }) => {
       loginRequired: false,
       error: {
         ...error,
-        message: `${error.message}${reason.message}. Check your internet connection.<br>`,
+        message: `${error.message}${description || reason.message}. Check your internet connection.<br>`,
       },
     };
   }
@@ -66,13 +68,13 @@ const syncErrorHandler = ({ error, loginRequired }, { reason, localLog }) => {
   // procedure; display the log name (if available) along with the error message
   // so we can debug.
   const message = localLog
-    ? `${error.message}Error while syncing "${localLog.name}": ${reason.message}<br>`
-    : `${error.message}Error while syncing: ${reason.message}<br>`;
+    ? `${error.message}Error while syncing "${localLog.name}": ${description || data || reason.message}<br>`
+    : `${error.message}Error while syncing: ${description || data || reason.message}<br>`;
   return {
     loginRequired: false,
     error: {
       ...error,
-      errorCode: error.errorCode.concat(reason.status),
+      errorCode: error.errorCode.concat(status),
       message,
     },
   };
