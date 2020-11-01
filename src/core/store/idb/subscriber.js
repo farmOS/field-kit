@@ -1,16 +1,18 @@
 import { cachingCriteria, evictionCriteria } from './criteria';
 
 const makeIDBSubscriber = store => ({ type, payload }) => {
+  const current = Date.now();
+  const meetsCachingCriteria = cachingCriteria(current);
+  const meetsEvictionCriteria = evictionCriteria(current);
   if (type === 'addLogs') {
     const logs = Array.isArray(payload) ? payload : [payload];
-    const current = Math.floor(Date.now() / 1000);
     logs
-      .filter(cachingCriteria(current))
+      .filter(meetsCachingCriteria)
       .forEach((log) => {
         store.dispatch('updateCachedLog', log);
       });
     logs
-      .filter(evictionCriteria(current))
+      .filter(meetsEvictionCriteria)
       .forEach((log) => {
         store.dispatch('countCachedLogs', log.localID)
           .then((num) => {
@@ -22,17 +24,19 @@ const makeIDBSubscriber = store => ({ type, payload }) => {
   }
   if (type === 'updateLog' && payload.localID) {
     const log = store.state.farm.logs.find(l => l.localID === payload.localID);
-    store.dispatch('updateCachedLog', log);
+    if (meetsCachingCriteria(log)) {
+      store.dispatch('updateCachedLog', log);
+    }
   }
   if (type === 'mergeLogFromServer') {
     const { id } = payload;
     const localLog = store.state.farm.logs.find(log => +log.id === +id);
-    if (localLog.localID) {
-      store.dispatch('updateCachedLog', localLog);
-    } else {
+    if (!localLog.localID) {
       store.dispatch('generateLogID').then((localID) => {
         store.commit('updateLog', { id, localID });
       });
+    } else if (meetsCachingCriteria(localLog)) {
+      store.dispatch('updateCachedLog', localLog);
     }
   }
   if (type === 'deleteLog') {

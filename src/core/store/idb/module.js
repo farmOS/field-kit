@@ -65,7 +65,7 @@ export default {
     },
 
     purgeLogs() {
-      return getRecords(logStore.name, evictionCriteria(Math.floor(Date.now() / 1000)))
+      return getRecords(logStore.name, evictionCriteria(Date.now()))
         .then(results => Promise.all(
           results.map(({ localID }) => deleteRecord(logStore.name, localID)),
         ))
