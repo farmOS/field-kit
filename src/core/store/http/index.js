@@ -22,8 +22,9 @@ export const flattenResponses = compose(
 // Handles network errors (get & send): a reducer function that reduces an array
 // of rejected network responses to a single error object that can be logged.
 const syncErrorHandler = ({ error, loginRequired }, { reason, localLog }) => {
-  const { response: { status, data } } = reason;
-  const { error_description: description } = data || {};
+  const status = reason.response?.status;
+  const data = reason.response?.data;
+  const description = data?.error_description;
   // 400, 401 and 403 errors indicate bad credentials; login is required.
   if (status >= 400
     && status <= 403) {
