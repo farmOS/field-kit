@@ -57,6 +57,8 @@ module.exports = {
     'no-underscore-dangle': 'off',
     'implicit-arrow-linebreak': 'off',
     'no-nested-ternary': 'off',
-    'indent': ['error', 2, { 'flatTernaryExpressions': true }] 
+    'indent': ['error', 2, { 'flatTernaryExpressions': true }],
+    'vue/experimental-script-setup-vars': 'off',
+    'camelcase': 'off'
   }
 }
