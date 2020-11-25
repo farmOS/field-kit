@@ -28,15 +28,11 @@ export default {
     },
   },
   mutations: {
-    logError(state, error) {
+    alert(state, error) {
       state.errors = state.errors.concat([error]);
     },
-    dismissError(state, index) {
-      const updatedError = {
-        ...state.errors[index],
-        show: false,
-      };
-      state.errors.splice(index, 1, updatedError);
+    dismissAlert(state, index) {
+      state.errors.splice(index, 1);
     },
     changeUsername(state, name) {
       state.user.name = name;

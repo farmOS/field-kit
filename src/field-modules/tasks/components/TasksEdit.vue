@@ -748,9 +748,8 @@ export default {
         const newGeom = `POINT (${position.coords.longitude} ${position.coords.latitude})`;
         props = [{ geom: mergeGeometries([oldGeom, newGeom]) }];
       }
-      function onError({ message }) {
-        const errorPayload = { message, level: 'warning', show: false };
-        this.$store.commit('logError', errorPayload);
+      function onError(error) {
+        this.$store.commit('alert', error);
         this.isWorking = false;
       }
       const options = {
@@ -985,9 +984,8 @@ export default {
           (position.coords.accuracy),
         ));
       }
-      function onError({ message }) {
-        const errorPayload = { message, level: 'warning', show: false };
-        this.$store.commit('logError', errorPayload);
+      function onError(error) {
+        this.$store.commit('alert', error);
       }
       // If useLocalAreas is set to true, get geolocation and nearby areas
       if (this.useLocalAreas) {

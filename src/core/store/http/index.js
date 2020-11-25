@@ -3,9 +3,16 @@ import {
 } from 'ramda';
 import farm from '../farmClient';
 import rules from './rules';
-import router from '../../router';
+import SyncError from './SyncError';
 import { formatLogForServer, isUnsynced } from '../../../utils/farmLog';
 import createQuery, { filterByTimestamp } from '../../../utils/createQuery';
+
+export const checkHost = () => {
+  if (localStorage.getItem('host') !== null) {
+    return Promise.resolve();
+  }
+  return Promise.reject(new SyncError('Login required.', { loginRequired: true }));
+};
 
 export const partitionResponses = partition(compose(
   equals('fulfilled'),
@@ -19,68 +26,6 @@ export const flattenResponses = compose(
   map(prop('value')),
 );
 
-// Handles network errors (get & send): a reducer function that reduces an array
-// of rejected network responses to a single error object that can be logged.
-const syncErrorHandler = ({ error, loginRequired }, { reason, localLog }) => {
-  const status = reason.response?.status;
-  const data = reason.response?.data;
-  const description = data?.error_description;
-  // 400, 401 and 403 errors indicate bad credentials; login is required.
-  if (status >= 400
-    && status <= 403) {
-    return {
-      loginRequired: true,
-      error: {
-        ...error,
-        errorCode: error.errorCode.concat(status),
-        message: `${error.message}${status} error: ${description || reason.message}<br>`,
-      },
-    };
-  }
-  // If the error is a 404, this means the log was deleted on the server.
-  // We are keeping 404 errors silent for now.
-  if (status === 404) {
-    return { error, loginRequired };
-  }
-  // If there's any status code, it's some other HTTP error, probably 406 or
-  // something in the 500 range. Just print it as is with the status code.
-  if (status !== undefined) {
-    return {
-      loginRequired: false,
-      error: {
-        ...error,
-        errorCode: error.errorCode.concat(status),
-        message: `${error.message}${status} error: ${description || data || reason.message}.<br>`,
-      },
-    };
-  }
-  // If there's no status code, it's either a Network Error or runtime error.
-  // Check navigator.onLine to confirm the former.
-  if (!navigator.onLine) {
-    return {
-      loginRequired: false,
-      error: {
-        ...error,
-        message: `${error.message}${description || reason.message}. Check your internet connection.<br>`,
-      },
-    };
-  }
-  // Otherwise, it's a runtime error thrown sometime during the request
-  // procedure; display the log name (if available) along with the error message
-  // so we can debug.
-  const message = localLog
-    ? `${error.message}Error while syncing "${localLog.name}": ${description || data || reason.message}<br>`
-    : `${error.message}Error while syncing: ${description || data || reason.message}<br>`;
-  return {
-    loginRequired: false,
-    error: {
-      ...error,
-      errorCode: error.errorCode.concat(status),
-      message,
-    },
-  };
-};
-
 export function getRemoteLogs(context, payload) {
   const { commit, rootState } = context;
   const { pass: { localIDs = [] } = {} } = payload;
@@ -91,13 +36,13 @@ export function getRemoteLogs(context, payload) {
       .find(log => log.localID === localID)
       ?.id)
     .filter(id => !!id);
-  const responses = []
-    .concat(filters ? farm().log.get(filters) : [])
-    .concat((ids?.length > 0) ? farm().log.get(ids) : [])
-    .map(req => req
-      .then(res => ({ status: 'fulfilled', value: res }))
-      .catch(err => ({ status: 'rejected', reason: err })));
-  return Promise.all(responses)
+  return checkHost()
+    .then(() => Promise.all([]
+      .concat(filters ? farm().log.get(filters) : [])
+      .concat((ids?.length > 0) ? farm().log.get(ids) : [])
+      .map(req => req
+        .then(res => ({ status: 'fulfilled', value: res }))
+        .catch(err => ({ status: 'rejected', reason: err })))))
     .then(partitionResponses)
     .then(([fulfilled, rejected]) => {
       flattenResponses(fulfilled)
@@ -109,16 +54,7 @@ export function getRemoteLogs(context, payload) {
       // Throw so if there are any subsequent promises chained to this one,
       // like sendRemoteLogs, they will be aborted.
       if (rejected.length > 0) {
-        const initError = {
-          loginRequired: false,
-          error: {
-            message: '', errorCode: [], level: 'warning', show: true,
-          },
-        };
-        const { error, loginRequired } = rejected.reduce(syncErrorHandler, initError);
-        commit('logError', error);
-        if (loginRequired) { router.push('/login'); }
-        throw new Error(error.message);
+        throw new SyncError(rejected);
       }
     });
 }
@@ -132,6 +68,7 @@ const syncReducer = ([syncables, unsyncables, updates], log) => {
   if (isUnsynced(log)) {
     const { localID } = log;
     const initialState = {
+      localLog: log,
       syncable: true,
       message: `Could not sync "${log.name}":`,
       update: { localID },
@@ -180,16 +117,6 @@ export function sendRemoteLogs(context, payload) {
   // as well as updates needed before syncing.
   const groupLogs = createGroupLogs(_filter, pass);
   const [syncables, unsyncables, updates] = groupLogs(rootState.farm.logs);
-  // For all logs that are unsyncable, display an error message.
-  unsyncables.forEach(({ message }) => {
-    if (message) {
-      commit('logError', {
-        message,
-        level: 'warning',
-        show: true,
-      });
-    }
-  });
   // Before syncing, commit all necessary updates.
   updates.forEach((update) => {
     commit('updateLog', update);
@@ -225,16 +152,8 @@ export function sendRemoteLogs(context, payload) {
     }
 
     // Check for errors, log them and redirect to login screen if needed.
-    if (rejected.length > 0) {
-      const initError = {
-        loginRequired: false,
-        error: {
-          message: '', errorCode: [], level: 'warning', show: true,
-        },
-      };
-      const { error, loginRequired } = rejected.reduce(syncErrorHandler, initError);
-      commit('logError', error);
-      if (loginRequired) { router.push('/login'); }
+    if (rejected.length > 0 || unsyncables.length > 0) {
+      throw new SyncError(unsyncables.concat(rejected));
     }
 
     // Return the responses to the caller.

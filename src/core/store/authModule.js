@@ -14,36 +14,28 @@ export default {
       function handleLoginError(error) {
         if (error.status === 401) {
           const resetUrl = `${url}/user/password`;
-          const errorPayload = {
-            message: `The username or password you entered was incorrect. Please try again, or <a href="${resetUrl}">reset your password</a>.`,
-            errorCode: error.statusText,
-            level: 'warning',
-            show: true,
-          };
-          commit('logError', errorPayload);
+          const err = new Error(
+            `The username or password you entered was incorrect. Please try again, or <a href="${resetUrl}">reset your password</a>.`,
+          );
+          commit('alert', err);
         } else if (error.status === 400) {
-          let errorMessage = `The OAuth Password Authorization flow failed. Error message: ${error.data.error_description}`;
+          // Other OAuth related errors.
+          let err = new Error(
+            `The OAuth Password Authorization flow failed. Error message: ${error.data.error_description}`,
+          );
 
           if (error.data.error === 'invalid_client') {
             const oauthConfigUrl = `${url}/admin/config/farm/oauth`;
-            errorMessage = `The OAuth client for farmOS Field Kit is not enabled on your farmOS server. Enable it <a href=${oauthConfigUrl}>here</a>.`;
+            err = new Error(
+              `The OAuth client for farmOS Field Kit is not enabled on your farmOS server. Enable it <a href=${oauthConfigUrl}>here</a>.`,
+            );
           }
-          // Other OAuth related errors.
-          const errorPayload = {
-            message: errorMessage,
-            errorCode: error.statusText,
-            level: 'warning',
-            show: true,
-          };
-          commit('logError', errorPayload);
+          commit('alert', err);
         } else {
-          const errorPayload = {
-            message: `Unable to reach the server. Please check that you have the correct URL and that your device has a network connection. Status: ${error.message}`,
-            errorCode: error.statusText,
-            level: 'warning',
-            show: true,
-          };
-          commit('logError', errorPayload);
+          const err = new Error(
+            `Unable to reach the server. Please check that you have the correct URL and that your device has a network connection. Status: ${error.message}`,
+          );
+          commit('alert', err);
         }
       }
 
@@ -82,7 +74,7 @@ export default {
             level: 'warning',
             show: true,
           };
-          commit('logError', errorPayload);
+          commit('alert', errorPayload);
         }
       });
     },

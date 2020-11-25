@@ -111,15 +111,14 @@
 
     <div
       v-for="(err, index) in errors"
-      :key="`err-${errors.indexOf(err)}`"
-      class="error-messages">
+      :key="`alert-${index}`"
+      class="alerts">
       <div
-        v-if="err.show"
         class="alert alert-warning alert-dismissable" >
         <span v-html="err.message"></span>
         <button
           type="button"
-          @click="closeError(index)"
+          @click="closeAlert(index)"
           class="close"
           aria-label="Close">
           <span aria-hidden="true">&times;</span>
@@ -208,8 +207,8 @@ export default {
     },
   },
   methods: {
-    closeError(index) {
-      this.$store.commit('dismissError', index);
+    closeAlert(index) {
+      this.$store.commit('dismissAlert', index);
     },
     setUseGeolocation(checked) {
       this.$store.commit('setUseGeolocation', checked);
@@ -288,7 +287,7 @@ export default {
     color: inherit;
   }
 
-  .error-messages {
+  .alerts {
     position: absolute;
     z-index: 1001;
     bottom: var(--s);

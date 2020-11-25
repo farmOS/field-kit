@@ -179,11 +179,17 @@ export default {
         localIDs: this.localIDs,
       };
       this.syncLogs({ filter, pass })
+        .then(() => this.$store.dispatch('updateAssets'))
+        .then(() => this.$store.dispatch('updateAreas'))
+        .then(() => this.$store.dispatch('updateUnits'))
+        .then(() => this.$store.dispatch('updateCategories'))
+        .catch((e) => {
+          this.$store.commit('alert', e);
+          if (e.loginRequired) {
+            this.$router.push('/login');
+          }
+        })
         .finally(() => { this.isSyncing = false; });
-      this.$store.dispatch('updateAssets');
-      this.$store.dispatch('updateAreas');
-      this.$store.dispatch('updateUnits');
-      this.$store.dispatch('updateCategories');
     },
 
     /**
