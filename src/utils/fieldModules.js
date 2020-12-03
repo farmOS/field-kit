@@ -40,7 +40,7 @@ const createRoutes = (modName, routes, store) => (
   }))
 );
 
-// Reroutes / to Home if there are modules, otherwise My Logs.
+// Reroutes / to Home if there are modules, otherwise Tasks.
 export const setRootRoute = (modules, router) => {
   const homeRouteExists = router.resolve('/').route.matched.length > 0;
   if (!homeRouteExists) {
@@ -59,6 +59,13 @@ export const setRootRoute = (modules, router) => {
         },
       ]);
     }
+    // Add a wildcard route so any unfound routes redirect to home.
+    router.addRoutes([
+      {
+        path: '*',
+        redirect: '/',
+      },
+    ]);
   }
 };
 
