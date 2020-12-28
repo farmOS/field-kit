@@ -1,4 +1,5 @@
 <template>
+<farm-main space="none">
   <farm-map
     id="map"
     :overrideStyles="{ height: 'calc(100vh - 3rem)' }"
@@ -14,6 +15,7 @@
       geojson: areaGeoJSON,
       color: 'grey',
     }"/>
+</farm-main>
 </template>
 
 <script>
