@@ -96,7 +96,7 @@ export const createFieldModule = (modConfig, deps) => {
   );
   Vue.component(
     `${name}-widget`,
-    { ...widget, name: `${name}-widget` },
+    { ...widget, name: `${name}-widget`, mixins: [mapVuex] },
   );
   router.addRoutes(createRoutes(name, routes, deps));
 };
