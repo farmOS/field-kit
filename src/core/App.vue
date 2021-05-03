@@ -154,6 +154,14 @@ export default {
     this.$store.dispatch('loadCachedUnits');
     this.$store.dispatch('loadCachedCategories');
     this.$store.dispatch('purgeLogs');
+
+    // V1 Migration Warning
+    this.$store.commit('alert', {
+      message: 'Field Kit 2.0 is coming! To continue using this version, however, '
+        + 'we ask that you please migrate to <a href="https://v1.farmos.app">v1.farmos.app</a>, '
+        + 'so we can begin preparing this site for the big launch. More details '
+        + 'can be found <a href="https://farmos.discourse.group">on the forum</a>.',
+    });
   },
   computed: {
     ...mapState({
