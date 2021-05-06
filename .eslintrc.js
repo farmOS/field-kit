@@ -59,6 +59,7 @@ module.exports = {
     'no-nested-ternary': 'off',
     'indent': ['error', 2, { 'flatTernaryExpressions': true }],
     'vue/experimental-script-setup-vars': 'off',
-    'camelcase': 'off'
+    'camelcase': 'off',
+    'no-warning-comments': 'warn',
   }
 }

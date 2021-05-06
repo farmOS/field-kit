@@ -44,7 +44,6 @@ export default {
       required: false,
     },
     timestamp: {
-      // TODO: Make this type a Number (Unix timestamp) and compute a string.
       type: String,
       required: false,
     },
