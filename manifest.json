@@ -1,6 +1,6 @@
 {
-  "name": "farmOS Field Kit",
-  "short_name": "farmOS",
+  "name": "farmOS Field Kit (Version 1)",
+  "short_name": "farmOS v1",
   "theme_color": "#336633",
   "background_color": "#ffffff",
   "display": "standalone",
