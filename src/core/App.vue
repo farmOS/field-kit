@@ -160,7 +160,8 @@ export default {
       message: 'Field Kit 2.0 is coming! To continue using this version, however, '
         + 'we ask that you please migrate to <a href="https://v1.farmos.app">v1.farmos.app</a>, '
         + 'so we can begin preparing this site for the big launch. More details '
-        + 'can be found <a href="https://farmos.discourse.group">on the forum</a>.',
+        + 'can be found <a href="https://farmos.discourse.group/t/migrating-from-farmos-app-to-v1-farmos-app/791">'
+        + 'on the forum</a>.',
     });
   },
   computed: {
