@@ -1,6 +1,6 @@
 {
-  "name": "farmOS Field Kit (Version 1)",
-  "short_name": "farmOS v1",
+  "name": "farmOS Field Kit (DEPRECATED)",
+  "short_name": "farmOS DEPRECATED",
   "theme_color": "#336633",
   "background_color": "#ffffff",
   "display": "standalone",
