@@ -1,6 +1,6 @@
 import { head, tail } from 'ramda';
 import config from './idb.config';
-import { filterAndSort, runUpgrades } from '../../../utils/runUpgrades';
+import runUpgrades from '../../../utils/runUpgrades';
 
 /**
  * Initialize a global counter for each store, eg:
@@ -18,9 +18,7 @@ function openDatabase() {
     const request = indexedDB.open(config.name, config.version);
     request.onerror = event => reject(event.target.error);
     request.onsuccess = () => resolve(request.result);
-    request.onupgradeneeded = event => config.stores
-      .map(store => store.upgrades.reduce(filterAndSort(event.oldVersion), []))
-      .forEach(upgrades => runUpgrades(event)(upgrades));
+    request.onupgradeneeded = runUpgrades(config);
   });
 }
 
