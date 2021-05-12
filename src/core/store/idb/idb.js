@@ -1,6 +1,6 @@
 import { head, tail } from 'ramda';
 import config from './idb.config';
-import runUpgrades from '../../../utils/runUpgrades';
+import runUpgrades from './runUpgrades';
 
 /**
  * Initialize a global counter for each store, eg:
