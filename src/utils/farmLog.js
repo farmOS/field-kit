@@ -168,7 +168,7 @@ function farmLog(logTypes) {
         // come from the server with value of [], which gets rejected if sent back
         // to the server, so we need to reset it to null to correct the error.
         if (fieldType === 'text_long' && Array.isArray(_props[key])) {
-          _props[key] = null;
+          _props[key] = { value: '', format: 'farm_format' };
         }
         const val = _props[key] !== undefined ? _props[key] : makeDefault(dataSchema);
         createProperty(log, key, val, _changed);
@@ -257,7 +257,7 @@ function farmLog(logTypes) {
         // come from the server with value of [], which gets rejected if sent back
         // to the server, so we need to reset it to null to correct the error.
         if (type === 'text_long' && Array.isArray(_serverLog[key])) {
-          _serverLog[key] = null;
+          _serverLog[key] = { value: '', format: 'farm_format' };
         }
         if (key !== 'files') {
           mergeProps(key);
