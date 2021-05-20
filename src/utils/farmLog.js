@@ -115,8 +115,11 @@ function farmLog(logTypes) {
           const keysToBeAdded = without(oldSchemaKeys, newSchemaKeys);
           const keysToBeRemoved = without(newSchemaKeys, oldSchemaKeys);
           keysToBeAdded.forEach((key) => {
-            const value = makeDefault(_logTypes[newType].fields[key].data_schema);
-            createProperty(this, key, value, _changed);
+            // Don't add the files field, b/c issue #444.
+            if (key !== 'files') {
+              const value = makeDefault(_logTypes[newType].fields[key].data_schema);
+              createProperty(this, key, value, _changed);
+            }
           });
           keysToBeRemoved.forEach((key) => {
             delete this[key];
@@ -158,7 +161,8 @@ function farmLog(logTypes) {
 
       // Set properties for "fields".
       const type = _props.type || 'farm_activity';
-      const schema = _logTypes[type]?.fields;
+      // Strip off the files field and do nothing with it, because issue #444.
+      const { files, ...schema } = _logTypes[type]?.fields;
       Object.entries(schema).forEach(([key, { data_schema: dataSchema, type: fieldType }]) => {
         // Due to a bug on the server, notes and other text_long fields sometimes
         // come from the server with value of [], which gets rejected if sent back
@@ -253,7 +257,9 @@ function farmLog(logTypes) {
         if (type === 'text_long' && Array.isArray(_serverLog[key])) {
           _serverLog[key] = null;
         }
-        mergeProps(key);
+        if (key !== 'files') {
+          mergeProps(key);
+        }
       });
       mergeProps('name');
       mergeProps('timestamp');
@@ -304,7 +310,7 @@ function farmLog(logTypes) {
         } else if (!sym && ['id', 'url', 'localID'].includes(key)) {
           setOnce(newLog, key, val);
         // The rest should be regular props with metadata.
-        } else if (sym) {
+        } else if (sym && key !== 'files') {
           createProperty(newLog, key, val.data, log[key].changed, log[key].conflicts);
         }
       });
