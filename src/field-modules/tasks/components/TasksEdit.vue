@@ -375,41 +375,51 @@
 
       <farm-card>
         <h3>{{ $t('Images')}}</h3>
-        <div
-          v-if="isNative"
-          class="form-item form-item-name form-group">
-          <button
-            :disabled='false'
-            title="Take picture with camera"
-            @click="getPhoto"
-            class="btn btn-info btn-navbar navbar-right"
-            type="button">
-            {{ $t('Take picture with camera')}}
-          </button>
+        <div v-if="currentLog.id">
+          <p>
+            {{ $t('To prevent data loss, images have been disabled for logs ') }}
+            {{ $t('that have already been uploaded to the server, because ') }}
+            {{ $t('there is a risk that they could overwrite existing images. ') }}
+            {{ $t('We are working to fix this in Field Kit v2.') }}
+          </p>
         </div>
-        <div class="form-item form-item-name form-group">
-          <div class="input-group ">
-            <label
-              class="custom-file-label"
-              for="customFile">
-              {{ $t('Select photo from file')}}
-            </label>
-            <input
-              type="file"
-              accept="image/*"
-              class="custom-file-input"
-              ref="photo"
-              @change="loadPhoto($event.target.files)">
+        <div v-if="!currentLog.id">
+          <div
+            v-if="isNative"
+            class="form-item form-item-name form-group">
+            <button
+              :disabled='false'
+              title="Take picture with camera"
+              @click="getPhoto"
+              class="btn btn-info btn-navbar navbar-right"
+              type="button">
+              {{ $t('Take picture with camera')}}
+            </button>
           </div>
-        </div>
-        <div class="form-item form-item-name form-group">
-          <!-- NOTE: Display is set to 'none' if the img fails to load. -->
-          <img
-            v-for="(url, i) in imageUrls"
-            :src="url"
-            :key="`preview-${i}`"
-            onerror="this.style.display='none'"
-            class="preview" />
+          <div class="form-item form-item-name form-group">
+            <div class="input-group ">
+              <label
+                class="custom-file-label"
+                for="customFile">
+                {{ $t('Select photo from file')}}
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                class="custom-file-input"
+                ref="photo"
+                @change="loadPhoto($event.target.files)">
+            </div>
+          </div>
+          <div class="form-item form-item-name form-group">
+            <!-- NOTE: Display is set to 'none' if the img fails to load. -->
+            <img
+              v-for="(url, i) in imageUrls"
+              :src="url"
+              :key="`preview-${i}`"
+              onerror="this.style.display='none'"
+              class="preview" />
+          </div>
         </div>
       </farm-card>
 

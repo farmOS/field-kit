@@ -204,6 +204,8 @@ function farmLog(logTypes) {
       delete serverLog.localID;
       delete serverLog.url;
       if (serverLog.id === undefined) { delete serverLog.id; }
+      // Prevent images on the server from being overwritten, b/c issue #444.
+      if (serverLog.id) { delete serverLog.images; }
       return serverLog;
     },
     mergeLogFromServer(localLog, serverLog) {
