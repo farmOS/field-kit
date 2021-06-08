@@ -51,8 +51,6 @@ describe('runUpgrades', () => {
   const run = runUpgrades(config);
 
   it('runs in correct order', () => run({ oldVersion: 0 })
-  //   expect(promise instanceof Promise).toBe(true);
-  // });
     .then(() => {
       expect(str).toBe('1234');
     }));
