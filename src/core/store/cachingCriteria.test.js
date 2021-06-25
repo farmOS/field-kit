@@ -1,21 +1,21 @@
 import farm from '../farm';
 import { cachingCriteria, daysAway, evictionCriteria } from './cachingCriteria';
 
-const current = new Date().toISOString();
+const now = new Date().toISOString();
 const props = {
   type: 'activity',
-  timestamp: current,
+  timestamp: now,
 };
 const metadata = {
-  remote: { lastSync: daysAway(current, 1) },
-  fields: { timestamp: { changed: current } },
+  remote: { lastSync: daysAway(now, 1) },
+  fields: { timestamp: { changed: now } },
 };
 const unsyncedMetadata = {
-  remote: { lastSync: daysAway(current, -1) },
-  fields: { timestamp: { changed: current } },
+  remote: { lastSync: daysAway(now, -1) },
+  fields: { timestamp: { changed: now } },
 };
-const meetsCachingCriteria = cachingCriteria(current).log;
-const meetsEvictionCriteria = evictionCriteria(current).log;
+const meetsCachingCriteria = cachingCriteria({ now }).log;
+const meetsEvictionCriteria = evictionCriteria({ now }).log;
 
 describe('cachingCriteria', () => {
   it('passes a log timestamped at the current time', () => {
@@ -25,35 +25,35 @@ describe('cachingCriteria', () => {
   it('passes a log timestamped 29 days ago', () => {
     const log = farm.log.create({
       ...props,
-      timestamp: daysAway(current, -29),
+      timestamp: daysAway(now, -29),
     }, metadata);
     expect(meetsCachingCriteria(log)).toBe(true);
   });
   it('fails a log timestamped 30 days ago', () => {
     const log = farm.log.create({
       ...props,
-      timestamp: daysAway(current, -30),
+      timestamp: daysAway(now, -30),
     }, metadata);
     expect(meetsCachingCriteria(log)).toBe(false);
   });
   it('passes a log timestamped 40 days ago but unsynced', () => {
     const log = farm.log.create({
       ...props,
-      timestamp: daysAway(current, -40),
+      timestamp: daysAway(now, -40),
     }, unsyncedMetadata);
     expect(meetsCachingCriteria(log)).toBe(true);
   });
   it('passes a log timestamped 14 days from now', () => {
     const log = farm.log.create({
       ...props,
-      timestamp: daysAway(current, 14),
+      timestamp: daysAway(now, 14),
     }, metadata);
     expect(meetsCachingCriteria(log)).toBe(true);
   });
   it('fails a log timestamped 15 days from now', () => {
     const log = farm.log.create({
       ...props,
-      timestamp: daysAway(current, 15),
+      timestamp: daysAway(now, 15),
     }, metadata);
     expect(meetsCachingCriteria(log)).toBe(false);
   });
@@ -68,7 +68,7 @@ describe('evictionCriteria', () => {
   it('fails a log timestamped 29 days ago', () => {
     const log = farm.log.create({
       ...props,
-      timestamp: daysAway(current, -29),
+      timestamp: daysAway(now, -29),
     }, metadata);
     expect(meetsEvictionCriteria(log))
       .toBe(false);
@@ -76,7 +76,7 @@ describe('evictionCriteria', () => {
   it('passes a log timestamped exactly 30 days ago', () => {
     const log = farm.log.create({
       ...props,
-      timestamp: daysAway(current, -30),
+      timestamp: daysAway(now, -30),
     }, metadata);
     expect(meetsEvictionCriteria(log))
       .toBe(true);
@@ -84,7 +84,7 @@ describe('evictionCriteria', () => {
   it('fails a log timestamped 40 days ago but unsynced', () => {
     const log = farm.log.create({
       ...props,
-      timestamp: daysAway(current, -40),
+      timestamp: daysAway(now, -40),
     }, unsyncedMetadata);
     expect(meetsEvictionCriteria(log))
       .toBe(false);
@@ -92,7 +92,7 @@ describe('evictionCriteria', () => {
   it('fails a log timestamped 14 days from now', () => {
     const log = farm.log.create({
       ...props,
-      timestamp: daysAway(current, 14),
+      timestamp: daysAway(now, 14),
     }, metadata);
     expect(meetsEvictionCriteria(log))
       .toBe(false);
@@ -100,7 +100,7 @@ describe('evictionCriteria', () => {
   it('passes a log timestamped exactly 15 days from now', () => {
     const log = farm.log.create({
       ...props,
-      timestamp: daysAway(current, 15),
+      timestamp: daysAway(now, 15),
     }, metadata);
     expect(meetsEvictionCriteria(log))
       .toBe(true);

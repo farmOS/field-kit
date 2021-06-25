@@ -26,20 +26,25 @@ const logCriteria = now => anyPass([
   farm.meta.isUnsynced,
 ]);
 
-export const cachingCriteria = now => ({
+const userCriteria = id => anyPass([
+  parseFilter({ id }),
+  farm.meta.isUnsynced,
+]);
+
+export const cachingCriteria = ({ now = Date.now(), uid = '' }) => ({
   asset: assetCriteria,
   log: logCriteria(now),
   plan: farm.meta.isUnsynced,
   quantity: farm.meta.isUnsynced,
-  term: farm.meta.isUnsynced,
-  user: farm.meta.isUnsynced,
+  taxonomy_term: farm.meta.isUnsynced,
+  user: userCriteria(uid),
 });
 
-export const evictionCriteria = now => evolve({
+export const evictionCriteria = deps => evolve({
   asset: complement,
   log: complement,
   plan: complement,
   quantity: complement,
-  term: complement,
+  taxonomy_term: complement,
   user: complement,
-}, cachingCriteria(now));
+}, cachingCriteria(deps));
