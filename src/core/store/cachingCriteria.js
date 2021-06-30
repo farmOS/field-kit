@@ -31,7 +31,7 @@ const userCriteria = id => anyPass([
   farm.meta.isUnsynced,
 ]);
 
-export const cachingCriteria = ({ now = Date.now(), uid = '' }) => ({
+export const cachingCriteria = ({ now = Date.now(), uid = '' } = {}) => ({
   asset: assetCriteria,
   log: logCriteria(now),
   plan: farm.meta.isUnsynced,
