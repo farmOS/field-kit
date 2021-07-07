@@ -4,16 +4,16 @@ import {
 } from 'ramda';
 
 const operators = {
-  $and: bound => allPass(map(parseFilter, bound)),
-  $or: bound => anyPass(map(parseFilter, bound)),
+  $and: compose(allPass, map(parseFilter)),
+  $or: compose(anyPass, map(parseFilter)),
   $eq: bound => data => data === bound,
   $ne: bound => data => data !== bound,
   $gt: bound => data => data > bound,
   $gte: bound => data => data >= bound,
   $lt: bound => data => data < bound,
   $lte: bound => data => data <= bound,
-  $in: bound => any(parseFilter(bound)),
-  $nin: bound => none(parseFilter(bound)),
+  $in: compose(any, parseFilter),
+  $nin: compose(none, parseFilter),
 };
 
 const isNumber = n => !Number.isNaN(+n);
