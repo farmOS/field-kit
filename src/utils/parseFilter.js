@@ -1,34 +1,48 @@
 /* eslint-disable no-use-before-define */
 import {
-  compose, allPass, map, prop, anyPass, T,
+  allPass, any, anyPass, compose, init, last, map, none, prop, T, when,
 } from 'ramda';
 
-const logicOperators = {
+const operators = {
   $and: bound => allPass(map(parseFilter, bound)),
   $or: bound => anyPass(map(parseFilter, bound)),
-};
-
-const comparisonOperators = {
   $eq: bound => data => data === bound,
   $ne: bound => data => data !== bound,
   $gt: bound => data => data > bound,
   $gte: bound => data => data >= bound,
   $lt: bound => data => data < bound,
   $lte: bound => data => data <= bound,
+  $in: bound => any(parseFilter(bound)),
+  $nin: bound => none(parseFilter(bound)),
 };
 
+const isNumber = n => !Number.isNaN(+n);
+const coerceKey = when(isNumber, n => +n);
+const lastKey = compose(coerceKey, last);
+
+function parsePath(path, value) {
+  const key = lastKey(path);
+  const rest = init(path);
+  if (rest.length === 0) {
+    return parseField([key, { $in: value }]);
+  }
+  return parsePath(rest, { [key]: value });
+}
+
 function parseField([key, value]) {
-  if (key in comparisonOperators) {
-    return comparisonOperators[key](value);
+  if (key.includes('.')) {
+    const path = key.split('.');
+    return parsePath(path, value);
+  }
+  if (key in operators) {
+    return operators[key](value);
   }
   let predicate = T;
   if (['string', 'number', 'boolean'].includes(typeof value) || !value) {
-    predicate = comparisonOperators.$eq(value);
-  }
-  if (Array.isArray(value)) {
-    predicate = logicOperators.$or(value);
-  }
-  if (typeof value === 'object') {
+    predicate = operators.$eq(value);
+  } else if (Array.isArray(value)) {
+    predicate = operators.$or(value);
+  } else if (typeof value === 'object') {
     predicate = parseFilter(value);
   }
   return compose(predicate, prop(key));
@@ -36,16 +50,10 @@ function parseField([key, value]) {
 
 export default function parseFilter(filter = {}) {
   if (Array.isArray(filter)) {
-    return logicOperators.$or(filter);
+    return operators.$or(filter);
   }
+  if (typeof filter !== 'object') throw new Error(`Invalid filter: ${filter}`);
   const entries = Object.entries(filter);
-  if (entries.length === 0) {
-    return T;
-  }
-  const [key, val] = entries[0] || [];
-  if (key in logicOperators && Array.isArray(val)) {
-    const predicate = logicOperators[key](val);
-    return predicate;
-  }
-  return allPass(map(parseField, entries));
+  if (entries.length === 0) return T;
+  return allPass(entries.map(parseField));
 }

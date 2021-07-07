@@ -1,7 +1,7 @@
 import parseFilter from './parseFilter';
 
-describe.only('parseFilter', () => {
-  it('makes a filter', () => {
+describe('parseFilter', () => {
+  it('parses a complex filter', () => {
     const filter = {
       $or: [
         { type: 'activity' },
@@ -60,5 +60,71 @@ describe.only('parseFilter', () => {
         count: 50,
       },
     ]);
+  });
+  const logsWithOwners = [
+    {
+      type: 'observation',
+      owner: [
+        { id: 1 },
+      ],
+    },
+    {
+      type: 'observation',
+      owner: [
+        { id: 2 },
+      ],
+    },
+    {
+      type: 'activity',
+      owner: [
+        { id: 2 },
+      ],
+    },
+  ];
+  const logsFilteredByOwner = [
+    {
+      type: 'observation',
+      owner: [
+        { id: 1 },
+      ],
+    },
+    {
+      type: 'activity',
+      owner: [
+        { id: 2 },
+      ],
+    },
+  ];
+  it('parses $in operator', () => {
+    const filter = {
+      $or: [
+        { type: 'activity' },
+        {
+          type: 'observation',
+          owner: { $in: [{ id: 1 }] },
+        },
+      ],
+    };
+
+    const predicate = parseFilter(filter);
+
+    const result = logsWithOwners.filter(predicate);
+    expect(result).toMatchObject(logsFilteredByOwner);
+  });
+  it('parses dot notation', () => {
+    const filter = {
+      $or: [
+        { type: 'activity' },
+        {
+          type: 'observation',
+          'owner.id': 1,
+        },
+      ],
+    };
+
+    const predicate = parseFilter(filter);
+
+    const result = logsWithOwners.filter(predicate);
+    expect(result).toMatchObject(logsFilteredByOwner);
   });
 });
