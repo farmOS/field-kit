@@ -22,19 +22,19 @@
     <div class="scroll-container">
       <div class="scroll-x" :style="scrollStyle">
         <svg-filter-dropshadow id="btn-shadow" :opacity=".25" :blur="3" :x="1" :y="2"/>
-        <div id="activity" class="add-btn" @click="addLog('farm_activity', $event)">
+        <div id="activity" class="add-btn" @click="addLog('activity', $event)">
           <icon-add-circle :style="{ filter: 'url(#btn-shadow)' }"/>
           <div>{{ $t('Activity')}}</div>
         </div>
-        <div id="observation" class="add-btn" @click="addLog('farm_observation', $event)">
+        <div id="observation" class="add-btn" @click="addLog('observation', $event)">
           <icon-add-circle :style="{ filter: 'url(#btn-shadow)' }"/>
           <div>{{ $t('Observation')}}</div>
         </div>
-        <div id="harvest" class="add-btn" @click="addLog('farm_harvest', $event)">
+        <div id="harvest" class="add-btn" @click="addLog('harvest', $event)">
           <icon-add-circle :style="{ filter: 'url(#btn-shadow)' }"/>
           <div>{{ $t('Harvest')}}</div>
         </div>
-        <div id="input" class="add-btn" @click="addLog('farm_input', $event)">
+        <div id="input" class="add-btn" @click="addLog('input', $event)">
           <icon-add-circle :style="{ filter: 'url(#btn-shadow)' }"/>
           <div>{{ $t('Input')}}</div>
         </div>
@@ -46,7 +46,7 @@
 <script>
 export default {
   name: 'TasksWidget',
-  props: ['logs', 'userId'],
+  props: ['logs', 'user'],
   data() {
     return {
       scrollStyle: {
@@ -55,32 +55,33 @@ export default {
     };
   },
   created() {
-    this.$emit('load-tasks-logs', {
-      log_owner: this.userId,
-      done: false,
-    });
+    const filter = {
+      'owner.id': this.user.id,
+      status: { $ne: 'done' },
+    };
+    this.loadLogs(filter);
   },
   mounted() {
     this.calcScrollStyle();
   },
   computed: {
     lateLogs() {
-      const now = Math.floor(Date.now() / 1000);
+      const now = new Date().toISOString();
       return this.logs
-        .filter(log => !log.done && log.timestamp < now)
+        .filter(log => log.status !== 'done' && log.timestamp < now)
         .slice(0, 5);
     },
     upcomingLogs() {
-      const now = Math.floor(Date.now() / 1000);
+      const now = new Date().toISOString();
       const limit = 5 - this.lateLogs.length;
       return this.logs
-        .filter(log => !log.done && log.timestamp > now)
+        .filter(log => log.status !== 'done' && log.timestamp > now)
         .slice(0, limit);
     },
     doneLogs() {
       const limit = 5 - this.lateLogs.length - this.upcomingLogs.length;
       return this.logs
-        .filter(log => log.done)
+        .filter(log => log.status === 'done')
         .slice(0, limit);
     },
   },
@@ -94,8 +95,12 @@ export default {
     },
     addLog(type, e) {
       e.stopPropagation();
-      const props = { type, done: true };
-      this.initializeLog(props)
+      const props = {
+        type,
+        status: 'done',
+        owner: [{ id: this.user.id }],
+      };
+      this.createLog(props)
         .then(id => this.$router.push(`/tasks/${id}`));
     },
   },

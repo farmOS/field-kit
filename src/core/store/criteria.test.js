@@ -1,5 +1,6 @@
 import farm from '../farm';
-import { cachingCriteria, daysAway, evictionCriteria } from './cachingCriteria';
+import { cachingCriteria, evictionCriteria } from './criteria';
+import daysAway from '../utils/daysAway';
 
 const now = new Date().toISOString();
 const props = {

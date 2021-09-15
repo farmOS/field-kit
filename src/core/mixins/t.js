@@ -5,7 +5,8 @@ import { $t } from '../store/l10n/t';
 export default {
   computed: {
     locale() {
-      return store.state.l10n.locale;
+      // TODO: figure out if this is where the locale will come from.
+      return store.state.profile.user.langcode;
     },
   },
   methods: { $t },

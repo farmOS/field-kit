@@ -6,28 +6,24 @@
       @delete-current-log="openDeleteDialog($event)"
       @sync-all="syncAll"
       @sync="sync($event)"
-      @reset-display-filters="resetDisplayFilters"
-      :logs='logs'
+      @reset-filters="resetFilters"
+      :logs="logs"
       :isSyncing="isSyncing"
     />
     <router-view
-      @add-to-excluded-types="addToExcludedTypes($event)"
-      @remove-from-excluded-types="removeFromExcludedTypes($event)"
-      @add-to-excluded-categories="addToExcludedCategories($event)"
-      @remove-from-excluded-categories="removeFromExcludedCategories($event)"
-      @set-date-filter="setDateFilter($event)"
-      :logTypes='logTypes'
-      :logs='sortLogsDescending(logs)'
-      :areas='areas'
-      :assets='assets'
-      :useGeolocation='useGeolocation'
-      :units='units'
-      :categories='categories'
-      :equipment='equipment'
-      :userId='userId'
-      :logDisplayFilters='logDisplayFilters'
-      :systemOfMeasurement='systemOfMeasurement'
-      :areaGeoJSON='areaGeoJSON'
+      @toggle-type-filter="toggleTypeFilter"
+      @toggle-category-filter="toggleCategoryFilter"
+      @set-time-filter="setTimeFilter"
+      :userId="user.id"
+      :useGeolocation="settings.useGeolocation"
+      :areaGeoJSON="areaGeoJSON"
+      :logs="sortedLogs"
+      :areas="areas"
+      :assets="assets"
+      :units="units"
+      :categories="categories"
+      :equipment="equipment"
+      :logTypes="logTypes"
     />
 
     <div
@@ -44,7 +40,7 @@
             <button
               type="button"
               class="close"
-              @click='cancelDelete'
+              @click="cancelDelete"
               aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -52,7 +48,7 @@
           <div class="modal-body">
             {{ $t('Are sure you\'d like to delete the log')}} "{{logToDelete.name}}"?&nbsp;
             <span
-              v-if='isUnsynced(logToDelete)'>
+              v-if="isUnsynced(logToDelete)">
               {{ $t('Deleting it on this device will not remove the log from the server.') }}
             </span>
             <span v-else>
@@ -64,13 +60,13 @@
             <button
             type="button"
             class="btn btn-secondary"
-            @click='cancelDelete'>
+            @click="cancelDelete">
             Cancel
           </button>
           <button
             type="button"
             class="btn btn-danger"
-            @click='confirmDelete()'>
+            @click="confirmDelete">
             Delete
           </button>
           </div>
@@ -81,72 +77,68 @@
 </template>
 
 <script>
-import sort from 'ramda/src/sort';
+const {
+  lib: { R },
+  meta: { isUnsynced },
+  utils: { daysAway },
+} = window.farmOS;
 
-const { isUnsynced } = window.farmOS.utils.farmLog;
+const assetFilter = { status: 'active' };
+const termFilter = { type: ['log_category', 'unit'] };
+
+// TODO: change `drupal_internal__id` to `name` or something else?
+const arrayToObject = (obj, type) => ({ ...obj, [type.drupal_internal__id]: true });
+const defaultFilters = (logTypes, terms, now) => ({
+  types: R.map(() => true, logTypes),
+  categories: terms.filter(t => t.type === 'log_category').reduce(arrayToObject, {}),
+  time: [daysAway(now, -7), daysAway(now, 7)],
+});
 
 export default {
   name: 'Tasks',
   data() {
     return {
-      filter: {
-      },
-      pass: {
-        localIDs: this.localIDs,
-      },
       showDeleteDialog: false,
       logIDToDelete: null,
-      logDisplayFilters: {
-        date: 'ALL_TIME',
-        // NOTE: We're tracking which types/categories to EXCLUDE, so we can manage
-        // defaults more easily w/o having to poll the server for the list
-        excludedTypes: [],
-        excludedCategories: [],
-      },
+      filters: defaultFilters(this.logTypes, this.terms, Date.now()),
       isSyncing: false,
     };
   },
   props: [
-    'useGeolocation',
-    'userId',
-    'systemOfMeasurement',
-    'logTypes',
-    'logs',
-    'areas',
-    'assets',
-    'units',
-    'categories',
-    'equipment',
+    'user',
+    'settings',
     'areaGeoJSON',
+    'assets',
+    'logs',
+    'terms',
+    'logTypes',
   ],
   created() {
-    this.clearDisplayFilters();
-    this.loadCachedDisplayFilters();
-    const filter = {
-      log_owner: this.userId,
-      done: false,
-    };
-    const now = Math.floor(Date.now() / 1000);
-    const tenDaysAgo = now - (60 * 60 * 24 * 10);
-    const threeDaysFromNow = now + (60 * 60 * 24 * 3);
-    const pass = {
-      unsynced: true,
-      timestamp: [tenDaysAgo, threeDaysFromNow],
-    };
-    this.loadLogs({ filter, pass });
+    const cachedFilters = JSON.parse(localStorage.getItem('tasks-filters'));
+    if (cachedFilters) {
+      const { types = {}, categories = {}, time = [] } = cachedFilters;
+      Object.keys(this.filters.types).forEach((key) => {
+        this.filters.types[key] = key in types ? types[key] : true;
+      });
+      Object.keys(this.filters.categories).forEach((key) => {
+        this.filters.categories[key] = key in categories ? categories[key] : true;
+      });
+      this.filters.time = time;
+    }
+    const filter = this.transformFilters();
+    this.loadLogs(filter, { includeUnsynced: true });
+    this.loadAssets(assetFilter);
+    this.loadTerms(termFilter);
   },
   methods: {
-    sortLogsDescending(logs) {
-      const compare = (logA, logB) => logB.timestamp - logA.timestamp;
-      return sort(compare, logs);
-    },
-
+    isUnsynced,
+    // TODO: Move these to App.vue and the mixins
     /**
      * DELETION METHODS
      */
-    openDeleteDialog(localID) {
+    openDeleteDialog(id) {
       this.showDeleteDialog = true;
-      this.logIDToDelete = localID;
+      this.logIDToDelete = id;
     },
     cancelDelete() {
       this.showDeleteDialog = false;
@@ -162,103 +154,78 @@ export default {
     /**
      * SYNCING
      */
-    sync(localID) {
+    sync(id) {
       this.isSyncing = true;
-      const pass = { localIDs: [localID] };
-      this.syncLogs({ pass })
+      this.syncLogs({ id })
         .finally(() => { this.isSyncing = false; });
     },
     syncAll() {
       this.isSyncing = true;
-      const filter = {
-        log_owner: this.userId,
-        done: false,
-        timestamp: [null, (Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 10))],
-      };
-      const pass = {
-        localIDs: this.localIDs,
-      };
-      this.syncLogs({ filter, pass })
-        .then(() => this.$store.dispatch('updateAssets'))
-        .then(() => this.$store.dispatch('updateAreas'))
-        .then(() => this.$store.dispatch('updateUnits'))
-        .then(() => this.$store.dispatch('updateCategories'))
+      const filter = this.transformFilters();
+      this.syncLogs(filter)
         .catch((e) => {
           this.$store.commit('alert', e);
-          if (e.loginRequired) {
-            this.$router.push('/login');
-          }
         })
         .finally(() => { this.isSyncing = false; });
+      this.syncAssets(assetFilter);
+      this.syncTerms(termFilter);
     },
 
     /**
      * FILTER METHODS
      */
-    addToExcludedTypes(type) {
-      const newArr = this.logDisplayFilters.excludedTypes.concat(type);
-      this.logDisplayFilters.excludedTypes = newArr;
-      localStorage.setItem('excludedTypes', JSON.stringify(newArr));
+    toggleTypeFilter(type) {
+      this.filters.types[type] = !this.filters.types[type];
     },
-    removeFromExcludedTypes(type) {
-      const newArr = this.logDisplayFilters.excludedTypes.filter(_type => (
-        type !== _type
-      ));
-      this.logDisplayFilters.excludedTypes = newArr;
-      localStorage.setItem('excludedTypes', JSON.stringify(newArr));
+    toggleCategoryFilter(category) {
+      this.filters.categories[category] = !this.filters.categories[category];
     },
-    addToExcludedCategories(cat) {
-      const newArr = this.logDisplayFilters.excludedCategories.concat(cat);
-      this.logDisplayFilters.excludedCategories = newArr;
-      localStorage.setItem('excludedCategories', JSON.stringify(newArr));
+    setTimeFilter(time) {
+      this.filters.time = time;
     },
-    removeFromExcludedCategories(cat) {
-      const newArr = this.logDisplayFilters.excludedCategories.filter(_cat => (
-        cat !== _cat
-      ));
-      this.logDisplayFilters.excludedCategories = newArr;
-      localStorage.setItem('excludedCategories', JSON.stringify(newArr));
+    resetFilters() {
+      this.filters = defaultFilters(this.logTypes, this.terms, Date.now());
     },
-    setDateFilter(value) {
-      this.logDisplayFilters.date = value;
-      localStorage.setItem('dateFilter', value);
-    },
-    clearDisplayFilters() {
-      this.logDisplayFilters = {
-        date: 'ALL_TIME',
-        excludedTypes: [],
-        excludedCategories: [],
+    transformFilters() {
+      const objectToArray = obj => Object.entries(obj).reduce(
+        (arr, [key, val]) => (!val ? arr : [...(arr || []), key]),
+        undefined,
+      );
+      const { types, categories, time: [start, end] } = this.filters;
+      return {
+        'owner.id': this.user.id,
+        status: { $ne: 'done' },
+        type: objectToArray(types),
+        'category.id': objectToArray(categories),
+        timestamp: { $gte: start, $lte: end },
       };
     },
-    loadCachedDisplayFilters() {
-      const exTypes = JSON.parse(localStorage.getItem('excludedTypes'));
-      const exCats = JSON.parse(localStorage.getItem('excludedCategories'));
-      const date = localStorage.getItem('dateFilter');
-
-      if (exTypes !== null) {
-        exTypes.forEach(type => this.addToExcludedTypes(type));
-      }
-      if (exCats !== null) {
-        exCats.forEach(cat => this.addToExcludedCategories(cat));
-      }
-      if (date !== null) {
-        this.setDateFilter(date);
-      }
+    saveFilters() {
+      localStorage.setItem('tasks-filters', JSON.stringify(this.filters));
+      const filter = this.transformFilters();
+      this.loadLogs(filter, { includeUnsynced: true });
     },
-    resetDisplayFilters() {
-      this.clearDisplayFilters();
-      localStorage.setItem('excludedTypes', '[]');
-      localStorage.setItem('excludedCategories', '[]');
-      localStorage.setItem('dateFilter', 'ALL_TIME');
-    },
-    isUnsynced,
   },
   computed: {
-    logToDelete() {
-      return this.logs.find(log => log.localID === this.logIDToDelete);
+    areas() {
+      return this.assets.filter(a => a.is_location);
     },
-    localIDs() {
-      return this.logs.map(log => log.localID);
+    equipment() {
+      return this.assets.filter(a => a.type === 'equipment');
+    },
+    units() {
+      return this.terms.filter(t => t.type === 'unit');
+    },
+    categories() {
+      return this.terms.filter(t => t.type === 'log_category');
+    },
+    sortedLogs() {
+      const compare = (logA, logB) =>
+        new Date(logB.timestamp) - new Date(logA.timestamp);
+      return R.sort(compare, this.logs);
+    },
+    logToDelete() {
+      return this.logs.find(log => log.id === this.logIDToDelete);
     },
   },
 };

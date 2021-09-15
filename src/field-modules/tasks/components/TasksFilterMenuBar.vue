@@ -7,12 +7,13 @@
       <li>{{ $t('Log Filters')}}</li>
     </template>
     <template #more-menu>
-      <li @click="$emit('reset-display-filters')">{{ $t('Reset filters')}}</li>
+      <li @click="$emit('reset-filters')">{{ $t('Reset filters')}}</li>
     </template>
   </farm-menu-bar>
 </template>
 
 <script>
+// TODO: Where to emit save-filters?
 export default {
   name: 'TasksFilterMenuBar',
   data() {

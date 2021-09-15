@@ -60,7 +60,8 @@ export default {
     },
   },
   computed: mapState({
-    mapboxAPIKey: state => state.shell.mapboxAPIKey,
+    // TODO: where will mapbox key come from?
+    mapboxAPIKey: state => state.mapboxAPIKey,
   }),
   mounted() {
     this.map = window.farmOS.map.create(this.id, this.options);

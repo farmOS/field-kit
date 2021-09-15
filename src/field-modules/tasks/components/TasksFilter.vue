@@ -174,6 +174,7 @@
 
           <farm-inline space="s">
             <div>
+              <!-- TODO: How to handle "No Category"? -->
               <input
                 type="checkbox"
                 id="category-none"
@@ -220,22 +221,16 @@ export default {
   props: ['categories', 'logDisplayFilters'],
   methods: {
     // NOTE: We're tracking which types/categiries to EXCLUDE from My Logs
-    updateExcludedLogType(type, checked) {
-      if (!checked) {
-        this.$emit('add-to-excluded-types', type);
-      } else {
-        this.$emit('remove-from-excluded-types', type);
-      }
+    // TODO: rename methods
+    updateExcludedLogType(type) {
+      this.$emit('toggle-type-filter', type);
     },
-    updateExcludedLogCategory(cat, checked) {
-      if (!checked) {
-        this.$emit('add-to-excluded-categories', cat);
-      } else {
-        this.$emit('remove-from-excluded-categories', cat);
-      }
+    updateExcludedLogCategory(catId) {
+      this.$emit('toggle-category-filter', catId);
     },
     setDateFilter(value) {
-      this.$emit('set-date-filter', value);
+      // TODO: parse date
+      this.$emit('set-time-filter', value);
     },
     checkChecked(id) {
       return !document.getElementById(id).checked;

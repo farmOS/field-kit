@@ -5,7 +5,7 @@
         <span class="input-group-text">https://</span>
       </div>
       <input
-        v-model="farmosUrl"
+        v-model="host"
         :placeholder="$t('Enter your farmOS URL')"
         autofocus
         type="url"
@@ -38,11 +38,8 @@
     </div>
     <br>
     <div class="input-group login-submit">
-      <div v-if="authPending">
-        <icon-spinner/>
-      </div>
       <button
-        v-else
+        v-if="!authPending && !updatesPending"
         :disabled="!this.valuesEntered"
         title="Submit credentials"
         @click="submitCredentials"
@@ -53,27 +50,43 @@
       </button>
     </div>
     <br>
-    <p style="textAlign: center">
-      {{ $t('Need a server? Check out')}}
-      <a href="https://farmos.org/hosting/">{{ $t('hosting options')}}</a>.
-    </p>
+    <div class="status-text">
+      <farm-text v-if="!authPending && !updatesPending">
+        {{ $t('Need a server? Check out')}}
+        <a href="https://farmos.org/hosting/">{{ $t('hosting options')}}</a>.
+      </farm-text>
+      <icon-spinner v-if="authPending || updatesPending"/>
+      <farm-text v-if="authPending">Authorizing...</farm-text>
+      <farm-text v-if="updatesPending">Authorization successful!</farm-text>
+      <farm-text v-if="updatesPending">Updating farm and user configuration...</farm-text>
+    </div>
   </farm-main>
 </template>
 
 <script>
+import { mapActions, mapMutations } from 'vuex';
+
 export default {
   name: 'Login',
   data() {
     return {
       valuesEntered: false,
       authPending: false,
+      updatesPending: false,
       username: '',
       password: '',
-      farmosUrl: '',
+      host: '',
     };
   },
 
   methods: {
+    ...mapMutations(['alert']),
+    ...mapActions([
+      'updateProfile',
+      'updateConfigDocs',
+      'updateFieldModules',
+      'purgeEntities',
+    ]),
     checkValues() {
       const urlIsValid = process.env.NODE_ENV === 'development' || this.username !== '';
       const usernameIsValid = this.username !== '';
@@ -83,38 +96,46 @@ export default {
       }
     },
     submitCredentials() {
+      this.authPending = true;
       const payload = {
-        farmosUrl: this.farmosUrl,
+        host: this.host,
         username: this.username,
         password: this.password,
-        router: this.$router,
       };
-
-      this.authPending = true;
-
       this.$store.dispatch('authorize', payload)
         .then(() => {
+          this.updatesPending = true;
           this.authPending = false;
-          this.$store.commit('setLoginStatus', true);
-          return this.$store.dispatch('updateFieldModules', this.$router);
+          return this.updateProfile()
+            .then(this.updateConfigDocs)
+            .then(this.updateFieldModules)
+            .then(this.purgeEntities)
+            .then(() => {
+              this.updatesPending = false;
+              this.$router.push('/home');
+            });
         })
-        .then(res => this.$store.dispatch('updateUserAndSiteInfo', res))
-        .then(res => this.$store.dispatch('updateFarmResources', res));
+        .catch((e) => {
+          this.authPending = false;
+          this.updatesPending = false;
+          this.alert(e);
+        });
     },
-
   },
   created() {
-    this.farmosUrl = localStorage.getItem('host')?.replace(/(^\w+:|^)\/\//, '') || '';
+    this.host = localStorage.getItem('host')?.replace(/(^\w+:|^)\/\//, '') || '';
   },
 };
 
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 
  .login-submit {
    justify-content: center;
+ }
+ .status-text {
+   text-align: center;
  }
 
 </style>

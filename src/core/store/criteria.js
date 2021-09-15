@@ -1,13 +1,7 @@
 import { anyPass, complement, evolve } from 'ramda';
-import parseFilter from '../../utils/parseFilter';
+import parseFilter from '../utils/parseFilter';
 import farm from '../farm';
-
-// Exporting only for the sake of testing, at least for now.
-export const daysAway = (t, x) => {
-  const ms = new Date(t).valueOf() + (1000 * 60 * 60 * 24 * x);
-  const iso = new Date(ms).toISOString();
-  return iso;
-};
+import daysAway from '../utils/daysAway';
 
 const assetCriteria = anyPass([
   parseFilter({

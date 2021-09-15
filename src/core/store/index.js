@@ -1,29 +1,29 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import shellModule from './shellModule';
-import farmModule from './farmModule';
-import idbModule from './idb/module';
-import makeIDBSubscriber from './idb/subscriber';
-import authModule from './authModule';
+import core from './core';
+import entities from './entities';
 import camModule from './camModule';
-import l10nModule from './l10n/module';
+// import l10nModule from './l10n/module';
 
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
+  state: {
+    ...core.state,
+    ...entities.state,
+  },
+  mutations: {
+    ...core.mutations,
+    ...entities.mutations,
+  },
+  actions: {
+    ...core.actions,
+    ...entities.actions,
+  },
   modules: {
-    shell: shellModule,
-    farm: farmModule,
-    idb: idbModule,
-    auth: authModule,
     cam: camModule,
-    l10n: l10nModule,
+    // l10n: l10nModule,
   },
 });
-
-// Add subscribers so the DB automatically caches data when changes happen in
-// the farmModule.
-const idbSubscriber = makeIDBSubscriber(store);
-store.subscribe(idbSubscriber);
 
 export default store;

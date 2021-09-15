@@ -15,36 +15,42 @@
         </farm-stack>
       </farm-card>
       <farm-card
-        v-for="(log, i) in logs.filter(passesFilters)"
+        v-for="(log, i) in tasks"
         :key="`card-${i}`">
-        <router-link :to="{ path: `/tasks/${log.localID}` }">
+        <router-link :to="{ path: `/tasks/${log.id}` }">
           <farm-stack space="xxs">
 
             <farm-inline justifyContent="space-between" space="s">
               <farm-inline justifyContent="start" space="s">
                 <icon-assignment-done
-                  v-if="log.done"/>
+                  v-if="log.status === 'done'"/>
                 <icon-assignment
-                  v-if="!log.done && (log.timestamp * 1000 > new Date().valueOf())"/>
+                  v-if="log.status !== 'done' && !log.late"/>
                 <icon-assignment-late
                   class="late"
-                  v-if="!log.done && (log.timestamp * 1000 < new Date().valueOf())"/>
+                  v-if="log.status !== 'done' && log.late"/>
                 <h6>{{log.name}}</h6>
               </farm-inline>
-              <icon-cloud-upload v-if="isUnsynced(log)"/>
+              <icon-cloud-upload v-if="log.isUnsynced"/>
               <icon-cloud-done v-else/>
             </farm-inline>
 
-            <farm-text size="s">{{parseNotes(log.notes)}}</farm-text>
+            <farm-text size="s">{{log.notes}}</farm-text>
 
             <farm-inline justifyContent="space-between" alignItems="flex-end">
               <farm-stack space="xs">
                 <farm-text-label as="p">
                   {{$t(logTypes[log.type].label).toUpperCase()}}
                 </farm-text-label>
-                <farm-text size="s">{{showDate(log.timestamp)}}</farm-text>
+                <farm-text size="s">{{log.date}}</farm-text>
               </farm-stack>
               <farm-inline space="xs" justifyContent="flex-end" flex="0 0 75%">
+                <farm-text size="s"
+                  v-for="(asset, i) in log.assets"
+                  class="tag area"
+                  :key="`area-${i}`">
+                  {{area.name}}
+                </farm-text>
                 <farm-text size="s"
                   v-for="(area, i) in mapTidsToAreas(log)"
                   class="tag area"
@@ -76,8 +82,10 @@
 </template>
 
 <script>
-const { parseNotes } = window.farmOS.utils;
-const { isUnsynced } = window.farmOS.utils.farmLog;
+const {
+  meta: { isUnsynced },
+  utils: { parseNotes },
+} = window.farmOS;
 
 export default {
   name: 'TasksAll',
@@ -86,84 +94,46 @@ export default {
     'logs',
     'userId',
     'assets',
-    'logDisplayFilters',
-    'areas',
   ],
+  computed: {
+    tasks() {
+      return this.logs.map((log) => {
+        const assets = log.asset.data.map(logAsset =>
+          this.assets.find(a => a.id === logAsset.id));
+        const dateOpts = { month: 'short', day: 'numeric', year: 'numeric' };
+        return {
+          ...log,
+          assets,
+          date: new Date(log.timestamp).toLocaleDateString(undefined, dateOpts),
+          notes: parseNotes(log.notes),
+          late: log.timestamp < new Date().toISOString(),
+          isUnsynced: isUnsynced(log),
+        };
+      });
+    },
+  },
   methods: {
-    showDate(unixTimestamp) {
-      if (Number.isNaN(Number(unixTimestamp))) {
-        return 'No Date Provided';
-      }
-      const date = new Date(unixTimestamp * 1000);
+    showDate(iso) {
+      const date = new Date(iso);
       const opts = { month: 'short', day: 'numeric', year: 'numeric' };
       return date.toLocaleDateString(undefined, opts);
     },
     // Pass in a log and get back an array of the areas attached to that log
     mapTidsToAreas(log) {
-      if (log.area && this.areas.length > 0) {
-        return log.area.map(a1 => this.areas.find(a2 => +a2.tid === +a1.id));
+      if (log.area?.data && this.areas.length > 0) {
+        return log.area.data.map(a1 => this.areas.find(a2 => +a2.tid === +a1.id));
       }
       return [];
     },
     // Pass in a log and get back an array of the areas attached to that log
     mapIdsToAssets(log) {
-      if (log.asset && this.assets.length > 0) {
-        return log.asset.map(a1 => this.assets.find(a2 => +a2.id === +a1.id));
+      if (log.asset?.data && this.assets.length > 0) {
+        return log.asset.data.map(a1 => this.assets.find(a2 => +a2.id === +a1.id));
       }
       return [];
     },
-    passesFilters(log) {
-      const passesTypeFilter = !this.logDisplayFilters.excludedTypes.includes(log.type);
-      const passesCategoryFilter = () => {
-        const logHasNoCats = log.log_category === null
-          || log.log_category.length === 0;
-        const noCatsFilterIsSelected = this.logDisplayFilters.excludedCategories.includes(-1);
-        if (logHasNoCats && noCatsFilterIsSelected) {
-          return false;
-        }
-        if (log.log_category !== null) {
-          return !log.log_category.some(cat => (
-            this.logDisplayFilters.excludedCategories.some(exCat => +exCat === +cat.id)
-          ));
-        }
-        return true;
-      };
-      const passesDateFilter = () => {
-        if (Number.isNaN(Number(log.timestamp))) {
-          return true;
-        }
-        const filter = this.logDisplayFilters.date;
-        const d = new Date();
-        let dateLimit;
-        if (filter === 'TODAY') {
-          d.setDate(d.getDate() - 1);
-          dateLimit = Math.floor(d.valueOf() / 1000);
-        }
-        if (filter === 'THIS_WEEK') {
-          d.setDate(d.getDate() - 7);
-          dateLimit = Math.floor(d.valueOf() / 1000);
-        }
-        if (filter === 'THIS_MONTH') {
-          d.setMonth(d.getMonth() - 1);
-          dateLimit = Math.floor(d.valueOf() / 1000);
-        }
-        if (filter === 'THIS_YEAR') {
-          d.setYear(d.getYear() - 1);
-          dateLimit = Math.floor(d.valueOf() / 1000);
-        }
-        if (filter === 'ALL_TIME') {
-          dateLimit = 0;
-        }
-        return log.timestamp > dateLimit;
-      };
-
-      if (passesTypeFilter && passesCategoryFilter() && passesDateFilter()) {
-        return true;
-      }
-      return false;
-    },
     startNewLog() {
-      this.initializeLog({ done: true })
+      this.createLog({ done: true })
         .then(id => this.$router.push({ path: `/tasks/${id}` }));
     },
     parseNotes,

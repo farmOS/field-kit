@@ -1,16 +1,20 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Login from '../login/Login';
-import LoginMenuBar from '../login/LoginMenuBar';
-import Logout from '../login/Logout';
-import LogoutMenuBar from '../login/LogoutMenuBar';
-import Home from '../home/Home';
-import HomeMenuBar from '../home/HomeMenuBar';
+import Login from './login/Login';
+import LoginMenuBar from './login/LoginMenuBar';
+import Logout from './login/Logout';
+import LogoutMenuBar from './login/LogoutMenuBar';
+import Home from './home/Home';
+import HomeMenuBar from './home/HomeMenuBar';
 
 Vue.use(Router);
 
 const router = new Router({
   routes: [
+    {
+      path: '/',
+      redirect: '/home',
+    },
     {
       path: '/login',
       name: 'Login',
@@ -35,16 +39,13 @@ const router = new Router({
         menubar: HomeMenuBar,
       },
     },
+    // FIXME: this is forcing reroutes after refreshing at /tasks because
+    // it's a lower index than the the modules' routes.
+    // {
+    //   path: '*',
+    //   redirect: '/home',
+    // },
   ],
-});
-
-router.beforeEach((to, from, next) => {
-  // If user logged out then logged back in, don't route them back to logout,
-  // but send them to root instead.
-  if (from.path === '/login' && to.path === '/logout') {
-    next('/');
-  }
-  next();
 });
 
 export default router;

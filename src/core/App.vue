@@ -11,14 +11,10 @@
             <div class="arrow-back" @click="showDrawer = !showDrawer">
               <icon-arrow-back/>
             </div>
-            <div v-if="isLoggedIn" class="user-info">
-              <h2>{{ farmName }}</h2>
-              <p>{{ farmUrl }}</p>
-              <p>{{ username}}</p>
-            </div>
-            <div v-else class="user-info">
-              <h2>{{ $t('Welcome to farmOS') }}</h2>
-              <p>{{ $t('Login for more options.') }}</p>
+            <div class="user-info">
+              <h2>{{ farm.name }}</h2>
+              <p>{{ farm.url.replace(/(^\w+:|^)\/\//, '') }}</p>
+              <p>{{ user.display_name }}</p>
             </div>
           </div>
         </header>
@@ -40,10 +36,10 @@
             <farm-toggle-check
               :label="$t('Share My Location')"
               labelPosition="before"
-              :checked="useGeolocation"
+              :checked="settings.useGeolocation"
               @input="setUseGeolocation($event)"/>
           </farm-list-item>
-          <farm-list-item v-if="langs.length > 0">
+          <!-- <farm-list-item v-if="langs.length > 0">
             <label>{{$t('Select Language')}}</label><br>
             <div class="form-check">
               <input
@@ -74,12 +70,9 @@
                 {{ lang.native }}
               </label>
             </div>
-          </farm-list-item>
+          </farm-list-item> -->
           <farm-list-item :clickable="false">{{ $t('Version')}}: {{version}}</farm-list-item>
-          <router-link to="/login" v-if="!isLoggedIn" @click.native="showDrawer = !showDrawer">
-            <farm-list-item >{{ $t('Login') }}</farm-list-item>
-          </router-link>
-          <router-link to="/logout" v-if="isLoggedIn" @click.native="showDrawer = !showDrawer">
+          <router-link to="/logout" @click.native="showDrawer = !showDrawer">
             <farm-list-item>{{ $t('Logout') }}</farm-list-item>
           </router-link>
         </farm-list>
@@ -87,24 +80,28 @@
       </div>
     </transition>
 
-    <div class="module-container">
+    <div class="module-container" v-if="ready">
       <router-view
         name="menubar"
         @toggle-drawer="showDrawer = !showDrawer"
       />
       <router-view
-        :useGeolocation="useGeolocation"
-        :userId='userId'
-        :systemOfMeasurement='systemOfMeasurement'
-        :logTypes='logTypes'
-        :modules="modules"
-        :logs='logs'
-        :areas='areas'
-        :assets='assets'
-        :units='units'
-        :categories='categories'
-        :equipment='equipment'
-        :areaGeoJSON='areaGeoJSON'
+        :user="user"
+        :farm="farm"
+        :settings="settings"
+        :assets="assets"
+        :logs="logs"
+        :plans="plans"
+        :quantities="quantities"
+        :terms="terms"
+        :users="users"
+        :assetTypes="assetTypes"
+        :logTypes="logTypes"
+        :planTypes="planTypes"
+        :quantityTypes="quantityTypes"
+        :termTypes="termTypes"
+        :userTypes="userTypes"
+        :areaGeoJSON="areaGeoJSON"
         @toggle-drawer="showDrawer = !showDrawer"
       />
     </div>
@@ -118,7 +115,7 @@
         <span v-html="err.message"></span>
         <button
           type="button"
-          @click="closeAlert(index)"
+          @click="dismissAlert(index)"
           class="close"
           aria-label="Close">
           <span aria-hidden="true">&times;</span>
@@ -130,69 +127,72 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex';
+import { mapActions, mapMutations, mapState } from 'vuex';
 import { version } from '../../package.json';
 
 export default {
   name: 'App',
   data() {
     return {
-      showDrawer: false,
+      // TODO: Provide a not-ready UI
+      ready: false,
       version,
+      showDrawer: false,
     };
   },
   created() {
-    this.$store.commit('setCurrentModule', this.$route.meta.module);
-    this.$store.dispatch('loadCachedUserAndSiteInfo');
-    this.$store.dispatch('loadCachedResources');
-    this.$store.dispatch('loadCachedLanguages');
-    this.$store.dispatch('updateUserAndSiteInfo')
-      .then(res => this.$store.dispatch('updateFarmResources', res))
-      .then(res => this.$store.dispatch('updateLanguages', res));
-    this.$store.dispatch('loadCachedAssets');
-    this.$store.dispatch('loadCachedAreas');
-    this.$store.dispatch('loadCachedUnits');
-    this.$store.dispatch('loadCachedCategories');
-    this.$store.dispatch('purgeLogs');
+    this.loadProfile()
+      .then(this.loadConfigDocs)
+      .then(this.loadFieldModules)
+      .then(() => {
+        this.ready = true;
+        this.updateProfile()
+          .then(this.updateConfigDocs)
+          .then(this.updateFieldModules)
+          .then(this.purgeEntities)
+          .catch((e) => { this.alert(e); });
+      })
+      .catch(() => {
+        this.ready = true;
+        // If loading the profile, config or modules fails, we treat it like a
+        // fresh install.
+        if (this.$route.path !== '/login') this.$router.push('/login');
+      });
   },
   computed: {
     ...mapState({
       /**
-       * SHELL STATE
+       * CORE STATE
        */
-      errors: state => state.shell.errors,
-      username: state => state.shell.user.name,
-      userId: state => state.shell.user.uid,
-      isLoggedIn: state => state.shell.user.isLoggedIn,
-      useGeolocation: state => state.shell.settings.useGeolocation,
-      systemOfMeasurement: state => state.shell.systemOfMeasurement,
-      farmName: state => state.shell.farmInfo.name,
-      // Provide an example url for the dev server environment
-      farmUrl: state => ((state.shell.farmInfo.url === '')
-        ? 'example.farmos.net'
-        : state.shell.farmInfo.url?.replace(/(^\w+:|^)\/\//, '')),
-      modules: state => state.shell.modules,
-      areaGeoJSON: state => state.shell.areaGeoJSON,
+      errors: state => state.errors,
+      user: state => state.profile.user,
+      farm: state => state.profile.farm,
+      settings: state => state.settings,
+      modules: state => state.modules,
+      areaGeoJSON: state => state.areaGeoJSON,
 
       /**
        * L10N STATE
        */
-      locale: state => state.l10n.locale,
-      langs: state => state.l10n.languages,
+      // locale: state => state.l10n.locale,
+      // langs: state => state.l10n.languages,
 
       /**
-       * FARM STATE
+       * ENTITIES
        */
-      logs: state => state.farm.logs,
-      areas: state => state.farm.areas,
-      assets: state => state.farm.assets,
-      units: state => state.farm.units,
-      categories: state => state.farm.categories,
-      logTypes: state => state.farm.resources.log,
+      assets: state => state.assets,
+      logs: state => state.logs,
+      plans: state => state.plans,
+      quantities: state => state.quantities,
+      terms: state => state.terms,
+      users: state => state.users,
+      assetTypes: state => state.logTypes,
+      logTypes: state => state.logTypes,
+      planTypes: state => state.planTypes,
+      quantityTypes: state => state.quantityTypes,
+      termTypes: state => state.termTypes,
+      userTypes: state => state.userTypes,
     }),
-    ...mapGetters([
-      'equipment',
-    ]),
   },
   watch: {
     showDrawer(currentShowDrawer) {
@@ -202,29 +202,33 @@ export default {
         document.querySelector('body').setAttribute('style', 'overflow-y: visible');
       }
     },
-    $route(to) {
-      this.$store.commit('setCurrentModule', to.meta.module);
-    },
   },
   methods: {
-    closeAlert(index) {
-      this.$store.commit('dismissAlert', index);
-    },
-    setUseGeolocation(checked) {
-      this.$store.commit('setUseGeolocation', checked);
-    },
+    ...mapMutations(['alert', 'dismissAlert']),
+    ...mapActions([
+      'loadProfile',
+      'loadConfigDocs',
+      'loadFieldModules',
+      'updateProfile',
+      'updateConfigDocs',
+      'updateFieldModules',
+      'purgeEntities',
+    ]),
+    // setUseGeolocation(checked) {
+    //   this.$store.commit('setUseGeolocation', checked);
+    // },
     handleModuleClick(module) {
       if (module.routes[0].path !== this.$route.path) {
         this.$router.push(module.routes[0].path);
       }
       this.showDrawer = !this.showDrawer;
     },
-    setLocale(e) {
-      this.$store.commit('setLocale', e.target.value);
-    },
-    isLocale(locale) {
-      return this.locale === locale;
-    },
+    // setLocale(e) {
+    //   this.$store.commit('setLocale', e.target.value);
+    // },
+    // isLocale(locale) {
+    //   return this.locale === locale;
+    // },
   },
 };
 </script>
