@@ -1,5 +1,12 @@
 <template>
-  <div>
+<transition name="ready">
+  <div v-if="!ready" class="not-ready" key="not-ready">
+    <farm-stack align="center" space="s">
+      <img src="icons/icon-72x72.png" alt="farmOS leaf icon">
+      <farm-text as="span" size="l">Getting ready...</farm-text>
+    </farm-stack>
+  </div>
+  <div v-if="ready" class="app-container" key="ready">
     <transition name="filter">
       <div class="modal-filter" v-if="showDrawer" @click="showDrawer = !showDrawer"/>
     </transition>
@@ -80,31 +87,29 @@
       </div>
     </transition>
 
-    <div class="module-container" v-if="ready">
-      <router-view
-        name="menubar"
-        @toggle-drawer="showDrawer = !showDrawer"
-      />
-      <router-view
-        :user="user"
-        :farm="farm"
-        :settings="settings"
-        :assets="assets"
-        :logs="logs"
-        :plans="plans"
-        :quantities="quantities"
-        :terms="terms"
-        :users="users"
-        :assetTypes="assetTypes"
-        :logTypes="logTypes"
-        :planTypes="planTypes"
-        :quantityTypes="quantityTypes"
-        :termTypes="termTypes"
-        :userTypes="userTypes"
-        :areaGeoJSON="areaGeoJSON"
-        @toggle-drawer="showDrawer = !showDrawer"
-      />
-    </div>
+    <router-view
+      name="menubar"
+      @toggle-drawer="showDrawer = !showDrawer"
+    />
+    <router-view
+      :user="user"
+      :farm="farm"
+      :settings="settings"
+      :assets="assets"
+      :logs="logs"
+      :plans="plans"
+      :quantities="quantities"
+      :terms="terms"
+      :users="users"
+      :assetTypes="assetTypes"
+      :logTypes="logTypes"
+      :planTypes="planTypes"
+      :quantityTypes="quantityTypes"
+      :termTypes="termTypes"
+      :userTypes="userTypes"
+      :areaGeoJSON="areaGeoJSON"
+      @toggle-drawer="showDrawer = !showDrawer"
+    />
 
     <div
       v-for="(err, index) in errors"
@@ -124,6 +129,7 @@
     </div>
 
   </div>
+</transition>
 </template>
 
 <script>
@@ -134,7 +140,6 @@ export default {
   name: 'App',
   data() {
     return {
-      // TODO: Provide a not-ready UI
       ready: false,
       version,
       showDrawer: false,
@@ -234,6 +239,34 @@ export default {
 </script>
 
 <style scoped>
+  .ready-enter-active, .ready-leave-active {
+    transition: opacity .5s;
+  }
+  .ready-enter, .ready-leave-to {
+    opacity: 0;
+  }
+  .not-ready {
+    height: 100vh;
+    padding-top: calc(50vh - 48px);
+  }
+  .not-ready img {
+    height: 48px;
+  }
+  .not-ready span {
+    -webkit-animation: pulse 1250ms infinite;
+    animation: pulse 1250ms infinite;
+  }
+  @keyframes pulse {
+    from { opacity: 1; }
+    50% { opacity: .5; }
+    to { opacity: 1; }
+  }
+  @-webkit-keyframes pulse {
+    from { opacity: 1; }
+    50% { opacity: .5; }
+    to { opacity: 1; }
+  }
+
   .close {
     position: absolute;
     top: 5px;
