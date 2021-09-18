@@ -39,12 +39,6 @@ const router = new Router({
         menubar: HomeMenuBar,
       },
     },
-    // FIXME: this is forcing reroutes after refreshing at /tasks because
-    // it's a lower index than the the modules' routes.
-    // {
-    //   path: '*',
-    //   redirect: '/home',
-    // },
   ],
 });
 
