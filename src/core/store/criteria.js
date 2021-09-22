@@ -1,4 +1,6 @@
-import { anyPass, complement, evolve } from 'ramda';
+import {
+  anyPass, complement, evolve, T,
+} from 'ramda';
 import parseFilter from '../utils/parseFilter';
 import farm from '../farm';
 import daysAway from '../utils/daysAway';
@@ -30,7 +32,7 @@ export const cachingCriteria = ({ now = Date.now(), uid = '' } = {}) => ({
   log: logCriteria(now),
   plan: farm.meta.isUnsynced,
   quantity: farm.meta.isUnsynced,
-  taxonomy_term: farm.meta.isUnsynced,
+  taxonomy_term: T,
   user: userCriteria(uid),
 });
 
