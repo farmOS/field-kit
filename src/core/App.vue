@@ -191,7 +191,7 @@ export default {
       quantities: state => state.quantities,
       terms: state => state.terms,
       users: state => state.users,
-      assetTypes: state => state.logTypes,
+      assetTypes: state => state.assetTypes,
       logTypes: state => state.logTypes,
       planTypes: state => state.planTypes,
       quantityTypes: state => state.quantityTypes,
