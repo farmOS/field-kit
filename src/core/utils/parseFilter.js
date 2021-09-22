@@ -37,11 +37,11 @@ function parseField([key, value]) {
     const path = key.split('.');
     return parsePath(path, value);
   }
-  if (key in operators) {
+  if (key in operators && value !== undefined) {
     return operators[key](value);
   }
   let predicate = T;
-  if (['string', 'number', 'boolean'].includes(typeof value) || !value) {
+  if (['string', 'number', 'boolean'].includes(typeof value) || value === null) {
     predicate = operators.$eq(value);
   } else if (Array.isArray(value)) {
     predicate = operators.$or(value);
