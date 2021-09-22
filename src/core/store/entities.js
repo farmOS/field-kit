@@ -1,5 +1,5 @@
 import {
-  allPass, anyPass, compose, evolve, map, none, pick, prop, reduce,
+  allPass, anyPass, compose, evolve, ifElse, map, none, pick, prop, reduce,
 } from 'ramda';
 import farm from '../farm';
 import nomenclature from './nomenclature';
@@ -22,10 +22,15 @@ const cacheEntity = (name, criteria, entity) => {
   return Promise.resolve(entity);
 };
 
+const flattenRelationships = map(ifElse(
+  Array.isArray,
+  map(prop('data')),
+  prop('data'),
+));
 const flattenSerializedEntity = ({
   id, type, meta, attributes, relationships,
 }) => ({
-  id, type, meta, ...attributes, ...relationships,
+  id, type, meta, ...attributes, ...flattenRelationships(relationships),
 });
 
 const docsReducer = ([schemata, types], { key, config_entity, json_schema }) => {
