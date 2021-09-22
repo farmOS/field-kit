@@ -40,7 +40,7 @@
             <farm-inline justifyContent="space-between" alignItems="flex-end">
               <farm-stack space="xs">
                 <farm-text-label as="p">
-                  {{$t(logTypes[log.type].label).toUpperCase()}}
+                  {{$t(log.typeLabel).toUpperCase()}}
                 </farm-text-label>
                 <farm-text size="s">{{log.date}}</farm-text>
               </farm-stack>
@@ -104,6 +104,7 @@ export default {
         return {
           ...log,
           assets,
+          typeLabel: this.logTypes[log.type]?.label || '',
           date: new Date(log.timestamp).toLocaleDateString(undefined, dateOpts),
           notes: parseNotes(log.notes),
           late: log.timestamp < new Date().toISOString(),

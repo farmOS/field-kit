@@ -80,19 +80,20 @@
 const {
   lib: { R },
   meta: { isUnsynced },
-  utils: { daysAway },
 } = window.farmOS;
 
 const assetFilter = { status: 'active' };
 const termFilter = { type: ['log_category', 'unit'] };
 
-// TODO: change `drupal_internal__id` to `name` or something else?
-const arrayToObject = (obj, type) => ({ ...obj, [type.drupal_internal__id]: true });
-const defaultFilters = (logTypes, terms, now) => ({
-  types: R.map(() => true, logTypes),
-  categories: terms.filter(t => t.type === 'log_category').reduce(arrayToObject, {}),
-  time: [daysAway(now, -7), daysAway(now, 7)],
-});
+const setTypeFilters = (logTypes, cachedValues = {}) =>
+  R.mapObjIndexed((_, key) => (key in cachedValues ? cachedValues[key] : true), logTypes);
+const setCategoryFilters = (cats, cachedValues = {}) => cats.map(({ id }) => ({
+  [id]: id in cachedValues ? cachedValues[id] : true,
+}));
+const setTimeFilter = (now, cachedValues) =>
+  (Array.isArray(cachedValues)
+    ? cachedValues
+    : []);
 
 export default {
   name: 'Tasks',
@@ -100,7 +101,11 @@ export default {
     return {
       showDeleteDialog: false,
       logIDToDelete: null,
-      filters: defaultFilters(this.logTypes, this.terms, Date.now()),
+      filters: {
+        types: {},
+        categories: {},
+        time: [],
+      },
       isSyncing: false,
     };
   },
@@ -114,21 +119,18 @@ export default {
     'logTypes',
   ],
   created() {
-    const cachedFilters = JSON.parse(localStorage.getItem('tasks-filters'));
-    if (cachedFilters) {
-      const { types = {}, categories = {}, time = [] } = cachedFilters;
-      Object.keys(this.filters.types).forEach((key) => {
-        this.filters.types[key] = key in types ? types[key] : true;
-      });
-      Object.keys(this.filters.categories).forEach((key) => {
-        this.filters.categories[key] = key in categories ? categories[key] : true;
-      });
-      this.filters.time = time;
-    }
-    const filter = this.transformFilters();
-    this.loadLogs(filter, { includeUnsynced: true });
     this.loadAssets(assetFilter);
-    this.loadTerms(termFilter);
+    this.loadTerms(termFilter).then(() => {
+      const cachedFilters = JSON.parse(localStorage.getItem('tasks-filters'));
+      const { types, categories, time } = cachedFilters || {};
+      this.filters = {
+        types: setTypeFilters(this.logTypes, types),
+        categories: setCategoryFilters(this.categories, categories),
+        time: setTimeFilter(Date.now(), time),
+      };
+      const filter = this.transformFilters();
+      this.loadLogs(filter, { includeUnsynced: true });
+    });
   },
   methods: {
     isUnsynced,
@@ -184,7 +186,11 @@ export default {
       this.filters.time = time;
     },
     resetFilters() {
-      this.filters = defaultFilters(this.logTypes, this.terms, Date.now());
+      this.filters = {
+        types: setTypeFilters(this.logTypes),
+        categories: setCategoryFilters(this.categories),
+        time: setTimeFilter(Date.now()),
+      };
     },
     transformFilters() {
       const objectToArray = obj => Object.entries(obj).reduce(
@@ -192,12 +198,30 @@ export default {
         undefined,
       );
       const { types, categories, time: [start, end] } = this.filters;
+      const includedCats = objectToArray(categories);
+      const catFilter = {};
+      // If default category filters are in place, there is no need to filter
+      // on the category property at all, hence the empty object.
+      if (includedCats.length < this.categories.length) {
+        const includedCatsFilter = {
+          $in: { id: includedCats },
+        };
+        // TODO: This filter should only be added conditionally.
+        const noCatFilter = {
+          $nin: { id: this.categories.map(R.prop('id')) },
+        };
+        catFilter.category = [includedCatsFilter, noCatFilter];
+      }
+      let timeFilter = {}; const timestamp = {};
+      if (start) timestamp.$gte = start;
+      if (end) timestamp.$lte = end;
+      if ('$gte' in timestamp || '$lte' in timestamp) timeFilter = { timestamp };
       return {
         'owner.id': this.user.id,
         status: { $ne: 'done' },
         type: objectToArray(types),
-        'category.id': objectToArray(categories),
-        timestamp: { $gte: start, $lte: end },
+        ...catFilter,
+        ...timeFilter,
       };
     },
     saveFilters() {
