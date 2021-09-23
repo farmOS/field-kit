@@ -49,11 +49,11 @@
             {{ $t('Are sure you\'d like to delete the log')}} "{{logToDelete.name}}"?&nbsp;
             <span
               v-if="isUnsynced(logToDelete)">
-              {{ $t('Deleting it on this device will not remove the log from the server.') }}
-            </span>
-            <span v-else>
               <!-- eslint-disable-next-line max-len -->
               {{ $t('It has not yet been synced to the server and cannot be recovered after it\'s deleted.')}}
+            </span>
+            <span v-else>
+              {{ $t('Deleting it on this device will not remove the log from the server.') }}
             </span>
           </div>
           <div class="modal-footer">
@@ -134,7 +134,6 @@ export default {
   },
   methods: {
     isUnsynced,
-    // TODO: Move these to App.vue and the mixins
     /**
      * DELETION METHODS
      */
