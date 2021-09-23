@@ -1,9 +1,9 @@
 <template>
   <farm-menu-bar>
     <template #left-menu>
-      <router-link :to="{ name: 'tasks-all' }" tag="li">
+      <li @click="returnToTasksAll">
         <icon-arrow-back/>
-      </router-link>
+      </li>
       <li>{{ $t('Log Filters')}}</li>
     </template>
     <template #more-menu>
@@ -13,7 +13,6 @@
 </template>
 
 <script>
-// TODO: Where to emit save-filters?
 export default {
   name: 'TasksFilterMenuBar',
   data() {
@@ -21,6 +20,11 @@ export default {
       showMore: false,
     };
   },
-
+  methods: {
+    returnToTasksAll() {
+      this.$emit('save-filters');
+      this.$router.push({ name: 'tasks-all' });
+    },
+  },
 };
 </script>

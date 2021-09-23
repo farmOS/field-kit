@@ -7,6 +7,7 @@
       @sync-all="syncAll"
       @sync="sync($event)"
       @reset-filters="resetFilters"
+      @save-filters="saveFilters"
       :logs="logs"
       :isSyncing="isSyncing"
     />
@@ -14,6 +15,7 @@
       @toggle-type-filter="toggleTypeFilter"
       @toggle-category-filter="toggleCategoryFilter"
       @set-time-filter="setTimeFilter"
+      :filters="filters"
       :userId="user.id"
       :useGeolocation="settings.useGeolocation"
       :areaGeoJSON="areaGeoJSON"
@@ -85,15 +87,49 @@ const {
 const assetFilter = { status: 'active' };
 const termFilter = { type: ['log_category', 'unit'] };
 
-const setTypeFilters = (logTypes, cachedValues = {}) =>
+// Helper for transforming a object mapping keys to booleans, back into an array
+// of those keys, as with type and category filters.
+const objectToArray = obj => Object.entries(obj).reduce(
+  (arr, [key, val]) => (!val ? arr : [...(arr || []), key]),
+  undefined,
+);
+
+const resetTypeFilters = (logTypes, cachedValues = {}) =>
   R.mapObjIndexed((_, key) => (key in cachedValues ? cachedValues[key] : true), logTypes);
-const setCategoryFilters = (cats, cachedValues = {}) => cats.map(({ id }) => ({
-  [id]: id in cachedValues ? cachedValues[id] : true,
-}));
-const setTimeFilter = (now, cachedValues) =>
-  (Array.isArray(cachedValues)
-    ? cachedValues
-    : []);
+const resetCategoryFilters = (categories, cachedValues = {}) =>
+  categories.reduce((obj, { id }) => ({
+    ...obj,
+    [id]: id in cachedValues ? cachedValues[id] : true,
+  }), { NO_CATEGORY: 'NO_CATEGORY' in cachedValues ? cachedValues.NO_CATEGORY : true });
+const transformCategoryFilters = (categories) => {
+  const { NO_CATEGORY, ...rest } = categories;
+  const includedCats = objectToArray(rest);
+  const allCats = Object.keys(rest);
+  const filter = {};
+  // If the list of included categories is the same length as the list of
+  // all categories, then the defaults are still in place, and there is no
+  // need to filter on the category property at all, so an empty object will
+  // be spread into the ultimate filter passed to the store.
+  if (includedCats.length < allCats.length) {
+    const includedCatsFilter = {
+      $in: { id: includedCats },
+    };
+    filter.category = includedCatsFilter;
+  }
+  // Likewise, only if NO_CATEGORY has been set true AND not all categories
+  // are included, do we need to explicitly filter for no category.
+  if (NO_CATEGORY && 'category' in filter) {
+    const noCatFilter = { $nin: { id: allCats } };
+    filter.category = [filter.category, noCatFilter];
+  }
+  return filter;
+};
+const transformTimeFilters = (start, end) => {
+  const timestamp = {};
+  if (start) timestamp.$gte = start;
+  if (end) timestamp.$lte = end;
+  return ('$gte' in timestamp || '$lte' in timestamp) ? { timestamp } : {};
+};
 
 export default {
   name: 'Tasks',
@@ -103,7 +139,9 @@ export default {
       logIDToDelete: null,
       filters: {
         types: {},
-        categories: {},
+        categories: {
+          NO_CATEGORY: true,
+        },
         time: [],
       },
       isSyncing: false,
@@ -124,9 +162,9 @@ export default {
       const cachedFilters = JSON.parse(localStorage.getItem('tasks-filters'));
       const { types, categories, time } = cachedFilters || {};
       this.filters = {
-        types: setTypeFilters(this.logTypes, types),
-        categories: setCategoryFilters(this.categories, categories),
-        time: setTimeFilter(Date.now(), time),
+        types: resetTypeFilters(this.logTypes, types),
+        categories: resetCategoryFilters(this.categories, categories),
+        time: Array.isArray(time) ? time : [],
       };
       const filter = this.transformFilters();
       this.loadLogs(filter, { includeUnsynced: true });
@@ -186,40 +224,20 @@ export default {
     },
     resetFilters() {
       this.filters = {
-        types: setTypeFilters(this.logTypes),
-        categories: setCategoryFilters(this.categories),
-        time: setTimeFilter(Date.now()),
+        types: resetTypeFilters(this.logTypes),
+        categories: resetCategoryFilters(this.categories),
+        time: [],
       };
     },
     transformFilters() {
-      const objectToArray = obj => Object.entries(obj).reduce(
-        (arr, [key, val]) => (!val ? arr : [...(arr || []), key]),
-        undefined,
-      );
       const { types, categories, time: [start, end] } = this.filters;
-      const includedCats = objectToArray(categories);
-      const catFilter = {};
-      // If default category filters are in place, there is no need to filter
-      // on the category property at all, hence the empty object.
-      if (includedCats.length < this.categories.length) {
-        const includedCatsFilter = {
-          $in: { id: includedCats },
-        };
-        // TODO: This filter should only be added conditionally.
-        const noCatFilter = {
-          $nin: { id: this.categories.map(R.prop('id')) },
-        };
-        catFilter.category = [includedCatsFilter, noCatFilter];
-      }
-      let timeFilter = {}; const timestamp = {};
-      if (start) timestamp.$gte = start;
-      if (end) timestamp.$lte = end;
-      if ('$gte' in timestamp || '$lte' in timestamp) timeFilter = { timestamp };
+      const categoryFilter = transformCategoryFilters(categories);
+      const timeFilter = transformTimeFilters(start, end);
       return {
         'owner.id': this.user.id,
         status: { $ne: 'done' },
         type: objectToArray(types),
-        ...catFilter,
+        ...categoryFilter,
         ...timeFilter,
       };
     },
