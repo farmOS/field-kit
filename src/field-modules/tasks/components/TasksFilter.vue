@@ -1,93 +1,10 @@
 <template lang="html">
   <farm-main>
-
     <farm-tiles :columns="[1, 2, 3]">
-      <farm-card>
-        <farm-stack space="s">
-
-          <h3>{{ $t('Date')}}</h3>
-
-          <farm-inline space="s">
-            <div>
-              <input
-                type="radio"
-                name="date"
-                :value="'TODAY'"
-                @input="setDateFilter($event.target.value)"
-                :checked="filters.date === 'TODAY'">
-              <label
-                for="date"
-                @click="setDateFilter('TODAY')"
-                :class="{selected: filters.date === 'TODAY'}">
-                {{ $t('Today')}}
-              </label>
-            </div>
-            <div>
-              <input
-                type="radio"
-                name="date"
-                :value="'THIS_WEEK'"
-                @input="setDateFilter($event.target.value)"
-                :checked="filters.date === 'THIS_WEEK'">
-              <label
-                for="date"
-                @click="setDateFilter('THIS_WEEK')"
-                :class="{selected: filters.date === 'THIS_WEEK'}">
-                {{ $t('This Week')}}
-              </label>
-            </div>
-            <div>
-              <input
-                type="radio"
-                name="date"
-                :value="'THIS_MONTH'"
-                @input="setDateFilter($event.target.value)"
-                :checked="filters.date === 'THIS_MONTH'">
-              <label
-                for="date"
-                @click="setDateFilter('THIS_MONTH')"
-                :class="{selected: filters.date === 'THIS_MONTH'}">
-                {{ $t('This Month')}}
-              </label>
-            </div>
-            <div>
-              <input
-                type="radio"
-                name="date"
-                :value="'THIS_YEAR'"
-                @input="setDateFilter($event.target.value)"
-                :checked="filters.date === 'THIS_YEAR'">
-              <label
-                for="date"
-                @click="setDateFilter('THIS_YEAR')"
-                :class="{selected: filters.date === 'THIS_YEAR'}">
-                {{ $t('This Year')}}
-              </label>
-            </div>
-            <div>
-              <input
-                type="radio"
-                name="date"
-                :value="'ALL_TIME'"
-                @input="setDateFilter($event.target.value)"
-                :checked="filters.date === 'ALL_TIME'">
-              <label
-                for="date"
-                @click="setDateFilter('ALL_TIME')"
-                :class="{selected: filters.date === 'ALL_TIME'}">
-                {{ $t('All Time')}}
-              </label>
-            </div>
-          </farm-inline>
-
-        </farm-stack>
-      </farm-card>
 
       <farm-card>
         <farm-stack space="s">
-
           <h3>{{ $t('Log Type')}}</h3>
-
           <farm-inline space="s">
             <div v-for="type in Object.keys(logTypes)" :key="`type-${type}`">
               <input
@@ -104,15 +21,12 @@
               </label>
             </div>
           </farm-inline>
-
         </farm-stack>
       </farm-card>
 
       <farm-card>
         <farm-stack space="s">
-
           <h3>{{ $t('Log Category')}}</h3>
-
           <farm-inline space="s">
             <div>
               <input
@@ -143,7 +57,6 @@
               </label>
             </div>
           </farm-inline>
-
         </farm-stack>
       </farm-card>
 
@@ -156,12 +69,6 @@
 export default {
   name: 'TasksFilter',
   props: ['categories', 'logTypes', 'filters'],
-  methods: {
-    setDateFilter(value) {
-      // TODO: parse date
-      this.$emit('set-time-filter', value);
-    },
-  },
 };
 </script>
 

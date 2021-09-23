@@ -14,7 +14,6 @@
     <router-view
       @toggle-type-filter="toggleTypeFilter"
       @toggle-category-filter="toggleCategoryFilter"
-      @set-time-filter="setTimeFilter"
       :filters="filters"
       :userId="user.id"
       :useGeolocation="settings.useGeolocation"
@@ -124,12 +123,6 @@ const transformCategoryFilters = (categories) => {
   }
   return filter;
 };
-const transformTimeFilters = (start, end) => {
-  const timestamp = {};
-  if (start) timestamp.$gte = start;
-  if (end) timestamp.$lte = end;
-  return ('$gte' in timestamp || '$lte' in timestamp) ? { timestamp } : {};
-};
 
 export default {
   name: 'Tasks',
@@ -142,7 +135,6 @@ export default {
         categories: {
           NO_CATEGORY: true,
         },
-        time: [],
       },
       isSyncing: false,
     };
@@ -160,11 +152,10 @@ export default {
     this.loadAssets(assetFilter);
     this.loadTerms(termFilter).then(() => {
       const cachedFilters = JSON.parse(localStorage.getItem('tasks-filters'));
-      const { types, categories, time } = cachedFilters || {};
+      const { types, categories } = cachedFilters || {};
       this.filters = {
         types: resetTypeFilters(this.logTypes, types),
         categories: resetCategoryFilters(this.categories, categories),
-        time: Array.isArray(time) ? time : [],
       };
       const filter = this.transformFilters();
       this.loadLogs(filter, { includeUnsynced: true });
@@ -219,26 +210,20 @@ export default {
     toggleCategoryFilter(category) {
       this.filters.categories[category] = !this.filters.categories[category];
     },
-    setTimeFilter(time) {
-      this.filters.time = time;
-    },
     resetFilters() {
       this.filters = {
         types: resetTypeFilters(this.logTypes),
         categories: resetCategoryFilters(this.categories),
-        time: [],
       };
     },
     transformFilters() {
-      const { types, categories, time: [start, end] } = this.filters;
+      const { types, categories } = this.filters;
       const categoryFilter = transformCategoryFilters(categories);
-      const timeFilter = transformTimeFilters(start, end);
       return {
         'owner.id': this.user.id,
         status: { $ne: 'done' },
         type: objectToArray(types),
         ...categoryFilter,
-        ...timeFilter,
       };
     },
     saveFilters() {
