@@ -2,31 +2,31 @@
   <div class="farm-autocomplete form-item form-item-name form-group">
     <label for="search" class="control-label">{{ label }}</label>
     <input
-      :value="search"
+      :value="query"
       :placeholder="$t('Enter text to search')"
       type="text"
       class="form-control"
       @focus="openResults"
-      @input="doSearch($event.target.value)"
+      @input="runSearch"
       @keydown.down="onArrowDown"
       @keydown.up="onArrowUp"
       @keydown.enter="onEnter">
     <ul
-      v-show="isOpen && search.length > 0"
+      v-show="isOpen && query.length >= minLength"
       class="list-group search-results">
       <li
-        v-if="searchResults.length === 0"
+        v-if="matches.length === 0"
         class="list-group-item empty">
         <slot name="empty">{{ $t('No Results')}}</slot>
       </li>
       <li
         v-else
-        v-for="(result, i) in searchResults"
-        v-bind:key="`result-${i}-${Math.floor(Math.random() * 1000000)}`"
+        v-for="({ item, key, index }, i) in matches"
+        :key="`result-${i}`"
         class="list-group-item"
         :class="{ 'is-active': i === counter }"
-        @click="selectSearchResult(result[searchId])">
-        {{result[searchKey]}}
+        @click="select(index)">
+        {{item[key]}}
       </li>
     </ul>
   </div>
@@ -35,22 +35,37 @@
 <script>
 export default {
   name: 'FarmAutocomplete',
-  /*
-    PROPS: The objects are an array of JS objects we are searching through. The
-    searchKey must be provided so we know specifically which property on each
-    object we are searching against. The searchId is a unique identifier
-    for each object. The label is just a name for the search field
-  */
-  props: [
-    'objects',
-    'searchKey',
-    'searchId',
-    'label',
-  ],
+  props: {
+    list: {
+      validator(l) {
+        return Array.isArray(l) && l.every(o => typeof o === 'object');
+      },
+    },
+    keys: {
+      validator(ks) {
+        return Array.isArray(ks)
+          && ks.every(k => typeof k === 'string' || typeof k === 'symbol');
+      },
+    },
+    // Minimum # of characters in the query string before search is performed.
+    minLength: {
+      type: Number,
+      default: 1,
+    },
+    caseSensitive: {
+      type: Boolean,
+      default: false,
+    },
+    label: {
+      type: String,
+      default: '',
+    },
+  },
   data() {
     return {
-      search: '',
-      searchResults: [],
+      query: '',
+      matches: [],
+      primaryKey: this.keys[0],
       counter: 0,
       isOpen: false,
     };
@@ -59,33 +74,29 @@ export default {
     openResults() {
       this.isOpen = true;
     },
-    // The search method matches partial strings, and is case insensitive
-    // Results are limited to a maximum of 10
-    doSearch(val) {
-      const foundObjects = [];
-      if (val !== '') {
-        const lowerVal = val.toLowerCase();
-        for (let i = 0; i < this.objects.length; i += 1) {
-          const object = this.objects[i];
-          const lowerName = object.name.toLowerCase();
-          if (lowerName.includes(lowerVal) && foundObjects.length < 10) {
-            foundObjects.push(object);
+    runSearch(e) {
+      this.query = e.target.value;
+      if (this.query.length >= this.minLength) {
+        const fmt = str => (this.caseSensitive ? str : str.toLowerCase());
+        this.matches = this.list.reduce((matches, item, index) => {
+          const matchingKeys = this.keys.filter(k => fmt(item[k]).includes(fmt(this.query)));
+          if (matchingKeys.length > 0) {
+            const key = matchingKeys.includes(this.primaryKey)
+              ? this.primaryKey
+              : matchingKeys[0];
+            const match = { item, index, key };
+            return [...matches, match];
           }
-        }
+          return matches;
+        }, []);
       }
-      this.searchResults = foundObjects;
-      this.search = val;
     },
-    // When results are selected, add them to selectedObjects
-    selectSearchResult(id) {
-      if (id !== '') {
-        this.$emit('results', id);
-        this.search = '';
-        this.doSearch(this.search);
-      }
+    select(index) {
+      this.$emit('select', index);
+      this.query = '';
     },
     onArrowDown() {
-      if (this.counter < (this.searchResults.length - 1)) {
+      if (this.counter < (this.matches.length - 1)) {
         this.counter += 1;
       }
     },
@@ -97,8 +108,8 @@ export default {
       }
     },
     onEnter() {
-      const id = this.searchResults[this.counter][this.searchId];
-      this.selectSearchResult(id);
+      const { index } = this.matches[this.counter];
+      this.select(index);
     },
     handleClickOutside(evt) {
       if (!this.$el.contains(evt.target)) {

@@ -10,16 +10,15 @@ const Template = (args, { argTypes }) => ({
   template: `
     <farm-stack>
       <farm-autocomplete
-        :objects="objects"
-        :searchKey="searchKey"
-        :searchId="searchId"
+        :list="list"
+        :keys="keys"
         :label="label"
-        @results="theResults.push(objects.find(obj => obj[searchId] === $event))"/>
+        @select="theResults.push(list[$event])"/>
       <farm-inline>
         <farm-chip
-          v-for="result in theResults"
-          :key="'result-' + result[searchId]">
-          {{ result[searchKey] }}
+          v-for="(result, i) in theResults"
+          :key="'result-' + i">
+          {{ result.name }}
         </farm-chip>
       </farm-inline>
     </farm-stack>
@@ -33,12 +32,11 @@ const Template = (args, { argTypes }) => ({
 
 export const Basic = Template.bind({});
 Basic.args = {
-  objects: [
+  list: [
     { id: 1, name: 'Apples' },
     { id: 2, name: 'Artichokes' },
     { id: 3, name: 'Amaranth' },
   ],
-  searchKey: 'name',
-  searchId: 'id',
+  keys: ['name'],
   label: 'Select a crop',
 };
