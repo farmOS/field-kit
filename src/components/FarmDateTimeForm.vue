@@ -108,8 +108,8 @@ export default {
         this.time.am = '';
         return;
       }
-      this.time.date = this.unixToDateString(timestamp);
-      const date = new Date(timestamp * 1000);
+      this.time.date = this.isoToDateString(timestamp);
+      const date = new Date(timestamp);
       const hours = date.getHours();
       this.time.hour = (hours === 0 || hours === 12)
         ? 12
@@ -117,13 +117,13 @@ export default {
       this.time.minute = addLeadZero(date.getMinutes());
       this.time.am = hours < 12;
     },
-    unixToDateString(unixTimestamp) {
-      const date = new Date(unixTimestamp * 1000);
+    isoToDateString(iso) {
+      const date = new Date(iso);
       const mm = addLeadZero(date.getMonth() + 1);
       const dd = addLeadZero(date.getDate());
       return `${date.getFullYear()}-${mm}-${dd}`;
     },
-    dateAndTimeToUnix(dateString, hourOutOf12, minute, am) {
+    dateAndTimeToISO(dateString, hourOutOf12, minute, am) {
       const year = +dateString.split('-')[0];
       const monthIndex = +dateString.split('-')[1] - 1;
       const day = +dateString.split('-')[2];
@@ -149,19 +149,19 @@ export default {
         : 0;
 
       if (year > 1970) {
-        return Math.floor(new Date(
+        return new Date(
           year,
           monthIndex,
           day,
           hourOutOf24,
           validMinute,
-        ).getTime() / 1000).toString();
+        ).toISOString();
       }
-      return (this.timestamp).toString();
+      return this.timestamp;
     },
     updateDate(dateString) {
       if (dateString) {
-        const timestamp = this.dateAndTimeToUnix(
+        const timestamp = this.dateAndTimeToISO(
           dateString,
           this.time.hour,
           this.time.minute,
@@ -172,7 +172,7 @@ export default {
     },
     updateHour(hour, skipValidation = false) {
       if (hour.length === 2 || skipValidation) {
-        const timestamp = this.dateAndTimeToUnix(
+        const timestamp = this.dateAndTimeToISO(
           this.time.date,
           hour,
           this.time.minute,
@@ -183,7 +183,7 @@ export default {
     },
     updateMinute(minute, skipValidation = false) {
       if (minute.length === 2 || skipValidation) {
-        const timestamp = this.dateAndTimeToUnix(
+        const timestamp = this.dateAndTimeToISO(
           this.time.date,
           this.time.hour,
           minute,
@@ -193,7 +193,7 @@ export default {
       }
     },
     updateAmPm(am) {
-      const timestamp = this.dateAndTimeToUnix(
+      const timestamp = this.dateAndTimeToISO(
         this.time.date,
         this.time.hour,
         this.time.minute,
