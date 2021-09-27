@@ -15,52 +15,46 @@
         </farm-stack>
       </farm-card>
       <farm-card
-        v-for="(log, i) in tasks"
+        v-for="(task, i) in tasks"
         :key="`card-${i}`">
-        <router-link :to="{ path: `/tasks/${log.id}` }">
+        <router-link :to="{ path: `/tasks/${task.id}` }">
           <farm-stack space="xxs">
 
             <farm-inline justifyContent="space-between" space="s">
               <farm-inline justifyContent="start" space="s">
                 <icon-assignment-done
-                  v-if="log.status === 'done'"/>
+                  v-if="task.status === 'done'"/>
                 <icon-assignment
-                  v-if="log.status !== 'done' && !log.late"/>
+                  v-if="task.status !== 'done' && !task.late"/>
                 <icon-assignment-late
                   class="late"
-                  v-if="log.status !== 'done' && log.late"/>
-                <h6>{{log.name}}</h6>
+                  v-if="task.status !== 'done' && task.late"/>
+                <h6>{{task.name}}</h6>
               </farm-inline>
-              <icon-cloud-upload v-if="log.isUnsynced"/>
+              <icon-cloud-upload v-if="task.isUnsynced"/>
               <icon-cloud-done v-else/>
             </farm-inline>
 
-            <farm-text size="s">{{log.notes}}</farm-text>
+            <farm-text size="s">{{task.notes}}</farm-text>
 
             <farm-inline justifyContent="space-between" alignItems="flex-end">
               <farm-stack space="xs">
                 <farm-text-label as="p">
-                  {{$t(log.typeLabel).toUpperCase()}}
+                  {{$t(task.typeLabel).toUpperCase()}}
                 </farm-text-label>
-                <farm-text size="s">{{log.date}}</farm-text>
+                <farm-text size="s">{{task.date}}</farm-text>
               </farm-stack>
               <farm-inline space="xs" justifyContent="flex-end" flex="0 0 75%">
                 <farm-text size="s"
-                  v-for="(asset, i) in log.assets"
+                  v-for="location in task.locations"
                   class="tag area"
-                  :key="`area-${i}`">
-                  {{area.name}}
+                  :key="`area-${location.id}`">
+                  {{location.name}}
                 </farm-text>
                 <farm-text size="s"
-                  v-for="(area, i) in mapTidsToAreas(log)"
-                  class="tag area"
-                  :key="`area-${i}`">
-                  {{area.name}}
-                </farm-text>
-                <farm-text size="s"
-                  v-for="(asset, i) in mapIdsToAssets(log)"
+                  v-for="asset in task.assets"
                   class="tag asset"
-                  :key="`asset-${i}`">
+                  :key="`asset-${asset.id}`">
                   {{asset.name}}
                 </farm-text>
               </farm-inline>
@@ -98,11 +92,19 @@ export default {
   computed: {
     tasks() {
       return this.logs.map((log) => {
-        const assets = log.asset.data.map(logAsset =>
-          this.assets.find(a => a.id === logAsset.id));
+        const { id, name, status } = log;
+        const [locations, assets] = log.asset.data.reduce(([locs, nonLocs], asset) => {
+          const match = this.assets.find(a => a.id === asset.id);
+          if (!match) return [locs, nonLocs];
+          if (match.is_location) return [[...locs, match], nonLocs];
+          return [locs, [...nonLocs, match]];
+        }, [[], []]);
         const dateOpts = { month: 'short', day: 'numeric', year: 'numeric' };
         return {
-          ...log,
+          id,
+          name,
+          status,
+          locations,
           assets,
           typeLabel: this.logTypes[log.type]?.label || '',
           date: new Date(log.timestamp).toLocaleDateString(undefined, dateOpts),
@@ -118,20 +120,6 @@ export default {
       const date = new Date(iso);
       const opts = { month: 'short', day: 'numeric', year: 'numeric' };
       return date.toLocaleDateString(undefined, opts);
-    },
-    // Pass in a log and get back an array of the areas attached to that log
-    mapTidsToAreas(log) {
-      if (log.area?.data && this.areas.length > 0) {
-        return log.area.data.map(a1 => this.areas.find(a2 => +a2.tid === +a1.id));
-      }
-      return [];
-    },
-    // Pass in a log and get back an array of the areas attached to that log
-    mapIdsToAssets(log) {
-      if (log.asset?.data && this.assets.length > 0) {
-        return log.asset.data.map(a1 => this.assets.find(a2 => +a2.id === +a1.id));
-      }
-      return [];
     },
     startNewLog() {
       this.createLog({ done: true })
