@@ -1,3 +1,4 @@
+import Vue from 'vue';
 import {
   allPass, anyPass, compose, evolve, ifElse, map, prop, reduce,
 } from 'ramda';
@@ -62,13 +63,8 @@ export default {
       state[shortPlural] = state[shortPlural].filter(predicate);
     },
     updateEntity(state, payload) {
-      const { shortPlural, index, props } = payload;
-      const ent = state[shortPlural][index];
-      Object.entries(props).forEach(([key, val]) => {
-        if (key in ent && ent[key] !== val) {
-          ent[key] = val;
-        }
-      });
+      const { shortPlural, index, entity } = payload;
+      Vue.set(state[shortPlural], index, entity);
     },
     deleteEntity(state, { shortPlural, id }) {
       const index = state[shortPlural].findIndex(ent => ent.id === id);
@@ -110,8 +106,13 @@ export default {
         const error = new Error(`Cannot update ${shortName} without a valid id.`);
         return Promise.reject(error);
       }
-      commit('updateEntity', { shortPlural, props, index });
       const entity = state[shortPlural][index];
+      Object.entries(props).forEach(([key, val]) => {
+        if (key in entity && entity[key] !== val) {
+          entity[key] = val;
+        }
+      });
+      commit('updateEntity', { shortPlural, index, entity });
       const criteria = {
         now: Date.now(),
         uid: state.profile.user.id,
