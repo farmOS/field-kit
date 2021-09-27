@@ -8,32 +8,32 @@
     </template>
     <template #right-menu>
       <a
-        v-if="currentLog.url"
-        :href="currentLog.url"
+        v-if="log.url"
+        :href="log.url"
         target="_blank">
         <li>
           <icon-open-in-new/>
         </li>
       </a>
-      <li @click="$emit('delete-current-log', +id)">
+      <li @click="$emit('delete-current-log', id)">
         <icon-delete/>
       </li>
-      <li @click="$emit('sync', +id)">
+      <li @click="$emit('sync', id)">
         <icon-cloud-upload v-if="!isSyncing"/>
         <icon-sync-spin v-if="isSyncing"/>
       </li>
     </template>
     <template #more-menu>
       <a
-        v-if="currentLog.url !==''"
-        :href="currentLog.url"
+        v-if="log.url !==''"
+        :href="log.url"
         target="_blank">
         <li>{{ $t('Open in browser')}}</li>
       </a>
       <li @click="$emit('delete-current-log')">
        {{ $t('Delete from device')}}
       </li>
-      <li @click="$emit('sync', +id)">
+      <li @click="$emit('sync', id)">
         {{ $t('Sync this log') }}
       </li>
     </template>
@@ -45,8 +45,8 @@ export default {
   name: 'TasksEditMenuBar',
   props: ['logs', 'id', 'isSyncing'],
   computed: {
-    currentLog() {
-      return this.logs.find(log => log.localID === +this.id) || this.logs[0];
+    log() {
+      return this.logs.find(l => l.id === this.id) || {};
     },
   },
 };

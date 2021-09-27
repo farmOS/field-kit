@@ -12,13 +12,13 @@
           <farm-toggle-check
             :label="$t('Done')"
             labelPosition="after"
-            :checked="currentLog.done"
-            @input="updateCurrentLog('done', $event)"/>
+            :checked="log.status === 'done'"
+            @input="updateCurrentLog('status', $event ? 'done' : 'pending')"/>
         </div>
         <div class="form-item form-item-name form-group">
           <label for="name" class="control-label">{{ $t('Name') }}</label>
           <input
-            :value="currentLog.name"
+            :value="log.name"
             @input="updateCurrentLog('name', $event.target.value)"
             :placeholder="$t('Enter name')"
             type="text"
@@ -27,18 +27,17 @@
             autofocus>
         </div>
         <farm-date-time-form
-          :timestamp="currentLog.timestamp"
+          :timestamp="log.timestamp"
           @input="updateCurrentLog('timestamp', $event)"/>
         <!-- Allow users to change type for logs that have not yet been sent to the server
         For logs currently on the server, display type as text -->
         <div class="form-item form-item-name form-group">
           <label for="type" class="control-label ">{{ $t('Log Type') }}</label>
-          <div class="input-group" v-if="(currentLog.id === undefined)">
+          <div class="input-group" v-if="(log.id === undefined)">
             <select
-              :value="currentLog.type"
+              :value="log.type"
               @input="updateCurrentLog('type', $event.target.value)"
               class="custom-select col-sm-3 ">
-                <!-- options are defined in the local logTypes variable -->
                 <option
                   v-for="(type, typeKey) in logTypes"
                   :value="typeKey"
@@ -47,8 +46,8 @@
                 </option>
             </select>
           </div>
-          <div class="form-item" v-if="!(currentLog.id === undefined)">
-            <p> {{ $t(logTypes[currentLog.type].label) }} </p>
+          <div class="form-item" v-if="!(log.id === undefined)">
+            <p> {{ $t(logTypes[log.type].label) }} </p>
           </div>
         </div>
       </farm-card>
@@ -57,7 +56,7 @@
         <div class="form-item form-item-name form-group">
           <label for="notes" class="control-label ">{{ $t('Notes') }}</label>
           <textarea
-            :value="parseNotes(currentLog.notes)"
+            :value="parseNotes(log.notes)"
             @input="updateNotes($event.target.value)"
             :placeholder="$t('Enter notes')"
             type="text"
@@ -69,51 +68,57 @@
 
       <farm-card>
         <h3>{{ $t('Log Categories') }}</h3>
-        <div id="categories" class="form-item form-group">
-          <p v-if="!showAllCategories
-            && (!currentLog.log_category
-            || currentLog.log_category.length < 1)">
+        <div v-if="showAllCategories" id="categories" class="form-item form-group">
+          <farm-select-box
+            small
+            v-for="cat in allCategories"
+            :id="`category-${cat.id}-${cat.name}`"
+            :selected="log.category.some(c => c.id === cat.id)"
+            :label="cat.name"
+            :key="`category-${cat.id}-${cat.name}`"
+            @input="toggleCategory($event, cat.id)">
+          </farm-select-box>
+          <div class="show-hide">
+            <div @click="showAllCategories = !showAllCategories">
+              <p><icon-expand-less/>{{ $t('Show Less') }}</p>
+            </div>
+          </div>
+        </div>
+        <div v-else id="categories" class="form-item form-group">
+          <p v-if="!log.category || log.category.length < 1">
             {{ $t('No categories selected') }}
           </p>
           <farm-select-box
             small
-            v-for="cat in filteredCategories"
-            :id="`category-${cat.tid}-${cat.name}`"
-            :selected="currentLog.log_category
-              && currentLog.log_category.some(_cat => cat.tid === _cat.id)"
+            v-for="cat in categories.selected"
+            :id="`category-${cat.id}-${cat.name}`"
+            :selected="true"
             :label="cat.name"
-            :key="`category-${cat.tid}-${cat.name}`"
-            @input="
-              $event
-              ? addCategory(cat.tid)
-              : removeCategory(currentLog
-                .log_category.findIndex(_cat => cat.tid === _cat.id))"
-            />
+            :key="`category-${cat.id}-${cat.name}`"
+            @input="toggleCategory($event, cat.id)">
+          </farm-select-box>
           <div class="show-hide">
-            <div v-if="!showAllCategories" @click="showAllCategories = !showAllCategories">
+            <div @click="showAllCategories = !showAllCategories">
               <p><icon-expand-more/>{{ $t('Show More') }}</p>
-            </div>
-            <div v-if="showAllCategories" @click="showAllCategories = !showAllCategories">
-              <p><icon-expand-less/>{{ $t('Show Less') }}</p>
             </div>
           </div>
         </div>
       </farm-card>
 
-      <farm-card v-if="currentLog.quantity !== undefined">
-        <h3>{{ $t('Quantities')}}</h3>
-        <label for="quantity" class="control-label ">
+      <farm-card v-if="log.quantity !== undefined">
+        <h3>{{ $t('Quantities')}} 🚧 UNDER CONSTRUCTION 🚧</h3>
+        <!-- <label for="quantity" class="control-label ">
           {{ $t('Add new or edit existing quantity')}}
         </label>
-        <div v-if="currentQuant >= 0" class="form-item form-item-name form-group">
+        <div v-if="currentQuant >= 0" class="form-item form-item-name form-group"> -->
           <!-- To display a placeholder value ONLY when there are no existing
           quantities, we must add the placeholder with an <option> tag and
           select it using the :value option -->
-          <select
-            :value="(currentLog.quantity
-              && currentLog.quantity.length > 0
-              && currentLog.quantity[currentQuant].measure)
-              ? currentLog.quantity[currentQuant].measure
+          <!-- <select
+            :value="(log.quantity
+              && log.quantity.length > 0
+              && log.quantity[currentQuant].measure)
+              ? log.quantity[currentQuant].measure
               : 'Select measure'"
             @input="updateQuantity('measure', $event.target.value, currentQuant)"
             class="custom-select col-sm-3 ">
@@ -126,34 +131,34 @@
               </option>
           </select>
           <input
-            :value="(currentLog.quantity
-              && currentLog.quantity.length > 0)
-              ? currentLog.quantity[currentQuant].value
+            :value="(log.quantity
+              && log.quantity.length > 0)
+              ? log.quantity[currentQuant].value
               : null"
             @input="updateQuantity('value', $event.target.value, currentQuant)"
             :placeholder="$t('Enter value')"
             type="number"
             class="form-control"/>
           <select
-          :value="(currentLog.quantity
-              && currentLog.quantity.length > 0
-              && currentLog.quantity[currentQuant].unit)
-              ? currentLog.quantity[currentQuant].unit.id
+          :value="(log.quantity
+              && log.quantity.length > 0
+              && log.quantity[currentQuant].unit)
+              ? log.quantity[currentQuant].unit.id
               : 'Select unit'"
             @input="updateQuantity('unit', $event.target.value, currentQuant)"
             class="custom-select col-sm-3 ">
               <option>{{ $t('Select unit')}}</option>
               <option
                 v-for="(unit, i) in units"
-                :value="unit.tid"
+                :value="unit.id"
                 :key="`unit-${i}`">
                 {{ (units) ? unit.name : '' }}
               </option>
           </select>
           <input
-            :value="(currentLog.quantity
-              && currentLog.quantity.length > 0)
-              ? currentLog.quantity[currentQuant].label
+            :value="(log.quantity
+              && log.quantity.length > 0)
+              ? log.quantity[currentQuant].label
               : null"
             @input="updateQuantity('label', $event.target.value, currentQuant)"
             :placeholder="$t('Enter label')"
@@ -162,12 +167,12 @@
         </div>
         <div class="form-item form-group">
           <ul
-            v-if="currentLog.quantity
-              && currentLog.quantity.length > 0"
+            v-if="log.quantity
+              && log.quantity.length > 0"
             class="list-group">
             <li
-              v-for="(quant, i) in currentLog.quantity"
-              v-bind:key="`quantity-${i}-${Math.floor(Math.random() * 1000000)}`"
+              v-for="(quant, i) in log.quantity"
+              v-bind:key="`quantity-${i}`"
               @click="currentQuant = i"
               class="list-group-item">
               {{ quant.measure }}&nbsp;
@@ -188,56 +193,44 @@
             name="addNewQuantity">
             {{$t('Add another quantity')}}
           </button>
-        </div>
+        </div> -->
       </farm-card>
 
       <farm-card>
         <h3>{{ $t('Assets')}}</h3>
         <farm-autocomplete
-          :objects="filteredAssets"
-          searchKey="name"
-          searchId="id"
-          :label="assetsRequired()
-            ? $t('Seedings must include assets!')
-            : $t('Add assets to the log')"
-          :class="{ invalid: assetsRequired() }"
-          v-on:results="addAsset($event)">
+          :list="assets.unselected"
+          :keys="['name']"
+          @select="toggleAsset(true, assets.unselected[$event])"
+          :label="$t('Add assets to the log')">
           <template slot="empty">
             <div class="empty-slot">
               <em>{{ $t('No assets found.')}}</em>
-              <br>
-              <button
-                type="button"
-                class="btn btn-light"
-                @click="forceSync"
-                name="button">
-                {{ $t('Sync Now')}}
-              </button>
             </div>
           </template>
         </farm-autocomplete>
         <div class="form-item form-item-name form-group">
           <ul class="list-group">
             <li
-              v-for="(asset, i) in selectedAssets"
-              v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
+              v-for="asset in assets.selected"
+              :key="`asset-${asset.id}`"
               class="list-group-item">
               {{ asset.name }}
-              <span class="remove-list-item" @click="removeAsset(asset)">
+              <span class="remove-list-item" @click="toggleAsset(false, asset)">
                 &#x2715;
               </span>
             </li>
           </ul>
         </div>
-        <div class="form-item form-item-name form-group">
-          <label for="type" class="control-label ">{{ $t('Equipment')}}</label>
+        <div v-if="log.equipment" class="form-item form-item-name form-group">
+          <label for="type" class="control-label ">{{ $t('Equipment') }}</label>
           <div class="input-group">
             <select
-              @input="addEquipment($event.target.value)"
+              @input="toggleEquipment(true, $event.target.value)"
               class="custom-select col-sm-3 ">
               <option value=""></option>
               <option
-                v-for="(equip, i) in equipment"
+                v-for="(equip, i) in equipment.unselected"
                 :value="equip.id"
                 :key="`equip-${i}`">
                 {{ (equip) ? equip.name : '' }}
@@ -246,13 +239,13 @@
           </div>
         </div>
         <div class="form-item form-group">
-          <ul v-if="currentLog.equipment" class="list-group">
+          <ul v-if="log.equipment" class="list-group">
             <li
-              v-for="(equip, i) in currentLog.equipment"
-              v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
+              v-for="(equip, i) in equipment.selected"
+              v-bind:key="`equipment-${i}`"
               class="list-group-item">
-              {{ (equipmentNames.length > 0) ? equipmentNames[i] : '' }}
-              <span class="remove-list-item" @click="removeEquipment(i)">
+              {{ equip.name }}
+              <span class="remove-list-item" @click="toggleEqupment(false, equip.id)">
                 &#x2715;
               </span>
             </li>
@@ -260,12 +253,12 @@
         </div>
       </farm-card>
 
-      <farm-card v-if="currentLog.type !== 'farm_seeding'">
+      <farm-card>
         <h3>{{ $t('Areas')}} &amp; {{ $t('Location')}}</h3>
         <!-- We're using a radio button to choose whether areas are selected
         automatically based on device location, or using an autocomplete.
         This will use the useLocalAreas conditional var -->
-        <div  v-if="useGeolocation" class="form-item form-item-name form-group">
+        <!-- <div  v-if="useGeolocation" class="form-item form-item-name form-group">
           <div class="form-check">
             <input
             v-model="useLocalAreas"
@@ -288,20 +281,20 @@
             >
             <label class="form-check-label" for="doUseGeo">{{ $t('Use my location')}}</label>
           </div>
-        </div>
+        </div> -->
         <!-- If using the user's, show a select menu of nearby locations -->
         <div v-if="useLocalAreas" class="form-group">
           <label for="areaSelector">{{ $t('Farm areas near your current location')}}</label>
           <select
-            @input="addArea($event.target.value)"
+            @input="toggleArea(true, localAreas[$event.target.value])"
             class="form-control"
             name="areas">
             <option v-if="localAreas.length < 1" value="">No other areas nearby</option>
             <option v-if="localAreas.length > 0" value="" selected>-- Select an Area --</option>
             <option
-              v-for="area in localAreas"
-              :value="area.tid"
-              v-bind:key="`area-${area.tid}`">
+              v-for="(area, i) in localAreas"
+              :value="i"
+              :key="`local-area-${area.id}`">
               {{area.name}}
             </option>
           </select>
@@ -309,64 +302,51 @@
         <!-- If not using the user's location, show a search bar -->
         <farm-autocomplete
           v-if="!useLocalAreas"
-          :objects="filteredAreas"
-          searchKey="name"
-          searchId="tid"
-          :label="$t('Add areas to the log')"
-          v-on:results="addArea($event)">
+          :list="areas.unselected"
+          :keys="['name']"
+          @select="toggleArea(true, areas.unselected[$event])"
+          :label="$t('Add areas to the log')">
           <template slot="empty">
             <div class="empty-slot">
               <em>{{ $t('No areas found.')}}</em>
-              <br>
-              <button
-                type="button"
-                class="btn btn-light"
-                @click="forceSync"
-                name="button">
-              {{ $t('Sync Now')}}
-              </button>
             </div>
           </template>
         </farm-autocomplete>
-        <!-- Display the areas attached to each log -->
         <div class="form-item form-item-name form-group">
           <ul class="list-group">
             <li
-              v-for="(area, i) in selectedAreas"
-              v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
+              v-for="area in areas.selected"
+              v-bind:key="`remove-area-${area.id}`"
               class="list-group-item">
               {{ area.name }}
-              <span class="remove-list-item" @click="removeArea(area)">
+              <span class="remove-list-item" @click="toggleArea(false, area)">
                 &#x2715;
               </span>
             </li>
           </ul>
         </div>
-        <!-- We're using a button to attach the current location to the log
-        as a geofield -->
         <div v-if="useGeolocation" class="form-item form-item-name form-group">
           <button
             :disabled='false'
             title="Add my GPS location to the log"
-            @click="addLocation"
+            @click="addGeolocationPoint"
             type="button"
             class="btn btn-success btn-navbar">
             {{ $t('Add my GPS location to the log')}}
           </button>
         </div>
-        <!-- Display a spinner while getting geolocation, then display the location -->
-        <div v-if="currentLog.geofield" class="form-item form-item-name form-group">
+        <div v-if="log.geometry" class="form-item form-item-name form-group">
           <ul class="list-group">
             <li
               class="list-group-item"
-              v-for="(point, i) in geofieldAsArrayOfWktPoints"
-              :key="`geofield-${i}`">
+              v-for="(point, i) in geometryAsArrayOfWktPoints"
+              :key="`geometry-${i}`">
               {{ point }}
-              <span class="remove-list-item" @click="removeLocation(i)">
+              <span class="remove-list-item" @click="removeGeolocationPoint(i)">
                 &#x2715;
               </span>
             </li>
-            <li class="list-item-group" v-if="isWorking">
+            <li class="list-item-group" v-if="awaitingLocation">
               <icon-spinner/>
             </li>
           </ul>
@@ -374,9 +354,8 @@
       </farm-card>
 
       <farm-card>
-        <h3>{{ $t('Images')}}</h3>
-        <div
-          v-if="isNative"
+        <h3>{{ $t('Images')}} 🚧 UNDER CONSTRUCTION 🚧</h3>
+        <!-- <div
           class="form-item form-item-name form-group">
           <button
             :disabled='false'
@@ -401,16 +380,16 @@
               ref="photo"
               @change="loadPhoto($event.target.files)">
           </div>
-        </div>
-        <div class="form-item form-item-name form-group">
-          <!-- NOTE: Display is set to 'none' if the img fails to load. -->
+        </div> -->
+        <!-- NOTE: Display is set to 'none' if the img fails to load. -->
+        <!-- <div class="form-item form-item-name form-group">
           <img
             v-for="(url, i) in imageUrls"
             :src="url"
             :key="`preview-${i}`"
             onerror="this.style.display='none'"
             class="preview" />
-        </div>
+        </div> -->
       </farm-card>
 
     </farm-stack>
@@ -418,28 +397,17 @@
 
   <template #movement>
 
-    <farm-card v-if="currentLog.movement !== undefined">
+    <farm-card><h3>🚧 UNDER CONSTRUCTION 🚧</h3></farm-card>
+    <!-- <farm-card v-if="log.movement !== undefined">
 
       <farm-autocomplete
-        :objects="filteredAssets"
-        searchKey="name"
-        searchId="id"
-        :label="assetsRequired()
-          ? $t('Seedings must include assets!')
-          : $t('Add assets to be moved')"
-        :class="{ invalid: assetsRequired() }"
-        v-on:results="addAsset($event)">
+        :list="assets.unselected"
+        :keys="['name']"
+        @select="toggleAsset(true, assets.unselected[$event])"
+        :label="$t('Add assets to be moved')">
         <template slot="empty">
           <div class="empty-slot">
             <em>{{ $t('No assets found.')}}</em>
-            <br>
-            <button
-              type="button"
-              class="btn btn-light"
-              @click="forceSync"
-              name="button">
-              {{ $t('Sync Now')}}
-            </button>
           </div>
         </template>
       </farm-autocomplete>
@@ -447,11 +415,11 @@
       <div class="form-item form-item-name form-group">
         <ul class="list-group">
           <li
-            v-for="(asset, i) in selectedAssets"
-            v-bind:key="`asset-${i}-${Math.floor(Math.random() * 1000000)}`"
+            v-for="asset in assets.selected"
+            :key="`asset-movement-${asset.id}`"
             class="list-group-item">
             {{ asset.name }}
-            <span class="remove-list-item" @click="removeAsset(asset)">
+            <span class="remove-list-item" @click="toggleAsset(false, asset)">
               &#x2715;
             </span>
           </li>
@@ -459,22 +427,13 @@
       </div>
 
       <farm-autocomplete
-        :objects="filteredMovementAreas"
-        searchKey="name"
-        searchId="tid"
-        :label="$t('Movement to')"
-        v-on:results="addMovementArea($event)">
+        :list="areas.unselected"
+        :keys="['name']"
+        @select="addMovementArea(areas.unselected[$event])"
+        :label="$t('Movement to')">
         <template slot="empty">
           <div class="empty-slot">
             <em>{{ $t('No areas found.')}}</em>
-            <br>
-            <button
-              type="button"
-              class="btn btn-light"
-              @click="forceSync"
-              name="button">
-              {{ $t('Sync Now')}}
-            </button>
           </div>
         </template>
       </farm-autocomplete>
@@ -482,8 +441,8 @@
       <div class="form-item form-item-name form-group">
         <ul class="list-group">
           <li
-            v-for="(area, i) in selectedMovementAreas"
-            v-bind:key="`log-${i}-${Math.floor(Math.random() * 1000000)}`"
+            v-for="(area, i) in areas.selected"
+            v-bind:key="`remove-movement-${i}`"
             class="list-group-item">
             {{ area.name }}
             <span class="remove-list-item" @click="removeMovementArea(area)">
@@ -511,7 +470,7 @@
           }"/>
       </router-link>
 
-    </farm-card>
+    </farm-card> -->
   </template>
 
 </farm-tabs>
@@ -521,10 +480,45 @@
 const {
   parseNotes,
   mergeGeometries,
-  removeGeometry,
-  isNearby,
+  // removeGeometry,
+  // isNearby,
 } = window.farmOS.utils;
-const { parse } = window.farmOS.lib.wellknown;
+const { R, wellknown } = window.farmOS.lib;
+
+// Used to separate assets, areas, etc into those that have already been added
+// to the log (selected), and those that haven't (unselected).
+const partitionOptions = (options = [], selections = []) => {
+  const [selected, unselected] = R.partition(
+    opt => selections.some(sel => sel.id === opt.id),
+    options,
+  );
+  return { selected, unselected };
+};
+
+// Temporary fix until relationships are flattened in farmOS.js:
+// https://github.com/farmOS/farmOS.js/issues/38
+const relationships = [
+  'asset',
+  'category',
+  'file',
+  'image',
+  'location',
+  'owner',
+  'quantity',
+];
+const flattenResource = R.ifElse(
+  Array.isArray,
+  R.map(R.prop('data')),
+  R.prop('data'),
+);
+const flattenRelationships = R.evolve(
+  relationships.reduce((fns, name) => ({ ...fns, [name]: flattenResource }), {}),
+);
+const expandResource = R.ifElse(
+  Array.isArray,
+  R.map(data => ({ data })),
+  data => ({ data }),
+);
 
 export default {
   name: 'TasksEdit',
@@ -532,7 +526,7 @@ export default {
   data() {
     return {
       useLocalAreas: false,
-      isWorking: false,
+      awaitingLocation: false,
       localAreas: [],
       showAllCategories: false,
       currentQuant: -1,
@@ -555,202 +549,153 @@ export default {
 
   props: [
     'id',
-    'logs',
     'logTypes',
-    'areas',
-    'assets',
     'useGeolocation',
-    'units',
-    'categories',
-    'equipment',
+    'allAssets',
+    'allCategories',
+    'allEquipment',
+    'allAreas',
+    'allLogs',
+    'allUnits',
     'areaGeoJSON',
   ],
 
   methods: {
-    forceSync() {
-      if (localStorage.getItem('host') !== null) {
-        this.$store.dispatch('updateAssets');
-        this.$store.dispatch('updateAreas');
-        return;
-      }
-      this.$router.push('/login');
-    },
-
     updateCurrentLog(key, val) {
+      const value = relationships.includes(key) ? expandResource(val) : val;
       const props = {
-        [key]: val,
-        localID: +this.id,
+        [key]: value,
+        id: this.id,
       };
       this.updateLog(props);
     },
 
     updateNotes(value) {
-      this.updateCurrentLog('notes', { value, format: 'farm_format' });
-    },
-    updateQuantity(key, value, index) {
-      const currentQuants = this.currentLog.quantity || [];
-      const storedVal = (key === 'unit')
-        ? { id: value, resource: 'taxonomy_term' }
-        : value;
-      let updatedQuant; let updatedQuants;
-      if (index >= 0) {
-        updatedQuant = { ...currentQuants[index], [key]: storedVal };
-        updatedQuants = [
-          ...currentQuants.slice(0, index),
-          updatedQuant,
-          ...currentQuants.slice(index + 1),
-        ];
-      } else {
-        updatedQuant = {
-          measure: null,
-          value: null,
-          unit: null,
-          label: null,
-        };
-        updatedQuants = [...currentQuants, updatedQuant];
-      }
-      this.updateCurrentLog('quantity', updatedQuants);
-      if (index < 0) {
-        this.currentQuant = updatedQuants.length - 1;
-      }
+      this.updateCurrentLog('notes', { value, format: 'default' });
     },
 
-    addCategory(id) {
-      const catReference = { id, resource: 'taxonomy_term' };
-      const oldCats = this.currentLog.log_category;
-      const newCats = oldCats
-        ? oldCats.concat(catReference)
-        : [catReference];
-      this.updateCurrentLog('log_category', newCats);
-    },
+    // updateQuantity(key, value, index) {
+    //   const currentQuants = this.log.quantity || [];
+    //   const storedVal = (key === 'unit')
+    //     ? { id: value, type: 'taxonomy_term--unit' }
+    //     : value;
+    //   let updatedQuant; let updatedQuants;
+    //   if (index >= 0) {
+    //     updatedQuant = { ...currentQuants[index], [key]: storedVal };
+    //     updatedQuants = [
+    //       ...currentQuants.slice(0, index),
+    //       updatedQuant,
+    //       ...currentQuants.slice(index + 1),
+    //     ];
+    //   } else {
+    //     updatedQuant = {
+    //       measure: null,
+    //       value: null,
+    //       unit: null,
+    //       label: null,
+    //     };
+    //     updatedQuants = [...currentQuants, updatedQuant];
+    //   }
+    //   this.updateCurrentLog('quantity', updatedQuants);
+    //   if (index < 0) {
+    //     this.currentQuant = updatedQuants.length - 1;
+    //   }
+    // },
 
-    addEquipment(id) {
-      if (id !== '') {
-        const equipReference = { id, resource: 'farm_asset' };
-        const oldEquip = this.currentLog.equipment;
-        const newEquip = oldEquip
-          ? oldEquip.concat(equipReference)
-          : [equipReference];
-        this.updateCurrentLog('equipment', newEquip);
-      }
-    },
-
-    addAsset(id) {
-      const assetReference = { id, resource: 'farm_asset' };
-      const newAssets = this.currentLog.asset.concat(assetReference);
+    toggleAsset(isSelected, { id, type }) {
+      const newAssets = isSelected
+        ? this.log.asset.concat({ id, type })
+        : this.log.asset.filter(c => c.id !== id);
       this.updateCurrentLog('asset', newAssets);
     },
-
-    addMovementArea(id) {
-      const areaReference = { id, resource: 'taxonomy_term' };
-      const areaGeometry = (this.areas.find(area => area.tid === id).geofield[0])
-        ? this.areas.find(area => area.tid === id).geofield[0].geom
-        : null;
-      const prevMovement = this.currentLog.movement;
-      const newGeometry = prevMovement
-        ? mergeGeometries([areaGeometry, prevMovement.geometry])
-        : areaGeometry;
-      const newMovement = {
-        area: prevMovement
-          ? prevMovement.area.concat(areaReference)
-          : [areaReference],
-        geometry: newGeometry,
-      };
-      this.updateCurrentLog('movement', newMovement);
+    toggleArea(isSelected, { id, type }) {
+      const newAreas = isSelected
+        ? this.log.location.concat({ id, type })
+        : this.log.location.filter(c => c.id !== id);
+      this.updateCurrentLog('location', newAreas);
+    },
+    toggleCategory(isSelected, id) {
+      const newCats = isSelected
+        ? this.log.category.concat({ id, type: 'taxonomy_term--log_category' })
+        : this.log.category.filter(c => c.id !== id);
+      this.updateCurrentLog('category', newCats);
+    },
+    toggleEquipment(isSelected, id) {
+      return isSelected
+        ? this.log.equipment.concat({ id, type: 'asset--equipment' })
+        : this.log.equipment.filter(c => c.id !== id);
     },
 
-    addArea(id) {
-      if (id !== '') {
-        const areaReference = { id, resource: 'taxonomy_term' };
-        const newAreas = this.currentLog.area.concat(areaReference);
-        this.updateCurrentLog('area', newAreas);
-      }
-    },
+    // addMovementArea(area) {
+    //   const { id, type } = area;
+    //   const areaReference = { id, type: `asset--${type}` };
+    //   // TODO: replace geofield property
+    //   const areaGeometry = area.geofield[0]?.geom;
+    //   const prevMovement = this.log.movement;
+    //   const newGeometry = prevMovement
+    //     ? mergeGeometries([areaGeometry, prevMovement.geometry])
+    //     : areaGeometry;
+    //   const newMovement = {
+    //     area: prevMovement
+    //       ? prevMovement.area.concat(areaReference)
+    //       : [areaReference],
+    //     geometry: newGeometry,
+    //   };
+    //   this.updateCurrentLog('movement', newMovement);
+    // },
 
-    removeAsset(asset) {
-      const newAssets = this.currentLog.asset
-        .filter(_asset => _asset.id !== asset.id);
-      this.updateCurrentLog('asset', newAssets);
-    },
+    // removeMovementArea(area) {
+    //   const newAreas = this.log.movement.area
+    //     .filter(_area => _area.id !== area.id);
+    //   const prevGeometry = this.log.movement.geometry;
+    //   let areaGeometry = null;
+    //   // TODO: Replace geofield property.
+    //   if (area.geofield[0]) {
+    //     areaGeometry = area.geofield[0].geom;
+    //   }
+    //   const newGeometry = removeGeometry(prevGeometry, areaGeometry);
+    //   const newMovement = {
+    //     geometry: newGeometry,
+    //     area: newAreas,
+    //   };
+    //   this.updateCurrentLog('movement', newMovement);
+    // },
 
-    removeArea(area) {
-      // Update the current log with a new array of areas, sans the removed one.
-      const newAreas = this.currentLog.area
-        .filter(_area => _area.id !== area.tid);
-      this.updateCurrentLog('area', newAreas);
+    // removeQuant(index) {
+    //   if (this.currentQuant >= index) {
+    //     this.currentQuant -= 1;
+    //   }
+    //   const newQuant = [
+    //     ...this.log.quantity.slice(0, index),
+    //     ...this.log.quantity.slice(index + 1),
+    //   ];
+    //   this.updateCurrentLog('quantity', newQuant);
+    // },
 
-      // Also remove the area's geofield from the current log.
-      const removedGeofields = this.areas
-        .find(_area => _area.tid === area.tid)
-        ?.geofield;
-      const newGeofields = this.currentLog.geofield
-        ?.filter(geofield => !removedGeofields.some(_geofield => geofield.geom === _geofield.geom));
-      this.updateCurrentLog('geofield', newGeofields);
-    },
+    // getPhoto() {
+    //   // Obtains an image location from the camera!
+    //   return this.$store.dispatch('getPhotoFromCamera', this.log);
+    // },
 
-    removeMovementArea(area) {
-      const newAreas = this.currentLog.movement.area
-        .filter(_area => _area.id !== area.tid);
-      const prevGeometry = this.currentLog.movement.geometry;
-      let areaGeometry = null;
-      if (area.geofield[0]) {
-        areaGeometry = area.geofield[0].geom;
-      }
-      const newGeometry = removeGeometry(prevGeometry, areaGeometry);
-      const newMovement = {
-        geometry: newGeometry,
-        area: newAreas,
-      };
-      this.updateCurrentLog('movement', newMovement);
-    },
+    // loadPhoto(files) {
+    //   for (let i = 0; i < files.length; i += 1) {
+    //     this.$store.dispatch('loadPhotoBlob', {
+    //       file: files[i],
+    //       log: this.log,
+    //     });
+    //   }
+    // },
 
-    removeQuant(index) {
-      if (this.currentQuant >= index) {
-        this.currentQuant -= 1;
-      }
-      const newQuant = [
-        ...this.currentLog.quantity.slice(0, index),
-        ...this.currentLog.quantity.slice(index + 1),
-      ];
-      this.updateCurrentLog('quantity', newQuant);
-    },
-
-    removeCategory(index) {
-      const newCat = this.currentLog.log_category;
-      newCat.splice(index, 1);
-      this.updateCurrentLog('category', newCat);
-    },
-
-    removeEquipment(index) {
-      const newEquip = this.currentLog.equipment;
-      newEquip.splice(index, 1);
-      this.updateCurrentLog('equipment', newEquip);
-    },
-
-    getPhoto() {
-      // Obtains an image location from the camera!
-      return this.$store.dispatch('getPhotoFromCamera', this.currentLog);
-    },
-
-    loadPhoto(files) {
-      for (let i = 0; i < files.length; i += 1) {
-        this.$store.dispatch('loadPhotoBlob', {
-          file: files[i],
-          log: this.currentLog,
-        });
-      }
-    },
-
-    addLocation() {
+    addGeolocationPoint() {
       let props;
-      function addGeofield(position) {
-        const oldGeom = this.currentLog.geofield?.[0]?.geom;
+      function addGeometry(position) {
+        const oldGeom = this.log.geometry?.value;
         const newGeom = `POINT (${position.coords.longitude} ${position.coords.latitude})`;
-        props = [{ geom: mergeGeometries([oldGeom, newGeom]) }];
+        props = { value: mergeGeometries([oldGeom, newGeom]) };
       }
       function onError(error) {
         this.$store.commit('alert', error);
-        this.isWorking = false;
+        this.awaitingLocation = false;
       }
       const options = {
         enableHighAccuracy: true,
@@ -758,100 +703,54 @@ export default {
         maximumAge: 0,
       };
 
-      this.isWorking = true;
+      this.awaitingLocation = true;
       const watch = navigator.geolocation.watchPosition(
-        addGeofield.bind(this),
+        addGeometry.bind(this),
         onError.bind(this),
         options,
       );
       setTimeout(() => {
         navigator.geolocation.clearWatch(watch);
-        this.updateCurrentLog('geofield', props);
-        this.isWorking = false;
+        this.updateCurrentLog('geometry', props);
+        this.awaitingLocation = false;
       }, 5000);
     },
 
-    removeLocation(index) {
-      const geofield = [{
-        geom: mergeGeometries([
-          ...this.geofieldAsArrayOfWktPoints.slice(0, index),
-          ...this.geofieldAsArrayOfWktPoints.slice(index + 1),
+    removeGeolocationPoint(index) {
+      const geometry = {
+        value: mergeGeometries([
+          ...this.geometryAsArrayOfWktPoints.slice(0, index),
+          ...this.geometryAsArrayOfWktPoints.slice(index + 1),
         ]),
-      }];
-      this.updateCurrentLog('geofield', geofield);
+      };
+      this.updateCurrentLog('geometry', geometry);
     },
 
-    getAttached(attribute, resources, resId) {
-      const logAttached = [];
-      resources.forEach((resrc) => {
-        attribute.forEach((attrib) => {
-          if (resrc[resId] === attrib.id) {
-            logAttached.push(resrc);
-          }
-        });
-      });
-      return logAttached;
-    },
-    assetsRequired() {
-      return this.currentLog.type === 'farm_seeding' && this.selectedAssets < 1;
-    },
     parseNotes,
   },
 
   computed: {
-    currentLog() {
-      return this.logs.find(log => log.localID === +this.id) || this.logs[0];
+    log() {
+      const log = this.allLogs.find(l => l.id === this.id) || {};
+      return flattenRelationships(log);
     },
-    /*
-      In order to avoid duplicates, filteredAssets & filteredAreas remove
-      assets/areas from the array of searchable objects if they've already been
-      added to the current log.
-    */
-    filteredAssets() {
-      if (this.currentLog.asset) {
-        const selectAssetRefs = this.currentLog.asset;
-        return this.assets.filter(asset => (
-          !selectAssetRefs.some(selAsset => asset.id === selAsset.id)
-        ));
-      }
-      return this.assets;
+    assets() {
+      return partitionOptions(this.allAssets, this.log.asset);
     },
-    filteredAreas() {
-      if (this.currentLog.area) {
-        const selectAreaRefs = this.currentLog.area;
-        return this.areas.filter(area => (
-          !selectAreaRefs.some(selArea => area.tid === selArea.id)
-        ));
-      }
-      return this.areas;
+    areas() {
+      return partitionOptions(this.allAreas, this.log.area);
     },
-    filteredMovementAreas() {
-      const { movement } = this.currentLog;
-      if (movement && movement && movement.area) {
-        const selectAreaRefs = this.currentLog.movement.area;
-        return this.areas.filter(area => (
-          !selectAreaRefs.some(selArea => area.tid === selArea.id)
-        ));
-      }
-      return this.areas;
+    categories() {
+      return partitionOptions(this.allCategories, this.log.category);
     },
-    filteredCategories() {
-      const selectedCats = this.currentLog.log_category;
-      const noCatsAreSelected = !selectedCats || selectedCats.length === 0;
-      if (!this.showAllCategories && !noCatsAreSelected) {
-        return this.categories.filter(cat => (
-          selectedCats.some(_cat => cat.tid === _cat.id)
-        ));
-      }
-      if (this.showAllCategories) {
-        return this.categories;
-      }
-      return [];
+    equipment() {
+      if (!this.log.equipment) return { selected: [], unselected: this.allEquipment };
+      return partitionOptions(this.allEquipment, this.log.equipment);
     },
-    geofieldAsArrayOfWktPoints() {
-      const geom = this.currentLog.geofield?.[0]?.geom;
+    geometryAsArrayOfWktPoints() {
+      const geom = this.log.geometry?.value;
       if (geom) {
-        const geojson = parse(geom);
+        const geojson = wellknown.parse(geom);
         if (geojson.type === 'Point') {
           return [`POINT (${geojson.coordinates[0]} ${geojson.coordinates[1]})`];
         }
@@ -862,149 +761,90 @@ export default {
       }
       return [];
     },
-    selectedAssets() {
-      if (this.currentLog.asset) {
-        return this.getAttached(this.currentLog.asset, this.assets, 'id');
-      }
-      return [];
-    },
-    selectedAreas() {
-      if (this.currentLog.area) {
-        return this.getAttached(this.currentLog.area, this.areas, 'tid');
-      }
-      return [];
-    },
-    selectedMovementAreas() {
-      const { movement } = this.currentLog;
-      if (movement && movement.area) {
-        return this.getAttached(
-          this.currentLog.movement.area,
-          this.areas,
-          'tid',
-        );
-      }
-      return [];
-    },
-    quantUnitNames() {
-      if (this.units.length > 0 && this.currentLog?.quantity.length > 0) {
-        const unitNames = [];
-        this.currentLog.quantity.forEach((quant) => {
-          if (quant.unit) {
-            this.units.forEach((unit) => {
-              if (parseInt(unit.tid, 10) === parseInt(quant.unit.id, 10)) {
-                unitNames.push(unit.name);
-              }
-            });
-          } else {
-            unitNames.push(null);
-          }
-        });
-        return unitNames;
-      }
-      return [];
-    },
-    categoryNames() {
-      if (this.categories.length > 0
-        && this.currentLog.log_category.length > 0) {
-        const catNames = [];
-        this.currentLog.log_category.forEach((logCat) => {
-          this.categories.forEach((cat) => {
-            if (parseInt(cat.tid, 10) === parseInt(logCat.id, 10)) {
-              catNames.push(cat.name);
-            }
-          });
-        });
-        return catNames;
-      }
-      return [];
-    },
-    equipmentNames() {
-      if (this.equipment.length > 0
-        && this.currentLog.equipment
-        && this.currentLog.equipment.length > 0) {
-        const equipNames = [];
-        this.currentLog.equipment.forEach((logEquip) => {
-          this.equipment.forEach((equip) => {
-            if (parseInt(equip.id, 10) === parseInt(logEquip.id, 10)) {
-              equipNames.push(equip.name);
-            }
-          });
-        });
-        return equipNames;
-      }
-      return [];
-    },
-    isNative() {
-      if (process.env.PLATFORM === 'native' || process.env.PLATFORM === 'dev') {
-        return true;
-      }
-      return false;
-    },
-    imageUrls() {
-      return this.currentLog.images
-        .filter(img => typeof img === 'string');
-    },
+
+    // quantUnitNames() {
+    //   if (this.units.length > 0 && this.log?.quantity.length > 0) {
+    //     const unitNames = [];
+    //     this.log.quantity.forEach((quant) => {
+    //       if (quant.unit) {
+    //         this.units.forEach((unit) => {
+    //           if (parseInt(unit.id, 10) === parseInt(quant.unit.id, 10)) {
+    //             unitNames.push(unit.name);
+    //           }
+    //         });
+    //       } else {
+    //         unitNames.push(null);
+    //       }
+    //     });
+    //     return unitNames;
+    //   }
+    //   return [];
+    // },
+    // imageUrls() {
+    //   return this.log.images
+    //     .filter(img => typeof img === 'string');
+    // },
     /*
     Assemble layers for display.
     The 'previous' layer is assembled from the geofield plus
     all area geometires associated with the log.
     The 'movement' layer is the geometry in the log's movement field
     */
-    mapLayers() {
-      const movement = {
-        title: 'movement',
-        wkt: this.currentLog.movement?.geometry,
-        color: 'orange',
-        visible: true,
-        weight: 0,
-        canEdit: !!this.currentLog.movement?.geometry,
-      };
-      const previousGeoms = this.currentLog.asset
-        ?.map(logAsset => this.assets
-          ?.find(asset => asset.id === logAsset.id)?.geometry);
-      const previousWKT = previousGeoms ? mergeGeometries(previousGeoms) : undefined;
-      const previous = {
-        title: 'previous',
-        wkt: previousWKT,
-        color: 'green',
-        visible: true,
-        weight: 1,
-        canEdit: false,
-      };
-      return [previous, movement];
-    },
+    // mapLayers() {
+    //   const movement = {
+    //     title: 'movement',
+    //     wkt: this.log.movement?.geometry,
+    //     color: 'orange',
+    //     visible: true,
+    //     weight: 0,
+    //     canEdit: !!this.log.movement?.geometry,
+    //   };
+    //   const previousGeoms = this.log.asset
+    //     ?.map(logAsset => this.assets
+    //       ?.find(asset => asset.id === logAsset.id)?.geometry);
+    //   const previousWKT = previousGeoms ? mergeGeometries(previousGeoms) : undefined;
+    //   const previous = {
+    //     title: 'previous',
+    //     wkt: previousWKT,
+    //     color: 'green',
+    //     visible: true,
+    //     weight: 1,
+    //     canEdit: false,
+    //   };
+    //   return [previous, movement];
+    // },
   },
 
   watch: {
-    useLocalAreas() {
-      function filterAreasByProximity(position) {
-        this.localAreas = this.filteredAreas.filter(area => !!area.geofield[0] && isNearby(
-          [position.coords.longitude, position.coords.latitude],
-          area.geofield[0].geom,
-          (position.coords.accuracy),
-        ));
-      }
-      function onError(error) {
-        this.$store.commit('alert', error);
-      }
-      // If useLocalAreas is set to true, get geolocation and nearby areas
-      if (this.useLocalAreas) {
-        const options = {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 0,
-        };
+    // useLocalAreas() {
+    //   function filterAreasByProximity(position) {
+    //     this.localAreas = this.area.unselected.filter(area => !!area.geofield[0] && isNearby(
+    //       [position.coords.longitude, position.coords.latitude],
+    //       area.geofield[0].geom,
+    //       (position.coords.accuracy),
+    //     ));
+    //   }
+    //   function onError(error) {
+    //     this.$store.commit('alert', error);
+    //   }
+    //   // If useLocalAreas is set to true, get geolocation and nearby areas
+    //   if (this.useLocalAreas) {
+    //     const options = {
+    //       enableHighAccuracy: true,
+    //       timeout: 10000,
+    //       maximumAge: 0,
+    //     };
 
-        const watch = navigator.geolocation.watchPosition(
-          filterAreasByProximity.bind(this),
-          onError.bind(this),
-          options,
-        );
-        setTimeout(() => {
-          navigator.geolocation.clearWatch(watch);
-        }, 5000);
-      }
-    },
+    //     const watch = navigator.geolocation.watchPosition(
+    //       filterAreasByProximity.bind(this),
+    //       onError.bind(this),
+    //       options,
+    //     );
+    //     setTimeout(() => {
+    //       navigator.geolocation.clearWatch(watch);
+    //     }, 5000);
+    //   }
+    // },
   },
 };
 

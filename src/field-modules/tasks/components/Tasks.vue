@@ -21,9 +21,12 @@
       :logs="sortedLogs"
       :areas="areas"
       :assets="assets"
-      :units="units"
-      :categories="categories"
-      :equipment="equipment"
+      :allAssets="assets"
+      :allAreas="areas"
+      :allCategories="categories"
+      :allEquipment="equipment"
+      :allLogs="logs"
+      :allUnits="units"
       :logTypes="logTypes"
     />
 
