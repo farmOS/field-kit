@@ -5,13 +5,15 @@
 [![Twitter](https://img.shields.io/twitter/follow/farmOSorg.svg?label=%40farmOSorg&style=flat)](https://twitter.com/farmOSorg)
 [![Chat](https://img.shields.io/matrix/farmOS:matrix.org.svg)](https://riot.im/app/#/room/#farmOS:matrix.org)
 
-farmOS Client is a lightweight application for connecting to a farmOS server from any mobile device. It is a hybrid app, meaning it can run in a web browser but can also be packaged as a native app for iOS and Android. The goal is to create a fast and focused client app for day-to-day and in-the-field record keeping that stores data locally for offline use, and syncs back to a farmOS server when internet access is available.
+farmOS Client is a lightweight application for connecting to a farmOS server from any mobile device. It is a Progressive Web App (PWA), meaning it can run from a browser, even offline, and will persist data in between sessions.
 
 Note that the default branch for this repository is `develop`, not `master`;
 `develop` should represent the most current set of complete features that
 are only awaiting further testing before release. You should branch or fork
 off `develop` and submit pull requests to be merged back into it. The 
 `deploy` branch respresents the latest tagged release.
+
+As of September 2021, the `develop` branch will point at the latest alpha or beta version for the upcoming 2.0.0 release, compatible with farmOS 2.x. Versions 0.8 and lower will only receive minimal support going forward, with no new feature development. Stay tuned for more details on the forthcoming Field Module API, which will enable developers to develop modules for Field Kit, similar to farmOS modules!
 
 ## GETTING STARTED
 
@@ -23,8 +25,6 @@ npm install
 # serve with hot reload at localhost:8080
 npm start
 ```
-
-For more details on the client's development and how to build it from source for native devices, see the [documentation on farmos.org](https://farmos.org/development/client/).
 
 If you would like to install and host a farmOS server yourself, see the official
 documentation on farmOS.org: https://farmOS.org/hosting/installing
@@ -41,3 +41,4 @@ This project has been sponsored by:
  * [Farmier](http://farmier.com)
  * [Paicines Ranch](https://paicinesranch.com/index.php)
  * [Knuth Farms](https://knuthfarms.com/)
+ * [OpenTEAM](https://openteam.community)
