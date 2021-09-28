@@ -59,7 +59,7 @@ module.exports = {
     'implicit-arrow-linebreak': 'off',
     'no-nested-ternary': 'off',
     'indent': ['error', 2, { 'flatTernaryExpressions': true }],
-    'vue/experimental-script-setup-vars': 'off',
+    'vue/script-setup-uses-vars': 'off',
     'camelcase': 'off',
     'no-warning-comments': 'warn',
   }
