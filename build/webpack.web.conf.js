@@ -88,6 +88,10 @@ const webpackConfig = merge(baseWebpackConfig, {
           from: 'res/icons/web/**',
           to: config.web.assetsRoot + '/icons',
           flatten: true
+        },
+        {
+          from: '_redirects',
+          to: config.web.assetsRoot,
         }
       ]
     })
