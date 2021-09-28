@@ -30,6 +30,7 @@ module.exports = {
       }
     }
   },
+  ignorePatterns: ['src/core/store/l10n/**'],
   // add your custom rules here
   rules: {
     // don't require .vue extension when importing
