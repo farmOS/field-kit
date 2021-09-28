@@ -70,8 +70,9 @@ const webpackConfig = merge(baseWebpackConfig, {
     new WorkboxPlugin.GenerateSW({
       runtimeCaching: [{
         urlPattern: /.*\.(?:js|css)$/,
-        handler: 'StaleWhileRevalidate'
-      }]
+        handler: 'StaleWhileRevalidate',
+      }],
+      exclude: [/_redirects/],
     }),
 
     new CopyWebpackPlugin({
