@@ -1,8 +1,7 @@
 /* eslint-disable no-use-before-define */
 import {
-  allPass, any, anyPass, compose, equals, has, ifElse, init, last, map, none, prop, T, when,
+  allPass, any, anyPass, compose, equals, init, last, map, none, prop, T, when,
 } from 'ramda';
-import farm from '../farm';
 
 const operators = {
   $and: compose(allPass, map(parseFilter)),
@@ -30,8 +29,6 @@ function parsePath(path, value) {
   return parsePath(rest, { [key]: value });
 }
 
-const metaProp = ifElse(has('meta'), prop('meta'), farm.meta.get);
-
 function parseField([key, value]) {
   if (key.includes('.')) {
     const path = key.split('.');
@@ -47,9 +44,6 @@ function parseField([key, value]) {
     predicate = operators.$or(value);
   } else if (typeof value === 'object') {
     predicate = parseFilter(value);
-  }
-  if (key === 'meta') {
-    return compose(predicate, metaProp);
   }
   return compose(predicate, prop(key));
 }

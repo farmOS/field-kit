@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import {
-  allPass, anyPass, compose, evolve, ifElse, map, prop, reduce,
+  allPass, anyPass, compose, map, reduce,
 } from 'ramda';
 import farm from '../farm';
 import nomenclature from './nomenclature';
@@ -8,30 +8,18 @@ import {
   deleteRecord, getRecords, saveRecord,
 } from '../idb';
 import { cachingCriteria, evictionCriteria } from './criteria';
+import SyncError from './SyncError';
 import upsert from '../utils/upsert';
 import parseFilter from '../utils/parseFilter';
-import SyncError from './SyncError';
+import flattenEntity from '../utils/flattenEntity';
 
 const cacheEntity = (name, criteria, entity) => {
-  const { shortName } = nomenclature.entities[name];
   const meetsCachingCriteria = cachingCriteria(criteria)[name];
   if (meetsCachingCriteria(entity)) {
-    const serialized = farm[shortName].serialize(entity);
-    return saveRecord('entities', name, serialized);
+    return saveRecord('entities', name, entity);
   }
   return Promise.resolve(entity);
 };
-
-const flattenRelationships = map(ifElse(
-  Array.isArray,
-  map(prop('data')),
-  prop('data'),
-));
-const flattenSerializedEntity = ({
-  id, type, meta, attributes, relationships,
-}) => ({
-  id, type, meta, ...attributes, ...flattenRelationships(relationships),
-});
 
 function parseFilterWithOptions(filter, options = {}) {
   const predicates = [parseFilter(filter)];
@@ -60,7 +48,8 @@ export default {
       upsert(state[shortPlural], 'id', entity);
     },
     filterEntities(state, { shortPlural, predicate }) {
-      state[shortPlural] = state[shortPlural].filter(predicate);
+      state[shortPlural] = state[shortPlural]
+        .filter(compose(predicate, flattenEntity));
     },
     updateEntity(state, payload) {
       const { shortPlural, index, entity } = payload;
@@ -84,7 +73,7 @@ export default {
       const now = Date.now();
       const uid = state.profile.user.id;
       const criteria = evictionCriteria({ now, uid });
-      const query = map(fn => compose(fn, flattenSerializedEntity), criteria);
+      const query = map(fn => compose(fn, flattenEntity), criteria);
       const dbRequests = Object.keys(nomenclature.entities)
         .map(name => deleteRecord('entities', name, query[name]));
       return Promise.all(dbRequests);
@@ -106,12 +95,8 @@ export default {
         const error = new Error(`Cannot update ${shortName} without a valid id.`);
         return Promise.reject(error);
       }
-      const entity = state[shortPlural][index];
-      Object.entries(props).forEach(([key, val]) => {
-        if (key in entity && entity[key] !== val) {
-          entity[key] = val;
-        }
-      });
+      const orig = state[shortPlural][index];
+      const entity = farm[shortName].update(orig, props);
       commit('updateEntity', { shortPlural, index, entity });
       const criteria = {
         now: Date.now(),
@@ -130,13 +115,12 @@ export default {
       return deleteRecord('entities', name, id);
     },
     loadEntities({ commit }, { name, filter, options }) {
-      const { shortName, shortPlural } = nomenclature.entities[name];
+      const { shortPlural } = nomenclature.entities[name];
       const predicate = parseFilterWithOptions(filter, options);
       commit('filterEntities', { shortPlural, predicate });
-      const query = compose(predicate, flattenSerializedEntity);
+      const query = compose(predicate, flattenEntity);
       return getRecords('entities', name, query).then((results) => {
-        const data = results.map((r) => {
-          const entity = farm[shortName].deserialize(r);
+        const data = results.map((entity) => {
           commit('upsertEntity', { shortPlural, entity });
           return entity;
         });
@@ -153,16 +137,10 @@ export default {
           const now = new Date().toISOString();
           const criteria = { now, uid: state.profile.user.id };
           results.data.forEach((remote) => {
-            let local = state[shortPlural].find(ent => ent.id === remote.id);
-            if (local) {
-              farm[shortName].merge(local, remote);
-            } else {
-              const meta = m => ({ remote: { lastSync: now, meta: m } });
-              const serialized = evolve({ meta }, remote);
-              local = farm[shortName].deserialize(serialized);
-            }
-            commit('upsertEntity', { shortPlural, entity: local });
-            cacheEntity(name, criteria, local);
+            const local = state[shortPlural].find(ent => ent.id === remote.id);
+            const entity = farm[shortName].merge(local, remote);
+            commit('upsertEntity', { shortPlural, entity });
+            cacheEntity(name, criteria, entity);
           });
           return errorInterceptor(results);
         });
@@ -171,7 +149,7 @@ export default {
       const { shortName, shortPlural } = nomenclature.entities[name];
       const now = Date.now();
       const criteria = { now, uid: state.profile.user.id };
-      const handleSendResults = reduce((results, { status, reason, value }) => {
+      const handleSendResults = reduce((results, { status, reason, value: remote }) => {
         const { fulfilled, rejected } = results;
         if (status === 'rejected') {
           return {
@@ -179,16 +157,14 @@ export default {
             rejected: [...rejected, reason],
           };
         }
-        const { data: remote } = value;
         const local = state[shortPlural].find(ent => ent.id === remote.id);
-        farm[shortName].merge(local, remote);
-        farm.meta.setLastSync(local, now);
-        commit('upsertEntity', { shortPlural, local });
-        cacheEntity(name, criteria, local);
+        const entity = farm[shortName].merge(local, remote);
+        commit('upsertEntity', { shortPlural, entity });
+        cacheEntity(name, criteria, entity);
         upsert(results.data, 'id', remote);
         return {
           ...results,
-          fulfilled: [...fulfilled, value],
+          fulfilled: [...fulfilled, remote],
         };
       });
       return dispatch('fetchEntities', { name, filter, options })
@@ -213,8 +189,7 @@ export default {
             farm.meta.isUnsynced,
           ]);
           const entities = state[shortPlural]
-            .filter(predicate)
-            .map(farm[shortName].serialize);
+            .filter(compose(predicate, flattenEntity));
           const requests = entities.map(farm[shortName].send);
           return Promise.allSettled(requests)
             .then(handleSendResults(fetchResults));

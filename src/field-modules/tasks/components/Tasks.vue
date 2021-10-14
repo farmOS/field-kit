@@ -92,8 +92,8 @@ const termFilter = { type: ['log_category', 'unit'] };
 // Helper for transforming a object mapping keys to booleans, back into an array
 // of those keys, as with type and category filters.
 const objectToArray = obj => Object.entries(obj).reduce(
-  (arr, [key, val]) => (!val ? arr : [...(arr || []), key]),
-  undefined,
+  (arr, [key, val]) => (!val ? arr : [...arr, key]),
+  [],
 );
 
 const resetTypeFilters = (logTypes, cachedValues = {}) =>
@@ -221,11 +221,12 @@ export default {
     },
     transformFilters() {
       const { types, categories } = this.filters;
+      const typesArray = objectToArray(types);
       const categoryFilter = transformCategoryFilters(categories);
       return {
         'owner.id': this.user.id,
         status: { $ne: 'done' },
-        type: objectToArray(types),
+        type: typesArray.length > 0 ? typesArray : undefined,
         ...categoryFilter,
       };
     },

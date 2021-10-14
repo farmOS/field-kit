@@ -135,6 +135,7 @@
 <script>
 import { mapActions, mapMutations, mapState } from 'vuex';
 import { version } from '../../package.json';
+import flattenEntity from './utils/flattenEntity';
 
 export default {
   name: 'App',
@@ -185,12 +186,12 @@ export default {
       /**
        * ENTITIES
        */
-      assets: state => state.assets,
-      logs: state => state.logs,
-      plans: state => state.plans,
-      quantities: state => state.quantities,
-      terms: state => state.terms,
-      users: state => state.users,
+      assets: state => state.assets.map(flattenEntity),
+      logs: state => state.logs.map(flattenEntity),
+      plans: state => state.plans.map(flattenEntity),
+      quantities: state => state.quantities.map(flattenEntity),
+      terms: state => state.terms.map(flattenEntity),
+      users: state => state.users.map(flattenEntity),
       assetTypes: state => state.assetTypes,
       logTypes: state => state.logTypes,
       planTypes: state => state.planTypes,

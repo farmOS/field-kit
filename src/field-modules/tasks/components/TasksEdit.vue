@@ -495,31 +495,6 @@ const partitionOptions = (options = [], selections = []) => {
   return { selected, unselected };
 };
 
-// Temporary fix until relationships are flattened in farmOS.js:
-// https://github.com/farmOS/farmOS.js/issues/38
-const relationships = [
-  'asset',
-  'category',
-  'file',
-  'image',
-  'location',
-  'owner',
-  'quantity',
-];
-const flattenResource = R.ifElse(
-  Array.isArray,
-  R.map(R.prop('data')),
-  R.prop('data'),
-);
-const flattenRelationships = R.evolve(
-  relationships.reduce((fns, name) => ({ ...fns, [name]: flattenResource }), {}),
-);
-const expandResource = R.ifElse(
-  Array.isArray,
-  R.map(data => ({ data })),
-  data => ({ data }),
-);
-
 export default {
   name: 'TasksEdit',
 
@@ -562,9 +537,8 @@ export default {
 
   methods: {
     updateCurrentLog(key, val) {
-      const value = relationships.includes(key) ? expandResource(val) : val;
       const props = {
-        [key]: value,
+        [key]: val,
         id: this.id,
       };
       this.updateLog(props);
@@ -731,8 +705,7 @@ export default {
 
   computed: {
     log() {
-      const log = this.allLogs.find(l => l.id === this.id) || {};
-      return flattenRelationships(log);
+      return this.allLogs.find(l => l.id === this.id) || {};
     },
     assets() {
       return partitionOptions(this.allAssets, this.log.asset);

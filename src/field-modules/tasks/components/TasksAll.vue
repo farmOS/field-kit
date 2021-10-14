@@ -93,7 +93,7 @@ export default {
     tasks() {
       return this.logs.map((log) => {
         const { id, name, status } = log;
-        const [locations, assets] = log.asset.data.reduce(([locs, nonLocs], asset) => {
+        const [locations, assets] = log.asset.reduce(([locs, nonLocs], asset) => {
           const match = this.assets.find(a => a.id === asset.id);
           if (!match) return [locs, nonLocs];
           if (match.is_location) return [[...locs, match], nonLocs];
