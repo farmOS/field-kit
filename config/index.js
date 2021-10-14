@@ -15,7 +15,10 @@ module.exports = {
     proxy: [{
       logLevel: 'debug',
       context: [
-        '/'
+        '/icons',
+        '/api',
+        '/oauth',
+        '/farm/client',
       ],
       target: 'http://localhost:80',
       changeOrigin: true,
