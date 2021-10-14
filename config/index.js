@@ -20,16 +20,6 @@ module.exports = {
       target: 'http://localhost:80',
       changeOrigin: true,
       secure: false,
-      // Clear invalid cookies in the header of POST and PUT req's so they don't 403.
-      // See https://www.drupal.org/project/restws_oauth2_server/issues/3159405
-      onProxyReq(proxyReq) {
-        const headersSymbol = Object.getOwnPropertySymbols(proxyReq)
-          .filter(s => s.toString() === 'Symbol(kOutHeaders)')[0];
-        if (headersSymbol && proxyReq[headersSymbol].host.some(h => h.includes('localhost'))) {
-          console.log(`Clearing cookie on ${proxyReq.method} request to ${proxyReq.path}`)
-          delete proxyReq[headersSymbol].cookie;
-        }
-      },
     }],
 
     // Various Dev Server settings
