@@ -1,44 +1,26 @@
-# farmOS Client
+# Kebun Kitani (kebunkitani)
 
-[![Licence](https://img.shields.io/badge/Licence-GPL%203.0-blue.svg)](https://opensource.org/licenses/GPL-3.0/)
-[![Last commit](https://img.shields.io/github/last-commit/farmOS/farmOS-client.svg?style=flat)](https://github.com/farmOS/farmOS-client/commits)
-[![Twitter](https://img.shields.io/twitter/follow/farmOSorg.svg?label=%40farmOSorg&style=flat)](https://twitter.com/farmOSorg)
-[![Chat](https://img.shields.io/matrix/farmOS:matrix.org.svg)](https://riot.im/app/#/room/#farmOS:matrix.org)
+A Farm-Tracking, Activity Logging app for Farmers. Built with Quasar v2.3.4
 
-farmOS Client is a lightweight application for connecting to a farmOS server from any mobile device. It is a Progressive Web App (PWA), meaning it can run from a browser, even offline, and will persist data in between sessions.
-
-Note that the default branch for this repository is `develop`, not `master`;
-`develop` should represent the most current set of complete features that
-are only awaiting further testing before release. You should branch or fork
-off `develop` and submit pull requests to be merged back into it. The 
-`deploy` branch respresents the latest tagged release.
-
-As of September 2021, the `develop` branch will point at the latest alpha or beta version for the upcoming 2.0.0 release, compatible with farmOS 2.x. Versions 0.8 and lower will only receive minimal support going forward, with no new feature development. Stay tuned for more details on the forthcoming Field Module API, which will enable developers to develop modules for Field Kit, similar to farmOS modules!
-
-## GETTING STARTED
-
-To run the client in your browser using the Webpack DevServer, clone this repo and run:
-``` bash
-# install dependencies
-npm install
-
-# serve with hot reload at localhost:8080
-npm start
+## Install the dependencies
+```bash
+yarn
 ```
 
-If you would like to install and host a farmOS server yourself, see the official
-documentation on farmOS.org: https://farmOS.org/hosting/installing
+### Start the app in development mode (hot-code reloading, error reporting, etc.)
+```bash
+quasar dev
+```
 
-If you would like to pay for hosting, [Farmier](https://farmier.com) provides
-affordable options for individual farms and organizations.
+### Lint the files
+```bash
+yarn run lint
+```
 
-## MAINTAINERS
+### Build the app for production
+```bash
+quasar build
+```
 
-Current maintainers:
- * Jamie Gaehring - https://jgaehring.com
-
-This project has been sponsored by:
- * [Farmier](http://farmier.com)
- * [Paicines Ranch](https://paicinesranch.com/index.php)
- * [Knuth Farms](https://knuthfarms.com/)
- * [OpenTEAM](https://openteam.community)
+### Customize the configuration
+See [Configuring quasar.conf.js](https://quasar.dev/quasar-cli/quasar-conf-js).
