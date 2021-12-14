@@ -42,22 +42,6 @@
           <td class="text-right">25/8/2021</td>
         </tr>
 
-         <tr>
-          <td class="text-left">Kambing</td>
-          <td class="text-right">6</td>
-          <td class="text-right">F</td>
-          <td class="text-right">9.5</td>
-          <td class="text-right">12/6/2021</td>
-        </tr>
-
-        <tr>
-          <td class="text-left">Biri-Biri</td>
-          <td class="text-right">7</td>
-          <td class="text-right">M</td>
-          <td class="text-right">9.1</td>
-          <td class="text-right">22/4/2021</td>
-        </tr>
-
         <tr>
           <td class="text-left">Rusa</td>
           <td class="text-right">8</td>
