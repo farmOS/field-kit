@@ -5,6 +5,8 @@ import {
   Store as VuexStore,
   useStore as vuexUseStore,
 } from 'vuex'
+import authModule from './auth';
+import { AuthStateInterface } from './auth/state';
 
 import taskModule from './tasks'
 import { TaskStateInterface } from './tasks/state';
@@ -22,7 +24,8 @@ export interface StateInterface {
   // Define your own store structure, using submodules if needed
   // example: ExampleStateInterface;
   // Declared as unknown to avoid linting issue. Best to strongly type as per the line above.
-  tasks: TaskStateInterface
+  tasks: TaskStateInterface,
+  auth: AuthStateInterface
 }
 
 // provide typings for `this.$store`
@@ -38,7 +41,8 @@ export const storeKey: InjectionKey<VuexStore<StateInterface>> = Symbol('vuex-ke
 export default store(function (/* { ssrContext } */) {
   const Store = createStore<StateInterface>({
     modules: {
-      taskModule
+      taskModule,
+      authModule
     },
 
     // enable strict mode (adds overhead!)
