@@ -1,0 +1,46 @@
+<template>
+  <q-page padding>
+
+     <q-input standout="bg-teal text-white" label="Jenis Buah" stack-label :dense="dense">
+        <template v-slot:control>
+          <div class="self-center full-width no-outline" tabindex="0">{{text}}</div>
+        </template>
+      </q-input>
+
+       <q-input standout="bg-teal text-white" label="Berat tanaman dalam KG" stack-label :dense="dense">
+        <template v-slot:control>
+          <div class="self-center full-width no-outline" tabindex="0">{{text}}</div>
+        </template>
+      </q-input>
+
+       <q-input standout="bg-teal text-white" label="Pohon Yang Berbuah" stack-label :dense="dense">
+        <template v-slot:control>
+          <div class="self-center full-width no-outline" tabindex="0">{{text}}</div>
+        </template>
+      </q-input>
+
+       <q-input standout="bg-teal text-white" label="KELUASAN DIUSAHAKAN MENGIKUT JENIS BUAH (Hektar)" stack-label :dense="dense">
+        <template v-slot:control>
+          <div class="self-center full-width no-outline" tabindex="0">{{text}}</div>
+        </template>
+      </q-input>
+
+       <q-input standout="bg-teal text-white" label="HARGA HASIL DI LADANG / UNIT (B$/KG)" stack-label :dense="dense">
+        <template v-slot:control>
+          <div class="self-center full-width no-outline" tabindex="0">{{text}}</div>
+        </template>
+      </q-input>
+
+      <q-btn :ripple="{ center: true }" color="secondary" label="Balik" no-caps :to="{ path: 'fruitlist' }" /> 
+      <q-btn round color="secondary" icon="mdi-plus" :to="{ path: 'fruitlist' }" />
+      <q-btn round color="secondary" icon="mdi-text-box-search-outline" :to="{ path: 'finalreview' }" />
+      
+
+  </q-page>
+</template>
+
+<script>
+export default {
+  // name: 'PageName',
+}
+</script>
