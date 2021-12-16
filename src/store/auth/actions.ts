@@ -12,10 +12,9 @@ import farm, { setHost } from '../farmClient';
 
 const actions: ActionTree<AuthStateInterface, StateInterface> = {
   authorize({ commit }, payload): Promise<void> {
-      // const url = (process.env.NODE_ENV === 'development')
-      //   ? ''
-      //   : `https://${payload.farmosUrl}`;
-      const url = `https://${payload.farmosUrl}`
+      const url = (process.env.NODE_ENV === 'development')
+        ? ''
+        : `https://${payload.farmosUrl}`;
       const { username, password, router } = payload;
       const storage = window.localStorage;
       setHost(url);

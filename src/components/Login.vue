@@ -43,9 +43,9 @@ export default defineComponent({
   setup() {
     let valuesEntered = ref(false);
     let authPending = ref(false);
-    let username = ref('Qoyyuum');
-    let password = ref('a7UKATJ6');
-    let farmosUrl = ref('bccteam8.farmos.net');
+    let username = ref('');
+    let password = ref('');
+    let farmosUrl = ref('');
 
     const store = useStore();
 
