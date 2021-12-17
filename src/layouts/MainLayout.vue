@@ -11,7 +11,12 @@
           @click="toggleLeftDrawer"
         />
 
-        <q-toolbar-title> Kebun Kitani </q-toolbar-title>
+        <q-toolbar-title> 
+          <img
+              src="Logo-KebunKitani.png"
+              style="height: 100px; max-width: 100px"
+    /> 
+      </q-toolbar-title>
       </q-toolbar>
     </q-header>
 

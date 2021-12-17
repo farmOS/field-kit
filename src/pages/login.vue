@@ -1,12 +1,10 @@
 <template>
   <q-page >
-      <q-avatar color="primary" text-color="white">J</q-avatar>
       <q-input standout="bg-teal text-white" v-model="text" label="Nama Ladang" />
       <q-input standout="bg-teal text-white" v-model="text" label="Nama Pengguna" />
       <q-input standout="bg-teal text-white" v-model="text" label="Kata Laluan" />
-      <q-btn color="primary" label="Log Masuk" :to="{ path: 'dashboard' }" />
-      
-  </q-page>
+      <q-btn color="secondary" label="Log Masuk" :to="{ path: 'dashboard' }" />
+   </q-page>
 </template>
 
 <script lang="ts">
