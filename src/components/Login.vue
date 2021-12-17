@@ -1,32 +1,37 @@
 <template>
-  <q-page>
-    <q-avatar color="primary" text-color="white">J</q-avatar>
-    <q-input
-      standout="bg-teal text-white"
-      v-model="farmosUrl"
-      label="Nama Ladang"
-      v-on:input="checkValues"
-    />
-    <q-input
-      standout="bg-teal text-white"
-      v-model="username"
-      label="Nama Pengguna"
-      v-on:input="checkValues"
-    />
-    <q-input
-      standout="bg-teal text-white"
-      v-model="password"
-      label="Kata Laluan"
-      type="password"
-      v-on:input="checkValues"
-    />
-    <q-spinner v-if="authPending" color="primary" size="3em" />
-    <q-btn
-      v-else
-      color="primary"
-      label="Log Masuk"
-      @click="submitCredentials"
-    />
+  <q-page class="q-pa-md">
+    <div class="q-gutter-y-md column">
+      <h4>Selamat Datang!</h4>
+      <q-input
+        standout="bg-teal text-white"
+        v-model="farmosUrl"
+        id="farmosUrl"
+        label="Nama Ladang"
+        v-on:input="checkValues"
+      />
+      <q-input
+        standout="bg-teal text-white"
+        v-model="username"
+        id="username"
+        label="Nama Pengguna"
+        v-on:input="checkValues"
+      />
+      <q-input
+        standout="bg-teal text-white"
+        v-model="password"
+        id="password"
+        label="Kata Laluan"
+        type="password"
+        v-on:input="checkValues"
+      />
+      <q-spinner v-if="authPending" color="primary" size="3em" />
+      <q-btn
+        v-else
+        color="primary"
+        label="Log Masuk"
+        @click="submitCredentials"
+      />
+    </div>
   </q-page>
 </template>
 
@@ -79,10 +84,10 @@ export default defineComponent({
           console.log('Set Login Status');
           store.commit('authModule/setLoginStatus', true);
           console.log('Login Status is set. Updating Field Modules');
-          // return $store.dispatch('updateFieldModules', this.$router);
+          // return $store.dispatch('updateFieldModules', this.$router); // TODO: Add shellModule to Store
         })
-        .then((res) => store.dispatch('authModule/updateUserAndSiteInfo', res));
-      // .then(res => $store.dispatch('updateFarmResources', res)); // TODO: Add to Store
+        .then((res) => store.dispatch('authModule/updateUserAndSiteInfo', res))
+        .then((res) => store.dispatch('farmModule/updateFarmResources', res));
     };
 
     return {

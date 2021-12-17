@@ -1,6 +1,6 @@
 # Kebun Kitani (kebunkitani)
 
-A Farm-Tracking, Activity Logging app for Farmers. Built with Quasar v2.3.4
+A Farm-Tracking, Activity Logging app for Farmers. Built with Quasar v2.3.4. Interfaces with FarmOS v1.
 
 ## Install the dependencies
 ```bash

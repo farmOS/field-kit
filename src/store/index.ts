@@ -11,6 +11,8 @@ import { AuthStateInterface } from './auth/state';
 import taskModule from './tasks'
 import { TaskStateInterface } from './tasks/state';
 
+import farmModule from './farm/index';
+// import { FarmStateInterface } from './farm/state';
 /*
  * If not building with SSR mode, you can
  * directly export the Store instantiation;
@@ -25,7 +27,8 @@ export interface StateInterface {
   // example: ExampleStateInterface;
   // Declared as unknown to avoid linting issue. Best to strongly type as per the line above.
   tasks: TaskStateInterface,
-  auth: AuthStateInterface
+  auth: AuthStateInterface,
+  // farm: FarmStateInterface
 }
 
 // provide typings for `this.$store`
@@ -42,7 +45,9 @@ export default store(function (/* { ssrContext } */) {
   const Store = createStore<StateInterface>({
     modules: {
       taskModule,
-      authModule
+      authModule,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      farmModule
     },
 
     // enable strict mode (adds overhead!)

@@ -1,5 +1,3 @@
-import { reactive } from 'vue'
-
 export interface TaskStateInterface {
   filter: Record<string, never>,
   pass: {

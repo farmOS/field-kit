@@ -5,10 +5,7 @@ const routes: RouteRecordRaw[] = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '/', component: () => import('pages/login.vue') },
-      { path: 'dashboard', component: () => import('pages/dashboard.vue') },
-      { path: 'settings', component: () => import('pages/settings.vue') }, 
-      { path: 'harvesttype', component: () => import('pages/harvesttype.vue') }, 
+      { path: '/', component: () => import('components/Dashboard.vue') },
       { path: 'croptype', component: () => import('pages/croptype.vue') },
       { path: 'vegelist', component: () => import('pages/vegelist.vue') },
       { path: 'vegereview', component: () => import('pages/vegereview.vue') },
