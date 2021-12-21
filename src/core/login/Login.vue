@@ -106,8 +106,8 @@ export default {
         .then(() => {
           this.updatesPending = true;
           this.authPending = false;
-          return this.updateProfile()
-            .then(this.updateConfigDocs)
+          return this.updateConfigDocs()
+            .then(this.updateProfile)
             .then(this.updateFieldModules)
             .then(this.purgeEntities)
             .then(() => {
