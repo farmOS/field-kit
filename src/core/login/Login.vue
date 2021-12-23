@@ -5,7 +5,7 @@
         <span class="input-group-text">https://</span>
       </div>
       <input
-        v-model="host"
+        v-model="url"
         :placeholder="$t('Enter your farmOS URL')"
         autofocus
         type="url"
@@ -75,7 +75,7 @@ export default {
       updatesPending: false,
       username: '',
       password: '',
-      host: '',
+      url: '',
     };
   },
 
@@ -88,7 +88,7 @@ export default {
       'purgeEntities',
     ]),
     checkValues() {
-      const urlIsValid = process.env.NODE_ENV === 'development' || this.username !== '';
+      const urlIsValid = process.env.NODE_ENV === 'development' || this.url !== '';
       const usernameIsValid = this.username !== '';
       const passwordIsValid = this.password !== '';
       if (urlIsValid && usernameIsValid && passwordIsValid) {
@@ -97,8 +97,10 @@ export default {
     },
     submitCredentials() {
       this.authPending = true;
+      const host = process.env.NODE_ENV === 'development'
+        ? '' : `https://${this.url.replace(/(^\w+:|^)\/\//, '')}`;
       const payload = {
-        host: this.host,
+        host,
         username: this.username,
         password: this.password,
       };
@@ -123,7 +125,7 @@ export default {
     },
   },
   created() {
-    this.host = localStorage.getItem('host')?.replace(/(^\w+:|^)\/\//, '') || '';
+    this.url = localStorage.getItem('host')?.replace(/(^\w+:|^)\/\//, '') || '';
   },
 };
 
