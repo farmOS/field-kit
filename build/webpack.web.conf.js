@@ -50,7 +50,7 @@ const webpackConfig = merge(baseWebpackConfig, {
     // see https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
       filename: config.web.index,
-      template: 'index.web.html',
+      template: 'index.html',
       inject: true,
       minify: {
         removeComments: true,
