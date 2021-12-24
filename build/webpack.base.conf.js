@@ -58,7 +58,7 @@ module.exports = {
           resolve('src'),
           resolve('test'),
           resolve('node_modules/webpack-dev-server/client'),
-          resolve('node_modules/farmOS-map/src'),
+          resolve('node_modules/@farmos.org/farmos-map/src'),
         ]
       },
       {
