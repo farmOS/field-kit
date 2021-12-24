@@ -10,7 +10,7 @@
     "start": "npm run dev",
     "lint": "eslint --color --ext .js,.vue src",
     "lint-files": "node --eval 'process.argv.reduce((acc, cur) => `${acc} ${cur}`, ``)' | eslint --color",
-    "build": "node build/build.js",
+    "build:web": "node build/build.js",
     "test": "mocha-webpack --webpack-config build/webpack.test.conf.js --require test-setup.js 'src/**/*.test.js' --watch",
     "storybook": "NODE_PATH=src start-storybook -p 6006",
     "build-storybook": "build-storybook",
