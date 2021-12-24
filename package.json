@@ -30,7 +30,7 @@
     "cordova-plugin-splashscreen": "^5.0.4",
     "cordova-plugin-whitelist": "^1.3.5",
     "farmOS-map": "github:farmOS/farmOS-map#v1.3.0",
-    "farmos": "^2.0.0-beta.2",
+    "farmos": "^2.0.0-beta.3",
     "ramda": "^0.27.1",
     "vue": "^2.6.14",
     "vue-router": "^3.5.2",
