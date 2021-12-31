@@ -61,7 +61,7 @@ export default {
     alert(state, error) {
       // eslint-disable-next-line no-console
       if (process.env.NODE_ENV === 'development') console.error(error);
-      state.errors.push(authInterceptor(error));
+      state.errors.push(authInterceptor(error, router));
     },
     dismissAlert(state, index) {
       state.errors.splice(index, 1);

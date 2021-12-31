@@ -1,4 +1,3 @@
-import router from '../router';
 import { getHost } from '../farm';
 
 export const authErrorMessage = (response = {}, message) => {
@@ -20,7 +19,7 @@ export const authErrorMessage = (response = {}, message) => {
   return message || `${status} error: ${data.error_description || response.statusText}`;
 };
 
-export const authInterceptor = (error = {}) => {
+export const authInterceptor = (error = {}, router) => {
   const { loginRequired, message, response = {} } = error;
   if (loginRequired) {
     if (router.currentRoute.path !== '/login') router.push('/login');
