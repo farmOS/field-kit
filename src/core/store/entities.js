@@ -8,7 +8,7 @@ import {
   deleteRecord, getRecords, saveRecord,
 } from '../idb';
 import { cachingCriteria, evictionCriteria } from './criteria';
-import SyncError from './SyncError';
+import SyncError from '../http/SyncError';
 import upsert from '../utils/upsert';
 import parseFilter from '../utils/parseFilter';
 import flattenEntity from '../utils/flattenEntity';

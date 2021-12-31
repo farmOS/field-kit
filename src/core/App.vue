@@ -135,6 +135,7 @@
 <script>
 import { mapActions, mapMutations, mapState } from 'vuex';
 import { version } from '../../package.json';
+import { refreshCache } from './idb/cache';
 import flattenEntity from './utils/flattenEntity';
 
 export default {
@@ -154,7 +155,7 @@ export default {
         this.updateProfile()
           .then(this.updateConfigDocs)
           .then(this.updateFieldModules)
-          .then(this.purgeEntities)
+          .then(refreshCache)
           .catch((e) => { this.alert(e); })
           .finally(() => { this.ready = true; });
       })
@@ -218,7 +219,6 @@ export default {
       'updateProfile',
       'updateConfigDocs',
       'updateFieldModules',
-      'purgeEntities',
     ]),
     // setUseGeolocation(checked) {
     //   this.$store.commit('setUseGeolocation', checked);

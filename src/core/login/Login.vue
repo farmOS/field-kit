@@ -65,6 +65,7 @@
 
 <script>
 import { mapActions, mapMutations } from 'vuex';
+import { refreshCache } from '../idb/cache';
 
 export default {
   name: 'Login',
@@ -85,7 +86,6 @@ export default {
       'updateProfile',
       'updateConfigDocs',
       'updateFieldModules',
-      'purgeEntities',
     ]),
     checkValues() {
       const urlIsValid = process.env.NODE_ENV === 'development' || this.url !== '';
@@ -111,7 +111,7 @@ export default {
           return this.updateConfigDocs()
             .then(this.updateProfile)
             .then(this.updateFieldModules)
-            .then(this.purgeEntities)
+            .then(refreshCache)
             .then(() => {
               this.updatesPending = false;
               this.$router.push('/home');

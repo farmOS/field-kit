@@ -1,7 +1,7 @@
 import farm, { setHost } from '../farm';
 import { loadFieldModule } from '../fieldModules';
 import router from '../router';
-import { authInterceptor } from './auth';
+import { authInterceptor } from '../http/auth';
 
 const LS = window.localStorage;
 
