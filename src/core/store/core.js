@@ -1,5 +1,5 @@
 import farm, { setHost } from '../farm';
-import { loadFieldModule } from '../fieldModules';
+import { loadFieldModule, fetchFieldModules } from '../fieldModules';
 import router from '../router';
 import { authInterceptor } from '../http/auth';
 
@@ -37,8 +37,8 @@ const loadModulesPlusHandler = (modules, commit) =>
       router.addRoutes([{ path: '*', redirect: '/home' }]);
       commit('filterModules', mod =>
         mod.name === 'tasks' || fullfilled.some(m => mod.name === m.name));
-      rejected.forEach(({ label, js }) => {
-        commit('alert', new Error(`Error installing ${label} module from ${js}.`));
+      rejected.forEach(({ label, uri }) => {
+        commit('alert', new Error(`Error installing ${label} module from ${uri}.`));
       });
       return fullfilled;
     });
@@ -132,16 +132,10 @@ export default {
       return loadModulesPlusHandler(modules, commit);
     },
     updateFieldModules({ commit }) {
-      return farm.remote.request('api/client_module/client_module')
-        .then(({ data }) => {
-          const modules = data.data.map(({ attributes }) => ({
-            ...attributes,
-            name: attributes.drupal_internal__id,
-            js: `farm/client/js/${attributes.drupal_internal__id}/index.js`,
-          }));
-          LS.setItem('modules', JSON.stringify(modules));
-          return loadModulesPlusHandler(modules, commit);
-        });
+      return fetchFieldModules().then((modules) => {
+        LS.setItem('modules', JSON.stringify(modules));
+        return loadModulesPlusHandler(modules, commit);
+      });
     },
   },
 };

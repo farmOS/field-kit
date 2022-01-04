@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import {
-  compose, concat, evolve, map, mergeDeepWith, pick,
+  compose, concat, evolve, map, mergeDeepWith, path, pick,
 } from 'ramda';
+import farm, { getHost } from './farm';
 import router from './router';
 import routeMixin from './mixins/routeMixin';
 import widgetMixin from './mixins/widgetMixin';
@@ -62,14 +63,14 @@ export const mountFieldModule = store => (mod) => {
 
 // Takes module info from the API and uses it to inject a script tag and run
 // a module's main entry file (eg, module.js).
-export const loadFieldModule = ({ name, js }) =>
+export const loadFieldModule = ({ name, uri }) =>
   new Promise((resolve, reject) => {
     const id = `field-module-${name}`;
     const prev = document.getElementById(id);
     if (prev !== null) { prev.remove(); }
     const script = document.createElement('script');
     script.id = id;
-    script.src = `${localStorage.getItem('host')}/${js}`;
+    script.src = `${getHost()}/${uri}`;
     script.type = 'module';
     script.async = true;
     script.crossOrigin = 'anonymous';
@@ -77,3 +78,25 @@ export const loadFieldModule = ({ name, js }) =>
     script.onerror = reject;
     document.body.appendChild(script);
   });
+
+const FM_ENDPOINT = process.env.NODE_ENV === 'development'
+  ? 'api/client_module/client_module' : 'api/field_module/field_module';
+const FM_DIR = process.env.NODE_ENV === 'development'
+  ? 'farm/client/js/' : 'fieldkit/js/';
+const FM_FILE = '/index.js';
+const transformModuleData = (data) => {
+  const { id, attributes } = data;
+  const {
+    drupal_internal__id: name, status, label, description,
+  } = attributes;
+  const uri = FM_DIR + name + FM_FILE;
+  return ({
+    id, name, uri, status, label, description,
+  });
+};
+const transformModuleResponse = compose(
+  map(transformModuleData),
+  path(['data', 'data']),
+);
+export const fetchFieldModules = () => farm.remote.request(FM_ENDPOINT)
+  .then(transformModuleResponse);
