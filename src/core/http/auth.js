@@ -1,4 +1,4 @@
-import { getHost } from '../farm';
+import { getHost } from '../remote';
 
 export const authErrorMessage = (response = {}, message) => {
   const { status, data = {} } = response;

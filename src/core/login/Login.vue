@@ -66,6 +66,7 @@
 <script>
 import { mapActions, mapMutations } from 'vuex';
 import { refreshCache } from '../idb/cache';
+import { getHost } from '../remote';
 
 export default {
   name: 'Login',
@@ -125,7 +126,7 @@ export default {
     },
   },
   created() {
-    this.url = localStorage.getItem('host')?.replace(/(^\w+:|^)\/\//, '') || '';
+    this.url = getHost()?.replace(/(^\w+:|^)\/\//, '') || '';
   },
 };
 

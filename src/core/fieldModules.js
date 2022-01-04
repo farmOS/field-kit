@@ -2,7 +2,8 @@ import Vue from 'vue';
 import {
   compose, concat, evolve, map, mergeDeepWith, path, pick,
 } from 'ramda';
-import farm, { getHost } from './farm';
+import { getHost } from './remote';
+import farm from './farm';
 import router from './router';
 import routeMixin from './mixins/routeMixin';
 import widgetMixin from './mixins/widgetMixin';

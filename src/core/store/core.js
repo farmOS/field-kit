@@ -1,4 +1,7 @@
-import farm, { setHost } from '../farm';
+import {
+  clientId, setHost, getToken, setToken,
+} from '../remote';
+import farm from '../farm';
 import { loadFieldModule, fetchFieldModules } from '../fieldModules';
 import router from '../router';
 import { authInterceptor } from '../http/auth';
@@ -93,7 +96,11 @@ export default {
   },
   actions: {
     authorize(_, { host, username, password }) {
+      const remote = {
+        host, clientId, getToken, setToken,
+      };
       setHost(host);
+      farm.remote.add(remote);
       return farm.remote.authorize(username, password);
     },
     loadProfile({ commit }) {
