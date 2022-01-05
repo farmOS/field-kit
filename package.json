@@ -19,7 +19,7 @@
   "dependencies": {
     "@farmos.org/farmos-map": "^1.4.2",
     "@turf/turf": "^5.1.6",
-    "farmos": "^2.0.0-beta.4",
+    "farmos": "^2.0.0-beta.5",
     "ramda": "^0.27.1",
     "vue": "^2.6.14",
     "vue-router": "^3.5.2",
