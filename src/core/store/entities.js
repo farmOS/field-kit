@@ -1,25 +1,15 @@
 import Vue from 'vue';
 import {
-  allPass, anyPass, compose, map, reduce,
+  allPass, anyPass, compose, reduce,
 } from 'ramda';
 import farm from '../farm';
 import nomenclature from './nomenclature';
-import {
-  deleteRecord, getRecords, saveRecord,
-} from '../idb';
-import { cachingCriteria, evictionCriteria } from './criteria';
+import { deleteRecord, getRecords } from '../idb';
+import { cacheEntity } from '../idb/cache';
 import SyncError from '../http/SyncError';
 import upsert from '../utils/upsert';
 import parseFilter from '../utils/parseFilter';
 import flattenEntity from '../utils/flattenEntity';
-
-const cacheEntity = (name, criteria, entity) => {
-  const meetsCachingCriteria = cachingCriteria(criteria)[name];
-  if (meetsCachingCriteria(entity)) {
-    return saveRecord('entities', name, entity);
-  }
-  return Promise.resolve(entity);
-};
 
 function parseFilterWithOptions(filter, options = {}) {
   const predicates = [parseFilter(filter)];
@@ -69,15 +59,6 @@ export default {
     },
   },
   actions: {
-    purgeEntities({ state }) {
-      const now = Date.now();
-      const uid = state.profile.user.id;
-      const criteria = evictionCriteria({ now, uid });
-      const query = map(fn => compose(fn, flattenEntity), criteria);
-      const dbRequests = Object.keys(nomenclature.entities)
-        .map(name => deleteRecord('entities', name, query[name]));
-      return Promise.all(dbRequests);
-    },
     createEntity({ commit, state }, { name, props }) {
       const { shortName, shortPlural } = nomenclature.entities[name];
       const entity = farm[shortName].create(props);
@@ -86,7 +67,7 @@ export default {
         now: Date.now(),
         uid: state.profile.user.id,
       };
-      return cacheEntity(name, criteria, entity);
+      return cacheEntity(name, entity, criteria);
     },
     updateEntity({ commit, state }, { name, props: { id, ...props } }) {
       const { shortName, shortPlural } = nomenclature.entities[name];
@@ -102,7 +83,7 @@ export default {
         now: Date.now(),
         uid: state.profile.user.id,
       };
-      return cacheEntity(name, criteria, entity);
+      return cacheEntity(name, entity, criteria);
     },
     deleteEntity({ commit, state }, { name, id }) {
       const { shortName, shortPlural } = nomenclature.entities[name];
@@ -140,7 +121,7 @@ export default {
             const local = state[shortPlural].find(ent => ent.id === remote.id);
             const entity = farm[shortName].merge(local, remote);
             commit('upsertEntity', { shortPlural, entity });
-            cacheEntity(name, criteria, entity);
+            cacheEntity(name, entity, criteria);
           });
           return errorInterceptor(results);
         });
@@ -160,7 +141,7 @@ export default {
         const local = state[shortPlural].find(ent => ent.id === remote.id);
         const entity = farm[shortName].merge(local, remote);
         commit('upsertEntity', { shortPlural, entity });
-        cacheEntity(name, criteria, entity);
+        cacheEntity(name, entity, criteria);
         upsert(results.data, 'id', remote);
         return {
           ...results,

@@ -22,7 +22,7 @@ const getUid = () => {
 
 export const cachingCriteria = (options = {}) => {
   const { now = Date.now(), uid = getUid() } = options;
-  return ({
+  return {
     asset: {
       status: 'active',
     },
@@ -36,7 +36,7 @@ export const cachingCriteria = (options = {}) => {
     quantity: {},
     taxonomy_term: {},
     user: { id: uid },
-  });
+  };
 };
 
 export const cacheEntity = (name, entity, options) => {

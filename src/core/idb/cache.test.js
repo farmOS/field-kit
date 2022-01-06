@@ -1,5 +1,10 @@
+import {
+  anyPass, complement, compose,
+} from 'ramda';
 import farm from '../farm';
-import { cachingCriteria, evictionCriteria } from './criteria';
+import { cachingCriteria } from './cache';
+import parseFilter from '../utils/parseFilter';
+import flattenEntity from '../utils/flattenEntity';
 import daysAway from '../utils/daysAway';
 
 const now = new Date().toISOString();
@@ -15,8 +20,16 @@ const unsyncedMetadata = {
   remote: { lastSync: daysAway(now, -1) },
   fields: { timestamp: { changed: now } },
 };
-const meetsCachingCriteria = cachingCriteria({ now }).log;
-const meetsEvictionCriteria = evictionCriteria({ now }).log;
+
+const criteria = cachingCriteria({ now }).log;
+const meetsCachingCriteria = compose(
+  anyPass([
+    parseFilter(criteria),
+    farm.meta.isUnsynced,
+  ]),
+  flattenEntity,
+);
+const meetsEvictionCriteria = complement(meetsCachingCriteria);
 
 describe('cachingCriteria', () => {
   it('passes a log timestamped at the current time', () => {
