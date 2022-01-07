@@ -1,7 +1,5 @@
 import Vue from 'vue';
-import {
-  allPass, anyPass, compose, reduce,
-} from 'ramda';
+import { anyPass } from 'ramda';
 import farm from '../farm';
 import nomenclature from './nomenclature';
 import { deleteRecord, getRecords } from '../idb';
@@ -9,7 +7,7 @@ import { cacheEntity } from '../idb/cache';
 import SyncError from '../http/SyncError';
 import upsert from '../utils/upsert';
 import parseFilter from '../utils/parseFilter';
-import flattenEntity from '../utils/flattenEntity';
+import { fetchEntities, syncEntities } from '../http/sync';
 
 function parseFilterWithOptions(filter, options = {}) {
   const predicates = [parseFilter(filter)];
@@ -38,8 +36,7 @@ export default {
       upsert(state[shortPlural], 'id', entity);
     },
     filterEntities(state, { shortPlural, predicate }) {
-      state[shortPlural] = state[shortPlural]
-        .filter(compose(predicate, flattenEntity));
+      state[shortPlural] = state[shortPlural].filter(predicate);
     },
     updateEntity(state, payload) {
       const { shortPlural, index, entity } = payload;
@@ -99,8 +96,7 @@ export default {
       const { shortPlural } = nomenclature.entities[name];
       const predicate = parseFilterWithOptions(filter, options);
       commit('filterEntities', { shortPlural, predicate });
-      const query = compose(predicate, flattenEntity);
-      return getRecords('entities', name, query).then((results) => {
+      return getRecords('entities', name, predicate).then((results) => {
         const data = results.map((entity) => {
           commit('upsertEntity', { shortPlural, entity });
           return entity;
@@ -110,71 +106,39 @@ export default {
         throw new Error({ data: [], fulfilled: [], rejected: [e] });
       });
     },
-    fetchEntities({ commit, dispatch, state }, { name, filter, options }) {
+    fetchEntities({ commit, dispatch, state }, payload) {
+      const {
+        name, filter, limit = Infinity, options,
+      } = payload;
       const { shortName, shortPlural } = nomenclature.entities[name];
+      const now = new Date().toISOString();
+      const criteria = { now, uid: state.profile.user.id };
       return dispatch('loadEntities', { name, filter, options })
-        .then(() => farm[shortName].fetch({ filter }))
+        .then(({ data }) => fetchEntities(shortName, { cache: data, filter, limit }))
         .then((results) => {
-          const now = new Date().toISOString();
-          const criteria = { now, uid: state.profile.user.id };
-          results.data.forEach((remote) => {
-            const local = state[shortPlural].find(ent => ent.id === remote.id);
-            const entity = farm[shortName].merge(local, remote);
+          results.data.forEach((entity) => {
             commit('upsertEntity', { shortPlural, entity });
             cacheEntity(name, entity, criteria);
           });
           return errorInterceptor(results);
         });
     },
-    syncEntities({ commit, dispatch, state }, { name, filter, options }) {
+    syncEntities({ commit, dispatch, state }, payload) {
+      const {
+        name, filter, limit = Infinity, options,
+      } = payload;
       const { shortName, shortPlural } = nomenclature.entities[name];
-      const now = Date.now();
+      const now = new Date().toISOString();
       const criteria = { now, uid: state.profile.user.id };
-      const handleSendResults = reduce((results, { status, reason, value: remote }) => {
-        const { fulfilled, rejected } = results;
-        if (status === 'rejected') {
-          return {
-            ...results,
-            rejected: [...rejected, reason],
-          };
-        }
-        const local = state[shortPlural].find(ent => ent.id === remote.id);
-        const entity = farm[shortName].merge(local, remote);
-        commit('upsertEntity', { shortPlural, entity });
-        cacheEntity(name, entity, criteria);
-        upsert(results.data, 'id', remote);
-        return {
-          ...results,
-          fulfilled: [...fulfilled, remote],
-        };
-      });
-      return dispatch('fetchEntities', { name, filter, options })
-        .catch((e) => {
-          if (e.fulfilled?.length > 0 && !e.loginRequired) {
-            const { data, fulfilled, rejected } = e;
-            return { data, fulfilled, rejected };
-          }
-          throw e;
-        })
-        .then((fetchResults) => {
-          const failedBundles = fetchResults.rejected.map(({ response = {} }) => {
-            const { config: { url } } = response;
-            const bundle = url.split('?')[0].split('/').pop();
-            return bundle;
+      return dispatch('loadEntities', { name, filter, options })
+        .then(({ data }) => syncEntities(shortName, { cache: data, filter, limit }))
+        .then((results) => {
+          results.data.forEach((entity) => {
+            commit('upsertEntity', { shortPlural, entity });
+            cacheEntity(name, entity, criteria);
           });
-          const excludeFailedBundles = entity =>
-            failedBundles.every(b => b !== entity.type);
-          const predicate = allPass([
-            parseFilterWithOptions(filter, options),
-            excludeFailedBundles,
-            farm.meta.isUnsynced,
-          ]);
-          const entities = state[shortPlural]
-            .filter(compose(predicate, flattenEntity));
-          const requests = entities.map(farm[shortName].send);
-          return Promise.allSettled(requests)
-            .then(handleSendResults(fetchResults));
-        }).then(errorInterceptor);
+          return errorInterceptor(results);
+        });
     },
   },
 };

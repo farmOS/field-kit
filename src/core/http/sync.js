@@ -1,42 +1,49 @@
-import { allPass, insert } from 'ramda';
+import {
+  allPass, insert, reduce,
+} from 'ramda';
 import farm from '../farm';
 import parseFilter from '../utils/parseFilter';
 
-const syncEntity = (shortName, { cache = [], filter, limit = Infinity }) =>
-  farm[shortName].fetch({ filter, limit }).then((fetchResults) => {
-    const mergedResults = fetchResults.data.reduce((collection, remote) => {
+export const fetchEntities = (shortName, { cache = [], filter, limit }) =>
+  farm[shortName].fetch({ filter, limit }).then((results) => {
+    const { data, fulfilled, rejected } = results;
+    const entities = data.reduce((collection, remote) => {
       const i = collection.findIndex(ent => ent.id === remote.id);
       const merged = farm[shortName].merge(collection[i], remote);
       return insert(i, merged, collection);
     }, cache);
-    const failedBundles = fetchResults.rejected.map(({ response = {} }) => {
+    return { data: entities, fulfilled, rejected };
+  });
+
+export const syncEntities = (shortName, { cache = [], filter, limit }) =>
+  fetchEntities(shortName, { cache, filter, limit }).then((fetchResults) => {
+    const { data: mergedEntities } = fetchResults;
+    const failedBundleNames = fetchResults.rejected.map(({ response = {} }) => {
       const { config: { url } } = response;
       const bundleName = url.split('?')[0].split('/').pop();
       return bundleName;
     });
     const predicate = allPass([
       parseFilter(filter),
-      entity => failedBundles.every(b => b !== entity.type),
+      entity => failedBundleNames.every(b => b !== entity.type),
       farm.meta.isUnsynced,
     ]);
-    const syncables = mergedResults.filter(predicate);
+    const syncables = mergedEntities.filter(predicate);
     const sendRequests = syncables.map(farm[shortName].send);
-    return Promise.allSettled(sendRequests)
-      .then(sendResults => sendResults.reduce((result, { status, reason, value: remote }) => {
-        const { data, fulfilled, rejected } = result;
-        if (status === 'rejected') {
-          return {
-            ...result,
-            rejected: [...rejected, reason],
-          };
-        }
-        const i = syncables.findIndex(ent => ent.id === remote.id);
-        const merged = farm[shortName].merge(syncables[i], remote);
+    const handleSendResults = reduce((result, { status, reason, value: remote }) => {
+      const { data, fulfilled, rejected } = result;
+      if (status === 'rejected') {
         return {
-          data: insert(i, merged, data),
-          fulfilled: [...fulfilled, remote],
+          ...result,
+          rejected: [...rejected, reason],
         };
-      }, fetchResults));
+      }
+      const i = syncables.findIndex(ent => ent.id === remote.id);
+      const merged = farm[shortName].merge(syncables[i], remote);
+      return {
+        data: insert(i, merged, data),
+        fulfilled: [...fulfilled, remote],
+      };
+    }, fetchResults);
+    return Promise.allSettled(sendRequests).then(handleSendResults);
   });
-
-export default syncEntity;

@@ -2,6 +2,11 @@
 import {
   allPass, any, anyPass, compose, equals, init, last, map, none, prop, T, when,
 } from 'ramda';
+import flattenEntity from './flattenEntity';
+
+// NB: These are not curried, so can only be used as single arity functions.
+const safeAny = predicate => (data = []) => any(predicate)(data);
+const safeNone = predicate => (data = []) => none(predicate)(data);
 
 const operators = {
   $and: compose(allPass, map(parseFilter)),
@@ -12,8 +17,8 @@ const operators = {
   $gte: bound => data => data >= bound,
   $lt: bound => data => data < bound,
   $lte: bound => data => data <= bound,
-  $in: compose(any, parseFilter),
-  $nin: compose(none, parseFilter),
+  $in: compose(safeAny, parseFilter),
+  $nin: compose(safeNone, parseFilter),
 };
 
 const isNumber = n => !Number.isNaN(+n);
@@ -48,7 +53,7 @@ function parseField([key, value]) {
   return compose(predicate, prop(key));
 }
 
-export default function parseFilter(filter = {}) {
+function parseFilter(filter = {}) {
   if (Array.isArray(filter)) {
     return operators.$or(filter);
   }
@@ -57,3 +62,5 @@ export default function parseFilter(filter = {}) {
   if (entries.length === 0) return T;
   return allPass(entries.map(parseField));
 }
+
+export default filter => compose(parseFilter(filter), flattenEntity);

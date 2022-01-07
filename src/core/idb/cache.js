@@ -1,14 +1,11 @@
-import {
-  anyPass, complement, compose,
-} from 'ramda';
+import { anyPass, complement } from 'ramda';
 import farm from '../farm';
 import nomenclature from '../store/nomenclature';
 import {
   deleteRecord, getRecords, saveRecord,
 } from '.';
-import syncEntity from '../http/sync';
+import { syncEntities } from '../http/sync';
 import parseFilter from '../utils/parseFilter';
-import flattenEntity from '../utils/flattenEntity';
 import daysAway from '../utils/daysAway';
 import SyncError from '../http/SyncError';
 
@@ -41,13 +38,10 @@ export const cachingCriteria = (options = {}) => {
 
 export const cacheEntity = (name, entity, options) => {
   const criteria = cachingCriteria(options)[name];
-  const meetsCriteria = compose(
-    anyPass([
-      parseFilter(criteria),
-      farm.meta.isUnsynced,
-    ]),
-    flattenEntity,
-  );
+  const meetsCriteria = anyPass([
+    parseFilter(criteria),
+    farm.meta.isUnsynced,
+  ]);
   if (meetsCriteria(entity)) {
     return saveRecord('entities', name, entity);
   }
@@ -56,13 +50,10 @@ export const cacheEntity = (name, entity, options) => {
 
 export const purgeCache = () => {
   const criteria = cachingCriteria();
-  const meetsCriteria = name => compose(
-    complement(anyPass([
-      parseFilter(criteria[name]),
-      farm.meta.isUnsynced,
-    ])),
-    flattenEntity,
-  );
+  const meetsCriteria = name => complement(anyPass([
+    parseFilter(criteria[name]),
+    farm.meta.isUnsynced,
+  ]));
   const dbRequests = Object.keys(nomenclature.entities)
     .map(name => deleteRecord('entities', name, meetsCriteria(name)));
   return Promise.all(dbRequests);
@@ -74,9 +65,10 @@ export const syncCache = async () => {
   const { lastSync } = settings;
   const requests = Object.values(nomenclature.entities).map(async ({ name, shortName }) => {
     const criteria = cachingCriteria({ now })[name];
-    const filter = lastSync ? { ...criteria, changed: lastSync } : criteria;
+    const changed = { $gt: lastSync };
+    const filter = changed.$gt ? { ...criteria, changed } : criteria;
     const cache = await getRecords('entities', name);
-    const syncResults = await syncEntity(shortName, { filter, cache, limit: Infinity });
+    const syncResults = await syncEntities(shortName, { filter, cache, limit: Infinity });
     const cacheRequests = syncResults.data.map(e => cacheEntity(name, e, criteria));
     const cacheResults = await Promise.allSettled(cacheRequests);
     const failedToCache = cacheResults.some(({ status }) => status === 'rejected');
