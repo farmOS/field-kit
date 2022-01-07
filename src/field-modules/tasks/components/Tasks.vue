@@ -200,8 +200,6 @@ export default {
           this.$store.commit('alert', e);
         })
         .finally(() => { this.isSyncing = false; });
-      this.syncAssets(assetFilter);
-      this.syncTerms(termFilter);
     },
 
     /**
