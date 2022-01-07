@@ -50,9 +50,9 @@ export default class SyncError extends Error {
           return `${message}${reason.message}. Check your internet connection.<br>`;
         }
         // Otherwise, it's a runtime error thrown sometime during the request
-        // procedure; display the log name (if available) along with the error message
+        // procedure; display the entity name (if available) along with the error message
         // so we can debug.
-        const name = config.data?.name ? ` "${config.data.name}"` : '';
+        const name = config.data?.attributes?.name ? ` "${config.data.attributes.name}"` : '';
         const submessage = typeof data === 'string' ? data : reason.message;
         return `${message}Error while syncing${name}${submessage && `: ${submessage}`}.<br>`;
       }, '');
