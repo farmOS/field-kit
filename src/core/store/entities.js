@@ -46,14 +46,6 @@ export default {
       const index = state[shortPlural].findIndex(ent => ent.id === id);
       state[shortPlural].splice(index, 1);
     },
-    clearAllEntities(state) {
-      state.assets = [];
-      state.logs = [];
-      state.plans = [];
-      state.quantities = [];
-      state.terms = [];
-      state.users = [];
-    },
   },
   actions: {
     createEntity({ commit, state }, { name, props }) {

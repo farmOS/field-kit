@@ -48,15 +48,12 @@ export default {
       this.$router.back();
     },
     logout() {
-      // Clear all logs, assets and other entities from the Vuex store.
-      this.$store.commit('clearAllEntities');
-      // Clear the user profile, settings and other core config from the Vuex store.
-      this.$store.commit('clearCoreState');
       // Clear localStorage and delete all IndexedDB databases.
       window.localStorage.clear();
       Promise.all(idbNames.map(deleteDatabase)).then(() => {
-        // Once everything is blown away, force a hard load of the login screen,
-        // without using Vue Router, so the app restarts as a clean install.
+        // Once everything in persistent storage is blown away, load the login
+        // screen via the Location API, instead of Vue Router, so the app is
+        // forced to restart as a clean install, thereby clearing the store.
         window.location.assign('/login');
       });
     },

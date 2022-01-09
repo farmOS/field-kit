@@ -95,11 +95,6 @@ export default {
     filterModules(state, predicate) {
       state.modules = state.modules.filter(predicate);
     },
-    clearCoreState(state) {
-      Object.keys(state).forEach((key) => {
-        state[key] = initState[key];
-      });
-    },
   },
   actions: {
     authorize(_, { host, username, password }) {
