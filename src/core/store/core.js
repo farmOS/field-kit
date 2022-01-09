@@ -22,6 +22,20 @@ const defaultProfile = {
   },
 };
 
+const initState = {
+  errors: [],
+  profile: defaultProfile,
+  modules: [],
+  mapboxAPIKey: '',
+  settings: {
+    useGeolocation: true,
+  },
+  areaGeoJSON: {
+    type: 'FeatureCollection',
+    features: [],
+  },
+};
+
 const partitionResults = (sources, results) =>
   results.reduce(([fulfilled, rejected], result, i) => {
     if (result.status === 'fulfilled') {
@@ -47,19 +61,7 @@ const loadModulesPlusHandler = (modules, commit) =>
     });
 
 export default {
-  state: {
-    errors: [],
-    profile: defaultProfile,
-    modules: [],
-    mapboxAPIKey: '',
-    settings: {
-      useGeolocation: true,
-    },
-    areaGeoJSON: {
-      type: 'FeatureCollection',
-      features: [],
-    },
-  },
+  state: initState,
   mutations: {
     alert(state, error) {
       // eslint-disable-next-line no-console
@@ -92,6 +94,11 @@ export default {
     },
     filterModules(state, predicate) {
       state.modules = state.modules.filter(predicate);
+    },
+    clearCoreState(state) {
+      Object.keys(state).forEach((key) => {
+        state[key] = initState[key];
+      });
     },
   },
   actions: {
@@ -128,11 +135,6 @@ export default {
           LS.setItem('profile', JSON.stringify(state.profile));
           return state.profile;
         });
-    },
-    deleteProfile({ commit }) {
-      commit('setProfile', defaultProfile);
-      LS.removeItem('profile');
-      return Promise.resolve();
     },
     loadFieldModules({ commit }) {
       const modules = JSON.parse(LS.getItem('modules')) || [];

@@ -42,11 +42,11 @@ export default {
       const { shortPlural, index, entity } = payload;
       Vue.set(state[shortPlural], index, entity);
     },
-    deleteEntity(state, { shortPlural, id }) {
+    removeEntity(state, { shortPlural, id }) {
       const index = state[shortPlural].findIndex(ent => ent.id === id);
       state[shortPlural].splice(index, 1);
     },
-    deleteAllEntities(state) {
+    clearAllEntities(state) {
       state.assets = [];
       state.logs = [];
       state.plans = [];
@@ -89,7 +89,7 @@ export default {
         const error = new Error(`Cannot delete ${shortName} without a valid id.`);
         return Promise.reject(error);
       }
-      commit('deleteEntity', { shortPlural, index });
+      commit('removeEntity', { shortPlural, index });
       return deleteRecord('entities', name, id);
     },
     loadEntities({ commit }, { name, filter, options }) {

@@ -107,11 +107,8 @@ export function deleteRecord(dbName, storeName, query) {
   }));
 }
 
-export function clearStore(dbName, storeName) {
-  return openDatabase(dbName).then(db => new Promise((resolve, reject) => {
-    const store = db.transaction(storeName, 'readwrite').objectStore(storeName);
-    const request = store.clear();
-    request.onsuccess = event => resolve(event.target.result);
-    request.onerror = event => reject(event.target.error);
-  }));
-}
+export const deleteDatabase = dbName => new Promise((resolve, reject) => {
+  const request = indexedDB.deleteDatabase(dbName);
+  request.onsuccess = resolve;
+  request.onerror = reject;
+});

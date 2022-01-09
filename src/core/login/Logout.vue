@@ -36,6 +36,11 @@
 </template>
 
 <script>
+import { deleteDatabase } from '../idb';
+import databases from '../idb/databases';
+
+const idbNames = Object.values(databases).map(d => d.name);
+
 export default {
   name: 'Logout',
   methods: {
@@ -43,25 +48,17 @@ export default {
       this.$router.back();
     },
     logout() {
-      // Call logout function from farmos.js
-      this.$store.dispatch('logout');
-
-      // Remove logs, assets, areas, user info & site info from store & local persistance
-      this.$store.commit('deleteAllLogs');
-      this.$store.dispatch('deleteAllCachedLogs');
-      this.$store.commit('deleteAllAssets');
-      this.$store.dispatch('deleteAllCachedAssets');
-      this.$store.commit('deleteAllAreas');
-      this.$store.dispatch('deleteAllCachedAreas');
-      this.$store.commit('deleteAllUnits');
-      this.$store.dispatch('deleteAllCachedUnits');
-      this.$store.commit('deleteAllCategories');
-      this.$store.dispatch('deleteAllCachedCategories');
-      this.$store.dispatch('deleteCachedUserAndSiteInfo');
-
-      // Set login status to false and return to login screen
-      this.$store.commit('setLoginStatus', false);
-      this.$router.push({ path: '/login' });
+      // Clear all logs, assets and other entities from the Vuex store.
+      this.$store.commit('clearAllEntities');
+      // Clear the user profile, settings and other core config from the Vuex store.
+      this.$store.commit('clearCoreState');
+      // Clear localStorage and delete all IndexedDB databases.
+      window.localStorage.clear();
+      Promise.all(idbNames.map(deleteDatabase)).then(() => {
+        // Once everything is blown away, force a hard load of the login screen,
+        // without using Vue Router, so the app restarts as a clean install.
+        window.location.assign('/login');
+      });
     },
   },
 };
