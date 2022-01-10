@@ -1,4 +1,4 @@
-<template lang="html">
+<template>
   <farm-main>
     <farm-tiles :columns="[1, 2, 3]">
 
@@ -64,14 +64,12 @@
 
   </farm-main>
 </template>
-
 <script>
 export default {
   name: 'TasksFilter',
   props: ['categories', 'logTypes', 'filters'],
 };
 </script>
-
 <style lang="css" scoped>
   .form-group {
     display: flex;

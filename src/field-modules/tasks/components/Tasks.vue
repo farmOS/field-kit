@@ -1,4 +1,4 @@
-<template lang="html">
+<template>
   <div>
     <router-view
       name="menubar"
@@ -79,7 +79,6 @@
     </div>
   </div>
 </template>
-
 <script>
 const {
   lib: { R },
@@ -258,7 +257,6 @@ export default {
   },
 };
 </script>
-
 <style lang="css" scoped>
   .modal {
     display: block;

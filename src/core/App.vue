@@ -2,7 +2,7 @@
 <transition name="ready" mode="out-in">
   <div v-if="!ready" class="not-ready" key="not-ready">
     <farm-stack align="center" space="s">
-      <img src="icons/icon-72x72.png" alt="farmOS leaf icon">
+      <img src="/icons/icon-72x72.png" alt="farmOS leaf icon">
       <farm-text as="span" size="l">Getting ready...</farm-text>
     </farm-stack>
   </div>

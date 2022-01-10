@@ -1,4 +1,4 @@
-<template lang="html">
+<template>
   <div class="farm-toggle-check">
     <label
       v-if="label && ['above', 'before'].includes(labelPosition)"

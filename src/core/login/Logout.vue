@@ -1,4 +1,4 @@
-<template lang="html">
+<template>
   <farm-main :paddingTop="['xl', 'xxl']" :paddingX="['l', 'xxl']">
 
     <farm-stack space="l">

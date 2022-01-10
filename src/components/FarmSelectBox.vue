@@ -1,4 +1,4 @@
-<template lang="html">
+<template>
   <div class="farm-select-box form-check">
     <input
       type="checkbox"

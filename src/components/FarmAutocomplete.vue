@@ -1,4 +1,4 @@
-<template lang="html">
+<template>
   <div class="farm-autocomplete form-item form-item-name form-group">
     <label for="search" class="control-label">{{ label }}</label>
     <input

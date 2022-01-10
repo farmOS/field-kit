@@ -1,4 +1,4 @@
-<template lang="html">
+<template>
   <farm-main :space="['none', 's']">
     <farm-tiles :columns="[1, 2, 3]" :space="['none', 's']" dividers>
       <farm-card
@@ -74,7 +74,6 @@
   </farm-main>
 
 </template>
-
 <script>
 const {
   meta: { isUnsynced },
@@ -131,7 +130,6 @@ export default {
 };
 
 </script>
-
 <style scoped>
   .inline-svg {
     height: 1rem;
