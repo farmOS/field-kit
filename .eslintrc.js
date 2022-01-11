@@ -1,15 +1,8 @@
 // https://eslint.org/docs/user-guide/configuring
-
-const { off } = require("node-notifier");
-
 module.exports = {
   root: true,
-  parserOptions: {
-    parser: 'babel-eslint'
-  },
   env: {
     browser: true,
-    jest: true,
   },
   extends: [
     // https://github.com/vuejs/eslint-plugin-vue#priority-a-essential-error-prevention
@@ -22,14 +15,6 @@ module.exports = {
   plugins: [
     'vue'
   ],
-  // check if imports actually resolve
-  settings: {
-    'import/resolver': {
-      webpack: {
-        config: 'build/webpack.base.conf.js'
-      }
-    }
-  },
   ignorePatterns: ['src/core/store/l10n/**'],
   // add your custom rules here
   rules: {
