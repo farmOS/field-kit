@@ -1,6 +1,9 @@
 // https://eslint.org/docs/user-guide/configuring
 module.exports = {
   root: true,
+  parserOptions: {
+    ecmaVersion: 2021,
+  },
   env: {
     browser: true,
   },
