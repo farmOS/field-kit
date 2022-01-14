@@ -27,7 +27,7 @@
           {{ $t('Logout')}}
         </button>
       </farm-inline>
-      <p style="textAlign: center">
+      <p style="text-align: center">
         Need to login again? <router-link to="/login">Login here</router-link>
       </p>
     </farm-stack>
