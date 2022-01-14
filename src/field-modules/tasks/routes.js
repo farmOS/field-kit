@@ -1,12 +1,12 @@
-import Tasks from './components/Tasks';
-import TasksAll from './components/TasksAll';
-import TasksAllMenuBar from './components/TasksAllMenuBar';
-import TasksEdit from './components/TasksEdit';
-import TasksEditMenuBar from './components/TasksEditMenuBar';
-import TasksMap from './components/TasksMap';
-import TasksMapMenuBar from './components/TasksMapMenuBar';
-import TasksFilter from './components/TasksFilter';
-import TasksFilterMenuBar from './components/TasksFilterMenuBar';
+import Tasks from './components/Tasks.vue';
+import TasksAll from './components/TasksAll.vue';
+import TasksAllMenuBar from './components/TasksAllMenuBar.vue';
+import TasksEdit from './components/TasksEdit.vue';
+import TasksEditMenuBar from './components/TasksEditMenuBar.vue';
+import TasksMap from './components/TasksMap.vue';
+import TasksMapMenuBar from './components/TasksMapMenuBar.vue';
+import TasksFilter from './components/TasksFilter.vue';
+import TasksFilterMenuBar from './components/TasksFilterMenuBar.vue';
 
 const routes = [
   {

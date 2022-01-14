@@ -1,5 +1,5 @@
 import routes from './routes';
-import TasksWidget from './components/TasksWidget';
+import TasksWidget from './components/TasksWidget.vue';
 
 export default {
   name: 'tasks',

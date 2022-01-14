@@ -1,5 +1,5 @@
-import FarmTiles from '../components/FarmTiles';
-import FarmPlaceholder from './FarmPlaceholder';
+import FarmTiles from '../components/FarmTiles.vue';
+import FarmPlaceholder from './FarmPlaceholder.vue';
 
 export default {
   title: 'Layout/FarmTiles',

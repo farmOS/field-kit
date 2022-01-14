@@ -1,5 +1,5 @@
-import FarmMain from '../components/FarmMain';
-import FarmPlaceholder from './FarmPlaceholder';
+import FarmMain from '../components/FarmMain.vue';
+import FarmPlaceholder from './FarmPlaceholder.vue';
 
 const control = {
   control: {

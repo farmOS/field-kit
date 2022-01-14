@@ -3,7 +3,7 @@ import * as R from 'ramda';
 import wellknown from 'wellknown';
 import router from './router';
 import store from './store';
-import App from './App';
+import App from './App.vue';
 import { mountFieldModule } from './fieldModules';
 import t from './mixins/t';
 import farm from './farm';

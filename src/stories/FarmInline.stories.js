@@ -1,5 +1,5 @@
-import FarmInline from '../components/FarmInline';
-import FarmPlaceholder from './FarmPlaceholder';
+import FarmInline from '../components/FarmInline.vue';
+import FarmPlaceholder from './FarmPlaceholder.vue';
 
 export default {
   title: 'Layout/FarmInline',

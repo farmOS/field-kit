@@ -1,5 +1,5 @@
-import FarmStack from '../components/FarmStack';
-import FarmPlaceholder from './FarmPlaceholder';
+import FarmStack from '../components/FarmStack.vue';
+import FarmPlaceholder from './FarmPlaceholder.vue';
 
 export default {
   title: 'Layout/FarmStack',

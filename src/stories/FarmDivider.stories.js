@@ -1,4 +1,4 @@
-import FarmDivider from '../components/FarmDivider';
+import FarmDivider from '../components/FarmDivider.vue';
 
 export default {
   title: 'Layout/FarmDivider',

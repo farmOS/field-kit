@@ -1,4 +1,4 @@
-import FarmText from '../components/FarmText';
+import FarmText from '../components/FarmText.vue';
 
 export default {
   title: 'Content/FarmText',

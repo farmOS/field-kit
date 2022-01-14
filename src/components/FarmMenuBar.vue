@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import IconMoreVert from './icons/icon-more-vert';
+import IconMoreVert from './icons/icon-more-vert.vue';
 
 export default {
   name: 'FarmMenuBar',

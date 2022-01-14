@@ -1,4 +1,4 @@
-import IconsTemplate from './IconsTemplate';
+import IconsTemplate from './IconsTemplate.vue';
 
 export default {
   title: 'Icons/All',

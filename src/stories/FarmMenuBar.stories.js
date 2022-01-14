@@ -1,4 +1,4 @@
-import FarmMenuBar from '../components/FarmMenuBar';
+import FarmMenuBar from '../components/FarmMenuBar.vue';
 
 export default {
   title: 'Layout/FarmMenuBar',

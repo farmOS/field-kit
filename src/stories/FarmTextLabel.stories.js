@@ -1,4 +1,4 @@
-import FarmTextLabel from '../components/FarmTextLabel';
+import FarmTextLabel from '../components/FarmTextLabel.vue';
 
 export default {
   title: 'Content/FarmTextLabel',
