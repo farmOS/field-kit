@@ -50,5 +50,14 @@ module.exports = {
     'vue/script-setup-uses-vars': 'off',
     'camelcase': 'off',
     'no-warning-comments': 'warn',
-  }
+  },
+  overrides: [
+    {
+      files: ['src/**/*.test.js'],
+      env: {
+        mocha: true,
+        jest: true, // for `expect` global
+      },
+    },
+  ],
 }
