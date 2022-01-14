@@ -11,8 +11,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "BROKEN-lint": "eslint --color --ext .js,.vue src",
-    "BROKEN-lint-files": "node --eval 'process.argv.reduce((acc, cur) => `${acc} ${cur}`, ``)' | eslint --color",
+    "lint": "eslint --color",
+    "lint-src": "eslint --color --ext .js,.vue src",
     "build:web": "npm run build",
     "storybook": "NODE_PATH=src start-storybook -p 6006",
     "build-storybook": "build-storybook"
