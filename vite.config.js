@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite';
-import { createVuePlugin } from 'vite-plugin-vue2';
+import createVuePlugin from '@vitejs/plugin-vue'
 import envCompatible from 'vite-plugin-env-compatible';
 import { injectHtml } from 'vite-plugin-html';
 import { viteCommonjs } from '@originjs/vite-plugin-commonjs';
@@ -20,7 +20,7 @@ export default defineConfig({
     alias: [
       {
         find: 'vue',
-        replacement: 'vue/dist/vue.esm.js',
+        replacement: '@vue/compat',
       },
       {
         find: /^~/,
