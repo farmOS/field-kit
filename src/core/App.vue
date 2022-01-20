@@ -1,5 +1,6 @@
 <template>
 <transition name="ready" mode="out-in">
+<div>
   <div v-if="!ready" class="not-ready" key="not-ready">
     <farm-stack align="center" space="s">
       <img src="/icons/icon-72x72.png" alt="farmOS leaf icon">
@@ -128,6 +129,7 @@
       </div>
     </div>
 
+  </div>
   </div>
 </transition>
 </template>
