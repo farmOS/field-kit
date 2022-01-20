@@ -14,8 +14,6 @@ import './bootstrap-simplex.min.css';
 import './vars.css';
 import './main.css';
 
-Vue.config.productionTip = false;
-
 // Attach common libs & utils to the global namespace so Field Modules can access them.
 if (window.farmOS === undefined) {
   window.farmOS = farm;
@@ -31,22 +29,20 @@ window.farmOS.lib = {
   wellknown,
 };
 
-// Register the shared component library globally so they can be accessed from
-// any other component on the root Vue instance.
-components.forEach((c) => { Vue.component(c.name, c); });
+const app = Vue.createApp(App);
+
+// Use Vuex and Vue Router plugins
+app.use(store);
+app.use(router);
 
 // Globally apply the t mixin, which provides translations along with the l10n module
-Vue.mixin(t);
+app.mixin(t);
 
 // Provide a global function for mounting Field Modules with all its dependencies.
-window.farmOS.mountFieldModule = mountFieldModule(store);
+window.farmOS.mountFieldModule = mountFieldModule({ app, router, store });
 
-export default tasks => new Vue({
-  store,
-  router,
-  components: { App },
-  template: '<App/>',
-  created() {
-    window.farmOS.mountFieldModule(tasks);
-  },
-});
+// Register the shared component library globally so they can be accessed from
+// any other component and field module.
+components.forEach((c) => { app.component(c.name, c); });
+
+export default app;

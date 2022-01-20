@@ -1,14 +1,11 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
+import { createStore } from 'vuex';
 import core from './core';
 import configDocuments from './configDocuments';
 import entities from './entities';
 import camModule from './camModule';
 // import l10nModule from './l10n/module';
 
-Vue.use(Vuex);
-
-const store = new Vuex.Store({
+const store = createStore({
   state: {
     ...core.state,
     ...configDocuments.state,

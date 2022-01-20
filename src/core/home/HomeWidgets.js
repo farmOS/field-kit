@@ -1,7 +1,8 @@
-import Vue from 'vue';
+import { reactive } from 'vue';
 import parseFilter from '../utils/parseFilter';
 
-const HomeWidgets = Vue.component('home-widgets', {
+const HomeWidgets = {
+  name: 'home-widgets',
   props: [
     'modules',
     'user',
@@ -33,7 +34,7 @@ const HomeWidgets = Vue.component('home-widgets', {
         },
       },
       this.modules.map((module) => {
-        const filters = Vue.observable({
+        const filters = reactive({
           assets: {},
           logs: {},
           plans: {},
@@ -41,7 +42,7 @@ const HomeWidgets = Vue.component('home-widgets', {
           terms: {},
           users: {},
         });
-        const state = Vue.observable({
+        const state = reactive({
           assets: self.assets.filter(parseFilter(filters.assets)),
           logs: self.logs.filter(parseFilter(filters.logs)),
           plans: self.plans.filter(parseFilter(filters.plans)),
@@ -93,6 +94,6 @@ const HomeWidgets = Vue.component('home-widgets', {
       }),
     );
   },
-});
+};
 
 export default HomeWidgets;

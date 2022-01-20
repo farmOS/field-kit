@@ -1,10 +1,8 @@
-import Vue from 'vue';
 import {
-  compose, concat, evolve, map, mergeDeepWith, path, pick,
+  compose, curry, evolve, map, path, pick,
 } from 'ramda';
 import { getHost } from './remote';
 import farm from './farm';
-import router from './router';
 import routeMixin from './mixins/routeMixin';
 import widgetMixin from './mixins/widgetMixin';
 
@@ -15,27 +13,23 @@ const kebabReplacer = (match, offset) =>
 const kebabRegex = /[A-Z]+(?![a-z])|[A-Z]/g;
 const kebab = str => str.replace(kebabRegex, kebabReplacer);
 
-const parseWidgetName = modName => widget =>
-  (widget?.name ? kebab(widget.name) : `${kebab(modName)}-widget`);
+const parseWidgetName = curry((modName, widget) =>
+  (widget?.name ? kebab(widget.name) : `${kebab(modName)}-widget`));
 
 // Functions for registering widget and main route components globally on the
-// Vue instance and adding the routeMixin to each.
-const registerRouteComponent = ({ name, mixins = [], ...rest }) =>
-  Vue.component(kebab(name), { ...rest, mixins: [...mixins, routeMixin] });
-const registerRoute = route => evolve({
-  component: registerRouteComponent,
-  components: map(registerRouteComponent),
-  children: map(registerRoute),
-}, route);
-const registerWidgetComponent = compose(
-  mod => Vue.component(mod.widget.name, mod.widget),
-  mod => evolve({
-    widget: {
-      name: parseWidgetName(mod.name),
-    },
-  }, mod),
-  mergeDeepWith(concat, { widget: { mixins: [widgetMixin] } }),
-);
+// application instance and adding the routeMixin to each.
+const addMixin = mixin => evolve({
+  component: c => ({ ...c, mixins: [...(c.mixins || []), mixin] }),
+  components: map(c => ({ ...c, mixins: [...(c.mixins || []), mixin] })),
+});
+const withRouteMixin = addMixin(routeMixin);
+const withWidgetMixn = addMixin(widgetMixin);
+const registerWidget = (app, modName, widget) => {
+  app.component(
+    parseWidgetName(modName, widget),
+    withWidgetMixn(widget),
+  );
+};
 
 // Functions for parsing modules as config data that can be tracked in Vuex.
 const parseComponent = ({ name }) => (name && kebab(name));
@@ -54,12 +48,15 @@ const parseModuleConfig = mod => evolve({
 
 // Main function called by modules to add their components and routes to the
 // main Vue app and Vuex store.
-export const mountFieldModule = store => (mod) => {
-  const { routes = [] } = mod;
+export const mountFieldModule = deps => (mod) => {
+  const { app, router, store } = deps;
+  const { routes = [], widget } = mod;
   const modConfig = parseModuleConfig(mod);
   store.commit('updateModuleConfig', modConfig);
-  if (mod.widget) registerWidgetComponent(mod);
-  router.addRoutes(routes.map(registerRoute));
+  if (widget) registerWidget(app, mod.name, widget);
+  routes.forEach((route) => {
+    router.addRoute(withRouteMixin(route));
+  });
 };
 
 // Takes module info from the API and uses it to inject a script tag and run

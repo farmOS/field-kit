@@ -150,6 +150,9 @@ export default {
     };
   },
   created() {
+    import('../field-modules/tasks/module').then((tasks) => {
+      window.farmOS.mountFieldModule(tasks);
+    });
     this.loadProfile()
       .then(this.loadConfigDocs)
       .then(this.loadFieldModules)
@@ -245,7 +248,7 @@ export default {
   .ready-enter-active, .ready-leave-active {
     transition: opacity .5s;
   }
-  .ready-enter, .ready-leave-to {
+  .ready-enter-from, .ready-leave-to {
     opacity: 0;
   }
   .not-ready {
