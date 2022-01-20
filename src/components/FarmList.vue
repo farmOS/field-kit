@@ -1,4 +1,4 @@
-<template functional>
+<template>
   <ul class="farm-list row list-group">
     <slot></slot>
   </ul>

@@ -1,4 +1,4 @@
-<template functional>
+<template>
   <li
     class="farm-list-item list-group-item"
     :class="{ clickable: props.clickable !== undefined ? props.clickable : true }"
