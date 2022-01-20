@@ -66,8 +66,8 @@ export default {
     padding: 0;
   }
 
-  /* Use Vue's "deep" selector so the style gets passed down, even through router-link's */
-  .farm-menu-bar >>> svg {
+  /* Use Vue's "deep" pseudo-class so the style gets passed down, even through router-link's */
+  .farm-menu-bar :deep(svg) {
     fill: var(--white);
   }
 
