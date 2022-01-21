@@ -74,7 +74,7 @@ export default {
   created() {
     window.addEventListener('resize', this.calcTabBarMarginX);
   },
-  destroyed() {
+  unmounted() {
     window.removeEventListener('resize', this.calcTabBarMarginX);
   },
   computed: {

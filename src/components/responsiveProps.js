@@ -17,7 +17,7 @@ export const responsiveProps = {
     window.addEventListener('resize', this.calcBpIndex);
     this.calcBpIndex();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener('resize', this.calcBpIndex);
   },
   methods: {

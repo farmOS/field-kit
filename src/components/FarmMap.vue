@@ -132,7 +132,7 @@ export default {
       this.layers.mapbox = this.map.addLayer('xyz', mapboxOpts);
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     window.farmOS.map.destroy(this.id);
     this.map = null;
   },
