@@ -1,4 +1,3 @@
-import Vue from 'vue';
 import { anyPass } from 'ramda';
 import farm from '../farm';
 import nomenclature from './nomenclature';
@@ -40,7 +39,7 @@ export default {
     },
     updateEntity(state, payload) {
       const { shortPlural, index, entity } = payload;
-      Vue.set(state[shortPlural], index, entity);
+      state[shortPlural][index] = entity;
     },
     removeEntity(state, { shortPlural, id }) {
       const index = state[shortPlural].findIndex(ent => ent.id === id);
