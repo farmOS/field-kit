@@ -1,4 +1,5 @@
 <script>
+import { h } from 'vue';
 import { responsiveProps, mapResponsiveProps, responsiveValidator } from './responsiveProps';
 
 export default {
@@ -44,7 +45,7 @@ export default {
       };
     },
   },
-  render(h) {
+  render() {
     return h(
       'div',
       { class: `farm-inline ${this._space}`, style: { paddingTop: '1px' } },

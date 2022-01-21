@@ -1,4 +1,5 @@
 <script>
+import { h } from 'vue';
 import { responsiveProps, mapResponsiveProps, responsiveValidator } from './responsiveProps';
 
 export default {
@@ -61,7 +62,7 @@ export default {
       };
     },
   },
-  render(h) {
+  render() {
     const renderChildNodes = (node, i, arr) => {
       // Derive the props and style attributes to be passed to farm-divider.
       const dividerAttrs = {

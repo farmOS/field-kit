@@ -1,4 +1,6 @@
 <script>
+import { h } from 'vue';
+
 export default {
   name: 'FarmText',
   props: {
@@ -55,7 +57,7 @@ export default {
       };
     },
   },
-  render(h) {
+  render() {
     return h(
       this.as,
       { class: 'farm-text', style: this.style },

@@ -1,4 +1,5 @@
 <script>
+import { h } from 'vue';
 import {
   responsiveProps, mapResponsiveProps, responsiveValidator, mapResponsiveEnums,
 } from './responsiveProps';
@@ -40,7 +41,7 @@ export default {
       },
     }),
   },
-  render(h) {
+  render() {
     return h(
       'div',
       { class: `farm-stack ${this._space}`, style: { paddingTop: '1px' } },

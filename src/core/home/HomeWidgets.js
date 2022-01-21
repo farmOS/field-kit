@@ -1,4 +1,4 @@
-import { reactive } from 'vue';
+import { h, reactive } from 'vue';
 import parseFilter from '../utils/parseFilter';
 
 const HomeWidgets = {
@@ -22,9 +22,9 @@ const HomeWidgets = {
     'userTypes',
     'areaGeoJSON',
   ],
-  render(createElement) {
+  render() {
     const self = this;
-    return createElement(
+    return h(
       'farm-tiles',
       {
         props: {
@@ -50,7 +50,7 @@ const HomeWidgets = {
           terms: self.terms.filter(parseFilter(filters.terms)),
           users: self.users.filter(parseFilter(filters.users)),
         });
-        return createElement(
+        return h(
           'farm-card',
           {
             nativeOn: {
@@ -60,8 +60,8 @@ const HomeWidgets = {
             },
           },
           [
-            createElement('h3', this.$t(module.label)),
-            createElement(
+            h('h3', this.$t(module.label)),
+            h(
               module.widget,
               {
                 props: {
