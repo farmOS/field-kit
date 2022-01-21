@@ -52,7 +52,7 @@ export default {
       [h(
         'div',
         { style: this.containerStyle },
-        (this.$slots.default || [])
+        (this.$slots.default() || [])
           // Filtering out undefined tags removes unwanted whitespace nodes.
           .filter(node => node.tag !== undefined)
           .map(node => h(

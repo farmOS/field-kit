@@ -58,7 +58,7 @@ export default {
     return h(
       this.as,
       { style: this.style },
-      this.$slots.default,
+      this.$slots.default(),
     );
   },
 };

@@ -61,7 +61,7 @@ export default {
     return h(
       this.as,
       { class: 'farm-text', style: this.style },
-      this.$slots.default,
+      this.$slots.default(),
     );
   },
 };

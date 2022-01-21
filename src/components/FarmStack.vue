@@ -45,7 +45,7 @@ export default {
     return h(
       'div',
       { class: `farm-stack ${this._space}`, style: { paddingTop: '1px' } },
-      (this.$slots.default || [])
+      (this.$slots.default() || [])
         // Filtering out undefined tags removes unwanted whitespace nodes.
         .filter(node => node.tag !== undefined)
         .map((node, i, arr) => {
