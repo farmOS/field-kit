@@ -1,5 +1,6 @@
 <script>
 import { h } from 'vue';
+import noWhiteSpace from './noWhiteSpace';
 import {
   responsiveProps, mapResponsiveProps, responsiveValidator, mapResponsiveEnums,
 } from './responsiveProps';
@@ -47,7 +48,7 @@ export default {
       { class: `farm-stack ${this._space}`, style: { paddingTop: '1px' } },
       (this.$slots.default() || [])
         // Filtering out undefined tags removes unwanted whitespace nodes.
-        .filter(node => node.tag !== undefined)
+        .filter(noWhiteSpace)
         .map((node, i, arr) => {
           const style = {
             display: 'flex',
