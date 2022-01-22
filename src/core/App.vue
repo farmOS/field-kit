@@ -273,12 +273,6 @@ export default {
     to { opacity: 1; }
   }
 
-  .close {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-  }
-
   .drawer {
     position: fixed;
     top: 0;
@@ -298,11 +292,11 @@ export default {
     z-index: 1500;
   }
 
-  .drawer-enter, .drawer-leave-to {
+  .drawer-enter-from, .drawer-leave-to {
     transform: translateX(-80vw);
   }
 
-  .filter-enter, .filter-leave-to {
+  .filter-enter-from, .filter-leave-to {
     opacity: 0;
   }
 
@@ -342,6 +336,12 @@ export default {
   .alert {
     display: inline-block;
     box-shadow: var(--shadow-strong);
+  }
+
+  .close {
+    position: absolute;
+    top: 5px;
+    right: 5px;
   }
 
 </style>
