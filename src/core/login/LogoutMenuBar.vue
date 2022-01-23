@@ -1,7 +1,7 @@
 <template>
   <farm-menu-bar :more="false">
     <template #left-menu>
-      <li @click="$emit('toggle-drawer')">
+      <li @click="$emit('openDrawer')">
         <icon-menu/>
       </li>
       <li>Logout</li>
@@ -12,5 +12,6 @@
 <script>
 export default {
   name: 'LoginMenuBar',
+  emits: ['openDrawer'],
 };
 </script>

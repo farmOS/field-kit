@@ -2,7 +2,7 @@
   <div class="drawer container-fluid">
     <header class="drawer-header row">
       <div class="col">
-        <div class="arrow-back" @click="hideDrawer">
+        <div class="arrow-back" @click="$emit('close')">
           <icon-arrow-back />
         </div>
         <div class="user-info">
@@ -13,20 +13,21 @@
       </div>
     </header>
     <farm-list>
-      <router-link to="/home" @click.native="hideDrawer">
-        <farm-list-item>{{ $t('Home') }}</farm-list-item>
-      </router-link>
+      <farm-list-item @click="handleRoute('/home')" :clickable="true">
+        {{ $t('Home') }}
+      </farm-list-item>
     </farm-list>
     <farm-list>
       <farm-list-item
         v-for="mod in modules"
         :key="`${mod.name}-menu-link`"
-        @click="handleModuleClick(mod)">
+        :clickable="true"
+        @click="handleRoute(mod.routes[0].path)">
         {{ $t(mod.label) }}
       </farm-list-item>
     </farm-list>
-    <!-- <farm-list>
-      <farm-list-item :clickable="false">
+    <farm-list>
+      <!-- <farm-list-item :clickable="false">
         <farm-toggle-check
           :label="$t('Share My Location')"
           labelPosition="before"
@@ -61,12 +62,12 @@
           />
           <label :for="`lang-${i}`" class="form-check-label">{{ lang.native }}</label>
         </div>
-      </farm-list-item>
+      </farm-list-item> -->
       <farm-list-item :clickable="false">{{ $t('Version') }}: {{ version }}</farm-list-item>
-      <router-link to="/logout" @click.native="hideDrawer">
-        <farm-list-item>{{ $t('Logout') }}</farm-list-item>
-      </router-link>
-    </farm-list> -->
+      <farm-list-item @click="handleRoute('/logout')" :clickable="true">
+        {{ $t('Logout') }}
+      </farm-list-item>
+    </farm-list>
   </div>
 </template>
 
@@ -76,7 +77,7 @@ import { version } from '../../../package.json';
 
 export default {
   name: 'App',
-  emits: ['hideDrawer'],
+  emits: ['close'],
   data() {
     return {
       version,
@@ -85,30 +86,30 @@ export default {
   computed: {
     ...mapState({
       /**
-           * CORE STATE
-           */
+       * CORE STATE
+       */
       user: state => state.profile.user,
       farm: state => state.profile.farm,
       settings: state => state.settings,
       modules: state => state.modules,
       // areaGeoJSON: state => state.areaGeoJSON,
       /**
-           * L10N STATE
-           */
+       * L10N STATE
+       */
       // locale: state => state.l10n.locale,
       // langs: state => state.l10n.languages,
     }),
   },
   methods: {
+    handleRoute(route) {
+      if (route !== this.$route.path) {
+        this.$router.push(route);
+      }
+      this.$emit('close');
+    },
     // setUseGeolocation(checked) {
     //   this.$store.commit('setUseGeolocation', checked);
     // },
-    handleModuleClick(module) {
-      if (module.routes[0].path !== this.$route.path) {
-        this.$router.push(module.routes[0].path);
-      }
-      this.$emit('hideDrawer');
-    },
     // setLocale(e) {
     //   this.$store.commit('setLocale', e.target.value);
     // },

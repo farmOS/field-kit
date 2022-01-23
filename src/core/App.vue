@@ -2,27 +2,31 @@
   <transition name="ready" mode="out-in">
     <not-ready v-if="!ready"/>
     <app-shell v-else>
-      <template v-slot:menubar>
-        <router-view name="menubar"/>
+      <template v-slot:menubar="{ openDrawer }">
+        <router-view name="menubar" v-slot="{ Component: MenuBar }">
+          <component :is="MenuBar" @open-drawer="openDrawer"/>
+        </router-view>
       </template>
       <template v-slot:default>
-        <router-view
-          :user="user"
-          :farm="farm"
-          :settings="settings"
-          :assets="assets"
-          :logs="logs"
-          :plans="plans"
-          :quantities="quantities"
-          :terms="terms"
-          :users="users"
-          :assetTypes="assetTypes"
-          :logTypes="logTypes"
-          :planTypes="planTypes"
-          :quantityTypes="quantityTypes"
-          :termTypes="termTypes"
-          :userTypes="userTypes"
-          :areaGeoJSON="areaGeoJSON"/>
+        <router-view v-slot="{ Component: MainView }">
+          <component :is="MainView"
+            :user="user"
+            :farm="farm"
+            :settings="settings"
+            :assets="assets"
+            :logs="logs"
+            :plans="plans"
+            :quantities="quantities"
+            :terms="terms"
+            :users="users"
+            :assetTypes="assetTypes"
+            :logTypes="logTypes"
+            :planTypes="planTypes"
+            :quantityTypes="quantityTypes"
+            :termTypes="termTypes"
+            :userTypes="userTypes"
+            :areaGeoJSON="areaGeoJSON"/>
+        </router-view>
       </template>
     </app-shell>
   </transition>

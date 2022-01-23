@@ -1,13 +1,13 @@
 <template>
   <div class="app-container">
     <transition name="drawer">
-      <app-drawer v-if="showDrawer" @hide-drawer="showDrawer = false"/>
+      <app-drawer v-if="showDrawer" ref="drawer" @close="showDrawer = false"/>
     </transition>
     <transition name="modal">
-      <app-modal v-if="showDrawer" @hide-modal="showDrawer = false"/>
+      <app-modal v-if="showDrawer" @click="modalClickHandler"/>
     </transition>
-    <slot name="menubar" @toggle-drawer="showDrawer = !showDrawer"></slot>
-    <slot name="default" @toggle-drawer="showDrawer = !showDrawer"></slot>
+    <slot name="menubar" :openDrawer="() => { showDrawer = true; }"></slot>
+    <slot name="default"></slot>
     <app-alerts/>
   </div>
 </template>
@@ -24,6 +24,13 @@ export default {
     return {
       showDrawer: false,
     };
+  },
+  methods: {
+    modalClickHandler(evt) {
+      if (!this.$refs.drawer.$el.contains(evt.target)) {
+        this.showDrawer = false;
+      }
+    },
   },
   watch: {
     showDrawer(currentShowDrawer) {

@@ -1,7 +1,7 @@
 <template>
   <farm-menu-bar>
     <template #left-menu>
-      <li @click="$emit('toggle-drawer')">
+      <li @click="$emit('openDrawer')">
         <icon-menu/>
       </li>
       <li>{{ $t('Tasks')}}</li>
@@ -28,6 +28,7 @@
 export default {
   name: 'TasksAllMenuBar',
   props: ['isSyncing'],
+  emits: ['openDrawer'],
 };
 </script>
 

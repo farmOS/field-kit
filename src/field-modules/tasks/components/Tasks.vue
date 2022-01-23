@@ -2,7 +2,7 @@
   <div>
     <router-view
       name="menubar"
-      @toggle-drawer="$emit('toggle-drawer')"
+      @open-drawer="$emit('openDrawer')"
       @delete-current-log="openDeleteDialog($event)"
       @sync-all="syncAll"
       @sync="sync($event)"
@@ -150,6 +150,7 @@ export default {
     'terms',
     'logTypes',
   ],
+  emits: ['openDrawer'],
   created() {
     this.loadAssets(assetFilter);
     this.loadTerms(termFilter).then(() => {
