@@ -51,7 +51,7 @@ const loadModulesPlusHandler = (modules, commit) =>
     .then(([fullfilled, rejected]) => {
       // Add the wildcard route here so it doesn't force reroutes on module
       // routes that were added after the core routes.
-      router.addRoutes([{ path: '/:pathMatch(.*)*', redirect: '/home' }]);
+      router.addRoute({ path: '/:pathMatch(.*)*', redirect: '/home' });
       commit('filterModules', mod =>
         mod.name === 'tasks' || fullfilled.some(m => mod.name === m.name));
       rejected.forEach(({ label, uri }) => {
