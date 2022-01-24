@@ -120,7 +120,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .drawer {
   position: fixed;
   top: 0;

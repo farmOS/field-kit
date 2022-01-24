@@ -44,7 +44,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
   .drawer-enter-from, .drawer-leave-to {
     transform: translateX(-80vw);
   }
