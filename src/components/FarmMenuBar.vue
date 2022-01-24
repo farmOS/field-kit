@@ -66,34 +66,37 @@ export default {
     padding: 0;
   }
 
-  /* Use Vue's "deep" pseudo-class so the style gets passed down, even through router-link's */
-  .farm-menu-bar :deep(svg) {
+  /**
+    * Use Vue's "deep" pseudo-class so the style gets passed to child components.
+    * See https://github.com/vuejs/rfcs/blob/master/active-rfcs/0023-scoped-styles-changes.md
+   */
+  :deep(svg) {
     fill: var(--white);
   }
 
-  li {
+  :deep(li) {
     list-style: none;
     font-size: 1.25rem;
     line-height: 1.5rem;
   }
 
-  .left-menu {
+  :deep(.left-menu) {
     justify-content: flex-start;
   }
 
-  .left-menu li {
+  :deep(.left-menu) li {
     margin-right: .5rem;
   }
 
-  .right-menu {
+  :deep(.right-menu) {
     justify-content: flex-end;
   }
 
-  .right-menu li {
+  :deep(.right-menu) li {
     margin-left: .5rem;
   }
 
-  #more-menu {
+  :deep(#more-menu) {
     position: absolute;
     top: 3px;
     right: 3px;
@@ -103,12 +106,12 @@ export default {
     box-shadow: var(--shadow);
   }
 
-  #more-menu li {
+  :deep(#more-menu) li {
     padding: 1rem 1rem;
     font-size: 1rem;
   }
 
-  #more-menu a {
+  :deep(#more-menu) a {
     color: var(--text);
   }
 </style>
