@@ -1,4 +1,4 @@
-import { h, reactive } from 'vue';
+import { h, reactive, resolveComponent } from 'vue';
 import parseFilter from '../utils/parseFilter';
 
 const HomeWidgets = {
@@ -25,7 +25,7 @@ const HomeWidgets = {
   render() {
     const self = this;
     return h(
-      'farm-tiles',
+      resolveComponent('farm-tiles'),
       {
         props: {
           columns: [1, 2, 3],
@@ -50,8 +50,9 @@ const HomeWidgets = {
           terms: self.terms.filter(parseFilter(filters.terms)),
           users: self.users.filter(parseFilter(filters.users)),
         });
+        const WidgetComponent = resolveComponent(module.widget);
         return h(
-          'farm-card',
+          resolveComponent('farm-card'),
           {
             nativeOn: {
               click() {
