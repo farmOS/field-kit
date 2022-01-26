@@ -36,6 +36,13 @@ export default {
         'm', 'l', 'xl', 'xxl', 'none',
       ]),
     },
+    height: {
+      type: [String, Array],
+      default: 'full',
+      validator: responsiveValidator([
+        's', 'm', 'l', 'xl', 'full', 'content',
+      ]),
+    },
     width: {
       type: [String, Array],
       default: 'full',
