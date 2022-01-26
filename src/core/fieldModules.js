@@ -1,5 +1,5 @@
 import {
-  compose, curry, evolve, map, path, pick,
+  compose, concat, curry, evolve, map, mergeDeepWith, path, pick,
 } from 'ramda';
 import { getHost } from './remote';
 import farm from './farm';
@@ -18,16 +18,16 @@ const parseWidgetName = curry((modName, widget) =>
 
 // Functions for registering widget and main route components globally on the
 // application instance and adding the routeMixin to each.
-const addMixin = mixin => evolve({
-  component: c => ({ ...c, mixins: [...(c.mixins || []), mixin] }),
-  components: map(c => ({ ...c, mixins: [...(c.mixins || []), mixin] })),
+const withMixin = mixin => mergeDeepWith(concat, { mixins: [mixin] });
+const withRouteMixin = evolve({
+  component: withMixin(routeMixin),
+  components: map(withMixin(routeMixin)),
 });
-const withRouteMixin = addMixin(routeMixin);
-const withWidgetMixn = addMixin(widgetMixin);
+const withWidgetMixin = withMixin(widgetMixin);
 const registerWidget = (app, modName, widget) => {
   app.component(
     parseWidgetName(modName, widget),
-    withWidgetMixn(widget),
+    withWidgetMixin(widget),
   );
 };
 
