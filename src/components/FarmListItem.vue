@@ -1,8 +1,5 @@
 <template>
-  <li
-    class="farm-list-item list-group-item"
-    :class="{ clickable }"
-    @click="$emit('click', $event)">
+  <li class="farm-list-item list-group-item" :class="{ clickable }">
     <slot></slot>
   </li>
 </template>
@@ -10,7 +7,6 @@
 <script>
 export default {
   name: 'FarmListItem',
-  emits: ['click'],
   props: {
     clickable: {
       type: Boolean,

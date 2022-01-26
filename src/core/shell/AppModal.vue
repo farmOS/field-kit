@@ -1,11 +1,10 @@
 <template>
-  <div class="modal-filter" @click="$emit('click', $event)"></div>
+  <div class="modal-filter"></div>
 </template>
 
 <script>
 export default {
   name: 'AppModal',
-  emits: ['click'],
 };
 </script>
 
