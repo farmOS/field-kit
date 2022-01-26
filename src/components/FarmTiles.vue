@@ -77,7 +77,7 @@ export default {
       // Add a divider if specified, and if there's only a single column, and if
       // the node is not the last element.
       const children = this._dividers && this._columns === 1 && i < arr.length - 1
-        ? [node, h('farm-divider', dividerAttrs)]
+        ? [node, h('farm-divider', { default() { return dividerAttrs; } })]
         : [node];
       return h(
         'div',

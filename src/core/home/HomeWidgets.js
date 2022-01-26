@@ -1,6 +1,10 @@
 import { h, reactive, resolveComponent } from 'vue';
 import parseFilter from '../utils/parseFilter';
 
+// Pass the children of a component VNode as the default slot of an object. See:
+// https://v3.vuejs.org/guide/render-function.html#slots
+const slotsDefault = children => ({ default() { return children; } });
+
 const HomeWidgets = {
   name: 'home-widgets',
   props: [
@@ -33,7 +37,7 @@ const HomeWidgets = {
           space: 's',
         },
       },
-      this.modules.map((module) => {
+      slotsDefault(this.modules.map((mod) => {
         const filters = reactive({
           assets: {},
           logs: {},
@@ -50,20 +54,18 @@ const HomeWidgets = {
           terms: self.terms.filter(parseFilter(filters.terms)),
           users: self.users.filter(parseFilter(filters.users)),
         });
-        const WidgetComponent = resolveComponent(module.widget);
+        const WidgetComponent = resolveComponent(mod.widget);
         return h(
           resolveComponent('farm-card'),
           {
-            nativeOn: {
-              click() {
-                self.$router.push(module.routes[0].path);
-              },
+            onClick() {
+              self.$router.push(mod.routes[0].path);
             },
           },
-          [
-            h('h3', this.$t(module.label)),
+          slotsDefault([
+            h('h3', this.$t(mod.label)),
             h(
-              module.widget,
+              WidgetComponent,
               {
                 props: {
                   user: this.user,
@@ -90,9 +92,9 @@ const HomeWidgets = {
                 },
               },
             ),
-          ],
+          ]),
         );
-      }),
+      })),
     );
   },
 };
