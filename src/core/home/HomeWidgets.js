@@ -81,10 +81,11 @@ const HomeWidgets = {
                 termTypes: this.termTypes,
                 userTypes: this.userTypes,
                 areaGeoJSON: this.areaGeoJSON,
-                on: {
-                  'set-widget-filter': ({ entity, filter }) => {
-                    filters[entity] = filter;
-                  },
+                onClick() {
+                  self.$router.push(mod.routes[0].path);
+                },
+                onSetWidgetFilter({ entity, filter }) {
+                  filters[entity] = filter;
                 },
               },
             ),
