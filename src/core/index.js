@@ -1,4 +1,4 @@
-import Vue from 'vue';
+import Vue, { configureCompat } from 'vue';
 import * as R from 'ramda';
 import wellknown from 'wellknown';
 import router from './router';
@@ -13,6 +13,10 @@ import './normalize.css';
 import './bootstrap-simplex.min.css';
 import './vars.css';
 import './main.css';
+
+configureCompat({
+  MODE: 3,
+});
 
 // Attach common libs & utils to the global namespace so Field Modules can access them.
 if (window.farmOS === undefined) {

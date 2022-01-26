@@ -38,7 +38,15 @@ export default defineConfig({
     ]
   },
   plugins: [
-    createVuePlugin({ jsx: true }),
+    createVuePlugin({ jsx: true,
+      template: {
+        compilerOptions: {
+          compatConfig: {
+            MODE: 3,
+          },
+        },
+      },
+    }),
     viteCommonjs(),
     envCompatible(),
     injectHtml(),
