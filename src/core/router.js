@@ -37,6 +37,7 @@ const router = createRouter({
         menubar: HomeMenuBar,
       },
     },
+    { path: '/:pathMatch(.*)*', redirect: '/home' },
   ],
 });
 
