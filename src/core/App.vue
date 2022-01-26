@@ -48,7 +48,7 @@ export default {
     };
   },
   created() {
-    import('../field-modules/tasks/module').then((tasks) => {
+    import('../field-modules/tasks/module').then(({ default: tasks }) => {
       window.farmOS.mountFieldModule(tasks);
     });
     this.loadProfile()
