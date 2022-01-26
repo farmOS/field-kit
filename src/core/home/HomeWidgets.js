@@ -31,11 +31,9 @@ const HomeWidgets = {
     return h(
       resolveComponent('farm-tiles'),
       {
-        props: {
-          columns: [1, 2, 3],
-          breakpoints: [0, 600, 900],
-          space: 's',
-        },
+        columns: [1, 2, 3],
+        breakpoints: [0, 600, 900],
+        space: 's',
       },
       slotsDefault(this.modules.map((mod) => {
         const filters = reactive({
@@ -67,24 +65,22 @@ const HomeWidgets = {
             h(
               WidgetComponent,
               {
-                props: {
-                  user: this.user,
-                  farm: this.farm,
-                  settings: this.settings,
-                  assets: state.assets || [],
-                  logs: state.logs || [],
-                  plans: state.plans || [],
-                  quantities: state.quantities || [],
-                  terms: state.terms || [],
-                  users: state.users || [],
-                  assetTypes: this.assetTypes,
-                  logTypes: this.logTypes,
-                  planTypes: this.planTypes,
-                  quantityTypes: this.quantityTypes,
-                  termTypes: this.termTypes,
-                  userTypes: this.userTypes,
-                  areaGeoJSON: this.areaGeoJSON,
-                },
+                user: this.user,
+                farm: this.farm,
+                settings: this.settings,
+                assets: state.assets || [],
+                logs: state.logs || [],
+                plans: state.plans || [],
+                quantities: state.quantities || [],
+                terms: state.terms || [],
+                users: state.users || [],
+                assetTypes: this.assetTypes,
+                logTypes: this.logTypes,
+                planTypes: this.planTypes,
+                quantityTypes: this.quantityTypes,
+                termTypes: this.termTypes,
+                userTypes: this.userTypes,
+                areaGeoJSON: this.areaGeoJSON,
                 on: {
                   'set-widget-filter': ({ entity, filter }) => {
                     filters[entity] = filter;

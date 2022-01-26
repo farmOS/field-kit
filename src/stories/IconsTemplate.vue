@@ -68,14 +68,14 @@ const IconTiles = {
         .filter(c => c.name.startsWith('Icon'))
         .map(icon => h(
           'farm-card',
-          { props: { width: 'full' } },
+          { width: 'full' },
           [h(
             'farm-stack',
-            { props: { align: 'center' } },
+            { align: 'center' },
             [
               h(
                 'div',
-                [h(icon, { props: { width: this.height, height: this.height, fill: this.fill } })],
+                [h(icon, { width: this.height, height: this.height, fill: this.fill })],
               ),
               h('h4', convertNameToTitle(icon.name)),
               h('pre', convertNameToTag(icon.name)),

@@ -58,11 +58,9 @@ export default {
           };
           // Derive the props and style attributes to be passed to farm-divider.
           const dividerAttrs = {
-            props: {
-              weight: typeof this._dividers === 'string'
-                ? this._dividers
-                : 'regular',
-            },
+            weight: typeof this._dividers === 'string'
+              ? this._dividers
+              : 'regular',
             style: { paddingTop: `var(--${this._space})` },
           };
           // Add a divider if specified and the node is not the last element.
