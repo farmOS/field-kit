@@ -3,7 +3,11 @@ import parseFilter from '../utils/parseFilter';
 
 // Pass the children of a component VNode as the default slot of an object. See:
 // https://v3.vuejs.org/guide/render-function.html#slots
-const slotsDefault = children => ({ default() { return children; } });
+const slotsDefault = slots => ({
+  default(props) {
+    return typeof slots === 'function' ? slots(props) : slots;
+  },
+});
 
 const HomeWidgets = {
   name: 'home-widgets',
@@ -60,7 +64,7 @@ const HomeWidgets = {
               self.$router.push(mod.routes[0].path);
             },
           },
-          slotsDefault([
+          slotsDefault(() => ([
             h('h3', this.$t(mod.label)),
             h(
               WidgetComponent,
@@ -89,7 +93,7 @@ const HomeWidgets = {
                 },
               },
             ),
-          ]),
+          ])),
         );
       })),
     );
