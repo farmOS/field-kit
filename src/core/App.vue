@@ -57,7 +57,17 @@ export default {
           .then(this.updateFieldModules)
           .then(refreshCache)
           .catch((e) => { this.alert(e); })
-          .finally(() => { this.ready = true; });
+          .finally(() => {
+            // Try to detect redirects from field modules that weren't loaded
+            // and hadn't registered their routes when the page loaded.
+            const { redirectedFrom } = this.$router.currentRoute.value;
+            const wasRedirectedFromModule = redirectedFrom && this.$router.getRoutes()
+              .findIndex(r => r.path === redirectedFrom.path) > -1;
+            if (wasRedirectedFromModule) {
+              this.$router.push(redirectedFrom.fullPath);
+            }
+            this.ready = true;
+          });
       })
       .catch(() => {
         this.ready = true;
