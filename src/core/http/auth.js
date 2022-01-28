@@ -22,11 +22,11 @@ export const authErrorMessage = (response = {}, message) => {
 export const authInterceptor = (error = {}, router) => {
   const { loginRequired, message, response = {} } = error;
   if (loginRequired) {
-    if (router.currentRoute.path !== '/login') router.push('/login');
+    if (router.currentRoute.value.path !== '/login') router.push('/login');
     return error;
   }
   if (response.status >= 400 && response.status <= 403) {
-    if (router.currentRoute.path !== '/login') router.push('/login');
+    if (router.currentRoute.value.path !== '/login') router.push('/login');
     return new Error(authErrorMessage(response, message), { cause: error });
   }
   return error;

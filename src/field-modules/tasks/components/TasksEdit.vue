@@ -1,7 +1,7 @@
 <template>
 <farm-tabs
   :tabs="['General', 'Movement']"
-  :initTab="$router.currentRoute.params.tab"
+  :initTab="$router.currentRoute.value.params.tab"
   :space="['none', 'none', 's']">
 
   <template #general>
