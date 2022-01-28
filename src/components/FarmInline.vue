@@ -1,6 +1,6 @@
 <script>
 import { h } from 'vue';
-import noWhiteSpace from './noWhiteSpace';
+import noEmptyVNodes from './noEmptyVNodes';
 import { responsiveProps, mapResponsiveProps, responsiveValidator } from './responsiveProps';
 
 export default {
@@ -55,7 +55,7 @@ export default {
         { style: this.containerStyle },
         (this.$slots.default() || [])
           // Filtering out undefined tags removes unwanted whitespace nodes.
-          .filter(noWhiteSpace)
+          .filter(noEmptyVNodes)
           .map(node => h(
             'div',
             { style: { ...this.itemStyle, flex: node.data?.attrs?.flex } },
