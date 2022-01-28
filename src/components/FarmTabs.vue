@@ -19,7 +19,7 @@
       </div>
     </div>
 
-    <farm-main ref="tabMain" @hook:mounted="calcTabBarMarginX" space="none">
+    <farm-main ref="tabMain" @vnode-mounted="calcTabBarMarginX" space="none">
       <div
         class="tab-content-container">
         <div class="tab-content-slider"
