@@ -67,6 +67,7 @@
 <script>
 export default {
   name: 'TasksFilter',
+  emits: ['toggle-category-filter', 'toggle-type-filter'],
   props: ['categories', 'logTypes', 'filters'],
 };
 </script>

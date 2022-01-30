@@ -17,6 +17,7 @@
 <script>
 export default {
   name: 'FarmSelectBox',
+  emits: ['input'],
   props: {
     id: String,
     selected: Boolean,

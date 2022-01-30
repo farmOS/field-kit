@@ -69,6 +69,7 @@ const addLeadZero = d => ((d < 10) ? `0${d}` : d);
 
 export default {
   name: 'FarmDateTimeForm',
+  emits: ['input'],
   props: {
     timestamp: {
       default: '',

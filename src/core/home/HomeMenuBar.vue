@@ -1,7 +1,7 @@
 <template>
   <farm-menu-bar :more="false">
     <template #left-menu>
-      <li @click="$emit('openDrawer')">
+      <li @click="$emit('open-drawer')">
         <icon-menu/>
       </li>
       <li>{{ $t('Home')}}</li>
@@ -12,7 +12,7 @@
 <script>
 export default {
   name: 'HomeMenuBar',
-  emits: ['openDrawer'],
+  emits: ['open-drawer'],
 };
 </script>
 

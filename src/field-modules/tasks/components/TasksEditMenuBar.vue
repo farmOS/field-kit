@@ -43,6 +43,7 @@
 <script>
 export default {
   name: 'TasksEditMenuBar',
+  emits: ['delete-current-log', 'sync'],
   props: ['logs', 'id', 'isSyncing'],
   computed: {
     log() {

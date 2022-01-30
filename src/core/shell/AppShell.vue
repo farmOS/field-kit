@@ -7,7 +7,7 @@
       <app-modal v-if="showDrawer" @click="modalClickHandler"/>
     </transition>
     <slot name="menubar" :openDrawer="() => { showDrawer = true; }"></slot>
-    <slot name="default"></slot>
+    <slot name="default" :openDrawer="() => { showDrawer = true; }"></slot>
     <app-alerts/>
   </div>
 </template>

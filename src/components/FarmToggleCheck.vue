@@ -22,6 +22,7 @@
 <script>
 export default {
   name: 'FarmToggleCheck',
+  emits: ['input'],
   props: {
     label: {
       type: String,

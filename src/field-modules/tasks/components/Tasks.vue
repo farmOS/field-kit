@@ -2,7 +2,7 @@
   <div>
     <router-view
       name="menubar"
-      @open-drawer="$emit('openDrawer')"
+      @open-drawer="$emit('open-drawer')"
       @delete-current-log="openDeleteDialog($event)"
       @sync-all="syncAll"
       @sync="sync($event)"
@@ -128,6 +128,7 @@ const transformCategoryFilters = (categories) => {
 
 export default {
   name: 'Tasks',
+  emits: ['open-drawer'],
   data() {
     return {
       showDeleteDialog: false,
@@ -150,7 +151,6 @@ export default {
     'terms',
     'logTypes',
   ],
-  emits: ['openDrawer'],
   created() {
     this.loadAssets(assetFilter);
     this.loadTerms(termFilter).then(() => {

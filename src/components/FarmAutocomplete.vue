@@ -35,6 +35,7 @@
 <script>
 export default {
   name: 'FarmAutocomplete',
+  emits: ['select'],
   props: {
     list: {
       validator(l) {

@@ -12,6 +12,7 @@ import { mapState } from 'vuex';
 
 export default {
   name: 'FarmMap',
+  emits: ['update-wkt'],
   data() {
     return {
       map: {},

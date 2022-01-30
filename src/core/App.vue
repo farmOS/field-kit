@@ -7,9 +7,10 @@
           <component :is="MenuBar" @open-drawer="openDrawer"/>
         </router-view>
       </template>
-      <template v-slot:default>
+      <template v-slot:default="{ openDrawer }">
         <router-view v-slot="{ Component: MainView }">
           <component :is="MainView"
+            @open-drawer="openDrawer"
             :user="user"
             :farm="farm"
             :settings="settings"

@@ -15,6 +15,7 @@
 <script>
 export default {
   name: 'TasksFilterMenuBar',
+  emits: ['reset-filters', 'save-filters'],
   data() {
     return {
       showMore: false,

@@ -1,7 +1,7 @@
 <template>
   <farm-menu-bar>
     <template #left-menu>
-      <li @click="$emit('openDrawer')">
+      <li @click="$emit('open-drawer')">
         <icon-menu/>
       </li>
       <li>{{ $t('Tasks')}}</li>
@@ -28,7 +28,7 @@
 export default {
   name: 'TasksAllMenuBar',
   props: ['isSyncing'],
-  emits: ['openDrawer'],
+  emits: ['open-drawer', 'sync-all'],
 };
 </script>
 

@@ -4,6 +4,7 @@ import { entityMethods } from '../store/nomenclature';
 const POOL_TIMEOUT = 500;
 
 export default {
+  emits: ['set-widget-filter'],
   methods: {
     ...entityMethods((names) => {
       const { name, display, displayPlural } = names;
