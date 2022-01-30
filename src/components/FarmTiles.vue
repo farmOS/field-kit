@@ -1,5 +1,5 @@
 <script>
-import { h } from 'vue';
+import { Fragment, h } from 'vue';
 import noEmptyVNodes from './noEmptyVNodes';
 import { responsiveProps, mapResponsiveProps, responsiveValidator } from './responsiveProps';
 
@@ -64,7 +64,7 @@ export default {
     },
   },
   render() {
-    const renderChildNodes = (node, i, arr) => {
+    const renderChildNode = (node, i, arr) => {
       // Derive the props and style attributes to be passed to farm-divider.
       const dividerAttrs = {
         weight: typeof this._dividers === 'string'
@@ -74,30 +74,36 @@ export default {
       };
       // Add a divider if specified, and if there's only a single column, and if
       // the node is not the last element.
-      const children = this._dividers && this._columns === 1 && i < arr.length - 1
-        ? [node, h('farm-divider', { default() { return dividerAttrs; } })]
+      const child = this._dividers && this._columns === 1 && i < arr.length - 1
+        ? [node, h('farm-divider', { dividerAttrs })]
         : [node];
       return h(
         'div',
         { style: this.style2 },
-        [h(
+        h(
           'div',
           { style: this.style3 },
-          children,
-        )],
+          child,
+        ),
       );
+    };
+    const rawSlots = this.$slots.default() || [];
+    const nestedSlots = {
+      default() {
+        const fragment = rawSlots.find(n => n.type === Fragment);
+        return (fragment ? fragment.children : rawSlots)
+          .filter(noEmptyVNodes)
+          .map(renderChildNode);
+      },
     };
     return h(
       'div',
       { class: 'farm-tiles', style: this.style0 },
-      [h(
+      h(
         'div',
         { style: this.style1 },
-        (this.$slots.default() || [])
-          // Filtering out undefined tags removes unwanted whitespace nodes.
-          .filter(noEmptyVNodes)
-          .map(renderChildNodes),
-      )],
+        nestedSlots,
+      ),
     );
   },
 };
