@@ -20,11 +20,7 @@ export default defineConfig({
     alias: [
       {
         find: 'vue',
-        replacement: '@vue/compat',
-      },
-      {
-        find: /^~/,
-        replacement: '',
+        replacement: 'vue/dist/vue.esm-bundler.js',
       },
     ],
     extensions: [
@@ -38,15 +34,7 @@ export default defineConfig({
     ]
   },
   plugins: [
-    createVuePlugin({ jsx: true,
-      template: {
-        compilerOptions: {
-          compatConfig: {
-            MODE: 3,
-          },
-        },
-      },
-    }),
+    createVuePlugin({ jsx: true }),
     viteCommonjs(),
     envCompatible(),
     injectHtml(),
