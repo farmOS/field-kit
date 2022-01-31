@@ -14,8 +14,8 @@
     "lint": "eslint --color",
     "lint-src": "eslint --color --ext .js,.vue src",
     "build:web": "npm run build",
-    "storybook": "NODE_PATH=src start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "BROKEN-storybook": "NODE_PATH=src start-storybook -p 6006",
+    "BROKEN-build-storybook": "build-storybook"
   },
   "dependencies": {
     "@farmos.org/farmos-map": "^1.4.2",
@@ -29,10 +29,6 @@
   },
   "devDependencies": {
     "@originjs/vite-plugin-commonjs": "^1.0.1",
-    "@storybook/addon-actions": "^6.4.10",
-    "@storybook/addon-essentials": "^6.4.10",
-    "@storybook/addon-links": "^6.4.10",
-    "@storybook/vue": "^6.4.10",
     "@vitejs/plugin-vue": "^2.0.1",
     "@vue/runtime-dom": "^3.2.26",
     "@vue/test-utils": "^1.2.2",
