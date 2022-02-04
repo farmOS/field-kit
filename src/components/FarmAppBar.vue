@@ -131,37 +131,33 @@ export default {
     padding: 0;
   }
 
-  /**
-    * Use Vue's "deep" pseudo-class so the style gets passed to child components.
-    * See https://github.com/vuejs/rfcs/blob/master/active-rfcs/0023-scoped-styles-changes.md
-   */
-  :deep(svg) {
+  svg {
     fill: var(--white);
   }
 
-  :deep(li) {
+  li {
     list-style: none;
     font-size: 1.25rem;
     line-height: 1.5rem;
   }
 
-  :deep(.main-nav) {
+  .main-nav {
     justify-content: flex-start;
   }
 
-  :deep(.main-nav) li {
+  .main-nav li {
     margin-right: .5rem;
   }
 
-  :deep(.actions) {
+  .actions {
     justify-content: flex-end;
   }
 
-  :deep(.actions) li {
+  .actions li {
     margin-left: .5rem;
   }
 
-  :deep(#overflow) {
+  #overflow {
     position: absolute;
     top: 3px;
     right: 3px;
@@ -171,12 +167,12 @@ export default {
     box-shadow: var(--shadow);
   }
 
-  :deep(#overflow) li {
+  #overflow li {
     padding: 1rem 1rem;
     font-size: 1rem;
   }
 
-  :deep(#overflow) a {
+  #overflow a {
     color: var(--text);
   }
 </style>
