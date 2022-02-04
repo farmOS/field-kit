@@ -69,7 +69,7 @@ import { refreshCache } from '../idb/cache';
 import { getHost } from '../remote';
 
 export default {
-  name: 'Login',
+  name: 'LoginScreen',
   data() {
     return {
       valuesEntered: false,

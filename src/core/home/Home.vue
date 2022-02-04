@@ -26,7 +26,7 @@ import { mapState } from 'vuex';
 import HomeWidgets from './HomeWidgets';
 
 export default {
-  name: 'Home',
+  name: 'HomeScreen',
   components: { HomeWidgets },
   props: [
     'user',

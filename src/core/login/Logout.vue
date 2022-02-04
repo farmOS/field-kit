@@ -42,7 +42,7 @@ import databases from '../idb/databases';
 const idbNames = Object.values(databases).map(d => d.name);
 
 export default {
-  name: 'Logout',
+  name: 'LogoutScreen',
   methods: {
     goBack() {
       this.$router.back();

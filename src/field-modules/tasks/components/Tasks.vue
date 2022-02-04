@@ -127,7 +127,7 @@ const transformCategoryFilters = (categories) => {
 };
 
 export default {
-  name: 'Tasks',
+  name: 'TasksContainer',
   emits: ['open-drawer'],
   data() {
     return {
