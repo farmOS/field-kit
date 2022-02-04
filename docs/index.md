@@ -62,19 +62,6 @@ Once your module object is complete, you can mount it by calling the global `far
 Included in the Field Kit API is a full Vue.js component library, which should be used to render Field Modules. We use [Storybook](https://storybook.js.org/) for component documentation, which can be found at [storybook.farmos.app](https://storybook.farmos.app). Head on over there to view the full catalog components and icons that are available for module development.
 
 
-# Custom Events
-## Menu Drawer
-The main menu drawer can be triggered to open from your root component or menubar, by calling the `toggle-drawer` event.
-
-```html
-<!-- From the template: -->
-<button @click="$emit('toggle-drawer')">Menu</button>
-```
-```js
-// From a component method:
-this.$emit('toggle-drawer');
-```
-
 # Logs API
 ## Loading and reading logs as props
 Logs will be passed down to your module's root component via [Vue.js props](https://vuejs.org/v2/guide/components.html#Passing-Data-to-Child-Components-with-Props) as `logs`, an array of log objects. However, until Field Kit knows what logs your module requires, that array will either be empty or comprised of arbitrary logs left there by a previous module. To tell Field Kit which logs you want loaded from the local IndexedDB cache, use the `loadLogs` [Vuex action](https://vuex.vuejs.org/guide/actions.html).
@@ -226,12 +213,6 @@ This will be rendered on the Home screen as a card with your `label` as the head
 - Type: [`Array<RouteConfig>`](https://router.vuejs.org/api/#routes)
 
 The routes for your module.
-
-## Vue Custom Events
-### toggle-drawer
-- Payload: none
-- Available from: any root component or menubar.
-- Description: Opens the main menu drawer.
 
 ## Vuex mutations
 Mutations are always synchronous and do not have a return value. See the [Vuex docs on mutations](https://vuex.vuejs.org/guide/mutations.html) for more info.
