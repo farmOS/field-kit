@@ -6,7 +6,7 @@
     <transition name="modal">
       <app-modal v-if="showDrawer" @click="modalClickHandler"/>
     </transition>
-    <slot name="menubar" :openDrawer="() => { showDrawer = true; }"></slot>
+    <app-bar/>
     <slot name="default" :openDrawer="() => { showDrawer = true; }"></slot>
     <app-alerts/>
   </div>
@@ -16,16 +16,27 @@
 import AppAlerts from './AppAlerts.vue';
 import AppDrawer from './AppDrawer.vue';
 import AppModal from './AppModal.vue';
+import AppBar from './AppBar.vue';
 
 export default {
   name: 'AppShell',
-  components: { AppAlerts, AppDrawer, AppModal },
+  components: {
+    AppAlerts, AppDrawer, AppModal, AppBar,
+  },
+  provide() {
+    return {
+      openDrawer: this.openDrawer,
+    };
+  },
   data() {
     return {
       showDrawer: false,
     };
   },
   methods: {
+    openDrawer() {
+      this.showDrawer = true;
+    },
     modalClickHandler(evt) {
       if (!this.$refs.drawer.$el.contains(evt.target)) {
         this.showDrawer = false;

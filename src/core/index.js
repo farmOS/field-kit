@@ -4,6 +4,7 @@ import wellknown from 'wellknown';
 import router from './router';
 import store from './store';
 import App from './App.vue';
+import AppBarOptions from './shell/AppBarOptions.vue';
 import { mountFieldModule } from './fieldModules';
 import t from './mixins/t';
 import farm from './farm';
@@ -44,5 +45,7 @@ window.farmOS.mountFieldModule = mountFieldModule({ app, router, store });
 // Register the shared component library globally so they can be accessed from
 // any other component and field module.
 components.forEach((c) => { app.component(c.name, c); });
+
+app.component('app-bar-options', AppBarOptions);
 
 export default app;

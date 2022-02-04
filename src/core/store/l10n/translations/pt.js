@@ -15,7 +15,6 @@ export default {
     'Logout': 'Sair',
     'Version': 'Versão',
     // Home.vue
-    // HomeMenuBar.vue
     // Login.vue
     // Logout.vue
     // DIRECTORY: field-modules/my-logs/
@@ -26,15 +25,13 @@ export default {
     'icon below, or you can get uncompleted tasks from the server by': 'abaixo, ou você pode obter tarefas não completadas do servidor ao',
     'clicking the': 'clicar no',
     'icon above.': 'ícone acima',
-    // AllLogsMenuBar.vue
     'My Logs': 'Meus registros',
     'Sync all logs': 'Sincronizar todos os registros',
     'Filter logs': 'Filtrar registros',
-    // EditLogMenuBar.vue
+    // EditLog.vue
     'Edit Log': 'Editar Registro',
     'Delete from device': 'Apagar do Dispostivio',
     'Open in browser': 'Abrir no navegador',
-    // EditLog.vue
     'Done': 'Feito',
     'GENERAL': 'Geral',
     'MOVEMENT': 'Movimento',
@@ -90,7 +87,6 @@ export default {
     'Seeding': 'Semeadura',
     'Log Category': 'Categoria do registro',
     'No Category': 'Nenhuma categoria',
-    // FilterLogsMenuBar.vue
     'Log Filters': 'Filtros do Log',
     'Reset filters': 'Limpar filtros',
     // MyLogsWidget.vue

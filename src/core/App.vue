@@ -2,14 +2,9 @@
   <transition name="ready" mode="out-in">
     <not-ready v-if="!ready"/>
     <app-shell v-else>
-      <template v-slot:menubar="{ openDrawer }">
-        <router-view name="menubar" v-slot="{ Component: MenuBar }">
-          <component :is="MenuBar" @open-drawer="openDrawer"/>
-        </router-view>
-      </template>
-      <template v-slot:default="{ openDrawer }">
-        <router-view v-slot="{ Component: MainView }">
-          <component :is="MainView"
+      <template v-slot="{ openDrawer }">
+        <router-view v-slot="{ Component }">
+          <component :is="Component"
             @open-drawer="openDrawer"
             :user="user"
             :farm="farm"

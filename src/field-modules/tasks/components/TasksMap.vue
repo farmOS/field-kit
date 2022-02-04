@@ -1,5 +1,7 @@
 <template>
 <farm-main space="none">
+  <!-- FIXME: This no longer provides route params: { id, tab: 'Movement' } -->
+  <app-bar-options :title="$t('Map')" nav="back"/>
   <farm-map
     id="map"
     :overrideStyles="{ height: 'calc(100vh - 3rem)' }"

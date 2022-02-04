@@ -1,0 +1,182 @@
+<template>
+  <header class="farm-app-bar navbar navbar-light fixed-top">
+    <ul class="main-nav">
+      <li class="nav-control" @click="handleNavControl">
+        <icon-arrow-back v-if="navBack"/>
+        <icon-menu v-else/>
+      </li>
+      <li class="title">{{title}}</li>
+    </ul>
+    <ul class="actions">
+      <li v-for="(a, i) in acts.show" :key="`app-bar-action-${i}`" @click="a.onClick">
+        <component :is="a.icon"/>
+      </li>
+      <li id="open-overflow" @click="openOverflow" v-if="acts.flow.length > 0">
+        <icon-more-vert/>
+      </li>
+    </ul>
+    <ul id="overflow" v-if="showOverflow">
+      <li v-for="(a, i) in acts.flow" :key="`app-bar-action-${i}`" @click="a.onClick">
+        {{action.text}}
+      </li>
+    </ul>
+  </header>
+</template>
+
+<script>
+import IconMoreVert from './icons/icon-more-vert.vue';
+import IconArrowBack from './icons/icon-arrow-back.vue';
+import IconMenu from './icons/icon-menu.vue';
+
+const rem = 16;
+const liMargin = rem / 2;
+const padding = rem * 2;
+const iconWidth = 24 + liMargin;
+
+export const validateAction = ({ icon, onClick, text }) => (
+  typeof icon === 'string'
+    && typeof onClick === 'function'
+    && typeof text === 'string'
+);
+export const validateNav = str => ['menu', 'back'].includes(str);
+
+export default {
+  name: 'FarmAppBar',
+  components: { IconMoreVert, IconArrowBack, IconMenu },
+  props: {
+    nav: {
+      type: String,
+      default: 'menu',
+      validator: validateNav,
+    },
+    title: String,
+    actions: {
+      type: Array,
+      default: () => [],
+      validator: arr => arr.every(validateAction),
+    },
+  },
+  inject: ['openDrawer'],
+  data() {
+    return {
+      showOverflow: false,
+      startOverflow: 0,
+    };
+  },
+  computed: {
+    navBack() {
+      return this.nav === 'back';
+    },
+    acts() {
+      const show = this.actions.slice(0, this.startOverflow);
+      const flow = this.actions.slice(this.startOverflow);
+      return { show, flow };
+    },
+  },
+  created() {
+    window.addEventListener('resize', this.calcOverflow);
+    this.calcOverflow();
+  },
+  beforeUnmount() {
+    window.removeEventListener('resize', this.calcOverflow);
+  },
+  methods: {
+    calcOverflow() {
+      const titleWidth = this.title.length * rem;
+      const availableWidth = window.innerWidth - padding - iconWidth - titleWidth;
+      const maxIcons = Math.floor(availableWidth / iconWidth);
+      if (this.actions.length > maxIcons) {
+        this.startOverflow = this.actions.length;
+      } else {
+        this.startOverflow = maxIcons - 1;
+      }
+    },
+    handleNavControl() {
+      if (this.navBack) {
+        this.$router.back();
+      } else {
+        this.openDrawer();
+      }
+    },
+    openOverflow(evt) {
+      evt.stopPropagation();
+      this.showOverflow = true;
+      document.addEventListener('click', this.handleClickOutside);
+    },
+    handleClickOutside(evt) {
+      const moreMenu = document.getElementById('overflow');
+      if (moreMenu !== null && !moreMenu.contains(evt.target)) {
+        this.showOverflow = false;
+      }
+    },
+  },
+  unmounted() {
+    document.removeEventListener('click', this.handleClickOutside);
+  },
+};
+</script>
+
+<style scoped>
+  header {
+    background-color: var(--primary);
+    color: var(--white);
+    border: none;
+    height: 3rem;
+  }
+
+  header ul {
+    display: flex;
+    flex-flow: row nowrap;
+    margin: 0;
+    padding: 0;
+  }
+
+  /**
+    * Use Vue's "deep" pseudo-class so the style gets passed to child components.
+    * See https://github.com/vuejs/rfcs/blob/master/active-rfcs/0023-scoped-styles-changes.md
+   */
+  :deep(svg) {
+    fill: var(--white);
+  }
+
+  :deep(li) {
+    list-style: none;
+    font-size: 1.25rem;
+    line-height: 1.5rem;
+  }
+
+  :deep(.main-nav) {
+    justify-content: flex-start;
+  }
+
+  :deep(.main-nav) li {
+    margin-right: .5rem;
+  }
+
+  :deep(.actions) {
+    justify-content: flex-end;
+  }
+
+  :deep(.actions) li {
+    margin-left: .5rem;
+  }
+
+  :deep(#overflow) {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    flex-flow: column;
+    background-color: var(--white);
+    color: var(--text);
+    box-shadow: var(--shadow);
+  }
+
+  :deep(#overflow) li {
+    padding: 1rem 1rem;
+    font-size: 1rem;
+  }
+
+  :deep(#overflow) a {
+    color: var(--text);
+  }
+</style>

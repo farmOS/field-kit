@@ -1,5 +1,6 @@
 <template>
   <farm-main :space="['none', 's']">
+    <app-bar-options title="Tasks" :actions="appBarActions"/>
     <farm-tiles :columns="[1, 2, 3]" :space="['none', 's']" dividers>
       <farm-card
         v-if="logs.length < 1">
@@ -83,6 +84,7 @@ const {
 export default {
   name: 'TasksAll',
   props: [
+    'isSyncing',
     'logTypes',
     'logs',
     'userId',
@@ -113,8 +115,28 @@ export default {
         };
       });
     },
+    appBarActions() {
+      return [
+        {
+          icon: this.isSyncing ? 'icon-sync-spin' : 'icon-cloud-upload',
+          onClick: this.syncAll,
+          text: this.$t('Sync all logs'),
+        },
+        {
+          icon: 'icon-filter',
+          onClick: this.viewFilters,
+          text: this.$t('Filter logs'),
+        },
+      ];
+    },
   },
   methods: {
+    syncAll() {
+      this.$emit('sync-all');
+    },
+    viewFilters() {
+      this.$router.push('/tasks/filter');
+    },
     showDate(iso) {
       const date = new Date(iso);
       const opts = { month: 'short', day: 'numeric', year: 'numeric' };

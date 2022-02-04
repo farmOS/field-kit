@@ -1,10 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Login from './login/Login.vue';
-import LoginMenuBar from './login/LoginMenuBar.vue';
 import Logout from './login/Logout.vue';
-import LogoutMenuBar from './login/LogoutMenuBar.vue';
 import Home from './home/Home.vue';
-import HomeMenuBar from './home/HomeMenuBar.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -16,26 +13,17 @@ const router = createRouter({
     {
       path: '/login',
       name: 'Login',
-      components: {
-        default: Login,
-        menubar: LoginMenuBar,
-      },
+      component: Login,
     },
     {
       path: '/logout',
       name: 'Logout',
-      components: {
-        default: Logout,
-        menubar: LogoutMenuBar,
-      },
+      component: Logout,
     },
     {
       path: '/home',
       name: 'Home',
-      components: {
-        default: Home,
-        menubar: HomeMenuBar,
-      },
+      component: Home,
     },
     { path: '/:pathMatch(.*)*', redirect: '/home' },
   ],

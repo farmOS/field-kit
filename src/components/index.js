@@ -1,4 +1,5 @@
 // Shared Component Library
+import FarmAppBar from './FarmAppBar.vue';
 import FarmAutocomplete from './FarmAutocomplete.vue';
 import FarmCard from './FarmCard.vue';
 import FarmChip from './FarmChip.vue';
@@ -10,7 +11,6 @@ import FarmListItem from './FarmListItem.vue';
 import FarmLogMainInfo from './FarmLogMainInfo.vue';
 import FarmMain from './FarmMain.vue';
 import FarmMap from './FarmMap.vue';
-import FarmMenuBar from './FarmMenuBar.vue';
 import FarmSelectBox from './FarmSelectBox.vue';
 import FarmStack from './FarmStack.vue';
 import FarmTabs from './FarmTabs.vue';
@@ -34,6 +34,7 @@ import IconEdit from './icons/icon-edit.vue';
 import IconExpandLess from './icons/icon-expand-less.vue';
 import IconExpandMore from './icons/icon-expand-more.vue';
 import IconFilter from './icons/icon-filter.vue';
+import IconFilterOff from './icons/icon-filter-off.vue';
 import IconMenu from './icons/icon-menu.vue';
 import IconMoreVert from './icons/icon-more-vert.vue';
 import IconOpenInNew from './icons/icon-open-in-new.vue';
@@ -45,6 +46,7 @@ import IconSyncSpin from './icons/icon-sync-spin.vue';
 import SvgFilterDropshadow from './icons/svg-filter-dropshadow.vue';
 
 export default [
+  FarmAppBar,
   FarmAutocomplete,
   FarmCard,
   FarmChip,
@@ -56,7 +58,6 @@ export default [
   FarmLogMainInfo,
   FarmMain,
   FarmMap,
-  FarmMenuBar,
   FarmSelectBox,
   FarmStack,
   FarmTabs,
@@ -78,6 +79,7 @@ export default [
   IconExpandLess,
   IconExpandMore,
   IconFilter,
+  IconFilterOff,
   IconMenu,
   IconMoreVert,
   IconOpenInNew,

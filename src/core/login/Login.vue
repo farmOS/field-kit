@@ -1,5 +1,6 @@
 <template>
   <farm-main :paddingTop="['xl', 'xxl']" :paddingX="['m', 'xl', 'xxl']">
+    <app-bar-options :title="$t('Login')"/>
     <div class="input-group">
       <div class="input-group-prepend">
         <span class="input-group-text">https://</span>

@@ -1,23 +1,24 @@
 <template>
   <farm-main>
+    <app-bar-options :title="$t('Log Filters')" nav="back" :actions="appBarActions"/>
     <farm-tiles :columns="[1, 2, 3]">
 
       <farm-card>
         <farm-stack space="s">
           <h3>{{ $t('Log Type')}}</h3>
           <farm-inline space="s">
-            <div v-for="type in Object.keys(logTypes)" :key="`type-${type}`">
+            <div v-for="t in Object.keys(logTypes)" :key="`type-${t}`">
               <input
                 type="checkbox"
-                :id="`type-${type}`"
+                :id="`type-${t}`"
                 name="log-types"
-                :checked="filters.types[type]"
-                @input="$emit('toggle-type-filter', type)">
+                :checked="filters.types[t]"
+                @input="$emit('toggle-type-filter', t)">
               <label
                 for="log-types"
-                @click="$emit('toggle-type-filter', type)"
-                :class="{ selected: filters.types[type] }">
-                {{ $t(logTypes[type].label) }}
+                @click="$emit('toggle-type-filter', t)"
+                :class="{ selected: filters.types[t] }">
+                {{ $t(logTypes[t].label) }}
               </label>
             </div>
           </farm-inline>
@@ -67,8 +68,24 @@
 <script>
 export default {
   name: 'TasksFilter',
-  emits: ['toggle-category-filter', 'toggle-type-filter'],
+  emits: ['reset-filters', 'toggle-category-filter', 'toggle-type-filter'],
   props: ['categories', 'logTypes', 'filters'],
+  methods: {
+    reset() {
+      this.$emit('reset-filters');
+    },
+  },
+  computed: {
+    appBarActions() {
+      return [
+        {
+          icon: 'icon-filter-off',
+          onClick: this.reset,
+          text: this.$t('Reset filters'),
+        },
+      ];
+    },
+  },
 };
 </script>
 <style lang="css" scoped>

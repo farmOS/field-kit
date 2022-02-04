@@ -32,7 +32,6 @@ The Field Module API is fairly flexible, granting a fair amount of latitude to t
 // src/FieldModule/MyModule/js/index.js
 import ModuleWidget from './components/ModuleWidget';
 import Module from './components/Module';
-import ModuleMenuBar from './components/ModuleMenuBar';
 
 const mod = {
   name: 'my-mod',
@@ -42,10 +41,7 @@ const mod = {
     {
       name: 'module',
       path: '/module',
-      components: {
-        default: Module,
-        menubar: ModuleMenuBar,
-      },
+      component: Module,
     },
   ],
 };

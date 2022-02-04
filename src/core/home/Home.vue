@@ -1,5 +1,6 @@
 <template>
   <farm-main>
+    <app-bar-options :title="$t('Home')"/>
     <home-widgets
       :modules="modules"
       :user="user"

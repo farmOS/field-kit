@@ -1,17 +1,12 @@
 <template>
   <div>
     <router-view
-      name="menubar"
-      @open-drawer="$emit('open-drawer')"
+      :isSyncing="isSyncing"
       @delete-current-log="openDeleteDialog($event)"
       @sync-all="syncAll"
       @sync="sync($event)"
       @reset-filters="resetFilters"
       @save-filters="saveFilters"
-      :logs="logs"
-      :isSyncing="isSyncing"
-    />
-    <router-view
       @toggle-type-filter="toggleTypeFilter"
       @toggle-category-filter="toggleCategoryFilter"
       :filters="filters"
@@ -207,15 +202,18 @@ export default {
      */
     toggleTypeFilter(type) {
       this.filters.types[type] = !this.filters.types[type];
+      this.saveFilters();
     },
     toggleCategoryFilter(category) {
       this.filters.categories[category] = !this.filters.categories[category];
+      this.saveFilters();
     },
     resetFilters() {
       this.filters = {
         types: resetTypeFilters(this.logTypes),
         categories: resetCategoryFilters(this.categories),
       };
+      this.saveFilters();
     },
     transformFilters() {
       const { types, categories } = this.filters;

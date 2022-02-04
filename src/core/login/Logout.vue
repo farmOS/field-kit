@@ -1,5 +1,6 @@
 <template>
   <farm-main :paddingTop="['xl', 'xxl']" :paddingX="['l', 'xxl']">
+    <app-bar-options :title="$t('Logout')"/>
 
     <farm-stack space="l">
       <farm-card backgroundColor="red">

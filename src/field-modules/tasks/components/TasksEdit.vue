@@ -5,6 +5,7 @@
   :space="['none', 'none', 's']">
 
   <template #general>
+    <app-bar-options :title="$t('Edit Log')" nav="back" :actions="appBarActions"/>
     <farm-stack :space="['none', 'none', 's']" :dividers="true">
 
       <farm-card>
@@ -533,6 +534,7 @@ export default {
     'allLogs',
     'allUnits',
     'areaGeoJSON',
+    'isSyncing',
   ],
 
   methods: {
@@ -700,6 +702,13 @@ export default {
       this.updateCurrentLog('geometry', geometry);
     },
 
+    deleteCurrentLog() {
+      this.$emit('delete-current-log', this.log.id);
+    },
+    sync() {
+      this.$emit('sync', this.log.id);
+    },
+
     parseNotes,
   },
 
@@ -733,6 +742,27 @@ export default {
         }
       }
       return [];
+    },
+    appBarActions() {
+      const logURL = this.log.url;
+      const openInNew = logURL ? [{
+        icon: 'icon-open-in-new',
+        onClick() { window.open(logURL, '_blank'); },
+        text: this.$t('Open in browser'),
+      }] : [];
+      return [
+        ...openInNew,
+        {
+          icon: 'icon-delete',
+          onClick: this.deleteCurrentLog,
+          text: this.$t('Delete from device'),
+        },
+        {
+          icon: this.isSyncing ? 'icon-sync-spin' : 'icon-cloud-upload',
+          onClick: this.sync,
+          text: this.$t('Sync this log'),
+        },
+      ];
     },
 
     // quantUnitNames() {
