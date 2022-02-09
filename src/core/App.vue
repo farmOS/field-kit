@@ -157,10 +157,11 @@ export default {
 
     // V1 Migration Warning
     this.$store.commit('alert', {
-      message: 'Field Kit 2.0 is coming! To continue using this version, however, '
-        + 'we ask that you please migrate to <a href="https://v1.farmos.app">v1.farmos.app</a>, '
-        + 'so we can begin preparing this site for the big launch. More details '
-        + 'can be found <a href="https://farmos.discourse.group/t/migrating-from-farmos-app-to-v1-farmos-app/791">'
+      message: 'WARNING: farmos.app will shut down for maintenance starting '
+        + 'Monday, February 21. To continue using this version, you must migrate'
+        + 'to <a href="https://v1.farmos.app">v1.farmos.app</a> by that time. '
+        + 'More details can be found '
+        + '<a href="https://farmos.discourse.group/t/migrating-from-farmos-app-to-v1-farmos-app/791">'
         + 'on the forum</a>.',
     });
   },
