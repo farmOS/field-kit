@@ -1,10 +1,7 @@
 import app from './core/app';
-import tasks from './field-modules/tasks/module';
 import onupdatefound from './onupdatefound';
 
-app('#app', [
-  tasks,
-]);
+app('#app');
 
 // Check that service workers are registered (for production environment only)
 if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
