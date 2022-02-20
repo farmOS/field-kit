@@ -1,0 +1,14 @@
+{
+  "name": "field-module-tasks",
+  "version": "1.0.0",
+  "description": "View, update and create farmOS logs for your assigned farm tasks.",
+  "main": "module.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "farmOS"
+  ],
+  "author": "Jamie Gaehring <gaehj457@gmail.com> (https://jgaehring.com)",
+  "license": "GPL-3.0-or-later"
+}
