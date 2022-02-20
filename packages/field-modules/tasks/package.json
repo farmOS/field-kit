@@ -2,13 +2,23 @@
   "name": "field-module-tasks",
   "version": "1.0.0",
   "description": "View, update and create farmOS logs for your assigned farm tasks.",
-  "main": "module.js",
+  "main": "dist/module.esm.js",
   "scripts": {
+    "start": "npm run dev",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "farmOS"
   ],
   "author": "Jamie Gaehring <gaehj457@gmail.com> (https://jgaehring.com)",
-  "license": "GPL-3.0-or-later"
+  "license": "GPL-3.0-or-later",
+  "devDependencies": {
+    "@originjs/vite-plugin-commonjs": "^1.0.3",
+    "@vitejs/plugin-vue": "^2.2.2",
+    "vite": "^2.8.4",
+    "vite-plugin-env-compatible": "^1.1.1"
+  }
 }
