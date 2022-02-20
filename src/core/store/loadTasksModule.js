@@ -1,4 +1,4 @@
-const loadTasksModule = () => import('../../field-modules/tasks/module')
+const loadTasksModule = () => import('../../../packages/field-modules/tasks/module')
   .then(({ default: tasks }) => {
     window.farmOS.mountFieldModule(tasks);
   })
