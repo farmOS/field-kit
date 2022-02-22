@@ -59,5 +59,11 @@ module.exports = {
         jest: true, // for `expect` global
       },
     },
+    {
+      files: ['packages/**'],
+      rules: {
+        'import/extensions': 'off',
+      }
+    },
   ],
 }
