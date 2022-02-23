@@ -1,19 +1,19 @@
-import { writeFileSync, readFileSync, mkdirSync } from 'fs';
-import { resolve as _resolve } from 'path';
+import fs from 'fs';
+import path from 'path';
 import { build } from 'vite';
 import createVuePlugin from '@vitejs/plugin-vue';
 import envCompatible from 'vite-plugin-env-compatible';
 import { viteCommonjs } from '@originjs/vite-plugin-commonjs';
-import { dump } from 'js-yaml';
+import jsYaml from 'js-yaml';
 import fieldModulePlugin from './rollup-plugin-field-module.js';
 
 const writeYaml = (filepath, data) => {
-  const yaml = dump(data);
-  writeFileSync(filepath, yaml);
+  const yaml = jsYaml.dump(data);
+  fs.writeFileSync(filepath, yaml);
 };
 
-const pkgPath = _resolve(process.cwd(), './package.json');
-const json = readFileSync(pkgPath);
+const pkgPath = path.resolve(process.cwd(), './package.json');
+const json = fs.readFileSync(pkgPath);
 const { version } = JSON.parse(json);
 
 export default async function bundler(config) {
@@ -82,7 +82,7 @@ export default async function bundler(config) {
     };
     writeYaml(libPath, lib);
 
-    mkdirSync(`dist/${drupalName}/config/install`, { recursive: true });
+    fs.mkdirSync(`dist/${drupalName}/config/install`, { recursive: true });
     const installPath = `dist/${drupalName}/config/install/farm_fieldkit.field_module.${name}.yml`;
     const install = {
       langcode: 'en',
