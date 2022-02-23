@@ -63,6 +63,7 @@ module.exports = {
       files: ['packages/**'],
       rules: {
         'import/extensions': 'off',
+        'no-param-reassign': 'off',
       }
     },
   ],

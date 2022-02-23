@@ -1,25 +1,13 @@
 import path from 'path';
+import { fmtCode, injectStyle } from './formatters.js';
 
-const fmtImport = (name, value) =>
-  (value ? `import ${name} from '${value}';` : '');
-const fmtCode = ({
-  name, label, description, routes, widget,
-}) => `
-${fmtImport('routes', routes)}
-${fmtImport('widget', widget)}
-
-window.farmOS.mountFieldModule({
-  name: '${name}',
-  label: '${label}',
-  description: '${description}',
-  widget: ${widget && 'widget'},
-  routes: ${routes && 'routes'},
-});`.trim();
+const STYLE_BUNDLE = 'style.css';
 
 export default function fieldModulePlugin(pluginOptions = {}) {
   const { entry = path.resolve(process.cwd(), 'module.config.js') } = pluginOptions;
   return {
     name: 'rollup-plugin-field-module',
+    enforce: 'post',
     transform(code, id) {
       // Use strict equality between the id and entry path, b/c isEntry is not
       // always reliable. See https://rollupjs.org/guide/en/#thisgetmoduleinfo.
@@ -27,6 +15,17 @@ export default function fieldModulePlugin(pluginOptions = {}) {
         return fmtCode(pluginOptions);
       }
       return code;
+    },
+    generateBundle(_, bundle) {
+      try {
+        const js = bundle[pluginOptions.fileName()];
+        const css = bundle[STYLE_BUNDLE];
+        js.code = injectStyle(js.code, css.source);
+        delete bundle[STYLE_BUNDLE];
+      } catch (error) {
+        const msg = `Error injecting styles for ${pluginOptions.name} module: `;
+        console.error(msg, error); // eslint-disable-line no-console
+      }
     },
   };
 }

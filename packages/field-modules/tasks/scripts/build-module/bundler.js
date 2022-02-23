@@ -40,7 +40,7 @@ export default async function bundler(config) {
       createVuePlugin({ jsx: true }),
       viteCommonjs(),
       envCompatible.default(),
-      fieldModulePlugin(config),
+      fieldModulePlugin({ ...config, fileName }),
     ],
     build: {
       lib: {
