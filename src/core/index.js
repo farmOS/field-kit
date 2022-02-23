@@ -1,4 +1,4 @@
-import { createApp } from 'vue';
+import * as Vue from 'vue';
 import * as R from 'ramda';
 import wellknown from 'wellknown';
 import router from './router';
@@ -29,8 +29,10 @@ window.farmOS.lib = {
   R,
   wellknown,
 };
+window.Vue = Vue;
 
-const app = createApp(App);
+const app = window.Vue.createApp(App);
+window.app = app;
 
 // Use Vuex and Vue Router plugins
 app.use(store);

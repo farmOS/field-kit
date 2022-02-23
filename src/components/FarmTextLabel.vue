@@ -1,6 +1,4 @@
 <script>
-import { h } from 'vue';
-
 export default {
   name: 'FarmTextLabel',
   props: {
@@ -55,6 +53,7 @@ export default {
     },
   },
   render() {
+    const { h } = window.Vue;
     return h(
       this.as,
       { style: this.style },

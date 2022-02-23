@@ -1,5 +1,4 @@
 <script>
-import { h } from 'vue';
 import noEmptyVNodes from './noEmptyVNodes';
 import { responsiveProps, mapResponsiveProps, responsiveValidator } from './responsiveProps';
 
@@ -47,6 +46,7 @@ export default {
     },
   },
   render() {
+    const { h } = window.Vue;
     return h(
       'div',
       { class: `farm-inline ${this._space}`, style: { paddingTop: '1px' } },

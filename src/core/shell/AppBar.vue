@@ -3,14 +3,9 @@
 </template>
 
 <script>
-import { reactive } from 'vue';
 import { validateAction, validateNav } from '../../components/FarmAppBar.vue';
 
-const state = reactive({
-  nav: 'menu',
-  title: '',
-  actions: [],
-});
+let state;
 
 export const setActions = (arr = []) => {
   state.actions = arr.filter(validateAction);
@@ -32,6 +27,13 @@ export const reset = () => {
 
 export default {
   name: 'AppBar',
+  beforeCreate() {
+    state = window.Vue.reactive({
+      nav: 'menu',
+      title: '',
+      actions: [],
+    });
+  },
   computed: {
     nav() {
       return state.nav;

@@ -1,4 +1,3 @@
-import { h, reactive, resolveComponent } from 'vue';
 import parseFilter from '../utils/parseFilter';
 
 // Pass the children of a component VNode as the default slot of an object. See:
@@ -31,6 +30,8 @@ const HomeWidgets = {
     'areaGeoJSON',
   ],
   render() {
+    const { h, reactive, resolveComponent } = window.Vue;
+    const { component } = window.app;
     const self = this;
     return h(
       resolveComponent('farm-tiles'),
@@ -56,7 +57,7 @@ const HomeWidgets = {
           terms: self.terms.filter(parseFilter(filters.terms)),
           users: self.users.filter(parseFilter(filters.users)),
         });
-        const WidgetComponent = resolveComponent(mod.widget);
+        const WidgetComponent = component(mod.widget);
         return h(
           resolveComponent('farm-card'),
           {
