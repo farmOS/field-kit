@@ -50,6 +50,7 @@ export default async function bundler(config) {
         formats: ['umd'],
       },
       rollupOptions: {
+        external: ['vue'],
         output: {
           dir: `dist/${drupalName}/js`,
           // Provide global variables to use in the UMD build
