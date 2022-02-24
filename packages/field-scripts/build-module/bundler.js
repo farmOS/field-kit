@@ -74,9 +74,10 @@ export default async function bundler(config) {
     };
     writeYaml(infoPath, info);
 
+    const libName = `${snake(name)}`;
     const libPath = `dist/${drupalName}/${drupalName}.libraries.yml`;
     const lib = {
-      [`${snake(name)}_field_module`]: {
+      [libName]: {
         js: {
           [`js/${fileName()}`]: { preprocess: false },
         },
@@ -93,6 +94,7 @@ export default async function bundler(config) {
       id: name,
       label,
       description,
+      library: `${drupalName}/${libName}`,
     };
     writeYaml(installPath, install);
 
