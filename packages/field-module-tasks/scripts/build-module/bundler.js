@@ -76,7 +76,7 @@ export default async function bundler(config) {
 
     const libPath = `dist/${drupalName}/${drupalName}.libraries.yml`;
     const lib = {
-      test_field_module: {
+      [`${snake(name)}_field_module`]: {
         js: {
           [`js/${fileName()}`]: { preprocess: false },
         },
