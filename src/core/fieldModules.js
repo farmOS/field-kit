@@ -105,10 +105,8 @@ export const loadFieldModule = ({ name, uri }) =>
     document.body.appendChild(script);
   });
 
-const FM_ENDPOINT = process.env.NODE_ENV === 'development'
-  ? 'api/client_module/client_module' : 'api/field_module/field_module';
-const FM_DIR = process.env.NODE_ENV === 'development'
-  ? 'farm/client/js/' : 'fieldkit/js/';
+const FM_ENDPOINT = 'api/field_module/field_module';
+const FM_DIR = 'fieldkit/js/';
 const FM_FILE = '/index.js';
 const transformModuleData = (data) => {
   const { id, attributes } = data;

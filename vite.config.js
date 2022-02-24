@@ -60,7 +60,7 @@ export default defineConfig({
     proxy: proxyPaths([
       '/api',
       '/oauth',
-      '/farm/client',
+      '/fieldkit',
     ]),
   },
 });
