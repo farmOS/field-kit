@@ -6,6 +6,7 @@ import envCompatible from 'vite-plugin-env-compatible';
 import { viteCommonjs } from '@originjs/vite-plugin-commonjs';
 import jsYaml from 'js-yaml';
 import fieldModulePlugin from './rollup-plugin-field-module.js';
+import { snake } from './string-case.js';
 
 const writeYaml = (filepath, data) => {
   const yaml = jsYaml.dump(data);
@@ -21,7 +22,7 @@ export default async function bundler(config) {
     entry, name, label, description,
   } = config;
   const fileName = () => `${name}.${version.replaceAll('.', '-')}.js`;
-  const drupalName = `farm_fieldkit_${name}`;
+  const drupalName = `farm_fieldkit_${snake(name)}`;
 
   return build({
     outDir: `dist/${drupalName}/js`,
@@ -84,7 +85,7 @@ export default async function bundler(config) {
     writeYaml(libPath, lib);
 
     fs.mkdirSync(`dist/${drupalName}/config/install`, { recursive: true });
-    const installPath = `dist/${drupalName}/config/install/farm_fieldkit.field_module.${name}.yml`;
+    const installPath = `dist/${drupalName}/config/install/farm_fieldkit.field_module.${snake(name)}.yml`;
     const install = {
       langcode: 'en',
       status: true,
