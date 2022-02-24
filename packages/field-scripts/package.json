@@ -1,0 +1,22 @@
+{
+  "name": "field-scripts",
+  "version": "1.0.0",
+  "description": "Node scripts for farmOS Field Kit and Field Modules.",
+  "type": "module",
+  "bin": "bin/field-scripts.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "farmOS"
+  ],
+  "author": "Jamie Gaehring <gaehj457@gmail.com> (https://jgaehring.com)",
+  "license": "GPL-3.0-or-later",
+  "devDependencies": {
+    "@originjs/vite-plugin-commonjs": "^1.0.3",
+    "@vitejs/plugin-vue": "^2.2.2",
+    "js-yaml": "^4.1.0",
+    "vite": "^2.8.4",
+    "vite-plugin-env-compatible": "^1.1.1"
+  }
+}

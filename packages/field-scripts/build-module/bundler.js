@@ -62,7 +62,7 @@ export default async function bundler(config) {
         },
       },
     },
-  }).then(() => {
+  }).then((bundle) => {
     const infoPath = `dist/${drupalName}/${drupalName}.info.yml`;
     const info = {
       name: `farmOS Field Kit ${label}`,
@@ -95,5 +95,24 @@ export default async function bundler(config) {
       description,
     };
     writeYaml(installPath, install);
+
+    return {
+      bundle: {
+        location: `dist/${drupalName}/js/${fileName()}`,
+        contents: bundle,
+      },
+      info: {
+        location: infoPath,
+        contents: info,
+      },
+      install: {
+        location: installPath,
+        contents: install,
+      },
+      lib: {
+        location: libPath,
+        contents: install,
+      },
+    };
   });
 }
