@@ -7,12 +7,12 @@ import farm from './farm';
 import routeMixin from './mixins/routeMixin';
 import widgetMixin from './mixins/widgetMixin';
 
-// Convert camelCase or PascalCase to kebab-case, based on:
+// Convert PascalCase & camelCase to kebab-case (or snake_case), based on:
 // https://stackoverflow.com/a/67243723/1549703.
+const pascalRegex = /[A-Z]+(?![a-z])|[A-Z]/g;
 const kebabReplacer = (match, offset) =>
   (offset ? '-' : '') + match.toLowerCase();
-const kebabRegex = /[A-Z]+(?![a-z])|[A-Z]/g;
-const kebab = str => str.replace(kebabRegex, kebabReplacer);
+const kebab = str => str.replace(pascalRegex, kebabReplacer).replaceAll('_', '-');
 
 const parseWidgetName = curry((modName, widget) =>
   (widget?.name ? kebab(widget.name) : `${kebab(modName)}-widget`));
@@ -116,7 +116,7 @@ const transformModuleData = (data) => {
     drupal_internal__id, status, label, description,
   } = attributes;
   const name = kebab(drupal_internal__id);
-  const uri = FM_DIR + name + FM_FILE;
+  const uri = FM_DIR + drupal_internal__id + FM_FILE;
   return ({
     id, name, uri, status, label, description,
   });
