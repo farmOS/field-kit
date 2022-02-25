@@ -49,8 +49,7 @@ const loadModulesPlusHandler = (modules, commit) =>
   Promise.allSettled(modules.map(loadFieldModule))
     .then(results => partitionResults(modules, results))
     .then(([fullfilled, rejected]) => {
-      commit('filterModules', mod =>
-        mod.name === 'tasks' || fullfilled.some(m => mod.name === m.name));
+      commit('filterModules', mod => fullfilled.some(m => mod.name === m.name));
       rejected.forEach(({ label, uri }) => {
         commit('alert', new Error(`Error installing ${label} module from ${uri}.`));
       });
