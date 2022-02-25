@@ -5,7 +5,6 @@ import farm from '../farm';
 import { loadFieldModule, fetchFieldModules } from '../fieldModules';
 import router from '../router';
 import { authInterceptor } from '../http/auth';
-import loadTasksModule from './loadTasksModule';
 
 const LS = window.localStorage;
 
@@ -131,8 +130,7 @@ export default {
     },
     loadFieldModules({ commit }) {
       const modules = JSON.parse(LS.getItem('modules')) || [];
-      return loadTasksModule().then(() =>
-        loadModulesPlusHandler(modules, commit));
+      return loadModulesPlusHandler(modules, commit);
     },
     updateFieldModules({ commit }) {
       return fetchFieldModules().then((modules) => {
