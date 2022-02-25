@@ -113,8 +113,9 @@ const FM_FILE = '/index.js';
 const transformModuleData = (data) => {
   const { id, attributes } = data;
   const {
-    drupal_internal__id: name, status, label, description,
+    drupal_internal__id, status, label, description,
   } = attributes;
+  const name = kebab(drupal_internal__id);
   const uri = FM_DIR + name + FM_FILE;
   return ({
     id, name, uri, status, label, description,
