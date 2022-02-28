@@ -114,5 +114,5 @@ const transformModuleResponse = compose(
   path(['data', 'data']),
 );
 
-export const fetchFieldModules = () => farm.remote.request(FM_API_ENDPOINT)
+export const fetchFieldModules = () => farm.remote.request(`/${FM_API_ENDPOINT}`)
   .then(transformModuleResponse);
