@@ -1,5 +1,5 @@
 import path from 'path';
-import { fmtCode, injectStyle } from './formatters.js';
+import { fmtCode, injectStyle } from '../shared/format.js';
 
 const STYLE_BUNDLE = 'style.css';
 

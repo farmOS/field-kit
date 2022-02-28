@@ -13,6 +13,9 @@ const pascalRegex = /[A-Z]+(?![a-z])|[A-Z]/g;
 const kebabReplacer = (match, offset) =>
   (offset ? '-' : '') + match.toLowerCase();
 const kebab = str => str.replace(pascalRegex, kebabReplacer).replaceAll('_', '-');
+const snakeReplacer = (match, offset) =>
+  (offset ? '_' : '') + match.toLowerCase();
+const snake = str => str.replace(pascalRegex, snakeReplacer).replaceAll('-', '_');
 
 const parseWidgetName = curry((modName, widget) =>
   (widget?.name ? kebab(widget.name) : `${kebab(modName)}-widget`));
@@ -87,41 +90,44 @@ export const mountFieldModule = deps => (mod) => {
   });
 };
 
+// Field Module constants, which should be moved to shared library where they
+// can be accessed by both field-kit and field-scripts.
+const FM_ENDPOINT = '/api/field_module/field_module';
+const FM_DIR = 'fieldkit/js';
+const FM_FILE = 'index.js';
+const resolveModulePathname = name => `${FM_DIR}/${snake(name)}/${FM_FILE}`;
+
 // Takes module info from the API and uses it to inject a script tag and run
 // a module's main entry file (eg, module.js).
-export const loadFieldModule = ({ name, uri }) =>
-  new Promise((resolve, reject) => {
-    const id = `field-module-${name}`;
-    const prev = document.getElementById(id);
-    if (prev !== null) { prev.remove(); }
-    const script = document.createElement('script');
-    script.id = id;
-    script.src = `${getHost()}/${uri}`;
-    script.type = 'module';
-    script.async = true;
-    script.crossOrigin = 'anonymous';
-    script.onload = resolve;
-    script.onerror = reject;
-    document.body.appendChild(script);
-  });
+export const loadFieldModule = ({ name }) => new Promise((resolve, reject) => {
+  const id = `field-module-${name}`;
+  const prev = document.getElementById(id);
+  if (prev !== null) { prev.remove(); }
+  const script = document.createElement('script');
+  script.id = id;
+  script.src = `${getHost()}/${resolveModulePathname(name)}`;
+  script.type = 'module';
+  script.async = true;
+  script.crossOrigin = 'anonymous';
+  script.onload = resolve;
+  script.onerror = reject;
+  document.body.appendChild(script);
+});
 
-const FM_ENDPOINT = 'api/field_module/field_module';
-const FM_DIR = 'fieldkit/js/';
-const FM_FILE = '/index.js';
 const transformModuleData = (data) => {
   const { id, attributes } = data;
   const {
     drupal_internal__id, status, label, description,
   } = attributes;
   const name = kebab(drupal_internal__id);
-  const uri = FM_DIR + drupal_internal__id + FM_FILE;
   return ({
-    id, name, uri, status, label, description,
+    id, name, status, label, description,
   });
 };
 const transformModuleResponse = compose(
   map(transformModuleData),
   path(['data', 'data']),
 );
+
 export const fetchFieldModules = () => farm.remote.request(FM_ENDPOINT)
   .then(transformModuleResponse);

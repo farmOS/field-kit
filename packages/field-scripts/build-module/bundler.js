@@ -19,7 +19,7 @@ const { version } = JSON.parse(json);
 
 export default async function bundler(config) {
   const {
-    entry, name, label, description,
+    name, label, description, location,
   } = config;
   const fileName = () => `${name}.${version.replaceAll('.', '-')}.js`;
   const drupalName = `farm_fieldkit_${snake(name)}`;
@@ -45,7 +45,7 @@ export default async function bundler(config) {
     ],
     build: {
       lib: {
-        entry,
+        entry: location,
         name,
         fileName,
         formats: ['umd'],
