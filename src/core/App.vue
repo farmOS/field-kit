@@ -51,7 +51,6 @@ export default {
         this.updateProfile()
           .then(this.updateConfigDocs)
           .then(this.updateFieldModules)
-          .then(refreshCache)
           .catch((e) => { this.alert(e); })
           .finally(() => {
             // Try to detect redirects from field modules that weren't loaded
@@ -63,6 +62,7 @@ export default {
               this.$router.push(redirectedFrom.fullPath);
             }
             this.ready = true;
+            return refreshCache();
           });
       })
       .catch(() => {
