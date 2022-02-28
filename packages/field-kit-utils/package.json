@@ -1,0 +1,11 @@
+{
+  "name": "field-kit-utils",
+  "version": "1.0.0",
+  "description": "Utilities and constants for working with farmOS Field Kit and Field Modules.",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jamie Gaehring <gaehj457@gmail.com> (https://jgaehring.com)",
+  "license": "GPL-3.0-or-later"
+}

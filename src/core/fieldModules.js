@@ -2,20 +2,12 @@ import {
   assoc, compose, concat, curry, evolve, map, mapObjIndexed,
   mergeDeepWith, path, pick, prop,
 } from 'ramda';
+import { kebab } from 'field-kit-utils/string-case';
+import { FM_API_ENDPOINT, resolveModulePathname } from 'field-kit-utils/constants';
 import { getHost } from './remote';
 import farm from './farm';
 import routeMixin from './mixins/routeMixin';
 import widgetMixin from './mixins/widgetMixin';
-
-// Convert PascalCase & camelCase to kebab-case (or snake_case), based on:
-// https://stackoverflow.com/a/67243723/1549703.
-const pascalRegex = /[A-Z]+(?![a-z])|[A-Z]/g;
-const kebabReplacer = (match, offset) =>
-  (offset ? '-' : '') + match.toLowerCase();
-const kebab = str => str.replace(pascalRegex, kebabReplacer).replaceAll('_', '-');
-const snakeReplacer = (match, offset) =>
-  (offset ? '_' : '') + match.toLowerCase();
-const snake = str => str.replace(pascalRegex, snakeReplacer).replaceAll('-', '_');
 
 const parseWidgetName = curry((modName, widget) =>
   (widget?.name ? kebab(widget.name) : `${kebab(modName)}-widget`));
@@ -90,13 +82,6 @@ export const mountFieldModule = deps => (mod) => {
   });
 };
 
-// Field Module constants, which should be moved to shared library where they
-// can be accessed by both field-kit and field-scripts.
-const FM_ENDPOINT = '/api/field_module/field_module';
-const FM_DIR = 'fieldkit/js';
-const FM_FILE = 'index.js';
-const resolveModulePathname = name => `${FM_DIR}/${snake(name)}/${FM_FILE}`;
-
 // Takes module info from the API and uses it to inject a script tag and run
 // a module's main entry file (eg, module.js).
 export const loadFieldModule = ({ name }) => new Promise((resolve, reject) => {
@@ -129,5 +114,5 @@ const transformModuleResponse = compose(
   path(['data', 'data']),
 );
 
-export const fetchFieldModules = () => farm.remote.request(FM_ENDPOINT)
+export const fetchFieldModules = () => farm.remote.request(FM_API_ENDPOINT)
   .then(transformModuleResponse);

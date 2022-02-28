@@ -1,6 +1,6 @@
 import http from 'http';
+import { snake } from 'field-kit-utils/string-case.js';
 import { fmtScript, fmtJsonApi } from '../shared/format.js';
-import { snake } from '../build-module/string-case.js';
 
 // Field Module constants, which should be moved to shared library where they
 // can be accessed by both field-kit and field-scripts.

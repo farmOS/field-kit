@@ -21,6 +21,7 @@
     "@farmos.org/farmos-map": "^1.4.2",
     "@turf/turf": "^5.1.6",
     "farmos": "^2.0.0-beta.7",
+    "field-kit-utils": "file:packages/field-kit-utils",
     "ramda": "^0.27.1",
     "vue": "^3.1.0",
     "vue-router": "^4.0.12",

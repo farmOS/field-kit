@@ -3,8 +3,8 @@ import { createServer } from 'vite';
 import createVuePlugin from '@vitejs/plugin-vue';
 import envCompatible from 'vite-plugin-env-compatible';
 import { viteCommonjs } from '@originjs/vite-plugin-commonjs';
+import { snake } from 'field-kit-utils/string-case.js';
 import createMockServer from './mock-server.js';
-import { snake } from '../build-module/string-case.js';
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
