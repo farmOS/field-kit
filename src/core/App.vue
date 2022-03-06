@@ -34,6 +34,7 @@ import AppShell from './shell/AppShell.vue';
 import NotReady from './shell/NotReady.vue';
 import { refreshCache } from './idb/cache';
 import profile, { loadProfile, updateProfile } from './store/profile';
+import settings from './store/settings';
 import flattenEntity from './utils/flattenEntity';
 
 export default {
@@ -43,6 +44,7 @@ export default {
     return {
       farm: profile.farm,
       ready: false,
+      settings,
       user: profile.user,
     };
   },
@@ -81,7 +83,6 @@ export default {
        * CORE STATE
        */
       errors: state => state.errors,
-      settings: state => state.settings,
       modules: state => state.modules,
       areaGeoJSON: state => state.areaGeoJSON,
 

@@ -12,9 +12,6 @@ const initState = {
   errors: [],
   modules: [],
   mapboxAPIKey: '',
-  settings: {
-    useGeolocation: true,
-  },
   areaGeoJSON: {
     type: 'FeatureCollection',
     features: [],

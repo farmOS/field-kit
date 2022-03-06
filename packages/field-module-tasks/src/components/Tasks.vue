@@ -11,7 +11,7 @@
       @toggle-category-filter="toggleCategoryFilter"
       :filters="filters"
       :userId="user.id"
-      :useGeolocation="settings.useGeolocation"
+      :useGeolocation="settings.permissions.geolocation"
       :areaGeoJSON="areaGeoJSON"
       :logs="sortedLogs"
       :areas="areas"

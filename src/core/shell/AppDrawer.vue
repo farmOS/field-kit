@@ -31,7 +31,7 @@
         <farm-toggle-check
           :label="$t('Share My Location')"
           labelPosition="before"
-          :checked="settings.useGeolocation"
+          :checked="settings.permissions.geolocation"
           @input="setUseGeolocation($event)"
         />
       </farm-list-item>
@@ -74,6 +74,7 @@
 <script>
 import { mapState } from 'vuex';
 import profile from '../store/profile';
+import settings from '../store/settings';
 import { version } from '../../../package.json';
 
 export default {
@@ -83,6 +84,7 @@ export default {
     return {
       user: profile.user,
       farm: profile.farm,
+      settings,
       version,
     };
   },
@@ -91,7 +93,6 @@ export default {
       /**
        * CORE STATE
        */
-      settings: state => state.settings,
       modules: state => state.modules,
       // areaGeoJSON: state => state.areaGeoJSON,
       /**
@@ -109,7 +110,6 @@ export default {
       this.$emit('close');
     },
     // setUseGeolocation(checked) {
-    //   this.$store.commit('setUseGeolocation', checked);
     // },
     // setLocale(e) {
     //   this.$store.commit('setLocale', e.target.value);
