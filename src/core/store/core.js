@@ -8,23 +8,8 @@ import { authInterceptor } from '../http/auth';
 
 const LS = window.localStorage;
 
-const defaultProfile = {
-  farm: {
-    name: '',
-    url: '',
-    version: '',
-    system_of_measurement: '',
-  },
-  user: {
-    id: '',
-    display_name: '',
-    langcode: 'en',
-  },
-};
-
 const initState = {
   errors: [],
-  profile: defaultProfile,
   modules: [],
   mapboxAPIKey: '',
   settings: {
@@ -67,19 +52,6 @@ export default {
     dismissAlert(state, index) {
       state.errors.splice(index, 1);
     },
-    setProfile(state, profile = {}) {
-      const { farm: farmInfo = {}, user = {} } = profile;
-      state.profile = {
-        farm: {
-          ...state.profile.farm,
-          ...farmInfo,
-        },
-        user: {
-          ...state.profile.user,
-          ...user,
-        },
-      };
-    },
     updateModuleConfig(state, modConfig) {
       const i = state.modules.findIndex(m => m.name === modConfig.name);
       if (i >= 0) {
@@ -100,32 +72,6 @@ export default {
       setHost(host);
       farm.remote.add(remote);
       return farm.remote.authorize(username, password);
-    },
-    loadProfile({ commit }) {
-      const profile = JSON.parse(LS.getItem('profile'));
-      if (profile) {
-        commit('setProfile', profile);
-        return Promise.resolve(profile);
-      }
-      return Promise.reject(new Error('No profile cached, login required.'));
-    },
-    updateProfile({ state, commit, dispatch }) {
-      return farm.remote.info()
-        .then((info) => {
-          const farmInfo = info.data?.meta?.farm;
-          const user = info.data?.meta?.links?.me?.meta;
-          if (farmInfo && user) {
-            commit('setProfile', { farm: farmInfo, user });
-            return dispatch('fetchEntities', { name: 'user', filter: { type: 'user', id: user.id } });
-          }
-          return Promise.reject(new Error('Cannot find remote profile info.'));
-        })
-        .then((results) => {
-          const { attributes: { display_name, langcode } } = results.data[0];
-          commit('setProfile', { user: { display_name, langcode } });
-          LS.setItem('profile', JSON.stringify(state.profile));
-          return state.profile;
-        });
     },
     loadFieldModules({ commit }) {
       const modules = JSON.parse(LS.getItem('modules')) || [];

@@ -73,6 +73,7 @@
 
 <script>
 import { mapState } from 'vuex';
+import profile from '../store/profile';
 import { version } from '../../../package.json';
 
 export default {
@@ -80,6 +81,8 @@ export default {
   emits: ['close'],
   data() {
     return {
+      user: profile.user,
+      farm: profile.farm,
       version,
     };
   },
@@ -88,8 +91,6 @@ export default {
       /**
        * CORE STATE
        */
-      user: state => state.profile.user,
-      farm: state => state.profile.farm,
       settings: state => state.settings,
       modules: state => state.modules,
       // areaGeoJSON: state => state.areaGeoJSON,

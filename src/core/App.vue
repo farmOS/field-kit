@@ -33,6 +33,7 @@ import { mapActions, mapState } from 'vuex';
 import AppShell from './shell/AppShell.vue';
 import NotReady from './shell/NotReady.vue';
 import { refreshCache } from './idb/cache';
+import profile, { loadProfile, updateProfile } from './store/profile';
 import flattenEntity from './utils/flattenEntity';
 
 export default {
@@ -40,15 +41,17 @@ export default {
   components: { AppShell, NotReady },
   data() {
     return {
+      farm: profile.farm,
       ready: false,
+      user: profile.user,
     };
   },
   created() {
-    this.loadProfile()
+    loadProfile()
       .then(this.loadConfigDocs)
       .then(this.loadFieldModules)
       .then(() => {
-        this.updateProfile()
+        updateProfile()
           .then(this.updateConfigDocs)
           .then(this.updateFieldModules)
           .catch((e) => { this.alert(e); })
@@ -78,8 +81,6 @@ export default {
        * CORE STATE
        */
       errors: state => state.errors,
-      user: state => state.profile.user,
-      farm: state => state.profile.farm,
       settings: state => state.settings,
       modules: state => state.modules,
       areaGeoJSON: state => state.areaGeoJSON,
@@ -109,10 +110,8 @@ export default {
   },
   methods: {
     ...mapActions([
-      'loadProfile',
       'loadConfigDocs',
       'loadFieldModules',
-      'updateProfile',
       'updateConfigDocs',
       'updateFieldModules',
     ]),
