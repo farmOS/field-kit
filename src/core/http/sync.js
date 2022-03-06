@@ -43,6 +43,7 @@ export const syncEntities = (shortName, { cache = [], filter, limit }) =>
       return {
         data: insert(i, merged, data),
         fulfilled: [...fulfilled, remote],
+        rejected,
       };
     }, fetchResults);
     return Promise.allSettled(sendRequests).then(handleSendResults);
