@@ -43,7 +43,9 @@ export const cacheEntity = (name, entity, options) => {
     farm.meta.isUnsynced,
   ]);
   if (meetsCriteria(entity)) {
-    return saveRecord('entities', name, entity);
+    return saveRecord('entities', name, entity)
+      // b/c saveRecord just returns the uuid
+      .then(() => entity);
   }
   return Promise.resolve(entity);
 };
