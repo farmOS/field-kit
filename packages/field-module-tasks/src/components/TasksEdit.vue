@@ -650,15 +650,10 @@ export default {
 
     // getPhoto() {
     //   // Obtains an image location from the camera!
-    //   return this.$store.dispatch('getPhotoFromCamera', this.log);
     // },
 
     // loadPhoto(files) {
     //   for (let i = 0; i < files.length; i += 1) {
-    //     this.$store.dispatch('loadPhotoBlob', {
-    //       file: files[i],
-    //       log: this.log,
-    //     });
     //   }
     // },
 

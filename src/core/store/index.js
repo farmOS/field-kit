@@ -2,7 +2,6 @@ import { createStore } from 'vuex';
 import core from './core';
 import configDocuments from './configDocuments';
 import entities from './entities';
-import camModule from './camModule';
 // import l10nModule from './l10n/module';
 
 const store = createStore({
@@ -22,7 +21,6 @@ const store = createStore({
     ...entities.actions,
   },
   modules: {
-    cam: camModule,
     // l10n: l10nModule,
   },
 });
