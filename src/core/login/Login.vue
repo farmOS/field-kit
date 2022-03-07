@@ -66,7 +66,10 @@
 
 <script>
 import { refreshCache } from '../idb/cache';
-import { getHost } from '../remote';
+import {
+  clientId, getHost, getToken, setHost, setToken,
+} from '../remote';
+import farm from '../farm';
 import { updateFieldModules } from '../field-modules';
 import { updateConfigDocs } from '../store/configDocuments';
 import { updateProfile } from '../store/profile';
@@ -97,12 +100,12 @@ export default {
       this.authPending = true;
       const host = process.env.NODE_ENV === 'development'
         ? '' : `https://${this.url.replace(/(^\w+:|^)\/\//, '')}`;
-      const payload = {
-        host,
-        username: this.username,
-        password: this.password,
+      const remote = {
+        host, clientId, getToken, setToken,
       };
-      this.$store.dispatch('authorize', payload)
+      setHost(host);
+      farm.remote.add(remote);
+      return farm.remote.authorize(this.username, this.password)
         .then(() => {
           this.updatesPending = true;
           this.authPending = false;
