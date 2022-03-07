@@ -29,11 +29,12 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapState } from 'vuex';
 import AppShell from './shell/AppShell.vue';
 import NotReady from './shell/NotReady.vue';
 import { refreshCache } from './idb/cache';
 import { loadFieldModules, updateFieldModules } from './field-modules';
+import { loadConfigDocs, updateConfigDocs } from './store/configDocuments';
 import { alert } from './store/errors';
 import profile, { loadProfile, updateProfile } from './store/profile';
 import settings from './store/settings';
@@ -52,11 +53,11 @@ export default {
   },
   created() {
     loadProfile()
-      .then(this.loadConfigDocs)
+      .then(loadConfigDocs)
       .then(loadFieldModules)
       .then(() => {
         updateProfile()
-          .then(this.updateConfigDocs)
+          .then(updateConfigDocs)
           .then(updateFieldModules)
           .catch((e) => { alert(e); })
           .finally(() => {
@@ -108,12 +109,6 @@ export default {
       termTypes: state => state.termTypes,
       userTypes: state => state.userTypes,
     }),
-  },
-  methods: {
-    ...mapActions([
-      'loadConfigDocs',
-      'updateConfigDocs',
-    ]),
   },
 };
 </script>
