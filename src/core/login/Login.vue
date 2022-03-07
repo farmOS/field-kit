@@ -65,9 +65,11 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
 import { refreshCache } from '../idb/cache';
 import { getHost } from '../remote';
+import { updateFieldModules } from '../field-modules';
+import { updateConfigDocs } from '../store/configDocuments';
+import { updateProfile } from '../store/profile';
 
 export default {
   name: 'LoginScreen',
@@ -83,11 +85,6 @@ export default {
   },
   inject: ['alert'],
   methods: {
-    ...mapActions([
-      'updateProfile',
-      'updateConfigDocs',
-      'updateFieldModules',
-    ]),
     checkValues() {
       const urlIsValid = process.env.NODE_ENV === 'development' || this.url !== '';
       const usernameIsValid = this.username !== '';
@@ -109,9 +106,9 @@ export default {
         .then(() => {
           this.updatesPending = true;
           this.authPending = false;
-          return this.updateConfigDocs()
-            .then(this.updateProfile)
-            .then(this.updateFieldModules)
+          return updateConfigDocs()
+            .then(updateProfile)
+            .then(updateFieldModules)
             .then(refreshCache)
             .then(() => {
               this.updatesPending = false;
