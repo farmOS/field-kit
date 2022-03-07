@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import { mapActions, mapMutations } from 'vuex';
+import { mapActions } from 'vuex';
 import { refreshCache } from '../idb/cache';
 import { getHost } from '../remote';
 
@@ -81,9 +81,8 @@ export default {
       url: '',
     };
   },
-
+  inject: ['alert'],
   methods: {
-    ...mapMutations(['alert']),
     ...mapActions([
       'updateProfile',
       'updateConfigDocs',

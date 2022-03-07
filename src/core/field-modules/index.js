@@ -3,7 +3,7 @@ import { compose, map, path } from 'ramda';
 import { kebab } from 'field-kit-utils/string-case';
 import { FM_API_ENDPOINT } from 'field-kit-utils/constants';
 import farm from '../farm';
-import vuex from '../store';
+import { alert } from '../store/errors';
 import importFieldModule from './import';
 import upsert from '../utils/upsert';
 
@@ -57,7 +57,7 @@ const setFieldModules = mods => (results) => {
   });
   rejected.forEach(({ label, uri }) => {
     const error = new Error(`Error installing ${label} module from ${uri}.`);
-    vuex.commit('alert', error);
+    alert(error);
   });
   return fulfilled;
 };

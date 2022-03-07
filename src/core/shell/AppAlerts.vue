@@ -17,17 +17,15 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex';
+import errors, { dismissAlert } from '../store/errors';
 
 export default {
   name: 'AppAlerts',
-  computed: {
-    ...mapState({
-      errors: state => state.errors,
-    }),
+  data() {
+    return { errors };
   },
   methods: {
-    ...mapMutations(['alert', 'dismissAlert']),
+    dismissAlert,
   },
 };
 </script>

@@ -6,6 +6,7 @@ import store from './store';
 import App from './App.vue';
 import AppBarOptions from './shell/AppBarOptions.vue';
 import mountFieldModule from './field-modules/mount';
+import { alert } from './store/errors';
 import t from './mixins/t';
 import farm from './farm';
 import utils from './utils';
@@ -30,6 +31,13 @@ window.farmOS.lib = {
   wellknown,
 };
 window.Vue = Vue;
+
+// Because the native window.alert() function blocks all execution, which could
+// interfere with background processes, and because it could easily be confused
+// with the app shell's alert function, reassign the native alert to another
+// variable and overwrite window.alert with the app shell's implementation.
+window.dangerouslyBlockingAlert = window.alert;
+window.alert = alert;
 
 const app = window.Vue.createApp(App);
 window.app = app;

@@ -537,6 +537,8 @@ export default {
     'isSyncing',
   ],
 
+  inject: ['alert'],
+
   methods: {
     updateCurrentLog(key, val) {
       const props = {
@@ -665,7 +667,7 @@ export default {
         props = { value: mergeGeometries([oldGeom, newGeom]) };
       }
       function onError(error) {
-        this.$store.commit('alert', error);
+        this.alert(error);
         this.awaitingLocation = false;
       }
       const options = {
@@ -823,7 +825,7 @@ export default {
     //     ));
     //   }
     //   function onError(error) {
-    //     this.$store.commit('alert', error);
+    //     this.alert(error);
     //   }
     //   // If useLocalAreas is set to true, get geolocation and nearby areas
     //   if (this.useLocalAreas) {

@@ -34,6 +34,7 @@ import AppShell from './shell/AppShell.vue';
 import NotReady from './shell/NotReady.vue';
 import { refreshCache } from './idb/cache';
 import { loadFieldModules, updateFieldModules } from './field-modules';
+import { alert } from './store/errors';
 import profile, { loadProfile, updateProfile } from './store/profile';
 import settings from './store/settings';
 import flattenEntity from './utils/flattenEntity';
@@ -57,7 +58,7 @@ export default {
         updateProfile()
           .then(this.updateConfigDocs)
           .then(updateFieldModules)
-          .catch((e) => { this.alert(e); })
+          .catch((e) => { alert(e); })
           .finally(() => {
             // Try to detect redirects from field modules that weren't loaded
             // and hadn't registered their routes when the page loaded.
@@ -83,7 +84,6 @@ export default {
       /**
        * CORE STATE
        */
-      errors: state => state.errors,
       areaGeoJSON: state => state.areaGeoJSON,
 
       /**

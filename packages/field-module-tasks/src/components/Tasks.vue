@@ -124,6 +124,7 @@ const transformCategoryFilters = (categories) => {
 export default {
   name: 'TasksContainer',
   emits: ['open-drawer'],
+  inject: ['alert'],
   data() {
     return {
       showDeleteDialog: false,
@@ -192,7 +193,7 @@ export default {
       const filter = this.transformFilters();
       this.syncLogs(filter)
         .catch((e) => {
-          this.$store.commit('alert', e);
+          this.alert(e);
         })
         .finally(() => { this.isSyncing = false; });
     },

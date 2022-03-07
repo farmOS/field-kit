@@ -13,6 +13,7 @@
 </template>
 
 <script>
+import { alert } from '../store/errors';
 import AppAlerts from './AppAlerts.vue';
 import AppDrawer from './AppDrawer.vue';
 import AppModal from './AppModal.vue';
@@ -26,6 +27,7 @@ export default {
   provide() {
     return {
       openDrawer: this.openDrawer,
+      alert,
     };
   },
   data() {
