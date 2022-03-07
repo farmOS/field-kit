@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { alert } from '../store/errors';
+import { alert } from '../store/alert';
 import AppAlerts from './AppAlerts.vue';
 import AppDrawer from './AppDrawer.vue';
 import AppModal from './AppModal.vue';
