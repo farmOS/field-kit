@@ -28,7 +28,7 @@ const partitionConfigDocs = reduce(docsReducer, [{}, {}]);
 const configTypes = ['asset', 'log', 'quantity'];
 const configTypesState = configTypes.reduce((types, name) => ({
   ...types,
-  [`${name}Types`]: [],
+  [name]: [],
 }), {});
 const requestConfigEntity = name =>
   farm.remote.request(`/api/${name}_type/${name}_type`).then(prop('data'));
@@ -50,7 +50,7 @@ export { reference as default };
 
 export function setConfigTypes({ name, types }) {
   const { shortName } = nomenclature.entities[name];
-  store[`${shortName}Types`] = types;
+  store[shortName] = types;
 }
 
 export function loadConfigDocs() {
