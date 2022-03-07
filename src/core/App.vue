@@ -20,8 +20,7 @@
             :planTypes="planTypes"
             :quantityTypes="quantityTypes"
             :termTypes="termTypes"
-            :userTypes="userTypes"
-            :areaGeoJSON="areaGeoJSON"/>
+            :userTypes="userTypes"/>
         </router-view>
       </template>
     </app-shell>
@@ -82,11 +81,6 @@ export default {
   },
   computed: {
     ...mapState({
-      /**
-       * CORE STATE
-       */
-      areaGeoJSON: state => state.areaGeoJSON,
-
       /**
        * L10N STATE
        */

@@ -12,7 +12,6 @@
       :filters="filters"
       :userId="user.id"
       :useGeolocation="settings.permissions.geolocation"
-      :areaGeoJSON="areaGeoJSON"
       :logs="sortedLogs"
       :areas="areas"
       :assets="assets"
@@ -141,7 +140,6 @@ export default {
   props: [
     'user',
     'settings',
-    'areaGeoJSON',
     'assets',
     'logs',
     'terms',

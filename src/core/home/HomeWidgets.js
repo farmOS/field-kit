@@ -27,7 +27,6 @@ const HomeWidgets = {
     'quantityTypes',
     'termTypes',
     'userTypes',
-    'areaGeoJSON',
   ],
   render() {
     const { h, reactive, resolveComponent } = window.Vue;
@@ -85,7 +84,6 @@ const HomeWidgets = {
                 quantityTypes: this.quantityTypes,
                 termTypes: this.termTypes,
                 userTypes: this.userTypes,
-                areaGeoJSON: this.areaGeoJSON,
                 onClick() {
                   self.$router.push(mod.routes[0].path);
                 },

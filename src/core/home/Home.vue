@@ -17,8 +17,7 @@
       :planTypes='planTypes'
       :quantityTypes='quantityTypes'
       :termTypes='termTypes'
-      :userTypes='userTypes'
-      :areaGeoJSON='areaGeoJSON'/>
+      :userTypes='userTypes'/>
   </farm-main>
 </template>
 
@@ -45,7 +44,6 @@ export default {
     'quantityTypes',
     'termTypes',
     'userTypes',
-    'areaGeoJSON',
   ],
   data() {
     return {
