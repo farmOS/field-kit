@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import fieldModules from '../field-modules';
 import HomeWidgets from './HomeWidgets';
 
 export default {
@@ -47,10 +47,10 @@ export default {
     'userTypes',
     'areaGeoJSON',
   ],
-  computed: {
-    ...mapState({
-      modules: state => state.modules,
-    }),
+  data() {
+    return {
+      modules: fieldModules,
+    };
   },
 };
 

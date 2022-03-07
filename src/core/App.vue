@@ -33,6 +33,7 @@ import { mapActions, mapState } from 'vuex';
 import AppShell from './shell/AppShell.vue';
 import NotReady from './shell/NotReady.vue';
 import { refreshCache } from './idb/cache';
+import { loadFieldModules, updateFieldModules } from './field-modules';
 import profile, { loadProfile, updateProfile } from './store/profile';
 import settings from './store/settings';
 import flattenEntity from './utils/flattenEntity';
@@ -51,11 +52,11 @@ export default {
   created() {
     loadProfile()
       .then(this.loadConfigDocs)
-      .then(this.loadFieldModules)
+      .then(loadFieldModules)
       .then(() => {
         updateProfile()
           .then(this.updateConfigDocs)
-          .then(this.updateFieldModules)
+          .then(updateFieldModules)
           .catch((e) => { this.alert(e); })
           .finally(() => {
             // Try to detect redirects from field modules that weren't loaded
@@ -83,7 +84,6 @@ export default {
        * CORE STATE
        */
       errors: state => state.errors,
-      modules: state => state.modules,
       areaGeoJSON: state => state.areaGeoJSON,
 
       /**
@@ -112,9 +112,7 @@ export default {
   methods: {
     ...mapActions([
       'loadConfigDocs',
-      'loadFieldModules',
       'updateConfigDocs',
-      'updateFieldModules',
     ]),
   },
 };

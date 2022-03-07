@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import fieldModules from '../field-modules';
 import profile from '../store/profile';
 import settings from '../store/settings';
 import { version } from '../../../package.json';
@@ -84,23 +84,10 @@ export default {
     return {
       user: profile.user,
       farm: profile.farm,
+      modules: fieldModules,
       settings,
       version,
     };
-  },
-  computed: {
-    ...mapState({
-      /**
-       * CORE STATE
-       */
-      modules: state => state.modules,
-      // areaGeoJSON: state => state.areaGeoJSON,
-      /**
-       * L10N STATE
-       */
-      // locale: state => state.l10n.locale,
-      // langs: state => state.l10n.languages,
-    }),
   },
   methods: {
     handleRoute(route) {

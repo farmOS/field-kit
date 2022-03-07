@@ -5,7 +5,7 @@ import router from './router';
 import store from './store';
 import App from './App.vue';
 import AppBarOptions from './shell/AppBarOptions.vue';
-import { mountFieldModule } from './fieldModules';
+import mountFieldModule from './field-modules/mount';
 import t from './mixins/t';
 import farm from './farm';
 import utils from './utils';
@@ -42,7 +42,7 @@ app.use(router);
 app.mixin(t);
 
 // Provide a global function for mounting Field Modules with all its dependencies.
-window.farmOS.mountFieldModule = mountFieldModule({ app, router, store });
+window.farmOS.mountFieldModule = mountFieldModule({ app, router });
 
 // Register the shared component library globally so they can be accessed from
 // any other component and field module.

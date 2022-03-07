@@ -1,13 +1,11 @@
 import {
   assoc, compose, concat, curry, evolve, map, mapObjIndexed,
-  mergeDeepWith, path, pick, prop,
+  mergeDeepWith, pick, prop,
 } from 'ramda';
 import { kebab } from 'field-kit-utils/string-case';
-import { FM_API_ENDPOINT, resolveModulePathname } from 'field-kit-utils/constants';
-import { getHost } from './remote';
-import farm from './farm';
-import routeMixin from './mixins/routeMixin';
-import widgetMixin from './mixins/widgetMixin';
+import routeMixin from '../mixins/routeMixin';
+import widgetMixin from '../mixins/widgetMixin';
+import { upsertModuleConfig } from './index';
 
 const parseWidgetName = curry((modName, widget) =>
   (widget?.name ? kebab(widget.name) : `${kebab(modName)}-widget`));
@@ -70,11 +68,11 @@ const prepRoute = route => evolve({
 
 // Main function called by modules to add their components and routes to the
 // main Vue app and Vuex store.
-export const mountFieldModule = deps => (mod) => {
-  const { app, router, store } = deps;
+const mountFieldModule = deps => (mod) => {
+  const { app, router } = deps;
   const { routes = [], widget } = mod;
   const modConfig = parseModuleConfig(mod, app);
-  store.commit('updateModuleConfig', modConfig);
+  upsertModuleConfig(modConfig);
   if (widget) registerWidget(app, mod.name, widget);
   routes.forEach((raw) => {
     const route = prepRoute(raw);
@@ -82,37 +80,4 @@ export const mountFieldModule = deps => (mod) => {
   });
 };
 
-// Takes module info from the API and uses it to inject a script tag and run
-// a module's main entry file (eg, module.js).
-export const loadFieldModule = ({ name }) => new Promise((resolve, reject) => {
-  const id = `field-module-${name}`;
-  const prev = document.getElementById(id);
-  if (prev !== null) { prev.remove(); }
-  const script = document.createElement('script');
-  script.id = id;
-  script.src = `${getHost()}/${resolveModulePathname(name)}`;
-  script.type = 'module';
-  script.async = true;
-  script.crossOrigin = 'anonymous';
-  script.onload = resolve;
-  script.onerror = reject;
-  document.body.appendChild(script);
-});
-
-const transformModuleData = (data) => {
-  const { id, attributes } = data;
-  const {
-    drupal_internal__id, status, label, description,
-  } = attributes;
-  const name = kebab(drupal_internal__id);
-  return ({
-    id, name, status, label, description,
-  });
-};
-const transformModuleResponse = compose(
-  map(transformModuleData),
-  path(['data', 'data']),
-);
-
-export const fetchFieldModules = () => farm.remote.request(`/${FM_API_ENDPOINT}`)
-  .then(transformModuleResponse);
+export default mountFieldModule;
