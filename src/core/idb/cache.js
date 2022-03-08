@@ -5,9 +5,12 @@ import {
   deleteRecord, getRecords, saveRecord,
 } from '.';
 import { syncEntities } from '../http/sync';
+import interceptor from '../http/interceptor';
 import parseFilter from '../utils/parseFilter';
 import daysAway from '../utils/daysAway';
-import SyncError from '../http/SyncError';
+import useRouter from '../store/useRouter';
+import { updateStatus } from '../store/connection';
+import { alert } from '../store/alert';
 
 const LS = window.localStorage;
 
@@ -61,6 +64,22 @@ export const purgeCache = () => {
   return Promise.all(dbRequests);
 };
 
+function syncHandler(evaluation) {
+  const {
+    loginRequired,
+    connectivity,
+    alerts,
+  } = evaluation;
+  updateStatus(connectivity);
+  if (alerts.length > 0) {
+    alert(alerts);
+  }
+  if (loginRequired) {
+    const router = useRouter();
+    router.push('/login');
+  }
+}
+
 export const syncCache = async () => {
   const now = new Date().toISOString();
   const settings = JSON.parse(LS.getItem('cacheSettings')) || {};
@@ -74,21 +93,19 @@ export const syncCache = async () => {
     const cacheRequests = syncResults.data.map(e => cacheEntity(name, e, criteria));
     const cacheResults = await Promise.allSettled(cacheRequests);
     const failedToCache = cacheResults.some(({ status }) => status === 'rejected');
-    if (syncResults.rejected.length === 0 && !failedToCache) {
-      return syncResults;
+    if (failedToCache) {
+      cacheResults.forEach(({ status, reason }, i) => {
+        if (status === 'rejected') {
+          const data = syncResults.data[i];
+          const error = new Error(
+            `Error caching ${shortName} "${data.name}": ${reason.message}`,
+            { cause: reason },
+          );
+          alert(error);
+        }
+      }, []);
     }
-    if (syncResults.rejected.length > 0 && !failedToCache) {
-      throw new SyncError(syncResults);
-    }
-    const cacheFailures = cacheResults.reduce((rejected, { status, reason }, i) => {
-      if (status !== 'rejected') return rejected;
-      const data = syncResults.data[i];
-      return rejected.concat({ reason, data });
-    }, []);
-    throw new SyncError({
-      ...syncResults,
-      rejected: syncResults.rejected.concat(cacheFailures),
-    });
+    return interceptor(syncResults, syncHandler);
   });
   return Promise.allSettled(requests).then(() => {
     const newSettings = { ...settings, lastSync: new Date().toISOString() };

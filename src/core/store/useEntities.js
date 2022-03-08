@@ -7,6 +7,11 @@ import { getRecords } from '../idb';
 import { syncEntities } from '../http/sync';
 import { cacheEntity } from '../idb/cache';
 import flattenEntity from '../utils/flattenEntity';
+import asArray from '../utils/asArray';
+import useRouter from './useRouter';
+import { updateStatus } from './connection';
+import { alert } from './alert';
+import interceptor from '../http/interceptor';
 
 function PromiseQueue(init) {
   this.init = Promise.resolve().then(init);
@@ -18,18 +23,35 @@ function PromiseQueue(init) {
   };
 }
 
-// Wrap a value in an array, unless it's nullish, then return an empty array.
-const asArray = value => (value ? [value] : []);
+function syncHandler(evaluation) {
+  const {
+    loginRequired,
+    connectivity,
+    alerts,
+    // reschedule,
+    // notFound,
+  } = evaluation;
+  updateStatus(connectivity);
+  if (alerts.length > 0) {
+    alert(alerts);
+  }
+  if (loginRequired) {
+    const router = useRouter();
+    router.push('/login');
+  }
+}
 
 // A "reader" or "writer" returns a list of async read/write operations, which
 // can be passed to and evaluated by an instance of PromiseQueue.
 const reader = (entity, type, id) => [
   () => getRecords('entities', entity, id).then(([, data]) => data),
   data => syncEntities(entity, { cache: asArray(data), filter: { id, type } })
-    .then(results => results.data?.[0]),
+    .then(results => interceptor(results, syncHandler))
+    .then(({ data: [value] = [] } = {}) => value),
 ];
 const writer = (entity, type, id) => [
   data => syncEntities(entity, { cache: asArray(data), filter: { id, type } })
+    .then(results => interceptor(results, syncHandler))
     .then(({ data: [value] = [] } = {}) => value),
   data => cacheEntity(entity, data, { now: Date.now() }),
 ];
