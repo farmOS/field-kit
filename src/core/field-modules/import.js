@@ -1,5 +1,5 @@
 import { resolveModulePathname } from 'field-kit-utils/constants';
-import { getHost } from '../remote';
+import { getHost } from '../http/remote';
 
 // Takes module info from the API and uses it to inject a script tag and run
 // a module's main entry file (eg, module.js).

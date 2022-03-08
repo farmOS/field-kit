@@ -1,5 +1,5 @@
 import { evolve, reduce } from 'ramda';
-import { getHost } from '../remote';
+import { getHost } from './remote';
 import asArray from '../utils/asArray';
 
 function evaluateResponse(response = {}, errorMsg) {

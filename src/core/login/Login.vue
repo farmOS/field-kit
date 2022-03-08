@@ -68,7 +68,7 @@
 import { refreshCache } from '../idb/cache';
 import {
   clientId, getHost, getToken, setHost, setToken,
-} from '../remote';
+} from '../http/remote';
 import farm from '../farm';
 import { updateFieldModules } from '../field-modules';
 import { updateConfigDocs } from '../store/configDocuments';
