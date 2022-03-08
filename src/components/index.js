@@ -28,6 +28,8 @@ import IconAssignmentLate from './icons/icon-assignment-late.vue';
 import IconAssignment from './icons/icon-assignment.vue';
 import IconCancel from './icons/icon-cancel.vue';
 import IconCloudDone from './icons/icon-cloud-done.vue';
+import IconCloudOff from './icons/icon-cloud-off.vue';
+import IconCloudSync from './icons/icon-cloud-sync.vue';
 import IconCloudUpload from './icons/icon-cloud-upload.vue';
 import IconDelete from './icons/icon-delete.vue';
 import IconEdit from './icons/icon-edit.vue';
@@ -73,6 +75,8 @@ export default [
   IconAssignment,
   IconCancel,
   IconCloudDone,
+  IconCloudOff,
+  IconCloudSync,
   IconCloudUpload,
   IconDelete,
   IconEdit,

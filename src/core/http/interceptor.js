@@ -120,6 +120,18 @@ function addAlert(tuple, map) {
 }
 
 export default function interceptor(syncResults, handler = () => {}, overrides = {}) {
+  if (syncResults.rejected.length < 1) {
+    // Early return if no errors were encountered, but make sure to run the
+    // handler still, with default values that indicate all successful requests.
+    handler({
+      loginRequired: false,
+      reschedule: [],
+      connectivity: 1,
+      notFound: [],
+      alerts: [],
+    });
+    return syncResults;
+  }
   function concatenate(accumulator, error) {
     // Skip it and return the accumulator if it's not a valid instance of Error.
     if (!(error instanceof Error)) return accumulator;
@@ -152,7 +164,10 @@ export default function interceptor(syncResults, handler = () => {}, overrides =
   const {
     loginRequired, requested, responded, reschedule, notFound, alert,
   } = reduce(concatenate, initEvaluation, syncResults.rejected);
-  const connectivity = requested === 0 ? 0 : responded / requested;
+  // As long as the number of request attempts is non-zero, a quotient can be
+  // calculated by division; otherwise, no requests were made, so the network
+  // status is unknown, as denoted by -1, which will be ignored by updateStatus.
+  const connectivity = requested > 0 ? responded / requested : -1;
   const evaluation = {
     loginRequired,
     reschedule,

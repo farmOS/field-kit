@@ -9,7 +9,7 @@ import interceptor from '../http/interceptor';
 import parseFilter from '../utils/parseFilter';
 import daysAway from '../utils/daysAway';
 import useRouter from '../store/useRouter';
-import { updateStatus } from '../store/connection';
+import { STATUS_IN_PROGRESS, updateStatus } from '../store/connection';
 import { alert } from '../store/alert';
 
 const LS = window.localStorage;
@@ -89,6 +89,7 @@ export const syncCache = async () => {
     const changed = { $gt: lastSync };
     const filter = changed.$gt ? { ...criteria, changed } : criteria;
     const cache = await getRecords('entities', name);
+    updateStatus(STATUS_IN_PROGRESS);
     const syncResults = await syncEntities(shortName, { filter, cache, limit: Infinity });
     const cacheRequests = syncResults.data.map(e => cacheEntity(name, e, criteria));
     const cacheResults = await Promise.allSettled(cacheRequests);

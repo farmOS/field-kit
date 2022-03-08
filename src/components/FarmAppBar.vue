@@ -8,6 +8,9 @@
       <li class="title">{{title}}</li>
     </ul>
     <ul class="actions">
+      <li v-if="$slots.status" class="status">
+        <slot name="status"></slot>
+      </li>
       <li v-for="(a, i) in acts.show" :key="`app-bar-action-${i}`" @click="a.onClick">
         <component :is="a.icon"/>
       </li>

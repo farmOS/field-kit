@@ -9,7 +9,7 @@ import { cacheEntity } from '../idb/cache';
 import flattenEntity from '../utils/flattenEntity';
 import asArray from '../utils/asArray';
 import useRouter from './useRouter';
-import { updateStatus } from './connection';
+import { STATUS_IN_PROGRESS, updateStatus } from './connection';
 import { alert } from './alert';
 import interceptor from '../http/interceptor';
 
@@ -28,8 +28,6 @@ function syncHandler(evaluation) {
     loginRequired,
     connectivity,
     alerts,
-    // reschedule,
-    // notFound,
   } = evaluation;
   updateStatus(connectivity);
   if (alerts.length > 0) {
@@ -41,16 +39,23 @@ function syncHandler(evaluation) {
   }
 }
 
+const withInProgress = syncFn => (...args) => {
+  updateStatus(STATUS_IN_PROGRESS);
+  return syncFn(...args);
+};
+
+const sync = withInProgress(syncEntities);
+
 // A "reader" or "writer" returns a list of async read/write operations, which
 // can be passed to and evaluated by an instance of PromiseQueue.
 const reader = (entity, type, id) => [
   () => getRecords('entities', entity, id).then(([, data]) => data),
-  data => syncEntities(entity, { cache: asArray(data), filter: { id, type } })
+  data => sync(entity, { cache: asArray(data), filter: { id, type } })
     .then(results => interceptor(results, syncHandler))
     .then(({ data: [value] = [] } = {}) => value),
 ];
 const writer = (entity, type, id) => [
-  data => syncEntities(entity, { cache: asArray(data), filter: { id, type } })
+  data => sync(entity, { cache: asArray(data), filter: { id, type } })
     .then(results => interceptor(results, syncHandler))
     .then(({ data: [value] = [] } = {}) => value),
   data => cacheEntity(entity, data, { now: Date.now() }),
