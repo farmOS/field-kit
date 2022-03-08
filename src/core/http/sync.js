@@ -19,7 +19,7 @@ export const syncEntities = (shortName, { cache = [], filter, limit }) =>
   fetchEntities(shortName, { cache, filter, limit }).then((fetchResults) => {
     const { data: mergedEntities } = fetchResults;
     const failedBundleNames = fetchResults.rejected.map(({ response = {} }) => {
-      const { config: { url } } = response;
+      const { config: { url = '' } = {} } = response;
       const bundleName = url.split('?')[0].split('/').pop();
       return bundleName;
     });
