@@ -1,6 +1,6 @@
 import { reactive, readonly } from 'vue';
 import {
-  clone, complement, compose, curryN, equals, is, reduce,
+  clone, complement, compose, curryN, equals, is,
 } from 'ramda';
 import farm from '../farm';
 import { getRecords } from '../idb';
@@ -38,28 +38,6 @@ function syncHandler(evaluation) {
     router.push('/login');
   }
 }
-
-const withInProgress = syncFn => (...args) => {
-  updateStatus(STATUS_IN_PROGRESS);
-  return syncFn(...args);
-};
-
-const sync = withInProgress(syncEntities);
-
-// A "reader" or "writer" returns a list of async read/write operations, which
-// can be passed to and evaluated by an instance of PromiseQueue.
-const reader = (entity, type, id) => [
-  () => getRecords('entities', entity, id).then(([, data]) => data),
-  data => sync(entity, { cache: asArray(data), filter: { id, type } })
-    .then(results => interceptor(results, syncHandler))
-    .then(({ data: [value] = [] } = {}) => value),
-];
-const writer = (entity, type, id) => [
-  data => sync(entity, { cache: asArray(data), filter: { id, type } })
-    .then(results => interceptor(results, syncHandler))
-    .then(({ data: [value] = [] } = {}) => value),
-  data => cacheEntity(entity, data, { now: Date.now() }),
-];
 
 // Emit takes the reactive state of an entity and updates its fields based on
 // new data, thereby "emitting" those changes to any dependent components.
@@ -123,10 +101,17 @@ export default function useEntities() {
       entity, type, id, state, transactions: [], queue,
     };
     revisions.set(reference, revision);
-    const read = reader(entity, type, id);
-    read.forEach((request) => {
-      queue.push(request).then(emit(state));
-    });
+    queue.push(() => getRecords('entities', entity, id).then(([, data]) => {
+      if (data) emit(state, data);
+      updateStatus(STATUS_IN_PROGRESS);
+      const syncOptions = { cache: asArray(data), filter: { id, type } };
+      return syncEntities(entity, syncOptions).then((results = {}) => {
+        const { data: [value] = [] } = interceptor(results, syncHandler);
+        if (!value) return data;
+        emit(state, value);
+        return cacheEntity(entity, value);
+      });
+    }));
     return reference;
   }
 
@@ -153,20 +138,24 @@ export default function useEntities() {
     const {
       entity, type, id, queue, state,
     } = revision;
-    const initWrite = queue.push((previous) => {
+    queue.push((previous) => {
       const fields = replay(previous, transactions);
       // The state will have had these transactions applied already, but may not
       // have received updates from a previous commit, so make sure to update it.
       emit(state, fields);
       const next = farm[entity].update(previous, fields);
-      return Promise.resolve(next);
+      return cacheEntity(entity, next);
     });
-    // Currently the results of each write are not being used, and the execution
-    // will only return the results of the last write, but it would be useful
-    // to track which writes succeeded and which failed in the future.
-    const execWrite = (prevWrite, nextWrite) =>
-      queue.push(nextWrite).then(emit(state));
-    return reduce(execWrite, initWrite, writer(entity, type, id));
+    return queue.push((previous) => {
+      updateStatus(STATUS_IN_PROGRESS);
+      const syncOptions = { cache: asArray(previous), filter: { id, type } };
+      return syncEntities(entity, syncOptions).then((results = {}) => {
+        const { data: [value] = [] } = interceptor(results, syncHandler);
+        if (!value) return previous;
+        emit(state, value);
+        return cacheEntity(entity, value);
+      });
+    });
   }
 
   return {
