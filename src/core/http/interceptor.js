@@ -1,4 +1,6 @@
-import { curryN, evolve, reduce } from 'ramda';
+import {
+  clone, curryN, evolve, reduce,
+} from 'ramda';
 import { getHost } from './remote';
 import asArray from '../utils/asArray';
 import Warning from './Warning';
@@ -122,7 +124,8 @@ function addErrorToWarnings(tuple, warnings) {
 }
 
 function interceptor(handler, syncResults, overrides = {}) {
-  if (syncResults.rejected.length < 1) {
+  const { data, fulfilled, rejected } = clone(syncResults);
+  if (rejected.length < 1) {
     // Early return if no errors were encountered, but make sure to run the
     // handler still, with default values that indicate all successful requests.
     handler({
@@ -131,6 +134,9 @@ function interceptor(handler, syncResults, overrides = {}) {
       connectivity: 1,
       notFound: [],
       warnings: [],
+      data,
+      fulfilled,
+      rejected,
     });
     return syncResults;
   }
@@ -164,19 +170,16 @@ function interceptor(handler, syncResults, overrides = {}) {
     warning: new Map(),
   };
   const {
-    loginRequired, requested, responded, repeatable, notFound, warning,
-  } = reduce(concatenate, initEvaluation, syncResults.rejected);
+    requested, responded, warning, ...rest
+  } = reduce(concatenate, initEvaluation, rejected);
   // As long as the number of request attempts is non-zero, a quotient can be
   // calculated by division; otherwise, no requests were made, so the network
   // status is unknown, as denoted by -1, which will be ignored by updateStatus.
   const connectivity = requested > 0 ? responded / requested : -1;
+  const warnings = Array.from(warning)
+    .map(([message, error]) => new Warning(message, error));
   const evaluation = {
-    loginRequired,
-    repeatable,
-    connectivity,
-    notFound,
-    warnings: Array.from(warning).map(([message, error]) =>
-      new Warning(message, error)),
+    ...rest, connectivity, warnings, data, fulfilled, rejected,
   };
   handler(evaluation);
   return syncResults;

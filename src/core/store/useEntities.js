@@ -152,27 +152,6 @@ function SyncScheduler(intervals = defaultIntervals) {
 
 const scheduler = new SyncScheduler();
 
-const syncHandler = retry =>
-  function handler(evaluation) {
-    const {
-      loginRequired,
-      connectivity,
-      repeatable,
-      warnings,
-    } = evaluation;
-    updateStatus(connectivity);
-    if (warnings.length > 0) {
-      alert(warnings);
-    }
-    if (repeatable.length > 0 && typeof retry === 'function') {
-      retry(evaluation);
-    }
-    if (loginRequired) {
-      const router = useRouter();
-      router.push('/login');
-    }
-  };
-
 // Emit takes the reactive state of an entity and updates its fields based on
 // new data, thereby "emitting" those changes to any dependent components.
 const emit = curryN(2, (state, data = {}) => {
@@ -215,6 +194,32 @@ const replay = (previous, transactions) => {
   return fields;
 };
 
+const syncHandler = revision => interceptor((evaluation) => {
+  const {
+    entity, type, id, state,
+  } = revision;
+  const {
+    loginRequired, connectivity, repeatable, warnings, data: [value] = [],
+  } = evaluation;
+  updateStatus(connectivity);
+  if (warnings.length > 0) {
+    alert(warnings);
+  }
+  if (repeatable.length > 0 && typeof retry === 'function') {
+    const subscribe = scheduler.push(entity, type, id);
+    subscribe((data) => {
+      emit(state, data);
+    });
+  }
+  if (loginRequired) {
+    const router = useRouter();
+    router.push('/login');
+  }
+  if (!value) return value;
+  emit(state, value);
+  return cacheEntity(entity, value);
+});
+
 export default function useEntities() {
   // A collection of revisions, each corresponding to a unique call of the
   // checkout function and mapped to the read-only ref returned by that call.
@@ -239,19 +244,8 @@ export default function useEntities() {
       if (data) emit(state, data);
       updateStatus(STATUS_IN_PROGRESS);
       const syncOptions = { cache: asArray(data), filter: { id, type } };
-      const retry = () => {
-        const subscribe = scheduler.push(entity, type, id);
-        subscribe((val) => {
-          emit(state, val);
-        });
-      };
-      return syncEntities(entity, syncOptions).then((results = {}) => {
-        const { data: [value] = [] } = interceptor(syncHandler(retry), results);
-        if (!value) return data;
-        emit(state, value);
-        return cacheEntity(entity, value);
-      });
-    }));
+      return syncEntities(entity, syncOptions);
+    })).then(syncHandler(revision));
     return reference;
   }
 
@@ -289,19 +283,8 @@ export default function useEntities() {
     return queue.push((previous) => {
       updateStatus(STATUS_IN_PROGRESS);
       const syncOptions = { cache: asArray(previous), filter: { id, type } };
-      return syncEntities(entity, syncOptions).then((results = {}) => {
-        const retry = () => {
-          const subscribe = scheduler.push(entity, type, id);
-          subscribe((data) => {
-            emit(state, data);
-          });
-        };
-        const { data: [value] = [] } = interceptor(syncHandler(retry), results);
-        if (!value) return previous;
-        emit(state, value);
-        return cacheEntity(entity, value);
-      });
-    });
+      return syncEntities(entity, syncOptions);
+    }).then(syncHandler(revision));
   }
 
   return {
