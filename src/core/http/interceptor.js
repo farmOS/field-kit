@@ -1,4 +1,4 @@
-import { evolve, reduce } from 'ramda';
+import { curryN, evolve, reduce } from 'ramda';
 import { getHost } from './remote';
 import asArray from '../utils/asArray';
 import Warning from './Warning';
@@ -121,7 +121,7 @@ function addErrorToWarnings(tuple, warnings) {
   return warnings;
 }
 
-export default function interceptor(syncResults, handler = () => {}, overrides = {}) {
+function interceptor(handler, syncResults, overrides = {}) {
   if (syncResults.rejected.length < 1) {
     // Early return if no errors were encountered, but make sure to run the
     // handler still, with default values that indicate all successful requests.
@@ -181,3 +181,5 @@ export default function interceptor(syncResults, handler = () => {}, overrides =
   handler(evaluation);
   return syncResults;
 }
+
+export default curryN(2, interceptor);

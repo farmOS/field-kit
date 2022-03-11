@@ -106,7 +106,7 @@ export const syncCache = async () => {
         }
       }, []);
     }
-    return interceptor(syncResults, syncHandler);
+    return interceptor(syncHandler, syncResults);
   });
   return Promise.allSettled(requests).then(() => {
     const newSettings = { ...settings, lastSync: new Date().toISOString() };

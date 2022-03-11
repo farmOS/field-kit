@@ -94,7 +94,7 @@ function SyncScheduler(intervals = defaultIntervals) {
           alert(warnings);
         }
       };
-      const { data } = interceptor(results, handler);
+      const { data } = interceptor(handler, results);
       data.forEach((value) => {
         if (!farm.meta.isUnsynced(value)) {
           const { type, id } = value;
@@ -239,8 +239,14 @@ export default function useEntities() {
       if (data) emit(state, data);
       updateStatus(STATUS_IN_PROGRESS);
       const syncOptions = { cache: asArray(data), filter: { id, type } };
+      const retry = () => {
+        const subscribe = scheduler.push(entity, type, id);
+        subscribe((val) => {
+          emit(state, val);
+        });
+      };
       return syncEntities(entity, syncOptions).then((results = {}) => {
-        const { data: [value] = [] } = interceptor(results, syncHandler);
+        const { data: [value] = [] } = interceptor(syncHandler(retry), results);
         if (!value) return data;
         emit(state, value);
         return cacheEntity(entity, value);
@@ -290,7 +296,7 @@ export default function useEntities() {
             emit(state, data);
           });
         };
-        const { data: [value] = [] } = interceptor(results, syncHandler(retry));
+        const { data: [value] = [] } = interceptor(syncHandler(retry), results);
         if (!value) return previous;
         emit(state, value);
         return cacheEntity(entity, value);
