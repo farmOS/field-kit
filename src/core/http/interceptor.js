@@ -1,5 +1,5 @@
 import {
-  clone, curryN, evolve, reduce,
+  clone, curryN, evolve, partition, reduce,
 } from 'ramda';
 import { getHost } from './remote';
 import asArray from '../utils/asArray';
@@ -115,12 +115,27 @@ function evaluate(error) {
 
 // Warnings are evaluated as tuples, then concatenated as a map, keyed by their
 // message string in order to eliminate duplicates. Empty messages are omitted.
-function addErrorToWarnings(tuple, warnings) {
-  const [message, error] = tuple;
+function addErrorToWarnings([message, error], warnings) {
   if (message !== '') {
     warnings.set(message, error);
   }
   return warnings;
+}
+
+// Reducer function for aggregating the evaluations from all sync results.
+function concatenate(accumulator, error) {
+  // Skip it and return the accumulator if it's not a valid instance of Error.
+  if (!(error instanceof Error)) return accumulator;
+  const evaluation = evaluate(error);
+  const additiveTransforms = evolve({
+    loginRequired: bool1 => bool2 => bool1 || bool2,
+    requested: bool => num => bool + num,
+    responded: bool => num => bool + num,
+    repeatable: obj => arr => [...arr, ...asArray(obj)],
+    notFound: obj => arr => [...arr, ...asArray(obj)],
+    warning: tuple => map => addErrorToWarnings(tuple, map),
+  }, evaluation);
+  return evolve(additiveTransforms, accumulator);
 }
 
 function interceptor(handler, syncResults, overrides = {}) {
@@ -140,27 +155,14 @@ function interceptor(handler, syncResults, overrides = {}) {
     });
     return syncResults;
   }
-  function concatenate(accumulator, error) {
-    // Skip it and return the accumulator if it's not a valid instance of Error.
-    if (!(error instanceof Error)) return accumulator;
-    const overrideHandler = overrides[error.response?.status];
-    if (typeof overrideHandler === 'function') {
-      // If a function is provided for this error's status code, just skip it
-      // and pass the error to the override handler to deal with separately.
-      overrideHandler(error);
-      return accumulator;
-    }
-    const evaluation = evaluate(error);
-    const additiveTransforms = evolve({
-      loginRequired: bool1 => bool2 => bool1 || bool2,
-      requested: bool => num => bool + num,
-      responded: bool => num => bool + num,
-      repeatable: obj => arr => [...arr, ...asArray(obj)],
-      notFound: obj => arr => [...arr, ...asArray(obj)],
-      warning: tuple => map => addErrorToWarnings(tuple, map),
-    }, evaluation);
-    return evolve(additiveTransforms, accumulator);
-  }
+  const [interceptErrors, overrideErrors] = partition(
+    error => typeof overrides[error?.response?.status] !== 'function',
+    rejected,
+  );
+  overrideErrors.forEach((error) => {
+    const override = overrides[error.response.status];
+    override(error);
+  });
   const initEvaluation = {
     loginRequired: false,
     requested: 0,
@@ -171,7 +173,7 @@ function interceptor(handler, syncResults, overrides = {}) {
   };
   const {
     requested, responded, warning, ...rest
-  } = reduce(concatenate, initEvaluation, rejected);
+  } = reduce(concatenate, initEvaluation, interceptErrors);
   // As long as the number of request attempts is non-zero, a quotient can be
   // calculated by division; otherwise, no requests were made, so the network
   // status is unknown, as denoted by -1, which will be ignored by updateStatus.
