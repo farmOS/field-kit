@@ -1,12 +1,13 @@
 import { evolve, reduce } from 'ramda';
 import { getHost } from './remote';
 import asArray from '../utils/asArray';
+import Warning from './Warning';
 
 function evaluateResponse(response = {}, errorMsg) {
   const { status, data = {} } = response;
   const defaultValues = {
     loginRequired: false,
-    reschedule: false,
+    repeatable: false,
     notFound: false,
     message: '',
   };
@@ -14,6 +15,7 @@ function evaluateResponse(response = {}, errorMsg) {
     return {
       ...defaultValues,
       loginRequired: true,
+      repeatable: true,
       message: `${status} error: ${data.error_description || data.error}`,
     };
   }
@@ -22,6 +24,7 @@ function evaluateResponse(response = {}, errorMsg) {
     return {
       ...defaultValues,
       loginRequired: true,
+      repeatable: true,
       message: 'The OAuth client for farmOS Field Kit is not enabled on your farmOS server. '
         + `If you are an administrator, you can enable it <a href=${oauthConfigUrl}>here</a>.`,
     };
@@ -31,6 +34,7 @@ function evaluateResponse(response = {}, errorMsg) {
     return {
       ...defaultValues,
       loginRequired: true,
+      repeatable: true,
       message: 'The username or password you entered was incorrect. '
         + `Please try again, or <a href="${resetUrl}">reset your password</a>.`,
     };
@@ -58,8 +62,8 @@ function evaluateResponse(response = {}, errorMsg) {
   if (status >= 500) {
     return {
       ...defaultValues,
+      repeatable: true,
       message,
-      reschedule: true,
     };
   }
   // Any other 4xx status codes or other unexpected errors.
@@ -70,12 +74,10 @@ function evaluateResponse(response = {}, errorMsg) {
 }
 
 function evaluate(error) {
-  const { config } = error;
-
   let loginRequired = false;
   let requested = false;
   let responded = false;
-  let reschedule = null;
+  let repeatable = null;
   let notFound = null;
   let message = '';
 
@@ -86,15 +88,15 @@ function evaluate(error) {
     loginRequired = loginRequired || result.loginRequired;
     requested = true;
     responded = true;
-    reschedule = result.reschedule ? config : reschedule;
-    notFound = result.notFound ? config : notFound;
+    repeatable = result.repeatable ? error : repeatable;
+    notFound = result.notFound ? error : notFound;
     message = result.message;
   } else if (error.request) {
     // The request was made but no response was received
     // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
     // http.ClientRequest in node.js
     requested = true;
-    reschedule = config;
+    repeatable = error;
   } else {
     // Something happened in setting up the request that triggered an Error
     message = error.message || '';
@@ -103,20 +105,20 @@ function evaluate(error) {
     loginRequired,
     requested,
     responded,
-    reschedule,
+    repeatable,
     notFound,
-    alert: [message, error],
+    warning: [message, error],
   };
 }
 
-// Alerts are evaluated as tuples, then concatenated as a map, keyed by their
+// Warnings are evaluated as tuples, then concatenated as a map, keyed by their
 // message string in order to eliminate duplicates. Empty messages are omitted.
-function addAlert(tuple, map) {
+function addErrorToWarnings(tuple, warnings) {
   const [message, error] = tuple;
   if (message !== '') {
-    map.set(message, error);
+    warnings.set(message, error);
   }
-  return map;
+  return warnings;
 }
 
 export default function interceptor(syncResults, handler = () => {}, overrides = {}) {
@@ -125,10 +127,10 @@ export default function interceptor(syncResults, handler = () => {}, overrides =
     // handler still, with default values that indicate all successful requests.
     handler({
       loginRequired: false,
-      reschedule: [],
+      repeatable: [],
       connectivity: 1,
       notFound: [],
-      alerts: [],
+      warnings: [],
     });
     return syncResults;
   }
@@ -147,9 +149,9 @@ export default function interceptor(syncResults, handler = () => {}, overrides =
       loginRequired: bool1 => bool2 => bool1 || bool2,
       requested: bool => num => bool + num,
       responded: bool => num => bool + num,
-      reschedule: obj => arr => [...arr, ...asArray(obj)],
+      repeatable: obj => arr => [...arr, ...asArray(obj)],
       notFound: obj => arr => [...arr, ...asArray(obj)],
-      alert: tuple => map => addAlert(tuple, map),
+      warning: tuple => map => addErrorToWarnings(tuple, map),
     }, evaluation);
     return evolve(additiveTransforms, accumulator);
   }
@@ -157,12 +159,12 @@ export default function interceptor(syncResults, handler = () => {}, overrides =
     loginRequired: false,
     requested: 0,
     responded: 0,
-    reschedule: [],
+    repeatable: [],
     notFound: [],
-    alert: new Map(),
+    warning: new Map(),
   };
   const {
-    loginRequired, requested, responded, reschedule, notFound, alert,
+    loginRequired, requested, responded, repeatable, notFound, warning,
   } = reduce(concatenate, initEvaluation, syncResults.rejected);
   // As long as the number of request attempts is non-zero, a quotient can be
   // calculated by division; otherwise, no requests were made, so the network
@@ -170,11 +172,11 @@ export default function interceptor(syncResults, handler = () => {}, overrides =
   const connectivity = requested > 0 ? responded / requested : -1;
   const evaluation = {
     loginRequired,
-    reschedule,
+    repeatable,
     connectivity,
     notFound,
-    alerts: Array.from(alert).map(([message, error]) =>
-      new Error(message, { cause: error })),
+    warnings: Array.from(warning).map(([message, error]) =>
+      new Warning(message, error)),
   };
   handler(evaluation);
   return syncResults;

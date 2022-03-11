@@ -6,8 +6,11 @@ const reference = readonly(store);
 export { reference as default };
 
 function pushError(error) {
-  // eslint-disable-next-line no-console
-  if (process.env.NODE_ENV === 'development') console.error(error);
+  if (process.env.NODE_ENV === 'development') {
+    const origError = error.cause instanceof Error ? error.cause : error;
+    // eslint-disable-next-line no-console
+    console.error(origError);
+  }
   store.push(error);
 }
 
@@ -16,13 +19,15 @@ export function alert(error, options = {}) {
     error.forEach((e) => {
       pushError(e);
     });
-  } else if (Array.isArray(error)) {
+  } else if (Array.isArray(error) && error.length > 0) {
     const message = error.reduce((msg, e) => {
-      if (typeof e.message === 'string') return `${msg}<br>${e.message}`;
+      if (typeof e.message === 'string') {
+        return `${msg}${e.message}<br>`;
+      }
       return msg;
     }, '');
     pushError(new Error(message, { cause: error }));
-  } else {
+  } else if (error instanceof Error) {
     pushError(error);
   }
 }
