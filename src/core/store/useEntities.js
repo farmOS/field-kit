@@ -2,6 +2,7 @@ import { reactive, readonly } from 'vue';
 import {
   clone, complement, compose, curryN, equals, is,
 } from 'ramda';
+import { validate, v4 as uuidv4 } from 'uuid';
 import farm from '../farm';
 import nomenclature from './nomenclature';
 import { getRecords } from '../idb';
@@ -225,21 +226,33 @@ export default function useEntities() {
   // checkout function and mapped to the read-only ref returned by that call.
   const revisions = new WeakMap();
 
-  // A synchronous operation that immediately returns a read-only, reactive
-  // reference to an entity, then updates that reference as new data comes in,
-  // first from the local database, then from any remote systems.
-  function checkout(entity, type, id) {
-    const def = farm[entity].create({ id, type });
+  // Create a reference to a new entity. This is essentially what checkout
+  // dispatches to when a valid id is not provided as its third argument.
+  function create(entity, type, id) {
+    const _id = validate(id) ? id : uuidv4();
+    const def = farm[entity].create({ id: _id, type });
     const defaultFields = {
-      id, type, ...def.attributes, ...def.relatinships,
+      id: _id, type, ...def.attributes, ...def.relatinships,
     };
     const state = reactive(defaultFields);
     const reference = readonly(state);
     const queue = new PromiseQueue(def);
     const revision = {
-      entity, type, id, state, transactions: [], queue,
+      entity, type, id: _id, state, transactions: [], queue,
     };
     revisions.set(reference, revision);
+    return reference;
+  }
+
+  // A synchronous operation that immediately returns a read-only, reactive
+  // reference to an entity, then updates that reference as new data comes in,
+  // first from the local database, then from any remote systems.
+  function checkout(entity, type, id) {
+    const reference = create(entity, type, id);
+    // Early return if this is a brand new entity.
+    if (!validate(id)) return reference;
+    const revision = revisions.get(reference);
+    const { queue, state } = revision;
     queue.push(() => getRecords('entities', entity, id).then(([, data]) => {
       if (data) emit(state, data);
       updateStatus(STATUS_IN_PROGRESS);
