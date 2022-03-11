@@ -216,9 +216,10 @@ const syncHandler = revision => interceptor((evaluation) => {
     const router = useRouter();
     router.push('/login');
   }
-  if (!value) return value;
-  emit(state, value);
-  return cacheEntity(entity, value);
+  if (value) {
+    emit(state, value);
+    cacheEntity(entity, value).catch(alert);
+  }
 });
 
 export default function useEntities() {
@@ -258,8 +259,10 @@ export default function useEntities() {
       return getRecords('entities', entity, id).then(([, data]) => {
         if (data) emit(state, data);
         const syncOptions = { cache: asArray(data), filter: { id, type } };
-        return syncEntities(entity, syncOptions);
-      }).then(syncHandler(revision));
+        return syncEntities(entity, syncOptions)
+          .then(syncHandler(revision))
+          .then(results => results?.data?.[0]);
+      });
     });
     return reference;
   }
@@ -296,7 +299,9 @@ export default function useEntities() {
       const next = farm[entity].update(previous, fields);
       return cacheEntity(entity, next).then(() => {
         const syncOptions = { cache: asArray(next), filter: { id, type } };
-        return syncEntities(entity, syncOptions).then(syncHandler(revision));
+        return syncEntities(entity, syncOptions)
+          .then(syncHandler(revision))
+          .then(({ data: [value] = [] } = {}) => value);
       });
     });
   }
