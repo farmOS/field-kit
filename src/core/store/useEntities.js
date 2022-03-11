@@ -253,12 +253,14 @@ export default function useEntities() {
     if (!validate(id)) return reference;
     const revision = revisions.get(reference);
     const { queue, state } = revision;
-    queue.push(() => getRecords('entities', entity, id).then(([, data]) => {
-      if (data) emit(state, data);
+    queue.push(() => {
       updateStatus(STATUS_IN_PROGRESS);
-      const syncOptions = { cache: asArray(data), filter: { id, type } };
-      return syncEntities(entity, syncOptions);
-    })).then(syncHandler(revision));
+      return getRecords('entities', entity, id).then(([, data]) => {
+        if (data) emit(state, data);
+        const syncOptions = { cache: asArray(data), filter: { id, type } };
+        return syncEntities(entity, syncOptions);
+      }).then(syncHandler(revision));
+    });
     return reference;
   }
 
@@ -285,19 +287,18 @@ export default function useEntities() {
     const {
       entity, type, id, queue, state,
     } = revision;
-    queue.push((previous) => {
+    return queue.push((previous) => {
+      updateStatus(STATUS_IN_PROGRESS);
       const fields = replay(previous, transactions);
       // The state will have had these transactions applied already, but may not
       // have received updates from a previous commit, so make sure to update it.
       emit(state, fields);
       const next = farm[entity].update(previous, fields);
-      return cacheEntity(entity, next);
+      return cacheEntity(entity, next).then(() => {
+        const syncOptions = { cache: asArray(next), filter: { id, type } };
+        return syncEntities(entity, syncOptions).then(syncHandler(revision));
+      });
     });
-    return queue.push((previous) => {
-      updateStatus(STATUS_IN_PROGRESS);
-      const syncOptions = { cache: asArray(previous), filter: { id, type } };
-      return syncEntities(entity, syncOptions);
-    }).then(syncHandler(revision));
   }
 
   return {
