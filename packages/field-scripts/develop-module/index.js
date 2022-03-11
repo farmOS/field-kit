@@ -60,7 +60,7 @@ export default async function develop(options = {}) {
       envCompatible.default(),
     ],
     optimizeDeps: {
-      exclude: ['@farmos.org/farmos-map'],
+      exclude: ['@farmos.org/farmos-map', 'field-kit', 'farmos'],
     },
     server: {
       port,
@@ -71,9 +71,6 @@ export default async function develop(options = {}) {
         '/oauth': proxyPort(80),
         '/fieldkit': proxyPort(80),
       },
-      // watch: {
-      //   ignored: ['!**/node_modules/field-kit/**'],
-      // },
       ...serverOptions,
     },
     ...sharedOptions,

@@ -51,7 +51,7 @@ export default defineConfig({
   ],
   build: {},
   optimizeDeps: {
-    exclude: ['@farmos.org/farmos-map'],
+    exclude: ['@farmos.org/farmos-map', 'farmos'],
   },
   server: {
     port: 8080,
