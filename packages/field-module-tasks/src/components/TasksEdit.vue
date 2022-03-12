@@ -204,7 +204,7 @@
           :keys="['name']"
           @select="toggleAsset(true, assets.unselected[$event])"
           :label="$t('Add assets to the log')">
-          <template slot="empty">
+          <template v-slot:empty>
             <div class="empty-slot">
               <em>{{ $t('No assets found.')}}</em>
             </div>
@@ -307,7 +307,7 @@
           :keys="['name']"
           @select="toggleArea(true, areas.unselected[$event])"
           :label="$t('Add areas to the log')">
-          <template slot="empty">
+          <template v-slot:empty>
             <div class="empty-slot">
               <em>{{ $t('No areas found.')}}</em>
             </div>
@@ -406,7 +406,7 @@
         :keys="['name']"
         @select="toggleAsset(true, assets.unselected[$event])"
         :label="$t('Add assets to be moved')">
-        <template slot="empty">
+        <template v-slot:empty>
           <div class="empty-slot">
             <em>{{ $t('No assets found.')}}</em>
           </div>
@@ -432,7 +432,7 @@
         :keys="['name']"
         @select="addMovementArea(areas.unselected[$event])"
         :label="$t('Movement to')">
-        <template slot="empty">
+        <template v-slot:empty>
           <div class="empty-slot">
             <em>{{ $t('No areas found.')}}</em>
           </div>
