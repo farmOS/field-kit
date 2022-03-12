@@ -15,17 +15,8 @@ import useRouter from './useRouter';
 import { STATUS_IN_PROGRESS, updateStatus } from './connection';
 import { alert } from './alert';
 import interceptor from '../http/interceptor';
+import { PromiseQueue } from '../utils/PromisePool';
 import parseFilter from '../utils/parseFilter';
-
-function PromiseQueue(init) {
-  this.init = Promise.resolve().then(init);
-  this.pending = this.init;
-  this.push = (next) => {
-    const promise = this.pending.then(next);
-    this.pending = promise;
-    return promise;
-  };
-}
 
 const scheduler = new SyncScheduler();
 

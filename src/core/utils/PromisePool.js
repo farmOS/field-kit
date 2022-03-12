@@ -1,3 +1,13 @@
+export function PromiseQueue(init) {
+  this.init = Promise.resolve().then(init);
+  this.pending = this.init;
+  this.push = (next) => {
+    const promise = this.pending.then(next);
+    this.pending = promise;
+    return promise;
+  };
+}
+
 export default function PromisePool(cb, timeout) {
   const pushMany = (...args) => this.pool.push(args);
   this.complete = false;
