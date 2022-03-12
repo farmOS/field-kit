@@ -8,7 +8,7 @@ export function PromiseQueue(init) {
   };
 }
 
-export default function PromisePool(cb, timeout) {
+export function PromisePool(cb, timeout) {
   const pushMany = (...args) => this.pool.push(args);
   this.complete = false;
   this.pool = [];

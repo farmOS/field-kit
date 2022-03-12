@@ -1,4 +1,4 @@
-import { pool } from '../utils/PromisePool';
+import { pool } from '../utils/promises';
 import { entityMethods } from '../store/nomenclature';
 
 const POOL_TIMEOUT = 500;
