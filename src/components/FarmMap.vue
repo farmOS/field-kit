@@ -65,6 +65,7 @@ export default {
     mapboxAPIKey: state => state.mapboxAPIKey,
   }),
   mounted() {
+    // FIXME: farmOS-map is no longer added globally
     this.map = window.farmOS.map.create(this.id, this.options);
     if (this.geojson) {
       this.layers.geojson = this.map.addLayer('geojson', this.geojson);
@@ -134,6 +135,7 @@ export default {
     }
   },
   beforeUnmount() {
+    // FIXME: farmOS-map is no longer added globally
     window.farmOS.map.destroy(this.id);
     this.map = null;
   },

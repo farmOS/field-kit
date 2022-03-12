@@ -479,12 +479,13 @@
 
 <script>
 const {
+  R,
+  wellknown,
   parseNotes,
   mergeGeometries,
   // removeGeometry,
   // isNearby,
-} = window.farmOS.utils;
-const { R, wellknown } = window.farmOS.lib;
+} = window.lib;
 
 // Used to separate assets, areas, etc into those that have already been added
 // to the log (selected), and those that haven't (unselected).

@@ -11,7 +11,7 @@ export const fmtCode = ({
 ${fmtImport('routes', routes)}
 ${fmtImport('widget', widget)}
 
-window.farmOS.mountFieldModule({
+window.lib.mountFieldModule({
   name: '${name}',
   label: '${label}',
   description: '${description}',

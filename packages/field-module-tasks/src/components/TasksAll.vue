@@ -77,9 +77,9 @@
 </template>
 <script>
 const {
-  meta: { isUnsynced },
-  utils: { parseNotes },
-} = window.farmOS;
+  isUnsynced,
+  parseNotes,
+} = window.lib;
 
 export default {
   name: 'TasksAll',

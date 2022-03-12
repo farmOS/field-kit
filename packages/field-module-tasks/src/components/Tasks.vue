@@ -75,9 +75,9 @@
 </template>
 <script>
 const {
-  lib: { R },
-  meta: { isUnsynced },
-} = window.farmOS;
+  R,
+  isUnsynced,
+} = window.lib;
 
 const assetFilter = { status: 'active' };
 const termFilter = { type: ['log_category', 'unit'] };

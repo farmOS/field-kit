@@ -1,4 +1,5 @@
 import * as Vue from 'vue';
+import * as VueRouter from 'vue-router';
 import * as R from 'ramda';
 import wellknown from 'wellknown';
 import router from './router';
@@ -10,28 +11,31 @@ import mountFieldModule from './field-modules/mount';
 import { alert } from './store/alert';
 import t from './mixins/t';
 import farm from './farm';
-import utils from './utils';
+import * as utils from './utils';
 import components from '../components';
 import './normalize.css';
 import './bootstrap-simplex.min.css';
 import './vars.css';
 import './main.css';
 
-// Attach common libs & utils to the global namespace so Field Modules can access them.
-if (window.farmOS === undefined) {
-  window.farmOS = farm;
-} else {
-  window.farmOS = {
-    ...window.farmOS,
-    ...farm,
-  };
-}
-window.farmOS.utils = utils;
-window.farmOS.lib = {
+const app = Vue.createApp(App);
+
+// Vue must be on the global scope so it can be accessed by Field Modules for
+// runtime rendering. VueRouter's utils (eg, `useRouter`) and the app instance
+// are just provided for easy access by Field Modules.
+window.Vue = Vue;
+window.VueRouter = VueRouter;
+window.app = app;
+
+// All other libraries, third part and internal, are placed on the global `lib`
+// namespace, for access by Field Modules. It's frozen to prevent tampering.
+window.lib = Object.freeze({
+  ...utils,
   R,
   wellknown,
-};
-window.Vue = Vue;
+  isUnsynced: farm.isUnsynced,
+  mountFieldModule: mountFieldModule({ app, router }),
+});
 
 // Because the native window.alert() function blocks all execution, which could
 // interfere with background processes, and because it could easily be confused
@@ -39,9 +43,6 @@ window.Vue = Vue;
 // variable and overwrite window.alert with the app shell's implementation.
 window.dangerouslyBlockingAlert = window.alert;
 window.alert = alert;
-
-const app = window.Vue.createApp(App);
-window.app = app;
 
 // Use Vuex and Vue Router plugins
 app.use(store);
@@ -51,9 +52,6 @@ setRouter(router);
 
 // Globally apply the t mixin, which provides translations along with the l10n module
 app.mixin(t);
-
-// Provide a global function for mounting Field Modules with all its dependencies.
-window.farmOS.mountFieldModule = mountFieldModule({ app, router });
 
 // Register the shared component library globally so they can be accessed from
 // any other component and field module.

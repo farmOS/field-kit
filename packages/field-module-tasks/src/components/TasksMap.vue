@@ -21,7 +21,7 @@
 </template>
 
 <script>
-const { mergeGeometries } = window.farmOS.utils;
+const { mergeGeometries } = window.lib;
 
 export default {
   name: 'TasksMap',
