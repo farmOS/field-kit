@@ -3,6 +3,7 @@ import {
   clone, complement, compose, curryN, equals, is,
 } from 'ramda';
 import { validate, v4 as uuidv4 } from 'uuid';
+import { parseBundles } from 'farmos/src/client/adapter';
 import farm from '../farm';
 import nomenclature from './nomenclature';
 import { getRecords } from '../idb';
@@ -31,8 +32,9 @@ const entities = Object.values(nomenclature.entities).map(e => e.shortName);
 
 const stringifyID = (entity, type, id) => JSON.stringify({ entity, type, id });
 const parseID = string => JSON.parse(string);
+const FILTER_ID = 'FILTER_ID';
 
-function groupFilters(setOfPendingEntities) {
+function groupFilters(setOfPendingEntities, mapOfPendingFilters) {
   const entityMap = new Map();
   entities.forEach((name) => { entityMap.set(name, new Map()); });
   setOfPendingEntities.forEach((idString) => {
@@ -43,7 +45,13 @@ function groupFilters(setOfPendingEntities) {
       filter = { type, id: [] };
       filters.set(type, filter);
     }
-    filter.id.push(id);
+    if (id === FILTER_ID && mapOfPendingFilters.has(idString)) {
+      const pendingFilter = mapOfPendingFilters.get(idString);
+      filter = { ...pendingFilter, type, id: filter.id };
+      filters.set(type, filter);
+    } else {
+      filter.id.push(id);
+    }
   });
   const filterGroups = [];
   entityMap.forEach((filters, entity) => {
@@ -78,11 +86,14 @@ const defaultIntervals = [
 function SyncScheduler(intervals = defaultIntervals) {
   const pending = new Set();
   const listeners = new Map();
+  const pendingFilters = new Map();
 
   async function retry() {
     const retrying = new Set(pending);
     pending.clear();
-    const filterGroups = groupFilters(retrying);
+    const retryingFilters = new Map(pendingFilters);
+    pendingFilters.clear();
+    const filterGroups = groupFilters(retrying, retryingFilters);
     const requests = filterGroups.map(async (group) => {
       updateStatus(STATUS_IN_PROGRESS);
       const { entity, filter } = group;
@@ -97,15 +108,23 @@ function SyncScheduler(intervals = defaultIntervals) {
       };
       const { data } = interceptor(handler, results);
       data.forEach((value) => {
-        if (!farm.meta.isUnsynced(value)) {
-          const { type, id } = value;
-          const idString = stringifyID(entity, type, id);
-          retrying.delete(idString);
-          // Use optional chaining in case an earlier retry already deleted it.
+        const clearById = (retryList, idString) => {
+          retryList.delete(idString);
+          // Use optional chaining in case the exact id was never scheduled, or
+          // an earlier retry already deleted it.
           listeners.get(idString)?.forEach((listener) => {
             safeCall(listener, value);
           });
           listeners.delete(idString);
+        };
+        if (!farm.meta.isUnsynced(value)) {
+          const { type, id } = value;
+          const idString = stringifyID(entity, type, id);
+          clearById(retrying, idString);
+          // Assume that if a value of a given type succeeds, any corresponding
+          // filters with that same type also completed and can be cleared.
+          const filterIdString = stringifyID(entity, type, FILTER_ID);
+          clearById(retryingFilters, filterIdString);
         }
       });
       // Any entities that still haven't been synced are added back to pending.
@@ -129,10 +148,11 @@ function SyncScheduler(intervals = defaultIntervals) {
     }, interval);
   }
 
-  this.push = function push(entity, type, id) {
+  this.push = function push(entity, type, target) {
     if (!entities.includes(entity)) {
       throw new Error(`Invalid entity name: ${entity}`);
     }
+    const id = typeof target === 'string' ? target : FILTER_ID;
     const idString = stringifyID(entity, type, id);
     if (pending.size === 0) startClock();
     pending.add(idString);
@@ -194,7 +214,6 @@ const replay = (previous, transactions) => {
   });
   return fields;
 };
-
 const syncHandler = revision => interceptor((evaluation) => {
   const {
     entity, type, id, state,
@@ -206,7 +225,7 @@ const syncHandler = revision => interceptor((evaluation) => {
   if (warnings.length > 0) {
     alert(warnings);
   }
-  if (repeatable.length > 0 && typeof retry === 'function') {
+  if (repeatable.length > 0) {
     const subscribe = scheduler.push(entity, type, id);
     subscribe((data) => {
       emit(state, data);
@@ -222,14 +241,58 @@ const syncHandler = revision => interceptor((evaluation) => {
   }
 });
 
+function findRepeatableBundles(entity, errors) {
+  const bundles = [];
+  const bundleRE = /^\/api\/([a-z]*)\/([a-z]*)/;
+  errors.forEach((error) => {
+    const { config: { url }, request, response } = error;
+    const [, ent, bundle] = url.match(bundleRE);
+    if (request && !response && bundle && ent === entity) {
+      bundles.push(bundle);
+    }
+  });
+  return bundles;
+}
+
+const collectionSyncHandler = (entity, filter, emitter) =>
+  interceptor((evaluation) => {
+    const {
+      data, loginRequired, connectivity, repeatable, warnings,
+    } = evaluation;
+    data.forEach((value) => {
+      emitter(value);
+      cacheEntity(entity, value);
+    });
+    updateStatus(connectivity);
+    if (warnings.length > 0) {
+      alert(warnings);
+    }
+    const repeatableBundles = findRepeatableBundles(entity, repeatable);
+    if (repeatableBundles.length > 0) {
+      const repeatableFilters = parseBundles(filter, repeatableBundles);
+      repeatableFilters.forEach(({ name: bundle, filter: bundleFilter }) => {
+        const subscribe = scheduler.push(entity, bundle, bundleFilter);
+        subscribe((results) => {
+          results.data.forEach((value) => {
+            emitter(value);
+            cacheEntity(entity, value);
+          });
+        });
+      });
+    }
+    if (loginRequired) {
+      const router = useRouter();
+      router.push('/login');
+    }
+  });
+
 export default function useEntities() {
   // A collection of revisions, each corresponding to a unique call of the
   // checkout function and mapped to the read-only ref returned by that call.
   const revisions = new WeakMap();
 
-  // Create a reference to a new entity. This is essentially what checkout
-  // dispatches to when a valid id is not provided as its third argument.
-  function create(entity, type, id) {
+  // Create a reference to a new entity. Just for internal use.
+  function createEntity(entity, type, id) {
     const _id = validate(id) ? id : uuidv4();
     const def = farm[entity].create({ id: _id, type });
     const defaultFields = {
@@ -242,6 +305,38 @@ export default function useEntities() {
       entity, type, id: _id, state, transactions: [], queue,
     };
     revisions.set(reference, revision);
+    return [reference, revision];
+  }
+
+  // A synchronous operation that returns a read-only, reactive array of entity
+  // references, then updates those entities as new data comes in. When the
+  // checkout function gets a filter instead of a type or id, it dispatches to
+  // checkoutCollection internally, so this is not exposed publicly.
+  function checkoutCollection(entity, filter) {
+    const collection = reactive([]);
+    const reference = readonly(collection);
+    const query = parseFilter(filter);
+    updateStatus(STATUS_IN_PROGRESS);
+    // Upsert an entity in the collection when received from the db or remote.
+    const emitter = ({ id, type, ...fields } = {}) => {
+      if (typeof id !== 'string' || typeof type !== 'string') return;
+      const i = collection.findIndex(item => item.id === id);
+      if (i < 0) {
+        const [itemRef, revision] = createEntity(entity, type, id);
+        const { state: itemState } = revision;
+        emit(itemState, fields);
+        collection.push(itemRef);
+      } else {
+        const itemRef = collection[i];
+        const { state: itemState } = revisions.get(itemRef);
+        emit(itemState, fields);
+      }
+    };
+    getRecords('entities', entity, query).then((cache) => {
+      cache.forEach(emitter);
+      const syncOptions = { cache, filter };
+      return syncEntities(entity, syncOptions);
+    }).then(collectionSyncHandler(entity, filter, emitter));
     return reference;
   }
 
@@ -249,10 +344,15 @@ export default function useEntities() {
   // reference to an entity, then updates that reference as new data comes in,
   // first from the local database, then from any remote systems.
   function checkout(entity, type, id) {
-    const reference = create(entity, type, id);
+    // Dispatch to checkoutCollection if the 2nd or 3rd param is a filter object.
+    if (is(Object, type)) return checkoutCollection(entity, type);
+    if (is(Object, id)) {
+      const filter = typeof type === 'string' ? { ...id, type } : id;
+      return checkoutCollection(entity, filter);
+    }
+    const [reference, revision] = createEntity(entity, type, id);
     // Early return if this is a brand new entity.
     if (!validate(id)) return reference;
-    const revision = revisions.get(reference);
     const { queue, state } = revision;
     queue.push(() => {
       updateStatus(STATUS_IN_PROGRESS);
@@ -284,6 +384,9 @@ export default function useEntities() {
   // current state of the entity at the time of calling, then writes those
   // changes to the local database and sends them on to remote systems.
   function commit(reference) {
+    if (is(Array, reference)) {
+      return Promise.allSettled(reference.map(commit));
+    }
     const revision = revisions.get(reference);
     const transactions = [...revision.transactions];
     revision.transactions = [];
