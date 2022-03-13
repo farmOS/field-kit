@@ -69,13 +69,17 @@
 export default {
   name: 'TasksFilter',
   emits: ['reset-filters', 'toggle-category-filter', 'toggle-type-filter'],
-  props: ['categories', 'logTypes', 'filters'],
+  inject: ['bundles'],
+  props: ['categories', 'filters'],
   methods: {
     reset() {
       this.$emit('reset-filters');
     },
   },
   computed: {
+    logTypes() {
+      return this.bundles.log;
+    },
     appBarActions() {
       return [
         {

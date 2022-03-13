@@ -2,25 +2,15 @@
   <transition name="ready" mode="out-in">
     <not-ready v-if="!ready"/>
     <app-shell v-else>
-      <template v-slot="{ openDrawer }">
+      <template v-slot:default>
         <router-view v-slot="{ Component }">
           <component :is="Component"
-            @open-drawer="openDrawer"
-            :user="user"
-            :farm="farm"
-            :settings="settings"
             :assets="assets"
             :logs="logs"
             :plans="plans"
             :quantities="quantities"
             :terms="terms"
-            :users="users"
-            :assetTypes="assetTypes"
-            :logTypes="logTypes"
-            :planTypes="planTypes"
-            :quantityTypes="quantityTypes"
-            :termTypes="termTypes"
-            :userTypes="userTypes"/>
+            :users="users"/>
         </router-view>
       </template>
     </app-shell>
@@ -42,12 +32,16 @@ import flattenEntity from './utils/flattenEntity';
 export default {
   name: 'App',
   components: { AppShell, NotReady },
+  provide() {
+    return {
+      bundles,
+      profile,
+      settings,
+    };
+  },
   data() {
     return {
-      farm: profile.farm,
       ready: false,
-      settings,
-      user: profile.user,
     };
   },
   created() {
@@ -96,12 +90,6 @@ export default {
       quantities: state => state.quantities.map(flattenEntity),
       terms: state => state.terms.map(flattenEntity),
       users: state => state.users.map(flattenEntity),
-      assetTypes: bundles.asset,
-      logTypes: bundles.log,
-      planTypes: bundles.plan,
-      quantityTypes: bundles.quantity,
-      termTypes: bundles.term,
-      userTypes: bundles.user,
     }),
   },
 };

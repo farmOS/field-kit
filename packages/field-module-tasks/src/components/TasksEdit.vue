@@ -526,7 +526,6 @@ export default {
 
   props: [
     'id',
-    'logTypes',
     'useGeolocation',
     'allAssets',
     'allCategories',
@@ -538,7 +537,7 @@ export default {
     'isSyncing',
   ],
 
-  inject: ['alert'],
+  inject: ['alert', 'bundles'],
 
   methods: {
     updateCurrentLog(key, val) {
@@ -726,6 +725,9 @@ export default {
     equipment() {
       if (!this.log.equipment) return { selected: [], unselected: this.allEquipment };
       return partitionOptions(this.allEquipment, this.log.equipment);
+    },
+    logTypes() {
+      return this.bundles.log;
     },
     geometryAsArrayOfWktPoints() {
       const geom = this.log.geometry?.value;

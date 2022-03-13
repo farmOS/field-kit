@@ -46,7 +46,8 @@
 <script>
 export default {
   name: 'TasksWidget',
-  props: ['logs', 'user'],
+  props: ['logs'],
+  inject: ['profile'],
   data() {
     return {
       scrollStyle: {
@@ -56,7 +57,7 @@ export default {
   },
   created() {
     const filter = {
-      'owner.id': this.user.id,
+      'owner.id': this.profile?.user?.id,
       status: { $ne: 'done' },
     };
     this.loadLogs(filter);
@@ -98,7 +99,7 @@ export default {
       const props = {
         type,
         status: 'done',
-        owner: [{ id: this.user.id }],
+        owner: [{ id: this.profile.user.id }],
       };
       this.createLog(props)
         .then(id => this.$router.push(`/tasks/${id}`));

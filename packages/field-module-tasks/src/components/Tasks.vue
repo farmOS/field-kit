@@ -10,7 +10,7 @@
       @toggle-type-filter="toggleTypeFilter"
       @toggle-category-filter="toggleCategoryFilter"
       :filters="filters"
-      :userId="user.id"
+      :userId="profile.user.id"
       :useGeolocation="settings.permissions.geolocation"
       :logs="sortedLogs"
       :areas="areas"
@@ -20,9 +20,7 @@
       :allCategories="categories"
       :allEquipment="equipment"
       :allLogs="logs"
-      :allUnits="units"
-      :logTypes="logTypes"
-    />
+      :allUnits="units"/>
 
     <div
       v-if="showDeleteDialog"
@@ -122,8 +120,7 @@ const transformCategoryFilters = (categories) => {
 
 export default {
   name: 'TasksContainer',
-  emits: ['open-drawer'],
-  inject: ['alert'],
+  inject: ['alert', 'bundles', 'profile', 'settings'],
   data() {
     return {
       showDeleteDialog: false,
@@ -138,12 +135,9 @@ export default {
     };
   },
   props: [
-    'user',
-    'settings',
     'assets',
     'logs',
     'terms',
-    'logTypes',
   ],
   created() {
     this.loadAssets(assetFilter);
@@ -151,7 +145,7 @@ export default {
       const cachedFilters = JSON.parse(localStorage.getItem('tasks-filters'));
       const { types, categories } = cachedFilters || {};
       this.filters = {
-        types: resetTypeFilters(this.logTypes, types),
+        types: resetTypeFilters(this.bundles.log, types),
         categories: resetCategoryFilters(this.categories, categories),
       };
       const filter = this.transformFilters();
@@ -209,7 +203,7 @@ export default {
     },
     resetFilters() {
       this.filters = {
-        types: resetTypeFilters(this.logTypes),
+        types: resetTypeFilters(this.bundles.log),
         categories: resetCategoryFilters(this.categories),
       };
       this.saveFilters();
@@ -219,7 +213,7 @@ export default {
       const typesArray = objectToArray(types);
       const categoryFilter = transformCategoryFilters(categories);
       return {
-        'owner.id': this.user.id,
+        'owner.id': this.profile.user.id,
         status: { $ne: 'done' },
         type: typesArray.length > 0 ? typesArray : undefined,
         ...categoryFilter,

@@ -83,9 +83,9 @@ const {
 
 export default {
   name: 'TasksAll',
+  inject: ['bundles'],
   props: [
     'isSyncing',
-    'logTypes',
     'logs',
     'userId',
     'assets',
@@ -101,13 +101,14 @@ export default {
           return [locs, [...nonLocs, match]];
         }, [[], []]);
         const dateOpts = { month: 'short', day: 'numeric', year: 'numeric' };
+        const label = this.bundles?.log?.[log.type]?.label || '';
         return {
           id,
           name,
           status,
           locations,
           assets,
-          typeLabel: this.logTypes[log.type]?.label || '',
+          typeLabel: label,
           date: new Date(log.timestamp).toLocaleDateString(undefined, dateOpts),
           notes: parseNotes(log.notes),
           late: log.timestamp < new Date().toISOString(),

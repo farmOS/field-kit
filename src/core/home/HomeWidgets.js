@@ -12,21 +12,12 @@ const HomeWidgets = {
   name: 'home-widgets',
   props: [
     'modules',
-    'user',
-    'farm',
-    'settings',
     'assets',
     'logs',
     'plans',
     'quantities',
     'terms',
     'users',
-    'assetTypes',
-    'logTypes',
-    'planTypes',
-    'quantityTypes',
-    'termTypes',
-    'userTypes',
   ],
   render() {
     const { h, reactive, resolveComponent } = window.Vue;
@@ -69,21 +60,12 @@ const HomeWidgets = {
             h(
               WidgetComponent,
               {
-                user: this.user,
-                farm: this.farm,
-                settings: this.settings,
                 assets: state.assets || [],
                 logs: state.logs || [],
                 plans: state.plans || [],
                 quantities: state.quantities || [],
                 terms: state.terms || [],
                 users: state.users || [],
-                assetTypes: this.assetTypes,
-                logTypes: this.logTypes,
-                planTypes: this.planTypes,
-                quantityTypes: this.quantityTypes,
-                termTypes: this.termTypes,
-                userTypes: this.userTypes,
                 onClick() {
                   self.$router.push(mod.routes[0].path);
                 },
