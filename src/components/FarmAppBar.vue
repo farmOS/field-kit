@@ -59,7 +59,6 @@ export default {
       validator: arr => arr.every(validateAction),
     },
   },
-  inject: ['openDrawer'],
   data() {
     return {
       showOverflow: false,
@@ -98,7 +97,7 @@ export default {
       if (this.navBack) {
         this.$router.back();
       } else {
-        this.openDrawer();
+        this.$emit('menu', true);
       }
     },
     openOverflow(evt) {

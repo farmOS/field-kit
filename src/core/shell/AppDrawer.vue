@@ -1,8 +1,12 @@
 <template>
-  <div class="drawer container-fluid">
+<transition name="filter">
+  <div v-if="show" class="drawer-filter" @click="show = false"></div>
+</transition>
+<transition name="drawer">
+  <div v-if="show" class="drawer container-fluid">
     <header class="drawer-header row">
       <div class="col">
-        <div class="arrow-back" @click="$emit('close')">
+        <div class="arrow-back" @click="show = false">
           <icon-arrow-back />
         </div>
         <div class="user-info">
@@ -69,6 +73,7 @@
       </farm-list-item>
     </farm-list>
   </div>
+</transition>
 </template>
 
 <script>
@@ -79,9 +84,11 @@ import { version } from '../../../package.json';
 
 export default {
   name: 'App',
+  expose: ['openDrawer'],
   emits: ['close'],
   data() {
     return {
+      show: false,
       user: profile.user,
       farm: profile.farm,
       modules: fieldModules,
@@ -90,11 +97,14 @@ export default {
     };
   },
   methods: {
+    openDrawer() {
+      this.show = true;
+    },
     handleRoute(route) {
       if (route !== this.$route.path) {
         this.$router.push(route);
       }
-      this.$emit('close');
+      this.show = false;
     },
     // setUseGeolocation(checked) {
     // },
@@ -109,6 +119,28 @@ export default {
 </script>
 
 <style scoped>
+.drawer-enter-from, .drawer-leave-to {
+  transform: translateX(-80vw);
+}
+
+.filter-enter-from, .filter-leave-to {
+  opacity: 0;
+}
+
+.drawer-enter-active, .drawer-leave-active,
+.filter-enter-active, .filter-leave-active {
+  transition: all .3s ease;
+}
+
+.drawer-filter {
+  position: fixed;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  background-color: var(--dark-transparent);
+  z-index: 1500;
+}
+
 .drawer {
   position: fixed;
   top: 0;

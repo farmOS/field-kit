@@ -1,5 +1,5 @@
 <template>
-  <farm-app-bar :nav="nav" :title="title" :actions="actions">
+  <farm-app-bar :nav="nav" :title="title" :actions="actions" @menu="$emit('menu')">
     <template #status>
       <component :is="statusIcon" class="status"/>
     </template>
