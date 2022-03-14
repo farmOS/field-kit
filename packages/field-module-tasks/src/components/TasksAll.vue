@@ -123,20 +123,12 @@ export default {
           onClick: this.syncAll,
           text: this.$t('Sync all logs'),
         },
-        {
-          icon: 'icon-filter',
-          onClick: this.viewFilters,
-          text: this.$t('Filter logs'),
-        },
       ];
     },
   },
   methods: {
     syncAll() {
       this.$emit('sync-all');
-    },
-    viewFilters() {
-      this.$router.push('/tasks/filter');
     },
     showDate(iso) {
       const date = new Date(iso);

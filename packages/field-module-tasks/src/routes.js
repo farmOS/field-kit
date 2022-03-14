@@ -2,7 +2,6 @@ import Tasks from './components/Tasks.vue';
 import TasksAll from './components/TasksAll.vue';
 import TasksEdit from './components/TasksEdit.vue';
 import TasksMap from './components/TasksMap.vue';
-import TasksFilter from './components/TasksFilter.vue';
 
 const routes = [
   {
@@ -25,11 +24,6 @@ const routes = [
         name: 'tasks-map',
         component: TasksMap,
         props: true,
-      },
-      {
-        path: 'filter',
-        name: 'tasks-filter',
-        component: TasksFilter,
       },
     ],
   },
