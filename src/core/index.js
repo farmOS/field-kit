@@ -4,7 +4,6 @@ import * as R from 'ramda';
 import wellknown from 'wellknown';
 import router from './router';
 import store from './store';
-import { setRouter } from './store/useRouter';
 import App from './App.vue';
 import AppBarOptions from './shell/AppBarOptions.vue';
 import mountFieldModule from './field-modules/mount';
@@ -47,8 +46,6 @@ window.alert = alert;
 // Use Vuex and Vue Router plugins
 app.use(store);
 app.use(router);
-// For reference within the store.
-setRouter(router);
 
 // Globally apply the t mixin, which provides translations along with the l10n module
 app.mixin(t);

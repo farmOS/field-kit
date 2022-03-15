@@ -1,3 +1,4 @@
+import { useRouter } from 'vue-router';
 import { anyPass, complement } from 'ramda';
 import farm from '../farm';
 import nomenclature from '../store/nomenclature';
@@ -8,7 +9,6 @@ import { syncEntities } from '../http/sync';
 import interceptor from '../http/interceptor';
 import parseFilter from '../utils/parseFilter';
 import daysAway from '../utils/daysAway';
-import useRouter from '../store/useRouter';
 import { STATUS_IN_PROGRESS, updateStatus } from '../store/connection';
 import { alert } from '../store/alert';
 

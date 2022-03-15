@@ -1,4 +1,5 @@
 import { reactive, readonly } from 'vue';
+import { useRouter } from 'vue-router';
 import {
   clone, complement, compose, curryN, equals, is,
 } from 'ramda';
@@ -11,7 +12,6 @@ import { getRecords } from '../idb';
 import { cacheEntity } from '../idb/cache';
 import flattenEntity from '../utils/flattenEntity';
 import asArray from '../utils/asArray';
-import useRouter from './useRouter';
 import { STATUS_IN_PROGRESS, updateStatus } from './connection';
 import { alert } from './alert';
 import interceptor from '../http/interceptor';
