@@ -1,13 +1,9 @@
 <template>
   <div>
     <router-view
-      :isSyncing="isSyncing"
-      @sync-all="syncAll"
-      @sync="sync($event)"
-      :filters="filters"
       :userId="profile.user.id"
       :useGeolocation="settings.permissions.geolocation"
-      :logs="sortedLogs"
+      :logs="logs"
       :areas="areas"
       :assets="assets"
       :allAssets="assets"
@@ -21,79 +17,42 @@
 <script>
 const {
   R,
-  isUnsynced,
+  useEntities,
 } = window.lib;
-
-const assetFilter = { status: 'active' };
-const termFilter = { type: ['log_category', 'unit'] };
-const logFilter = {
-  'owner.id': this.profile.user.id,
-  status: { $ne: 'done' },
-};
+const { computed, inject } = window.Vue;
 
 export default {
   name: 'TasksContainer',
-  inject: ['alert', 'bundles', 'profile', 'settings'],
-  data() {
-    return {
-      filters: {
-        types: {},
-        categories: {
-          NO_CATEGORY: true,
-        },
-      },
-      isSyncing: false,
+  setup() {
+    const profile = inject('profile');
+    const settings = inject('settings');
+
+    const { checkout } = useEntities();
+    const assetFilter = { status: 'active' };
+    const termFilter = { type: ['log_category', 'unit'] };
+    const logFilter = {
+      'owner.id': profile.user.id,
+      status: { $ne: 'done' },
     };
-  },
-  props: [
-    'assets',
-    'logs',
-    'terms',
-  ],
-  created() {
-    this.loadAssets(assetFilter);
-    this.loadTerms(termFilter);
-    this.loadLogs(logFilter, { includeUnsynced: true });
-  },
-  methods: {
-    isUnsynced,
 
-    /**
-     * SYNCING
-     */
-    sync(id) {
-      this.isSyncing = true;
-      this.syncLogs({ id })
-        .finally(() => { this.isSyncing = false; });
-    },
-    syncAll() {
-      this.isSyncing = true;
-      this.syncLogs(logFilter)
-        .catch((e) => {
-          this.alert(e);
-        })
-        .finally(() => { this.isSyncing = false; });
-    },
+    const assets = checkout('asset', assetFilter);
+    const areas = computed(() => assets.filter(a => a.is_location));
+    const equipment = computed(() => assets.filter(a => a.type === 'equipment'));
 
-  },
-  computed: {
-    areas() {
-      return this.assets.filter(a => a.is_location);
-    },
-    equipment() {
-      return this.assets.filter(a => a.type === 'equipment');
-    },
-    units() {
-      return this.terms.filter(t => t.type === 'unit');
-    },
-    categories() {
-      return this.terms.filter(t => t.type === 'log_category');
-    },
-    sortedLogs() {
-      const compare = (logA, logB) =>
-        new Date(logB.timestamp) - new Date(logA.timestamp);
-      return R.sort(compare, this.logs);
-    },
+    const unsortedLogs = checkout('log', logFilter);
+    const compare = (a, b) => new Date(b.timestamp) - new Date(a.timestamp);
+    const logs = computed(() => {
+      const copy = R.clone(unsortedLogs);
+      return copy.sort(compare);
+    });
+
+    const terms = checkout('term', termFilter);
+    const units = computed(() => terms.filter(t => t.type === 'unit'));
+    const categories = computed(() => terms.filter(t => t.type === 'log_category'));
+
+    return {
+      areas, assets, categories, equipment, logs, profile, settings, terms, units,
+    };
   },
 };
 </script>

@@ -4,6 +4,7 @@ import * as R from 'ramda';
 import wellknown from 'wellknown';
 import router from './router';
 import store from './store';
+import useEntities from './store/useEntities';
 import App from './App.vue';
 import AppBarOptions from './shell/AppBarOptions.vue';
 import mountFieldModule from './field-modules/mount';
@@ -32,7 +33,8 @@ window.lib = Object.freeze({
   ...utils,
   R,
   wellknown,
-  isUnsynced: farm.isUnsynced,
+  isUnsynced: farm.meta.isUnsynced,
+  useEntities,
   mountFieldModule: mountFieldModule({ app, router }),
 });
 

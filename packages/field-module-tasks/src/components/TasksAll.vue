@@ -1,6 +1,6 @@
 <template>
   <farm-main :space="['none', 's']">
-    <app-bar-options title="Tasks" :actions="appBarActions"/>
+    <app-bar-options title="Tasks"/>
     <farm-tiles :columns="[1, 2, 3]" :space="['none', 's']" dividers>
       <farm-card
         v-if="logs.length < 1">
@@ -32,8 +32,6 @@
                   v-if="task.status !== 'done' && task.late"/>
                 <h6>{{task.name}}</h6>
               </farm-inline>
-              <icon-cloud-upload v-if="task.isUnsynced"/>
-              <icon-cloud-done v-else/>
             </farm-inline>
 
             <farm-text size="s">{{task.notes}}</farm-text>
@@ -77,7 +75,6 @@
 </template>
 <script>
 const {
-  isUnsynced,
   parseNotes,
 } = window.lib;
 
@@ -85,7 +82,6 @@ export default {
   name: 'TasksAll',
   inject: ['bundles'],
   props: [
-    'isSyncing',
     'logs',
     'userId',
     'assets',
@@ -112,24 +108,11 @@ export default {
           date: new Date(log.timestamp).toLocaleDateString(undefined, dateOpts),
           notes: parseNotes(log.notes),
           late: log.timestamp < new Date().toISOString(),
-          isUnsynced: isUnsynced(log),
         };
       });
     },
-    appBarActions() {
-      return [
-        {
-          icon: this.isSyncing ? 'icon-sync-spin' : 'icon-cloud-upload',
-          onClick: this.syncAll,
-          text: this.$t('Sync all logs'),
-        },
-      ];
-    },
   },
   methods: {
-    syncAll() {
-      this.$emit('sync-all');
-    },
     showDate(iso) {
       const date = new Date(iso);
       const opts = { month: 'short', day: 'numeric', year: 'numeric' };
@@ -140,7 +123,6 @@ export default {
         .then(id => this.$router.push({ path: `/tasks/${id}` }));
     },
     parseNotes,
-    isUnsynced,
   },
 };
 
