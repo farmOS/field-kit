@@ -17,6 +17,7 @@ import { alert } from './alert';
 import interceptor from '../http/interceptor';
 import { PromiseQueue } from '../utils/promises';
 import parseFilter from '../utils/parseFilter';
+import nomenclature from './nomenclature';
 
 const scheduler = new SyncScheduler();
 
@@ -140,8 +141,9 @@ export default function useEntities() {
 
   // Create a reference to a new entity. Just for internal use.
   function createEntity(entity, type, id) {
+    const { shortName } = nomenclature.entities[entity];
     const _id = validate(id) ? id : uuidv4();
-    const def = farm[entity].create({ id: _id, type });
+    const def = farm[shortName].create({ id: _id, type });
     const defaultFields = {
       id: _id, type, ...def.attributes, ...def.relatinships,
     };
@@ -179,10 +181,11 @@ export default function useEntities() {
         emit(itemState, fields);
       }
     };
+    const { shortName } = nomenclature.entities[entity];
     getRecords('entities', entity, query).then((cache) => {
       cache.forEach(emitter);
       const syncOptions = { cache, filter };
-      return syncEntities(entity, syncOptions);
+      return syncEntities(shortName, syncOptions);
     }).then(collectionSyncHandler(entity, filter, emitter));
     return reference;
   }
@@ -191,22 +194,25 @@ export default function useEntities() {
   // reference to an entity, then updates that reference as new data comes in,
   // first from the local database, then from any remote systems.
   function checkout(entity, type, id) {
+    const _entity = nomenclature.memoized[entity];
+    if (!_entity) throw new Error(`Checkout failed; invalid entity name: ${entity}`);
+    const { shortName } = nomenclature.entities[_entity];
     // Dispatch to checkoutCollection if the 2nd or 3rd param is a filter object.
-    if (is(Object, type)) return checkoutCollection(entity, type);
+    if (is(Object, type)) return checkoutCollection(_entity, type);
     if (is(Object, id)) {
       const filter = typeof type === 'string' ? { ...id, type } : id;
-      return checkoutCollection(entity, filter);
+      return checkoutCollection(_entity, filter);
     }
-    const [reference, revision] = createEntity(entity, type, id);
+    const [reference, revision] = createEntity(_entity, type, id);
     // Early return if this is a brand new entity.
     if (!validate(id)) return reference;
     const { queue, state } = revision;
     queue.push(() => {
       updateStatus(STATUS_IN_PROGRESS);
-      return getRecords('entities', entity, id).then(([, data]) => {
+      return getRecords('entities', _entity, id).then(([, data]) => {
         if (data) emit(state, data);
         const syncOptions = { cache: asArray(data), filter: { id, type } };
-        return syncEntities(entity, syncOptions)
+        return syncEntities(shortName, syncOptions)
           .then(syncHandler(revision))
           .then(results => results?.data?.[0]);
       });
@@ -240,16 +246,17 @@ export default function useEntities() {
     const {
       entity, type, id, queue, state,
     } = revision;
+    const { shortName } = nomenclature.entities[entity];
     return queue.push((previous) => {
       updateStatus(STATUS_IN_PROGRESS);
       const fields = replay(previous, transactions);
       // The state will have had these transactions applied already, but may not
       // have received updates from a previous commit, so make sure to update it.
       emit(state, fields);
-      const next = farm[entity].update(previous, fields);
+      const next = farm[shortName].update(previous, fields);
       return cacheEntity(entity, next).then(() => {
         const syncOptions = { cache: asArray(next), filter: { id, type } };
-        return syncEntities(entity, syncOptions)
+        return syncEntities(shortName, syncOptions)
           .then(syncHandler(revision))
           .then(({ data: [value] = [] } = {}) => value);
       });

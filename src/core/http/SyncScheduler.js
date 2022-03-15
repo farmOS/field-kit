@@ -9,7 +9,7 @@ import { alert } from '../store/alert';
 import parseFilter from '../utils/parseFilter';
 
 // An array of shortNames to ensure only valid entities are pushed onto the scheduler.
-const entities = Object.values(nomenclature.entities).map(e => e.shortName);
+const entities = Object.keys(nomenclature.entities);
 
 const stringifyID = (entity, type, id) => JSON.stringify({ entity, type, id });
 const parseID = string => JSON.parse(string);
@@ -78,9 +78,10 @@ export default function SyncScheduler(intervals = defaultIntervals) {
     const requests = filterGroups.map(async (group) => {
       updateStatus(STATUS_IN_PROGRESS);
       const { entity, filter } = group;
+      const { shortName } = nomenclature.entities[entity];
       const query = parseFilter(filter);
       const cache = await getRecords('entities', entity, query);
-      const results = await syncEntities(entity, { cache, filter });
+      const results = await syncEntities(shortName, { cache, filter });
       const handler = ({ connectivity, warnings }) => {
         updateStatus(connectivity);
         if (warnings.length > 0) {
