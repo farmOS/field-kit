@@ -44,23 +44,22 @@
 </template>
 
 <script>
+const { inject, reactive } = window.Vue;
+const { useEntities } = window.lib;
+
 export default {
   name: 'TasksWidget',
-  props: ['logs'],
-  inject: ['profile'],
-  data() {
-    return {
-      scrollStyle: {
-        paddingBottom: '15px',
-      },
-    };
-  },
-  created() {
+  setup() {
+    const profile = inject('profile');
+    const { checkout } = useEntities();
     const filter = {
-      'owner.id': this.profile?.user?.id,
+      'owner.id': profile?.user?.id,
       status: { $ne: 'done' },
     };
-    this.loadLogs(filter);
+    const logs = checkout('log', filter);
+    const scrollStyle = reactive({ paddingBottom: '15px' });
+
+    return { logs, scrollStyle };
   },
   mounted() {
     this.calcScrollStyle();

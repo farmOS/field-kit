@@ -1,24 +1,16 @@
 import {
-  assoc, compose, concat, curry, evolve, map, mapObjIndexed,
-  mergeDeepWith, pick, prop,
+  assoc, compose, curry, evolve, map, mapObjIndexed, pick, prop,
 } from 'ramda';
 import { kebab } from 'field-kit-utils/string-case';
-import widgetMixin from '../mixins/widgetMixin';
 import { upsertModuleConfig } from './index';
 
 const parseWidgetName = curry((modName, widget) =>
   (widget?.name ? kebab(widget.name) : `${kebab(modName)}-widget`));
 
-// Returns a function that takes a component and adds a mixin too it.
-const withMixin = mixin => mergeDeepWith(concat, { mixins: [mixin] });
-
-// Functions for registering widget and main route components globally on the
-// application instance and adding the routeMixin to each.
-const addWidgetMixin = withMixin(widgetMixin);
 const registerWidget = (app, modName, widget) => {
   app.component(
     parseWidgetName(modName, widget),
-    addWidgetMixin(widget),
+    widget,
   );
 };
 
