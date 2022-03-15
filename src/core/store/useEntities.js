@@ -1,4 +1,4 @@
-import { reactive, readonly } from 'vue';
+import { reactive, readonly, shallowReactive } from 'vue';
 import { useRouter } from 'vue-router';
 import {
   clone, complement, compose, curryN, equals, is,
@@ -162,7 +162,7 @@ export default function useEntities() {
   // checkout function gets a filter instead of a type or id, it dispatches to
   // checkoutCollection internally, so this is not exposed publicly.
   function checkoutCollection(entity, filter) {
-    const collection = reactive([]);
+    const collection = shallowReactive([]);
     const reference = readonly(collection);
     const query = parseFilter(filter);
     updateStatus(STATUS_IN_PROGRESS);
