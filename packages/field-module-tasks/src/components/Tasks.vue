@@ -16,7 +16,6 @@
 </template>
 <script>
 const {
-  R,
   useEntities,
 } = window.lib;
 const { computed, inject } = window.Vue;
@@ -39,12 +38,7 @@ export default {
     const areas = computed(() => assets.filter(a => a.is_location));
     const equipment = computed(() => assets.filter(a => a.type === 'equipment'));
 
-    const unsortedLogs = checkout('log', logFilter);
-    const compare = (a, b) => new Date(b.timestamp) - new Date(a.timestamp);
-    const logs = computed(() => {
-      const copy = R.clone(unsortedLogs);
-      return copy.sort(compare);
-    });
+    const logs = checkout('log', logFilter);
 
     const terms = checkout('term', termFilter);
     const units = computed(() => terms.filter(t => t.type === 'unit'));

@@ -88,8 +88,11 @@ export default {
   ],
   computed: {
     tasks() {
-      return this.logs.map((log) => {
-        const { id, name, status } = log;
+      const compare = (a, b) => new Date(b.timestamp) - new Date(a.timestamp);
+      const logs = this.logs.map((log) => {
+        const {
+          id, name, status, timestamp,
+        } = log;
         const [locations, assets] = log.asset.reduce(([locs, nonLocs], asset) => {
           const match = this.assets.find(a => a.id === asset.id);
           if (!match) return [locs, nonLocs];
@@ -102,14 +105,16 @@ export default {
           id,
           name,
           status,
+          timestamp,
           locations,
           assets,
           typeLabel: label,
-          date: new Date(log.timestamp).toLocaleDateString(undefined, dateOpts),
+          date: new Date(timestamp).toLocaleDateString(undefined, dateOpts),
           notes: parseNotes(log.notes),
-          late: log.timestamp < new Date().toISOString(),
+          late: timestamp < new Date().toISOString(),
         };
       });
+      return logs.sort(compare);
     },
   },
   methods: {
