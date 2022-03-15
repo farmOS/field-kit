@@ -14,13 +14,13 @@
             :label="$t('Done')"
             labelPosition="after"
             :checked="log.status === 'done'"
-            @input="updateCurrentLog('status', $event ? 'done' : 'pending')"/>
+            @input="updateCurrentLog({ status: $event ? 'done' : 'pending' })"/>
         </div>
         <div class="form-item form-item-name form-group">
           <label for="name" class="control-label">{{ $t('Name') }}</label>
           <input
             :value="log.name"
-            @input="updateCurrentLog('name', $event.target.value)"
+            @input="updateCurrentLog({ name: $event.target.value })"
             :placeholder="$t('Enter name')"
             type="text"
             class="form-control"
@@ -29,7 +29,7 @@
         </div>
         <farm-date-time-form
           :timestamp="log.timestamp"
-          @input="updateCurrentLog('timestamp', $event)"/>
+          @input="updateCurrentLog({ timestamp: $event })"/>
         <!-- Allow users to change type for logs that have not yet been sent to the server
         For logs currently on the server, display type as text -->
         <div class="form-item form-item-name form-group">
@@ -37,7 +37,7 @@
           <div class="input-group" v-if="(log.id === undefined)">
             <select
               :value="log.type"
-              @input="updateCurrentLog('type', $event.target.value)"
+              @input="updateCurrentLog({ type: $event.target.value })"
               class="custom-select col-sm-3 ">
                 <option
                   v-for="(type, typeKey) in logTypes"
@@ -534,22 +534,21 @@ export default {
     'allLogs',
     'allUnits',
     'areaGeoJSON',
-    'isSyncing',
   ],
 
-  inject: ['alert', 'bundles'],
+  inject: ['alert', 'appendLog', 'bundles', 'updateLog', 'saveLog'],
+
+  beforeRouteLeave() {
+    this.saveLog(this.log);
+  },
 
   methods: {
-    updateCurrentLog(key, val) {
-      const props = {
-        [key]: val,
-        id: this.id,
-      };
-      this.updateLog(props);
+    updateCurrentLog(tx) {
+      this.updateLog(this.log, tx);
     },
 
     updateNotes(value) {
-      this.updateCurrentLog('notes', { value, format: 'default' });
+      this.updateCurrentLog({ notes: { value, format: 'default' } });
     },
 
     // updateQuantity(key, value, index) {
@@ -574,7 +573,7 @@ export default {
     //     };
     //     updatedQuants = [...currentQuants, updatedQuant];
     //   }
-    //   this.updateCurrentLog('quantity', updatedQuants);
+    //   this.updateCurrentLog({ quantity: updatedQuants });
     //   if (index < 0) {
     //     this.currentQuant = updatedQuants.length - 1;
     //   }
@@ -584,19 +583,19 @@ export default {
       const newAssets = isSelected
         ? this.log.asset.concat({ id, type })
         : this.log.asset.filter(c => c.id !== id);
-      this.updateCurrentLog('asset', newAssets);
+      this.updateCurrentLog({ asset: newAssets });
     },
     toggleArea(isSelected, { id, type }) {
       const newAreas = isSelected
         ? this.log.location.concat({ id, type })
         : this.log.location.filter(c => c.id !== id);
-      this.updateCurrentLog('location', newAreas);
+      this.updateCurrentLog({ location: newAreas });
     },
     toggleCategory(isSelected, id) {
       const newCats = isSelected
         ? this.log.category.concat({ id, type: 'taxonomy_term--log_category' })
         : this.log.category.filter(c => c.id !== id);
-      this.updateCurrentLog('category', newCats);
+      this.updateCurrentLog({ category: newCats });
     },
     toggleEquipment(isSelected, id) {
       return isSelected
@@ -619,7 +618,7 @@ export default {
     //       : [areaReference],
     //     geometry: newGeometry,
     //   };
-    //   this.updateCurrentLog('movement', newMovement);
+    //   this.updateCurrentLog({ movement: newMovement });
     // },
 
     // removeMovementArea(area) {
@@ -636,7 +635,7 @@ export default {
     //     geometry: newGeometry,
     //     area: newAreas,
     //   };
-    //   this.updateCurrentLog('movement', newMovement);
+    //   this.updateCurrentLog({ movement: newMovement });
     // },
 
     // removeQuant(index) {
@@ -647,7 +646,7 @@ export default {
     //     ...this.log.quantity.slice(0, index),
     //     ...this.log.quantity.slice(index + 1),
     //   ];
-    //   this.updateCurrentLog('quantity', newQuant);
+    //   this.updateCurrentLog({ quantity: newQuant });
     // },
 
     // getPhoto() {
@@ -684,7 +683,7 @@ export default {
       );
       setTimeout(() => {
         navigator.geolocation.clearWatch(watch);
-        this.updateCurrentLog('geometry', props);
+        this.updateCurrentLog({ geometry: props });
         this.awaitingLocation = false;
       }, 5000);
     },
@@ -696,14 +695,7 @@ export default {
           ...this.geometryAsArrayOfWktPoints.slice(index + 1),
         ]),
       };
-      this.updateCurrentLog('geometry', geometry);
-    },
-
-    deleteCurrentLog() {
-      this.$emit('delete-current-log', this.log.id);
-    },
-    sync() {
-      this.$emit('sync', this.log.id);
+      this.updateCurrentLog({ geometry });
     },
 
     parseNotes,
@@ -750,19 +742,7 @@ export default {
         onClick() { window.open(logURL, '_blank'); },
         text: this.$t('Open in browser'),
       }] : [];
-      return [
-        ...openInNew,
-        {
-          icon: 'icon-delete',
-          onClick: this.deleteCurrentLog,
-          text: this.$t('Delete from device'),
-        },
-        {
-          icon: this.isSyncing ? 'icon-sync-spin' : 'icon-cloud-upload',
-          onClick: this.sync,
-          text: this.$t('Sync this log'),
-        },
-      ];
+      return openInNew;
     },
 
     // quantUnitNames() {

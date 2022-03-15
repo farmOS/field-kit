@@ -26,7 +26,9 @@ export default {
     const profile = inject('profile');
     const settings = inject('settings');
 
-    const { append, checkout } = useEntities();
+    const {
+      append, checkout, commit, revise,
+    } = useEntities();
     const assetFilter = { status: 'active' };
     const termFilter = { type: ['log_category', 'unit'] };
     const logFilter = {
@@ -40,6 +42,8 @@ export default {
 
     const logs = checkout('log', logFilter);
     provide('appendLog', (type, fields = {}) => append(logs, type, fields));
+    provide('updateLog', (log, tx) => { revise(log, tx); });
+    provide('saveLog', commit);
 
     const terms = checkout('term', termFilter);
     const units = computed(() => terms.filter(t => t.type === 'unit'));

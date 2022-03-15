@@ -3,7 +3,6 @@ import {
   mergeDeepWith, pick, prop,
 } from 'ramda';
 import { kebab } from 'field-kit-utils/string-case';
-import routeMixin from '../mixins/routeMixin';
 import widgetMixin from '../mixins/widgetMixin';
 import { upsertModuleConfig } from './index';
 
@@ -58,7 +57,6 @@ const parseModuleConfig = mod => evolve({
 // Prepare route components prior to registering them with Vue Router.
 const prepComponent = route => compose(
   normalizeComponentName(route),
-  withMixin(routeMixin),
 );
 const prepRoute = route => evolve({
   component: prepComponent(route),
