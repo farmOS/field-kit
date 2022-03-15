@@ -18,7 +18,7 @@
 const {
   useEntities,
 } = window.lib;
-const { computed, inject } = window.Vue;
+const { computed, inject, provide } = window.Vue;
 
 export default {
   name: 'TasksContainer',
@@ -26,7 +26,7 @@ export default {
     const profile = inject('profile');
     const settings = inject('settings');
 
-    const { checkout } = useEntities();
+    const { append, checkout } = useEntities();
     const assetFilter = { status: 'active' };
     const termFilter = { type: ['log_category', 'unit'] };
     const logFilter = {
@@ -39,6 +39,7 @@ export default {
     const equipment = computed(() => assets.filter(a => a.type === 'equipment'));
 
     const logs = checkout('log', logFilter);
+    provide('appendLog', (type, fields = {}) => append(logs, type, fields));
 
     const terms = checkout('term', termFilter);
     const units = computed(() => terms.filter(t => t.type === 'unit'));

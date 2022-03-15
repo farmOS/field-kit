@@ -80,7 +80,7 @@ const {
 
 export default {
   name: 'TasksAll',
-  inject: ['bundles'],
+  inject: ['appendLog', 'bundles'],
   props: [
     'logs',
     'userId',
@@ -124,8 +124,8 @@ export default {
       return date.toLocaleDateString(undefined, opts);
     },
     startNewLog() {
-      this.createLog({ done: true })
-        .then(id => this.$router.push({ path: `/tasks/${id}` }));
+      const log = this.appendLog('activity', { status: 'done' });
+      this.$router.push({ path: `/tasks/${log.id}` });
     },
     parseNotes,
   },

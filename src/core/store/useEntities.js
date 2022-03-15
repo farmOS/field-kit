@@ -62,6 +62,7 @@ const replay = (previous, transactions) => {
   });
   return fields;
 };
+
 const syncHandler = revision => interceptor((evaluation) => {
   const {
     entity, type, id, state,
@@ -135,9 +136,13 @@ const collectionSyncHandler = (entity, filter, emitter) =>
   });
 
 export default function useEntities() {
-  // A collection of revisions, each corresponding to a unique call of the
+  // A record of all revisions, each corresponding to a unique call of the
   // checkout function and mapped to the read-only ref returned by that call.
   const revisions = new WeakMap();
+  // For tracking collections of entities, which in turn have their own revisions
+  // tracked individually above. This is primarily for appending new items to
+  // the collection, but may be useful for attaching listeners in the future.
+  const collections = new WeakMap();
 
   // Create a reference to a new entity. Just for internal use.
   function createEntity(entity, type, id) {
@@ -145,7 +150,7 @@ export default function useEntities() {
     const _id = validate(id) ? id : uuidv4();
     const def = farm[shortName].create({ id: _id, type });
     const defaultFields = {
-      id: _id, type, ...def.attributes, ...def.relatinships,
+      id: _id, type, ...def.attributes, ...def.relationships,
     };
     const state = reactive(defaultFields);
     const reference = readonly(state);
@@ -157,36 +162,49 @@ export default function useEntities() {
     return [reference, revision];
   }
 
+  // Create a new entity and add it to an existing collection.
+  function append(collectionReference, type, fields) {
+    const collection = collections.get(collectionReference);
+    const { entity, state: collectionState } = collection;
+    const [itemReference, revision] = createEntity(entity, type, fields.id);
+    collectionState.push(itemReference);
+    const { queue, state: itemState } = revision;
+    queue.push(() => emit(itemState, fields));
+    return itemReference;
+  }
+
+  // Upsert an entity in the collection.
+  const emitCollection = reference => (value = {}) => {
+    const { id, type, ...fields } = value;
+    const { state } = collections.get(reference);
+    if (typeof id !== 'string' || typeof type !== 'string') return;
+    const i = state.findIndex(item => item.id === id);
+    if (i < 0) {
+      append(reference, type, value);
+    } else {
+      const itemRef = state[i];
+      const { state: itemState } = revisions.get(itemRef);
+      emit(itemState, fields);
+    }
+  };
+
   // A synchronous operation that returns a read-only, reactive array of entity
   // references, then updates those entities as new data comes in. When the
   // checkout function gets a filter instead of a type or id, it dispatches to
   // checkoutCollection internally, so this is not exposed publicly.
   function checkoutCollection(entity, filter) {
-    const collection = shallowReactive([]);
-    const reference = readonly(collection);
+    const state = shallowReactive([]);
+    const reference = readonly(state);
+    const collection = { entity, filter, state };
+    collections.set(reference, collection);
     const query = parseFilter(filter);
     updateStatus(STATUS_IN_PROGRESS);
-    // Upsert an entity in the collection when received from the db or remote.
-    const emitter = ({ id, type, ...fields } = {}) => {
-      if (typeof id !== 'string' || typeof type !== 'string') return;
-      const i = collection.findIndex(item => item.id === id);
-      if (i < 0) {
-        const [itemRef, revision] = createEntity(entity, type, id);
-        const { state: itemState } = revision;
-        emit(itemState, fields);
-        collection.push(itemRef);
-      } else {
-        const itemRef = collection[i];
-        const { state: itemState } = revisions.get(itemRef);
-        emit(itemState, fields);
-      }
-    };
     const { shortName } = nomenclature.entities[entity];
     getRecords('entities', entity, query).then((cache) => {
-      cache.forEach(emitter);
+      cache.forEach(emitCollection(reference));
       const syncOptions = { cache, filter };
       return syncEntities(shortName, syncOptions);
-    }).then(collectionSyncHandler(entity, filter, emitter));
+    }).then(collectionSyncHandler(entity, filter, emitCollection(reference)));
     return reference;
   }
 
@@ -264,6 +282,6 @@ export default function useEntities() {
   }
 
   return {
-    checkout, commit, revise,
+    append, checkout, commit, revise,
   };
 }
