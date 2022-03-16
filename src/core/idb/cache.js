@@ -9,7 +9,7 @@ import { syncEntities } from '../http/sync';
 import interceptor from '../http/interceptor';
 import parseFilter from '../utils/parseFilter';
 import daysAway from '../utils/daysAway';
-import { STATUS_IN_PROGRESS, updateStatus } from '../store/connection';
+import { STATUS_IN_PROGRESS, updateStatus } from '../http/connection';
 import { alert } from '../store/alert';
 
 const LS = window.localStorage;

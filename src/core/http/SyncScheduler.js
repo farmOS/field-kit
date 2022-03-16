@@ -4,7 +4,7 @@ import { getRecords } from '../idb';
 import { cacheEntity } from '../idb/cache';
 import farm from '../farm';
 import nomenclature from '../store/nomenclature';
-import { STATUS_IN_PROGRESS, updateStatus } from '../store/connection';
+import { STATUS_IN_PROGRESS, updateStatus } from './connection';
 import { alert } from '../store/alert';
 import parseFilter from '../utils/parseFilter';
 

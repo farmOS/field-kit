@@ -14,7 +14,7 @@
 <script>
 import { computed } from 'vue';
 import { validateAction, validateNav } from '../../components/FarmAppBar.vue';
-import connection, { STATUS_GOOD_CONNECTION, STATUS_IN_PROGRESS, STATUS_NO_CONNECTION } from '../store/connection';
+import connection, { STATUS_GOOD_CONNECTION, STATUS_IN_PROGRESS, STATUS_NO_CONNECTION } from '../http/connection';
 
 let state;
 
