@@ -79,7 +79,7 @@
 <script>
 import fieldModules from '../field-modules';
 import profile from '../store/profile';
-import settings from '../store/settings';
+import settings from './settings';
 import { version } from '../../../package.json';
 
 export default {
