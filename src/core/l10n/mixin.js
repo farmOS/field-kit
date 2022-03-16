@@ -1,5 +1,5 @@
 import profile from '../farm/profile';
-import { $t } from '../store/l10n/t';
+import { $t } from './t';
 
 // A global Vue mixin for translating strings in the markup.
 export default {

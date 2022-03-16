@@ -8,7 +8,7 @@ import App from './App.vue';
 import AppBarOptions from './shell/AppBarOptions.vue';
 import mountFieldModule from './field-modules/mount';
 import { alert } from './warnings/alert';
-import t from './mixins/t';
+import t from './l10n/mixin';
 import farm from './farm';
 import * as utils from './utils';
 import components from '../components';
