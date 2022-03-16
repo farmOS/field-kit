@@ -78,7 +78,7 @@
 
 <script>
 import fieldModules from '../field-modules';
-import profile from '../store/profile';
+import profile from '../farm/profile';
 import settings from './settings';
 import { version } from '../../../package.json';
 

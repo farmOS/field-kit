@@ -1,5 +1,5 @@
 import { reactive, readonly } from 'vue';
-import farm from '../farm';
+import farm from '.';
 import { fetchEntities } from '../http/sync';
 
 const LS = window.localStorage;

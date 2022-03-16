@@ -1,4 +1,4 @@
-import profile from '../store/profile';
+import profile from '../farm/profile';
 import { $t } from '../store/l10n/t';
 
 // A global Vue mixin for translating strings in the markup.

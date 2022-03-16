@@ -1,5 +1,5 @@
 import farmOS from 'farmos';
-import * as remoteConfig from './http/remote';
+import * as remoteConfig from './remote';
 
 const { getHost, setHost, ...rest } = remoteConfig;
 const host = getHost();

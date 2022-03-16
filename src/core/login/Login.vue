@@ -68,11 +68,11 @@
 import { refreshCache } from '../idb/cache';
 import {
   clientId, getHost, getToken, setHost, setToken,
-} from '../http/remote';
+} from '../farm/remote';
 import farm from '../farm';
 import { updateFieldModules } from '../field-modules';
 import { updateConfigDocs } from '../store/configDocuments';
-import { updateProfile } from '../store/profile';
+import { updateProfile } from '../farm/profile';
 
 export default {
   name: 'LoginScreen',
