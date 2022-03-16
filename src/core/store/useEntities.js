@@ -1,11 +1,11 @@
 import { reactive, readonly, shallowReactive } from 'vue';
-import { useRouter } from 'vue-router';
 import {
   clone, complement, compose, curryN, equals, is,
 } from 'ramda';
 import { validate, v4 as uuidv4 } from 'uuid';
 import { parseBundles } from 'farmos';
 import farm from '../farm';
+import router from '../router';
 import SyncScheduler from '../http/SyncScheduler';
 import { syncEntities } from '../http/sync';
 import { getRecords } from '../idb';
@@ -81,7 +81,6 @@ const syncHandler = revision => interceptor((evaluation) => {
     });
   }
   if (loginRequired) {
-    const router = useRouter();
     router.push('/login');
   }
   if (value) {
