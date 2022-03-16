@@ -18,6 +18,9 @@ import interceptor from '../http/interceptor';
 import { PromiseQueue } from '../utils/promises';
 import parseFilter from '../utils/parseFilter';
 import nomenclature from './nomenclature';
+import {
+  backupTransactions, clearBackup, restoreTransactions,
+} from './backup';
 
 const scheduler = new SyncScheduler();
 
@@ -129,7 +132,6 @@ const collectionSyncHandler = (entity, filter, emitter) =>
       });
     }
     if (loginRequired) {
-      const router = useRouter();
       router.push('/login');
     }
   });
@@ -154,8 +156,10 @@ export default function useEntities() {
     const state = reactive(defaultFields);
     const reference = readonly(state);
     const queue = new PromiseQueue(def);
+    const route = router.currentRoute.value;
+    const [backupURI, transactions] = restoreTransactions(entity, type, _id, route);
     const revision = {
-      entity, type, id: _id, state, transactions: [], queue,
+      entity, type, id: _id, state, transactions, queue, backupURI,
     };
     revisions.set(reference, revision);
     return [reference, revision];
@@ -203,7 +207,14 @@ export default function useEntities() {
       cache.forEach(emitCollection(reference));
       const syncOptions = { cache, filter };
       return syncEntities(shortName, syncOptions);
-    }).then(collectionSyncHandler(entity, filter, emitCollection(reference)));
+    }).then(collectionSyncHandler(entity, filter, emitCollection(reference)))
+      .then(() => {
+        state.forEach((itemRef) => {
+          const { state: itemState, transactions } = revisions.get(itemRef);
+          const fields = replay(itemState, transactions);
+          emit(itemState, fields);
+        });
+      });
     return reference;
   }
 
@@ -223,7 +234,7 @@ export default function useEntities() {
     const [reference, revision] = createEntity(_entity, type, id);
     // Early return if this is a brand new entity.
     if (!validate(id)) return reference;
-    const { queue, state } = revision;
+    const { queue, state, transactions } = revision;
     queue.push(() => {
       updateStatus(STATUS_IN_PROGRESS);
       return getRecords('entities', _entity, id).then(([, data]) => {
@@ -231,7 +242,11 @@ export default function useEntities() {
         const syncOptions = { cache: asArray(data), filter: { id, type } };
         return syncEntities(shortName, syncOptions)
           .then(syncHandler(revision))
-          .then(results => results?.data?.[0]);
+          .then(({ data: [value] = [] } = {}) => {
+            const fields = replay(value, transactions);
+            emit(state, fields);
+            return value;
+          });
       });
     });
     return reference;
@@ -244,9 +259,10 @@ export default function useEntities() {
     let fields = {}; let tx = () => fields;
     if (typeof transaction === 'function') tx = transaction;
     if (is(Object, transaction)) fields = transaction;
-    const { state, transactions } = revisions.get(reference);
+    const { state, transactions, backupURI } = revisions.get(reference);
     fields = tx(reference);
     transactions.push(tx);
+    backupTransactions(backupURI, fields);
     emit(state, fields);
   }
 
@@ -261,7 +277,7 @@ export default function useEntities() {
     const transactions = [...revision.transactions];
     revision.transactions = [];
     const {
-      entity, type, id, queue, state,
+      entity, type, id, queue, state, backupURI,
     } = revision;
     const { shortName } = nomenclature.entities[entity];
     return queue.push((previous) => {
@@ -272,6 +288,7 @@ export default function useEntities() {
       emit(state, fields);
       const next = farm[shortName].update(previous, fields);
       return cacheEntity(entity, next).then(() => {
+        clearBackup(backupURI);
         const syncOptions = { cache: asArray(next), filter: { id, type } };
         return syncEntities(shortName, syncOptions)
           .then(syncHandler(revision))
