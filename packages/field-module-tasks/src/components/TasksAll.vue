@@ -10,8 +10,7 @@
             {{ $t('You don\'t have any logs to display yet. Logs are records of events') }}
             {{ $t('in farmOS. You can add some by clicking the') }}
             <icon-add-circle class="inline-svg"/>
-            {{ $t('icon below, or you can get uncompleted tasks from the server by') }}
-            {{ $t('clicking the') }} <icon-cloud-upload class="inline-svg"/> {{ $t('icon above.') }}
+            {{ $t('icon below.') }}
           </farm-text>
         </farm-stack>
       </farm-card>

@@ -22,7 +22,7 @@ export default {
     'Let\'s Get Started!': 'Lass uns anfangen',
     'You don\'t have any logs to display yet. Logs are records of events': 'Du hast keine Einträge zum Anzeigen, Einträge sind Aufzeichnungen von Ereignissen',
     'in farmOS. You can add some by clicking the': 'In farmOS Sie können etwas hinzufügen durch anklicken ',
-    'icon below, or you can get uncompleted tasks from the server by': 'des Symbols unterhalb, oder Sie können unvollendete Aufgaben erhalten durch',
+    'icon below.': 'des Symbols unterhalb.',
     'clicking the': 'das Klicken',
     'icon above.': 'auf das Symbol oberhalb.',
     'My Logs': 'Meine Einträge',
