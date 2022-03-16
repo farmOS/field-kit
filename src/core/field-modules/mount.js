@@ -26,8 +26,7 @@ const normalizeComponentName = route => (component, viewName) => {
   return assoc('name', fallbackName(route.name, viewName), component);
 };
 
-// Functions for parsing module config objects as primitive data that can be
-// serialized, stored and tracked in Vuex.
+// Functions for parsing module config objects as serializable data.
 const parseComponentName = compose(kebab, prop('name'));
 const parseRoute = route => compose(
   evolve({
@@ -56,8 +55,8 @@ const prepRoute = route => evolve({
   children: map(prepRoute),
 }, route);
 
-// Main function called by modules to add their components and routes to the
-// main Vue app and Vuex store.
+// Main function called by modules to register their components and routes to
+// the main Vue instance.
 const mountFieldModule = deps => (mod) => {
   const { app, router } = deps;
   const { routes = [], widget } = mod;

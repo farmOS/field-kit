@@ -4,8 +4,8 @@
  * of which is as a "config entity." This actually has some advantages, b/c it
  * provides additional configuration details over the API that is handy,
  * especially for logs. However, it makes the process of collecting and storing
- * those configuration details a lot more complicated. So here, we have the Vuex
- * actions for fetching, processing and storing all configuration data for a
+ * those configuration details a lot more complicated. So here, we have the state
+ * and logic for fetching, processing and storing all configuration data for a
  * particular entity, which we call its `config_documents`, all in one place.
  * For the time being, we're also adding types to the global store for config
  * entities only (assets, logs and quantities), but that could change.

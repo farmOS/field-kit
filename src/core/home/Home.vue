@@ -1,14 +1,7 @@
 <template>
   <farm-main>
     <app-bar-options :title="$t('Home')"/>
-    <home-widgets
-      :modules="modules"
-      :assets='assets'
-      :logs="logs"
-      :plans='plans'
-      :quantities='quantities'
-      :terms='terms'
-      :users='users'/>
+    <home-widgets :modules="modules"/>
   </farm-main>
 </template>
 
@@ -19,14 +12,6 @@ import HomeWidgets from './HomeWidgets';
 export default {
   name: 'HomeScreen',
   components: { HomeWidgets },
-  props: [
-    'assets',
-    'logs',
-    'plans',
-    'quantities',
-    'terms',
-    'users',
-  ],
   data() {
     return {
       modules: fieldModules,

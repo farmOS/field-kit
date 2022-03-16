@@ -3,7 +3,6 @@ import * as VueRouter from 'vue-router';
 import * as R from 'ramda';
 import wellknown from 'wellknown';
 import router from './router';
-import store from './store';
 import useEntities from './store/useEntities';
 import App from './App.vue';
 import AppBarOptions from './shell/AppBarOptions.vue';
@@ -45,8 +44,7 @@ window.lib = Object.freeze({
 window.dangerouslyBlockingAlert = window.alert;
 window.alert = alert;
 
-// Use Vuex and Vue Router plugins
-app.use(store);
+// Use Vue Router plugins
 app.use(router);
 
 // Globally apply the t mixin, which provides translations along with the l10n module

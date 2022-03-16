@@ -4,13 +4,7 @@
     <app-shell v-else>
       <template v-slot:default>
         <router-view v-slot="{ Component }">
-          <component :is="Component"
-            :assets="assets"
-            :logs="logs"
-            :plans="plans"
-            :quantities="quantities"
-            :terms="terms"
-            :users="users"/>
+          <component :is="Component"/>
         </router-view>
       </template>
     </app-shell>
@@ -18,7 +12,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
 import AppShell from './shell/AppShell.vue';
 import NotReady from './shell/NotReady.vue';
 import { refreshCache } from './idb/cache';
@@ -27,7 +20,6 @@ import bundles, { loadConfigDocs, updateConfigDocs } from './store/configDocumen
 import { alert } from './store/alert';
 import profile, { loadProfile, updateProfile } from './store/profile';
 import settings from './store/settings';
-import flattenEntity from './utils/flattenEntity';
 
 export default {
   name: 'App',
@@ -72,25 +64,6 @@ export default {
         // fresh install.
         if (this.$route.path !== '/login') this.$router.push('/login');
       });
-  },
-  computed: {
-    ...mapState({
-      /**
-       * L10N STATE
-       */
-      // locale: state => state.l10n.locale,
-      // langs: state => state.l10n.languages,
-
-      /**
-       * ENTITIES
-       */
-      assets: state => state.assets.map(flattenEntity),
-      logs: state => state.logs.map(flattenEntity),
-      plans: state => state.plans.map(flattenEntity),
-      quantities: state => state.quantities.map(flattenEntity),
-      terms: state => state.terms.map(flattenEntity),
-      users: state => state.users.map(flattenEntity),
-    }),
   },
 };
 </script>

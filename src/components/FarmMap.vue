@@ -8,7 +8,6 @@
 
 <script>
 import '@farmos.org/farmos-map/src/main';
-import { mapState } from 'vuex';
 
 export default {
   name: 'FarmMap',
@@ -16,6 +15,8 @@ export default {
   data() {
     return {
       map: {},
+      // TODO: where will mapbox key come from?
+      mapboxAPIKey: null,
       layers: {
         wkt: null,
         geojson: null,
@@ -60,10 +61,6 @@ export default {
       visible: Boolean,
     },
   },
-  computed: mapState({
-    // TODO: where will mapbox key come from?
-    mapboxAPIKey: state => state.mapboxAPIKey,
-  }),
   mounted() {
     // FIXME: farmOS-map is no longer added globally
     this.map = window.farmOS.map.create(this.id, this.options);

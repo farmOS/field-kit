@@ -1,6 +1,5 @@
 // A function for mutating an array of objects IN PLACE. It takes the array to
 // be mutated, an identifier (eg, 'localID') and the new or updated element.
-// This is used to create the `addLogs` and other Vuex mutations.
 const upsert = (arr, identifier, el) => {
   const i = arr.findIndex(_el => el[identifier] === _el[identifier]);
   const isNew = i < 0;

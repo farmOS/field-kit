@@ -4,7 +4,7 @@ import {
   clone, complement, compose, curryN, equals, is,
 } from 'ramda';
 import { validate, v4 as uuidv4 } from 'uuid';
-import { parseBundles } from 'farmos/src/client/adapter';
+import { parseBundles } from 'farmos';
 import farm from '../farm';
 import SyncScheduler from '../http/SyncScheduler';
 import { syncEntities } from '../http/sync';
