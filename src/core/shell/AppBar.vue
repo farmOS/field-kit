@@ -1,5 +1,10 @@
 <template>
-  <farm-app-bar :nav="nav" :title="title" :actions="actions" @menu="$emit('menu')">
+  <farm-app-bar
+    :nav="nav"
+    :title="title"
+    :actions="actions"
+    @menu="onNav('menu')"
+    @back="onNav('back')">
     <template #status>
       <component :is="statusIcon" class="status"/>
     </template>
@@ -58,6 +63,15 @@ export default {
     },
     actions() {
       return state.actions;
+    },
+  },
+  methods: {
+    onNav(navEvent) {
+      if (navEvent === 'back') {
+        this.$router.back();
+      } else {
+        this.$emit('menu');
+      }
     },
   },
 };

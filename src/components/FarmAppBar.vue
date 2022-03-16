@@ -95,7 +95,7 @@ export default {
     },
     handleNavControl() {
       if (this.navBack) {
-        this.$router.back();
+        this.$emit('back', true);
       } else {
         this.$emit('menu', true);
       }
