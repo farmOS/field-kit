@@ -13,7 +13,7 @@ import { cacheEntity } from '../idb/cache';
 import flattenEntity from '../utils/flattenEntity';
 import asArray from '../utils/asArray';
 import { STATUS_IN_PROGRESS, updateStatus } from '../http/connection';
-import { alert } from './alert';
+import { alert } from '../warnings/alert';
 import interceptor from '../http/interceptor';
 import { PromiseQueue } from '../utils/promises';
 import parseFilter from '../utils/parseFilter';

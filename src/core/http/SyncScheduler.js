@@ -5,7 +5,7 @@ import { cacheEntity } from '../idb/cache';
 import farm from '../farm';
 import nomenclature from '../store/nomenclature';
 import { STATUS_IN_PROGRESS, updateStatus } from './connection';
-import { alert } from '../store/alert';
+import { alert } from '../warnings/alert';
 import parseFilter from '../utils/parseFilter';
 
 // An array of shortNames to ensure only valid entities are pushed onto the scheduler.

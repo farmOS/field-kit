@@ -3,7 +3,7 @@ import { compose, map, path } from 'ramda';
 import { kebab } from 'field-kit-utils/string-case';
 import { FM_API_ENDPOINT } from 'field-kit-utils/constants';
 import farm from '../farm';
-import { alert } from '../store/alert';
+import { alert } from '../warnings/alert';
 import importFieldModule from './import';
 import upsert from '../utils/upsert';
 

@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { alert } from '../store/alert';
+import { alert } from '../warnings/alert';
 import AppAlerts from './AppAlerts.vue';
 import AppDrawer from './AppDrawer.vue';
 import AppBar from './AppBar.vue';

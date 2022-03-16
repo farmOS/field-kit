@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import errors, { dismissAlert } from '../store/alert';
+import errors, { dismissAlert } from '../warnings/alert';
 
 export default {
   name: 'AppAlerts',

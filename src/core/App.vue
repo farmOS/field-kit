@@ -17,7 +17,7 @@ import NotReady from './shell/NotReady.vue';
 import { refreshCache } from './idb/cache';
 import { loadFieldModules, updateFieldModules } from './field-modules';
 import bundles, { loadConfigDocs, updateConfigDocs } from './store/configDocuments';
-import { alert } from './store/alert';
+import { alert } from './warnings/alert';
 import profile, { loadProfile, updateProfile } from './store/profile';
 import settings from './shell/settings';
 

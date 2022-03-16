@@ -3,7 +3,7 @@ import {
 } from 'ramda';
 import { getHost } from './remote';
 import asArray from '../utils/asArray';
-import Warning from './Warning';
+import Warning from '../warnings/Warning';
 
 function evaluateResponse(response = {}, errorMsg) {
   const { status, data = {} } = response;

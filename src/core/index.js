@@ -7,7 +7,7 @@ import useEntities from './store/useEntities';
 import App from './App.vue';
 import AppBarOptions from './shell/AppBarOptions.vue';
 import mountFieldModule from './field-modules/mount';
-import { alert } from './store/alert';
+import { alert } from './warnings/alert';
 import t from './mixins/t';
 import farm from './farm';
 import * as utils from './utils';

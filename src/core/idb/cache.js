@@ -10,7 +10,7 @@ import interceptor from '../http/interceptor';
 import parseFilter from '../utils/parseFilter';
 import daysAway from '../utils/daysAway';
 import { STATUS_IN_PROGRESS, updateStatus } from '../http/connection';
-import { alert } from '../store/alert';
+import { alert } from '../warnings/alert';
 
 const LS = window.localStorage;
 
