@@ -3,7 +3,7 @@ import interceptor from './interceptor';
 import { getRecords } from '../idb';
 import { cacheEntity } from '../idb/cache';
 import farm from '../farm';
-import nomenclature from '../store/nomenclature';
+import nomenclature from '../entities/nomenclature';
 import { STATUS_IN_PROGRESS, updateStatus } from './connection';
 import { alert } from '../warnings/alert';
 import parseFilter from '../utils/parseFilter';

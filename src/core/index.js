@@ -3,7 +3,7 @@ import * as VueRouter from 'vue-router';
 import * as R from 'ramda';
 import wellknown from 'wellknown';
 import router from './router';
-import useEntities from './store/useEntities';
+import useEntities from './entities';
 import App from './App.vue';
 import AppBarOptions from './shell/AppBarOptions.vue';
 import mountFieldModule from './field-modules/mount';

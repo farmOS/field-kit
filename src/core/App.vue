@@ -16,7 +16,7 @@ import AppShell from './shell/AppShell.vue';
 import NotReady from './shell/NotReady.vue';
 import { refreshCache } from './idb/cache';
 import { loadFieldModules, updateFieldModules } from './field-modules';
-import bundles, { loadConfigDocs, updateConfigDocs } from './store/configDocuments';
+import bundles, { loadConfigDocs, updateConfigDocs } from './entities/configDocuments';
 import { alert } from './warnings/alert';
 import profile, { loadProfile, updateProfile } from './farm/profile';
 import settings from './shell/settings';

@@ -1,7 +1,7 @@
 import { useRouter } from 'vue-router';
 import { anyPass, complement } from 'ramda';
 import farm from '../farm';
-import nomenclature from '../store/nomenclature';
+import nomenclature from '../entities/nomenclature';
 import {
   deleteRecord, getRecords, saveRecord,
 } from '.';

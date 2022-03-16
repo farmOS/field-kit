@@ -71,7 +71,7 @@ import {
 } from '../farm/remote';
 import farm from '../farm';
 import { updateFieldModules } from '../field-modules';
-import { updateConfigDocs } from '../store/configDocuments';
+import { updateConfigDocs } from '../entities/configDocuments';
 import { updateProfile } from '../farm/profile';
 
 export default {
