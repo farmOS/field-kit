@@ -12,10 +12,10 @@ import t from './l10n/mixin';
 import farm from './farm';
 import * as utils from './utils';
 import components from '../components';
-import './normalize.css';
-import './bootstrap-simplex.min.css';
-import './vars.css';
-import './main.css';
+import './styles/normalize.css';
+import './styles/bootstrap-simplex.min.css';
+import './styles/vars.css';
+import './styles/main.css';
 
 const app = Vue.createApp(App);
 
