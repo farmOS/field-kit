@@ -136,7 +136,7 @@ const collectionSyncHandler = (entity, filter, emitter) =>
     }
   });
 
-export default function useEntities() {
+export default function useEntities(options = {}) {
   // A record of all revisions, each corresponding to a unique call of the
   // checkout function and mapped to the read-only ref returned by that call.
   const revisions = new WeakMap();
@@ -144,6 +144,18 @@ export default function useEntities() {
   // tracked individually above. This is primarily for appending new items to
   // the collection, but may be useful for attaching listeners in the future.
   const collections = new WeakMap();
+
+  const { module: modConfig } = options;
+
+  function identifyRoute() {
+    const current = router.currentRoute.value;
+    if (current.path !== '/home' || !is(Object, modConfig)) return current;
+    // If useEntities being called from the '/home' route it's a module widget.
+    // In this case, identify the module, then find its top-level route record.
+    const { routes: [record = {}] = [] } = modConfig;
+    if (!record.path) return current;
+    return router.resolve(record.path);
+  }
 
   // Create a reference to a new entity. Just for internal use.
   function createEntity(entity, type, id) {
@@ -156,7 +168,7 @@ export default function useEntities() {
     const state = reactive(defaultFields);
     const reference = readonly(state);
     const queue = new PromiseQueue(def);
-    const route = router.currentRoute.value;
+    const route = identifyRoute();
     const [backupURI, transactions] = restoreTransactions(entity, type, _id, route);
     const revision = {
       entity, type, id: _id, state, transactions, queue, backupURI,
