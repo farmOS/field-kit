@@ -16,9 +16,10 @@ const isNearest = (prevPath, curPath) =>
 // Takes a route's path, such as '/tasks/f17110c4-5390-4ec7-8911-a44f152d8726/map',
 // and its params, such as `{ id: 'f17110c4-5390-4ec7-8911-a44f152d8726' }, and
 // reconstructs the original route record, in this instance '/tasks/:id/map'.
-const encodeRoute = ({ matched }) =>
+const encodeRoute = ({ matched = [], path }) =>
   matched.reduce((prevPath, { path: curPath }) =>
-    (isNearest(prevPath, curPath) || prevPath === curPath ? curPath : prevPath), '');
+    (isNearest(prevPath, curPath) || prevPath === curPath ? curPath : prevPath), '')
+    || path; // If there were no matches, replace '' with the route record's `path`.
 
 // 'backup:f17110c4-5390-4ec7-8911-a44f152d8726.activity.log/tasks/:id/map#2022-03-16T13:53:58.894Z'
 const encodeBackupURI = (entity, type, id, route, timestamp = new Date().toISOString()) =>
