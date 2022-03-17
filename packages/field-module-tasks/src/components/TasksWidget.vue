@@ -45,18 +45,17 @@
 
 <script>
 const { inject, reactive } = window.Vue;
-const { useEntities } = window.lib;
 
 export default {
   name: 'TasksWidget',
-  setup() {
+  props: ['checkout'],
+  setup(props) {
     const profile = inject('profile');
-    const { checkout } = useEntities();
     const filter = {
       'owner.id': profile?.user?.id,
       status: { $ne: 'done' },
     };
-    const logs = checkout('log', filter);
+    const logs = props.checkout('log', filter);
     const scrollStyle = reactive({ paddingBottom: '15px' });
 
     return { logs, scrollStyle };
