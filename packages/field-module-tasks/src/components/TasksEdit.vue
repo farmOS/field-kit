@@ -315,45 +315,6 @@
         </div>
       </farm-card>
 
-      <farm-card>
-        <h3>{{ $t('Images')}} 🚧 UNDER CONSTRUCTION 🚧</h3>
-        <!-- <div
-          class="form-item form-item-name form-group">
-          <button
-            :disabled='false'
-            title="Take picture with camera"
-            @click="getPhoto"
-            class="btn btn-info btn-navbar navbar-right"
-            type="button">
-            {{ $t('Take picture with camera')}}
-          </button>
-        </div>
-        <div class="form-item form-item-name form-group">
-          <div class="input-group ">
-            <label
-              class="custom-file-label"
-              for="customFile">
-              {{ $t('Select photo from file')}}
-            </label>
-            <input
-              type="file"
-              accept="image/*"
-              class="custom-file-input"
-              ref="photo"
-              @change="loadPhoto($event.target.files)">
-          </div>
-        </div> -->
-        <!-- NOTE: Display is set to 'none' if the img fails to load. -->
-        <!-- <div class="form-item form-item-name form-group">
-          <img
-            v-for="(url, i) in imageUrls"
-            :src="url"
-            :key="`preview-${i}`"
-            onerror="this.style.display='none'"
-            class="preview" />
-        </div> -->
-      </farm-card>
-
     </farm-stack>
   </template>
 
@@ -635,17 +596,6 @@ export default {
   //     this.update({ quantity: newQuant });
   //   },
 
-  //   getPhoto() {
-  //     // Obtains an image location from the camera!
-  //   },
-
-  //   loadPhoto(files) {
-  //     for (let i = 0; i < files.length; i += 1) {
-  //       // do something
-  //     }
-  //   },
-  // },
-
   // computed: {
   //   quantUnitNames() {
   //     if (this.units.length > 0 && this.log?.quantity.length > 0) {
@@ -664,10 +614,6 @@ export default {
   //       return unitNames;
   //     }
   //     return [];
-  //   },
-  //   imageUrls() {
-  //     return this.log.images
-  //       .filter(img => typeof img === 'string');
   //   },
   //   mapLayers() {
   //     const movement = {
@@ -737,10 +683,6 @@ export default {
 
   .reset-margin {
     margin: 0 0;
-  }
-  .preview {
-    width: 100%;
-    height: 100%;
   }
 
   .empty-slot {
