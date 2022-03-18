@@ -1,328 +1,315 @@
 <template>
-<farm-tabs
-  :tabs="['General', 'Movement']"
-  :initTab="$router.currentRoute.value.params.tab"
-  :space="['none', 'none', 's']">
+  <app-bar-options :title="$t('Edit Log')" nav="back" :actions="appBarActions"/>
+  <farm-stack v-if="log" :space="['none', 'none', 's']" :dividers="true">
 
-  <template #general>
-    <app-bar-options :title="$t('Edit Log')" nav="back" :actions="appBarActions"/>
-    <farm-stack v-if="log" :space="['none', 'none', 's']" :dividers="true">
+    <farm-card>
+      <div class="form-item form-group">
+        <farm-toggle-check
+          :label="$t('Done')"
+          labelPosition="after"
+          :checked="log.status === 'done'"
+          @input="update({ status: $event ? 'done' : 'pending' })"/>
+      </div>
+      <div class="form-item form-item-name form-group">
+        <label for="name" class="control-label">{{ $t('Name') }}</label>
+        <input
+          :value="log.name"
+          @input="update({ name: $event.target.value })"
+          :placeholder="$t('Enter name')"
+          type="text"
+          class="form-control"
+          maxlength="250"
+          autofocus>
+      </div>
+      <farm-date-time-form
+        :timestamp="log.timestamp"
+        @input="update({ timestamp: $event })"/>
+      <div class="form-item form-item-name form-group">
+        <label for="type" class="control-label ">{{ $t('Log Type') }}</label>
+        <div class="form-item">
+          <p> {{ $t(typeLabel) }} </p>
+        </div>
+      </div>
+    </farm-card>
 
-      <farm-card>
-        <div class="form-item form-group">
-          <farm-toggle-check
-            :label="$t('Done')"
-            labelPosition="after"
-            :checked="log.status === 'done'"
-            @input="update({ status: $event ? 'done' : 'pending' })"/>
-        </div>
-        <div class="form-item form-item-name form-group">
-          <label for="name" class="control-label">{{ $t('Name') }}</label>
-          <input
-            :value="log.name"
-            @input="update({ name: $event.target.value })"
-            :placeholder="$t('Enter name')"
-            type="text"
-            class="form-control"
-            maxlength="250"
-            autofocus>
-        </div>
-        <farm-date-time-form
-          :timestamp="log.timestamp"
-          @input="update({ timestamp: $event })"/>
-        <div class="form-item form-item-name form-group">
-          <label for="type" class="control-label ">{{ $t('Log Type') }}</label>
-          <div class="form-item">
-            <p> {{ $t(typeLabel) }} </p>
+    <farm-card>
+      <div class="form-item form-item-name form-group">
+        <label for="notes" class="control-label ">{{ $t('Notes') }}</label>
+        <textarea
+          :value="parseNotes(log.notes)"
+          @input="updateNotes($event.target.value)"
+          :placeholder="$t('Enter notes')"
+          type="text"
+          rows="4"
+          class="form-control">
+        </textarea>
+      </div>
+    </farm-card>
+
+    <farm-card>
+      <h3>{{ $t('Log Categories') }}</h3>
+      <div v-if="showAllCategories" id="categories" class="form-item form-group">
+        <farm-select-box
+          small
+          v-for="cat in categories"
+          :id="`category-${cat.id}-${cat.name}`"
+          :selected="log.category.some(c => c.id === cat.id)"
+          :label="cat.name"
+          :key="`category-${cat.id}-${cat.name}`"
+          @input="toggleRelationship('category', cat)">
+        </farm-select-box>
+        <div class="show-hide">
+          <div @click="showAllCategories = !showAllCategories">
+            <p><icon-expand-less/>{{ $t('Show Less') }}</p>
           </div>
         </div>
-      </farm-card>
-
-      <farm-card>
-        <div class="form-item form-item-name form-group">
-          <label for="notes" class="control-label ">{{ $t('Notes') }}</label>
-          <textarea
-            :value="parseNotes(log.notes)"
-            @input="updateNotes($event.target.value)"
-            :placeholder="$t('Enter notes')"
-            type="text"
-            rows="4"
-            class="form-control">
-          </textarea>
-        </div>
-      </farm-card>
-
-      <farm-card>
-        <h3>{{ $t('Log Categories') }}</h3>
-        <div v-if="showAllCategories" id="categories" class="form-item form-group">
-          <farm-select-box
-            small
-            v-for="cat in categories"
-            :id="`category-${cat.id}-${cat.name}`"
-            :selected="log.category.some(c => c.id === cat.id)"
-            :label="cat.name"
-            :key="`category-${cat.id}-${cat.name}`"
-            @input="toggleRelationship('category', cat)">
-          </farm-select-box>
-          <div class="show-hide">
-            <div @click="showAllCategories = !showAllCategories">
-              <p><icon-expand-less/>{{ $t('Show Less') }}</p>
-            </div>
+      </div>
+      <div v-else id="categories" class="form-item form-group">
+        <p v-if="!log.category || log.category.length < 1">
+          {{ $t('No categories selected') }}
+        </p>
+        <farm-select-box
+          small
+          v-for="cat in categories.selected"
+          :id="`category-${cat.id}-${cat.name}`"
+          :selected="true"
+          :label="cat.name"
+          :key="`category-${cat.id}-${cat.name}`"
+          @input="toggleRelationship('category', cat)">
+        </farm-select-box>
+        <div class="show-hide">
+          <div @click="showAllCategories = !showAllCategories">
+            <p><icon-expand-more/>{{ $t('Show More') }}</p>
           </div>
         </div>
-        <div v-else id="categories" class="form-item form-group">
-          <p v-if="!log.category || log.category.length < 1">
-            {{ $t('No categories selected') }}
-          </p>
-          <farm-select-box
-            small
-            v-for="cat in categories.selected"
-            :id="`category-${cat.id}-${cat.name}`"
-            :selected="true"
-            :label="cat.name"
-            :key="`category-${cat.id}-${cat.name}`"
-            @input="toggleRelationship('category', cat)">
-          </farm-select-box>
-          <div class="show-hide">
-            <div @click="showAllCategories = !showAllCategories">
-              <p><icon-expand-more/>{{ $t('Show More') }}</p>
-            </div>
-          </div>
-        </div>
-      </farm-card>
+      </div>
+    </farm-card>
 
-      <farm-card v-if="log.quantity !== undefined">
-        <h3>{{ $t('Quantities')}} 🚧 UNDER CONSTRUCTION 🚧</h3>
-        <!-- <label for="quantity" class="control-label ">
-          {{ $t('Add new or edit existing quantity')}}
-        </label>
-        <div v-if="currentQuant >= 0" class="form-item form-item-name form-group"> -->
-          <!-- To display a placeholder value ONLY when there are no existing
-          quantities, we must add the placeholder with an <option> tag and
-          select it using the :value option -->
-          <!-- <select
-            :value="(log.quantity
-              && log.quantity.length > 0
-              && log.quantity[currentQuant].measure)
-              ? log.quantity[currentQuant].measure
-              : 'Select measure'"
-            @input="updateQuantity('measure', $event.target.value, currentQuant)"
-            class="custom-select col-sm-3 ">
-              <option>{{ $t('Select measure')}}</option>
-              <option
-                v-for="(measure, i) in quantMeasures"
-                :value="measure"
-                :key="`measure-${i}`">
-                {{ measure }}
-              </option>
-          </select>
-          <input
-            :value="(log.quantity
-              && log.quantity.length > 0)
-              ? log.quantity[currentQuant].value
-              : null"
-            @input="updateQuantity('value', $event.target.value, currentQuant)"
-            :placeholder="$t('Enter value')"
-            type="number"
-            class="form-control"/>
-          <select
+    <farm-card v-if="log.quantity !== undefined">
+      <h3>{{ $t('Quantities')}} 🚧 UNDER CONSTRUCTION 🚧</h3>
+      <!-- <label for="quantity" class="control-label ">
+        {{ $t('Add new or edit existing quantity')}}
+      </label>
+      <div v-if="currentQuant >= 0" class="form-item form-item-name form-group"> -->
+        <!-- To display a placeholder value ONLY when there are no existing
+        quantities, we must add the placeholder with an <option> tag and
+        select it using the :value option -->
+        <!-- <select
           :value="(log.quantity
-              && log.quantity.length > 0
-              && log.quantity[currentQuant].unit)
-              ? log.quantity[currentQuant].unit.id
-              : 'Select unit'"
-            @input="updateQuantity('unit', $event.target.value, currentQuant)"
-            class="custom-select col-sm-3 ">
-              <option>{{ $t('Select unit')}}</option>
-              <option
-                v-for="(unit, i) in units"
-                :value="unit.id"
-                :key="`unit-${i}`">
-                {{ (units) ? unit.name : '' }}
-              </option>
-          </select>
-          <input
-            :value="(log.quantity
-              && log.quantity.length > 0)
-              ? log.quantity[currentQuant].label
-              : null"
-            @input="updateQuantity('label', $event.target.value, currentQuant)"
-            :placeholder="$t('Enter label')"
-            type="text"
-            class="form-control"/>
-        </div>
-        <div class="form-item form-group">
-          <ul
-            v-if="log.quantity
-              && log.quantity.length > 0"
-            class="list-group">
-            <li
-              v-for="(quant, i) in log.quantity"
-              v-bind:key="`quantity-${i}`"
-              @click="currentQuant = i"
-              class="list-group-item">
-              {{ quant.measure }}&nbsp;
-              {{ quant.value }}&nbsp;
-              {{ (quantUnitNames.length > 0) ? quantUnitNames[i] : '' }}&nbsp;
-              {{ quant.label }}
-              <span class="remove-list-item" @click="removeQuant(i); $event.stopPropagation()">
-                &#x2715;
-              </span>
-            </li>
-          </ul>
-        </div>
-        <div class="form-item form-group">
-          <button
-            type="button"
-            class="btn btn-success"
-            @click="updateQuantity(null, null, -1)"
-            name="addNewQuantity">
-            {{$t('Add another quantity')}}
-          </button>
-        </div> -->
-      </farm-card>
-
-      <farm-card>
-        <h3>{{ $t('Assets')}}</h3>
-        <farm-autocomplete
-          :list="assets.unselected"
-          :keys="['name']"
-          @select="toggleRelationship('asset', assets.unselected[$event])"
-          :label="$t('Add assets to the log')">
-          <template v-slot:empty>
-            <div class="empty-slot">
-              <em>{{ $t('No assets found.')}}</em>
-            </div>
-          </template>
-        </farm-autocomplete>
-        <div class="form-item form-item-name form-group">
-          <ul class="list-group">
-            <li
-              v-for="asset in assets.selected"
-              :key="`asset-${asset.id}`"
-              class="list-group-item">
-              {{ asset.name }}
-              <span class="remove-list-item" @click="toggleRelationship('asset', asset)">
-                &#x2715;
-              </span>
-            </li>
-          </ul>
-        </div>
-        <div v-if="log.equipment" class="form-item form-item-name form-group">
-          <label for="type" class="control-label ">{{ $t('Equipment') }}</label>
-          <div class="input-group">
-            <select
-              @input="toggleRelationship('equipment', equipment.unselected[i])"
-              class="custom-select col-sm-3 ">
-              <option value=""></option>
-              <option
-                v-for="(equip, i) in equipment.unselected"
-                :value="i"
-                :key="`equip-${i}`">
-                {{ (equip) ? equip.name : '' }}
-              </option>
-            </select>
-          </div>
-        </div>
-        <div class="form-item form-group">
-          <ul v-if="log.equipment" class="list-group">
-            <li
-              v-for="(equip, i) in equipment.selected"
-              v-bind:key="`equipment-${i}`"
-              class="list-group-item">
-              {{ equip.name }}
-              <span class="remove-list-item" @click="toggleEqupment(false, equip.id)">
-                &#x2715;
-              </span>
-            </li>
-          </ul>
-        </div>
-      </farm-card>
-
-      <farm-card>
-        <h3>{{ $t('Areas')}} &amp; {{ $t('Location')}}</h3>
-        <!-- We're using a radio button to choose whether areas are selected
-        automatically based on device location, or using an autocomplete.
-        This will use the useLocalAreas conditional var -->
-        <!-- <div
-          v-if="settinngs.permissions.geolocation"
-          class="form-item form-item-name form-group">
-          <div class="form-check">
-            <input
-            v-model="useLocalAreas"
-            type="radio"
-            class="form-check-input"
-            id="dontUseGeo"
-            name="geoRadioGroup"
-            v-bind:value="false"
-            checked>
-            <label class="form-check-label" for="dontUseGeo">{{ $t('Search areas')}}</label>
-          </div>
-          <div class="form-check">
-            <input
-            v-model="useLocalAreas"
-            type="radio"
-            class="form-check-input"
-            id="doUseGeo"
-            name="geoRadioGroup"
-            v-bind:value="true"
-            >
-            <label class="form-check-label" for="doUseGeo">{{ $t('Use my location')}}</label>
-          </div>
-        </div> -->
-        <!-- If using the user's, show a select menu of nearby locations -->
-        <div v-if="useLocalAreas" class="form-group">
-          <label for="areaSelector">{{ $t('Farm areas near your current location')}}</label>
-          <select
-            @input="toggleRelationship('location', localAreas[$event.target.value])"
-            class="form-control"
-            name="areas">
-            <option v-if="localAreas.length < 1" value="">No other areas nearby</option>
-            <option v-if="localAreas.length > 0" value="" selected>-- Select an Area --</option>
+            && log.quantity.length > 0
+            && log.quantity[currentQuant].measure)
+            ? log.quantity[currentQuant].measure
+            : 'Select measure'"
+          @input="updateQuantity('measure', $event.target.value, currentQuant)"
+          class="custom-select col-sm-3 ">
+            <option>{{ $t('Select measure')}}</option>
             <option
-              v-for="(area, i) in localAreas"
+              v-for="(measure, i) in quantMeasures"
+              :value="measure"
+              :key="`measure-${i}`">
+              {{ measure }}
+            </option>
+        </select>
+        <input
+          :value="(log.quantity
+            && log.quantity.length > 0)
+            ? log.quantity[currentQuant].value
+            : null"
+          @input="updateQuantity('value', $event.target.value, currentQuant)"
+          :placeholder="$t('Enter value')"
+          type="number"
+          class="form-control"/>
+        <select
+        :value="(log.quantity
+            && log.quantity.length > 0
+            && log.quantity[currentQuant].unit)
+            ? log.quantity[currentQuant].unit.id
+            : 'Select unit'"
+          @input="updateQuantity('unit', $event.target.value, currentQuant)"
+          class="custom-select col-sm-3 ">
+            <option>{{ $t('Select unit')}}</option>
+            <option
+              v-for="(unit, i) in units"
+              :value="unit.id"
+              :key="`unit-${i}`">
+              {{ (units) ? unit.name : '' }}
+            </option>
+        </select>
+        <input
+          :value="(log.quantity
+            && log.quantity.length > 0)
+            ? log.quantity[currentQuant].label
+            : null"
+          @input="updateQuantity('label', $event.target.value, currentQuant)"
+          :placeholder="$t('Enter label')"
+          type="text"
+          class="form-control"/>
+      </div>
+      <div class="form-item form-group">
+        <ul
+          v-if="log.quantity
+            && log.quantity.length > 0"
+          class="list-group">
+          <li
+            v-for="(quant, i) in log.quantity"
+            v-bind:key="`quantity-${i}`"
+            @click="currentQuant = i"
+            class="list-group-item">
+            {{ quant.measure }}&nbsp;
+            {{ quant.value }}&nbsp;
+            {{ (quantUnitNames.length > 0) ? quantUnitNames[i] : '' }}&nbsp;
+            {{ quant.label }}
+            <span class="remove-list-item" @click="removeQuant(i); $event.stopPropagation()">
+              &#x2715;
+            </span>
+          </li>
+        </ul>
+      </div>
+      <div class="form-item form-group">
+        <button
+          type="button"
+          class="btn btn-success"
+          @click="updateQuantity(null, null, -1)"
+          name="addNewQuantity">
+          {{$t('Add another quantity')}}
+        </button>
+      </div> -->
+    </farm-card>
+
+    <farm-card>
+      <h3>{{ $t('Assets')}}</h3>
+      <farm-autocomplete
+        :list="assets.unselected"
+        :keys="['name']"
+        @select="toggleRelationship('asset', assets.unselected[$event])"
+        :label="$t('Add assets to the log')">
+        <template v-slot:empty>
+          <div class="empty-slot">
+            <em>{{ $t('No assets found.')}}</em>
+          </div>
+        </template>
+      </farm-autocomplete>
+      <div class="form-item form-item-name form-group">
+        <ul class="list-group">
+          <li
+            v-for="asset in assets.selected"
+            :key="`asset-${asset.id}`"
+            class="list-group-item">
+            {{ asset.name }}
+            <span class="remove-list-item" @click="toggleRelationship('asset', asset)">
+              &#x2715;
+            </span>
+          </li>
+        </ul>
+      </div>
+      <div v-if="log.equipment" class="form-item form-item-name form-group">
+        <label for="type" class="control-label ">{{ $t('Equipment') }}</label>
+        <div class="input-group">
+          <select
+            @input="toggleRelationship('equipment', equipment.unselected[i])"
+            class="custom-select col-sm-3 ">
+            <option value=""></option>
+            <option
+              v-for="(equip, i) in equipment.unselected"
               :value="i"
-              :key="`local-area-${area.id}`">
-              {{area.name}}
+              :key="`equip-${i}`">
+              {{ (equip) ? equip.name : '' }}
             </option>
           </select>
         </div>
-        <!-- If not using the user's location, show a search bar -->
-        <farm-autocomplete
-          v-if="!useLocalAreas"
-          :list="locations.unselected"
-          :keys="['name']"
-          @select="toggleRelationship('location', locations.unselected[$event])"
-          :label="$t('Add areas to the log')">
-          <template v-slot:empty>
-            <div class="empty-slot">
-              <em>{{ $t('No areas found.')}}</em>
-            </div>
-          </template>
-        </farm-autocomplete>
-        <div class="form-item form-item-name form-group">
-          <ul class="list-group">
-            <li
-              v-for="location in locations.selected"
-              v-bind:key="`remove-area-${location.id}`"
-              class="list-group-item">
-              {{ location.name }}
-              <span class="remove-list-item" @click="toggleRelationship('location', area)">
-                &#x2715;
-              </span>
-            </li>
-          </ul>
+      </div>
+      <div class="form-item form-group">
+        <ul v-if="log.equipment" class="list-group">
+          <li
+            v-for="(equip, i) in equipment.selected"
+            v-bind:key="`equipment-${i}`"
+            class="list-group-item">
+            {{ equip.name }}
+            <span class="remove-list-item" @click="toggleEqupment(false, equip.id)">
+              &#x2715;
+            </span>
+          </li>
+        </ul>
+      </div>
+    </farm-card>
+
+    <farm-card>
+      <h3>{{ $t('Areas')}} &amp; {{ $t('Location')}}</h3>
+      <!-- We're using a radio button to choose whether areas are selected
+      automatically based on device location, or using an autocomplete.
+      This will use the useLocalAreas conditional var -->
+      <!-- <div
+        v-if="settinngs.permissions.geolocation"
+        class="form-item form-item-name form-group">
+        <div class="form-check">
+          <input
+          v-model="useLocalAreas"
+          type="radio"
+          class="form-check-input"
+          id="dontUseGeo"
+          name="geoRadioGroup"
+          v-bind:value="false"
+          checked>
+          <label class="form-check-label" for="dontUseGeo">{{ $t('Search areas')}}</label>
         </div>
-      </farm-card>
+        <div class="form-check">
+          <input
+          v-model="useLocalAreas"
+          type="radio"
+          class="form-check-input"
+          id="doUseGeo"
+          name="geoRadioGroup"
+          v-bind:value="true"
+          >
+          <label class="form-check-label" for="doUseGeo">{{ $t('Use my location')}}</label>
+        </div>
+      </div> -->
+      <!-- If using the user's, show a select menu of nearby locations -->
+      <div v-if="useLocalAreas" class="form-group">
+        <label for="areaSelector">{{ $t('Farm areas near your current location')}}</label>
+        <select
+          @input="toggleRelationship('location', localAreas[$event.target.value])"
+          class="form-control"
+          name="areas">
+          <option v-if="localAreas.length < 1" value="">No other areas nearby</option>
+          <option v-if="localAreas.length > 0" value="" selected>-- Select an Area --</option>
+          <option
+            v-for="(area, i) in localAreas"
+            :value="i"
+            :key="`local-area-${area.id}`">
+            {{area.name}}
+          </option>
+        </select>
+      </div>
+      <!-- If not using the user's location, show a search bar -->
+      <farm-autocomplete
+        v-if="!useLocalAreas"
+        :list="locations.unselected"
+        :keys="['name']"
+        @select="toggleRelationship('location', locations.unselected[$event])"
+        :label="$t('Add areas to the log')">
+        <template v-slot:empty>
+          <div class="empty-slot">
+            <em>{{ $t('No areas found.')}}</em>
+          </div>
+        </template>
+      </farm-autocomplete>
+      <div class="form-item form-item-name form-group">
+        <ul class="list-group">
+          <li
+            v-for="location in locations.selected"
+            v-bind:key="`remove-area-${location.id}`"
+            class="list-group-item">
+            {{ location.name }}
+            <span class="remove-list-item" @click="toggleRelationship('location', area)">
+              &#x2715;
+            </span>
+          </li>
+        </ul>
+      </div>
+    </farm-card>
 
-    </farm-stack>
-  </template>
-
-  <template #movement>
-    <farm-card v-if="log"><h3>🚧 UNDER CONSTRUCTION 🚧</h3></farm-card>
-  </template>
-
-</farm-tabs>
+  </farm-stack>
 </template>
 
 <script>
