@@ -326,32 +326,6 @@
             </li>
           </ul>
         </div>
-        <div v-if="useGeolocation" class="form-item form-item-name form-group">
-          <button
-            :disabled='false'
-            title="Add my GPS location to the log"
-            @click="addGeolocationPoint"
-            type="button"
-            class="btn btn-success btn-navbar">
-            {{ $t('Add my GPS location to the log')}}
-          </button>
-        </div>
-        <div v-if="log.geometry" class="form-item form-item-name form-group">
-          <ul class="list-group">
-            <li
-              class="list-group-item"
-              v-for="(point, i) in geometryAsArrayOfWktPoints"
-              :key="`geometry-${i}`">
-              {{ point }}
-              <span class="remove-list-item" @click="removeGeolocationPoint(i)">
-                &#x2715;
-              </span>
-            </li>
-            <li class="list-item-group" v-if="awaitingLocation">
-              <icon-spinner/>
-            </li>
-          </ul>
-        </div>
       </farm-card>
 
       <farm-card>
@@ -480,9 +454,7 @@
 <script>
 const {
   R,
-  wellknown,
   parseNotes,
-  mergeGeometries,
   // removeGeometry,
   // isNearby,
 } = window.lib;
@@ -658,46 +630,6 @@ export default {
     //   }
     // },
 
-    addGeolocationPoint() {
-      let props;
-      function addGeometry(position) {
-        const oldGeom = this.log.geometry?.value;
-        const newGeom = `POINT (${position.coords.longitude} ${position.coords.latitude})`;
-        props = { value: mergeGeometries([oldGeom, newGeom]) };
-      }
-      function onError(error) {
-        this.alert(error);
-        this.awaitingLocation = false;
-      }
-      const options = {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0,
-      };
-
-      this.awaitingLocation = true;
-      const watch = navigator.geolocation.watchPosition(
-        addGeometry.bind(this),
-        onError.bind(this),
-        options,
-      );
-      setTimeout(() => {
-        navigator.geolocation.clearWatch(watch);
-        this.updateCurrentLog({ geometry: props });
-        this.awaitingLocation = false;
-      }, 5000);
-    },
-
-    removeGeolocationPoint(index) {
-      const geometry = {
-        value: mergeGeometries([
-          ...this.geometryAsArrayOfWktPoints.slice(0, index),
-          ...this.geometryAsArrayOfWktPoints.slice(index + 1),
-        ]),
-      };
-      this.updateCurrentLog({ geometry });
-    },
-
     parseNotes,
   },
 
@@ -720,20 +652,6 @@ export default {
     },
     logTypes() {
       return this.bundles.log;
-    },
-    geometryAsArrayOfWktPoints() {
-      const geom = this.log.geometry?.value;
-      if (geom) {
-        const geojson = wellknown.parse(geom);
-        if (geojson.type === 'Point') {
-          return [`POINT (${geojson.coordinates[0]} ${geojson.coordinates[1]})`];
-        }
-        if (geojson.type === 'GeometryCollection') {
-          return geojson.geometries
-            .map(g => `POINT (${g.coordinates[0]} ${g.coordinates[1]})`);
-        }
-      }
-      return [];
     },
     appBarActions() {
       const logURL = this.log.url;
