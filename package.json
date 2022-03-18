@@ -13,7 +13,6 @@
     "preview": "vite preview",
     "lint": "eslint --color",
     "lint-src": "eslint --color --ext .js,.vue src",
-    "build:web": "npm run build",
     "BROKEN-storybook": "NODE_PATH=src start-storybook -p 6006",
     "BROKEN-build-storybook": "build-storybook"
   },
