@@ -319,81 +319,7 @@
   </template>
 
   <template #movement>
-
     <farm-card v-if="log"><h3>🚧 UNDER CONSTRUCTION 🚧</h3></farm-card>
-    <!-- <farm-card v-if="log.movement !== undefined">
-
-      <farm-autocomplete
-        :list="assets.unselected"
-        :keys="['name']"
-        @select="togglerelationship('asset', assets.unselected[$event])"
-        :label="$t('Add assets to be moved')">
-        <template v-slot:empty>
-          <div class="empty-slot">
-            <em>{{ $t('No assets found.')}}</em>
-          </div>
-        </template>
-      </farm-autocomplete>
-
-      <div class="form-item form-item-name form-group">
-        <ul class="list-group">
-          <li
-            v-for="asset in assets.selected"
-            :key="`asset-movement-${asset.id}`"
-            class="list-group-item">
-            {{ asset.name }}
-            <span class="remove-list-item" @click="togglerelationship('asset', asset)">
-              &#x2715;
-            </span>
-          </li>
-        </ul>
-      </div>
-
-      <farm-autocomplete
-        :list="areas.unselected"
-        :keys="['name']"
-        @select="addMovementArea(areas.unselected[$event])"
-        :label="$t('Movement to')">
-        <template v-slot:empty>
-          <div class="empty-slot">
-            <em>{{ $t('No areas found.')}}</em>
-          </div>
-        </template>
-      </farm-autocomplete>
-
-      <div class="form-item form-item-name form-group">
-        <ul class="list-group">
-          <li
-            v-for="(area, i) in areas.selected"
-            v-bind:key="`remove-movement-${i}`"
-            class="list-group-item">
-            {{ area.name }}
-            <span class="remove-list-item" @click="removeMovementArea(area)">
-              &#x2715;
-            </span>
-          </li>
-        </ul>
-      </div>
-
-      <router-link :to="{ name: 'tasks-map' }">
-        <farm-map
-          id="map"
-          :overrideStyles="{ height: '90vw' }"
-          :drawing="false"
-          :options="{
-            controls: (defaults) =>
-              defaults.filter(def => def.constructor.name === 'Attribution'),
-            interactions: false,
-          }"
-          :wkt=mapLayers
-          :geojson="{
-            title: 'areas',
-            geojson: areaGeoJSON,
-            color: 'grey',
-          }"/>
-      </router-link>
-
-    </farm-card> -->
   </template>
 
 </farm-tabs>
@@ -406,8 +332,6 @@ const {
 const {
   R,
   parseNotes,
-  // removeGeometry,
-  // isNearby,
 } = window.lib;
 
 // Used to separate assets, areas, etc into those that have already been added
@@ -517,10 +441,6 @@ export default {
     }
   },
 
-  // props: [
-  //   'areaGeoJSON',
-  // ],
-
   // methods: {
   //   updateQuantity(key, value, index) {
   //     const currentQuants = this.log.quantity || [];
@@ -550,41 +470,6 @@ export default {
   //     }
   //   },
 
-  //   addMovementArea(area) {
-  //     const { id, type } = area;
-  //     const areaReference = { id, type: `asset--${type}` };
-  //     // TODO: replace geofield property
-  //     const areaGeometry = area.geofield[0]?.geom;
-  //     const prevMovement = this.log.movement;
-  //     const newGeometry = prevMovement
-  //       ? mergeGeometries([areaGeometry, prevMovement.geometry])
-  //       : areaGeometry;
-  //     const newMovement = {
-  //       area: prevMovement
-  //         ? prevMovement.area.concat(areaReference)
-  //         : [areaReference],
-  //       geometry: newGeometry,
-  //     };
-  //     this.update({ movement: newMovement });
-  //   },
-
-  //   removeMovementArea(area) {
-  //     const newAreas = this.log.movement.area
-  //       .filter(_area => _area.id !== area.id);
-  //     const prevGeometry = this.log.movement.geometry;
-  //     let areaGeometry = null;
-  //     // TODO: Replace geofield property.
-  //     if (area.geofield[0]) {
-  //       areaGeometry = area.geofield[0].geom;
-  //     }
-  //     const newGeometry = removeGeometry(prevGeometry, areaGeometry);
-  //     const newMovement = {
-  //       geometry: newGeometry,
-  //       area: newAreas,
-  //     };
-  //     this.update({ movement: newMovement });
-  //   },
-
   //   removeQuant(index) {
   //     if (this.currentQuant >= index) {
   //       this.currentQuant -= 1;
@@ -595,6 +480,7 @@ export default {
   //     ];
   //     this.update({ quantity: newQuant });
   //   },
+  // },
 
   // computed: {
   //   quantUnitNames() {
@@ -614,62 +500,6 @@ export default {
   //       return unitNames;
   //     }
   //     return [];
-  //   },
-  //   mapLayers() {
-  //     const movement = {
-  //       title: 'movement',
-  //       wkt: this.log.movement?.geometry,
-  //       color: 'orange',
-  //       visible: true,
-  //       weight: 0,
-  //       canEdit: !!this.log.movement?.geometry,
-  //     };
-  //     const previousGeoms = this.log.asset
-  //       ?.map(logAsset => this.assets
-  //         ?.find(asset => asset.id === logAsset.id)?.geometry);
-  //     const previousWKT = previousGeoms ? mergeGeometries(previousGeoms) : undefined;
-  //     const previous = {
-  //       title: 'previous',
-  //       wkt: previousWKT,
-  //       color: 'green',
-  //       visible: true,
-  //       weight: 1,
-  //       canEdit: false,
-  //     };
-  //     return [previous, movement];
-  //   },
-  // },
-
-  // watch: {
-  //   useLocalAreas() {
-  //     function filterAreasByProximity(position) {
-  //       this.localAreas = this.locations.unselected
-  //         .filter(area => !!area.geofield[0] && isNearby(
-  //           [position.coords.longitude, position.coords.latitude],
-  //           area.geofield[0].geom,
-  //           (position.coords.accuracy),
-  //         ));
-  //     }
-  //     function onError(error) {
-  //       this.alert(error);
-  //     }
-  //     // If useLocalAreas is set to true, get geolocation and nearby areas
-  //     if (this.useLocalAreas) {
-  //       const options = {
-  //         enableHighAccuracy: true,
-  //         timeout: 10000,
-  //         maximumAge: 0,
-  //       };
-
-  //       const watch = navigator.geolocation.watchPosition(
-  //         filterAreasByProximity.bind(this),
-  //         onError.bind(this),
-  //         options,
-  //       );
-  //       setTimeout(() => {
-  //         navigator.geolocation.clearWatch(watch);
-  //       }, 5000);
-  //     }
   //   },
   // },
 };
