@@ -14,13 +14,13 @@ const routes = [
         component: TasksAll,
       },
       {
-        path: ':id',
+        path: 'edit',
         name: 'tasks-edit',
         component: TasksEdit,
         props: true,
       },
       {
-        path: ':id/map',
+        path: 'map',
         name: 'tasks-map',
         component: TasksMap,
         props: true,

@@ -6,7 +6,7 @@
 
   <template #general>
     <app-bar-options :title="$t('Edit Log')" nav="back" :actions="appBarActions"/>
-    <farm-stack :space="['none', 'none', 's']" :dividers="true">
+    <farm-stack v-if="log" :space="['none', 'none', 's']" :dividers="true">
 
       <farm-card>
         <div class="form-item form-group">
@@ -14,13 +14,13 @@
             :label="$t('Done')"
             labelPosition="after"
             :checked="log.status === 'done'"
-            @input="updateCurrentLog({ status: $event ? 'done' : 'pending' })"/>
+            @input="update({ status: $event ? 'done' : 'pending' })"/>
         </div>
         <div class="form-item form-item-name form-group">
           <label for="name" class="control-label">{{ $t('Name') }}</label>
           <input
             :value="log.name"
-            @input="updateCurrentLog({ name: $event.target.value })"
+            @input="update({ name: $event.target.value })"
             :placeholder="$t('Enter name')"
             type="text"
             class="form-control"
@@ -29,26 +29,11 @@
         </div>
         <farm-date-time-form
           :timestamp="log.timestamp"
-          @input="updateCurrentLog({ timestamp: $event })"/>
-        <!-- Allow users to change type for logs that have not yet been sent to the server
-        For logs currently on the server, display type as text -->
+          @input="update({ timestamp: $event })"/>
         <div class="form-item form-item-name form-group">
           <label for="type" class="control-label ">{{ $t('Log Type') }}</label>
-          <div class="input-group" v-if="(log.id === undefined)">
-            <select
-              :value="log.type"
-              @input="updateCurrentLog({ type: $event.target.value })"
-              class="custom-select col-sm-3 ">
-                <option
-                  v-for="(type, typeKey) in logTypes"
-                  :value="typeKey"
-                  :key="`${type.label}-${typeKey}`">
-                  {{ $t(type.label) }}
-                </option>
-            </select>
-          </div>
-          <div class="form-item" v-if="!(log.id === undefined)">
-            <p> {{ $t(logTypes[log.type].label) }} </p>
+          <div class="form-item">
+            <p> {{ $t(typeLabel) }} </p>
           </div>
         </div>
       </farm-card>
@@ -72,12 +57,12 @@
         <div v-if="showAllCategories" id="categories" class="form-item form-group">
           <farm-select-box
             small
-            v-for="cat in allCategories"
+            v-for="cat in categories"
             :id="`category-${cat.id}-${cat.name}`"
             :selected="log.category.some(c => c.id === cat.id)"
             :label="cat.name"
             :key="`category-${cat.id}-${cat.name}`"
-            @input="toggleCategory($event, cat.id)">
+            @input="toggleRelationship('category', cat)">
           </farm-select-box>
           <div class="show-hide">
             <div @click="showAllCategories = !showAllCategories">
@@ -96,7 +81,7 @@
             :selected="true"
             :label="cat.name"
             :key="`category-${cat.id}-${cat.name}`"
-            @input="toggleCategory($event, cat.id)">
+            @input="toggleRelationship('category', cat)">
           </farm-select-box>
           <div class="show-hide">
             <div @click="showAllCategories = !showAllCategories">
@@ -202,7 +187,7 @@
         <farm-autocomplete
           :list="assets.unselected"
           :keys="['name']"
-          @select="toggleAsset(true, assets.unselected[$event])"
+          @select="toggleRelationship('asset', assets.unselected[$event])"
           :label="$t('Add assets to the log')">
           <template v-slot:empty>
             <div class="empty-slot">
@@ -217,7 +202,7 @@
               :key="`asset-${asset.id}`"
               class="list-group-item">
               {{ asset.name }}
-              <span class="remove-list-item" @click="toggleAsset(false, asset)">
+              <span class="remove-list-item" @click="toggleRelationship('asset', asset)">
                 &#x2715;
               </span>
             </li>
@@ -227,12 +212,12 @@
           <label for="type" class="control-label ">{{ $t('Equipment') }}</label>
           <div class="input-group">
             <select
-              @input="toggleEquipment(true, $event.target.value)"
+              @input="toggleRelationship('equipment', equipment.unselected[i])"
               class="custom-select col-sm-3 ">
               <option value=""></option>
               <option
                 v-for="(equip, i) in equipment.unselected"
-                :value="equip.id"
+                :value="i"
                 :key="`equip-${i}`">
                 {{ (equip) ? equip.name : '' }}
               </option>
@@ -259,7 +244,9 @@
         <!-- We're using a radio button to choose whether areas are selected
         automatically based on device location, or using an autocomplete.
         This will use the useLocalAreas conditional var -->
-        <!-- <div  v-if="useGeolocation" class="form-item form-item-name form-group">
+        <!-- <div
+          v-if="settinngs.permissions.geolocation"
+          class="form-item form-item-name form-group">
           <div class="form-check">
             <input
             v-model="useLocalAreas"
@@ -287,7 +274,7 @@
         <div v-if="useLocalAreas" class="form-group">
           <label for="areaSelector">{{ $t('Farm areas near your current location')}}</label>
           <select
-            @input="toggleArea(true, localAreas[$event.target.value])"
+            @input="toggleRelationship('location', localAreas[$event.target.value])"
             class="form-control"
             name="areas">
             <option v-if="localAreas.length < 1" value="">No other areas nearby</option>
@@ -303,9 +290,9 @@
         <!-- If not using the user's location, show a search bar -->
         <farm-autocomplete
           v-if="!useLocalAreas"
-          :list="areas.unselected"
+          :list="locations.unselected"
           :keys="['name']"
-          @select="toggleArea(true, areas.unselected[$event])"
+          @select="toggleRelationship('location', locations.unselected[$event])"
           :label="$t('Add areas to the log')">
           <template v-slot:empty>
             <div class="empty-slot">
@@ -316,11 +303,11 @@
         <div class="form-item form-item-name form-group">
           <ul class="list-group">
             <li
-              v-for="area in areas.selected"
-              v-bind:key="`remove-area-${area.id}`"
+              v-for="location in locations.selected"
+              v-bind:key="`remove-area-${location.id}`"
               class="list-group-item">
-              {{ area.name }}
-              <span class="remove-list-item" @click="toggleArea(false, area)">
+              {{ location.name }}
+              <span class="remove-list-item" @click="toggleRelationship('location', area)">
                 &#x2715;
               </span>
             </li>
@@ -372,13 +359,13 @@
 
   <template #movement>
 
-    <farm-card><h3>🚧 UNDER CONSTRUCTION 🚧</h3></farm-card>
+    <farm-card v-if="log"><h3>🚧 UNDER CONSTRUCTION 🚧</h3></farm-card>
     <!-- <farm-card v-if="log.movement !== undefined">
 
       <farm-autocomplete
         :list="assets.unselected"
         :keys="['name']"
-        @select="toggleAsset(true, assets.unselected[$event])"
+        @select="togglerelationship('asset', assets.unselected[$event])"
         :label="$t('Add assets to be moved')">
         <template v-slot:empty>
           <div class="empty-slot">
@@ -394,7 +381,7 @@
             :key="`asset-movement-${asset.id}`"
             class="list-group-item">
             {{ asset.name }}
-            <span class="remove-list-item" @click="toggleAsset(false, asset)">
+            <span class="remove-list-item" @click="togglerelationship('asset', asset)">
               &#x2715;
             </span>
           </li>
@@ -453,6 +440,9 @@
 
 <script>
 const {
+  computed, inject, reactive, ref,
+} = window.Vue;
+const {
   R,
   parseNotes,
   // removeGeometry,
@@ -469,284 +459,273 @@ const partitionOptions = (options = [], selections = []) => {
   return { selected, unselected };
 };
 
+// Quantity measures are static strings, so no need to make them reactive.
+const quantMeasures = [
+  'count',
+  'length',
+  'weight',
+  'area',
+  'volume',
+  'time',
+  'temperature',
+  'water_content',
+  'value',
+  'rating',
+  'ratio',
+  'probability',
+];
+
 export default {
   name: 'TasksEdit',
+  setup() {
+    // LOCAL STATE
+    const localAreas = reactive([]);
+    const useLocalAreas = ref(false);
+    const awaitingLocation = ref(false);
+    const showAllCategories = ref(false);
+    const currentQuant = ref(-1);
 
-  data() {
+    // APP SHELL DATA
+    const alert = inject('alert');
+    const bundles = inject('bundles');
+    const settings = inject('settings');
+
+    // ENTITIES
+    const { assets, equipment, locations } = inject('assets');
+    const { categories, units } = inject('terms');
+    const {
+      current, update, save, close,
+    } = inject('logs');
+
     return {
-      useLocalAreas: false,
-      awaitingLocation: false,
-      localAreas: [],
-      showAllCategories: false,
-      currentQuant: -1,
-      quantMeasures: [
-        'count',
-        'length',
-        'weight',
-        'area',
-        'volume',
-        'time',
-        'temperature',
-        'water_content',
-        'value',
-        'rating',
-        'ratio',
-        'probability',
-      ],
+      parseNotes,
+      quantMeasures,
+      localAreas,
+      useLocalAreas,
+      awaitingLocation,
+      showAllCategories,
+      currentQuant,
+      alert,
+      typeLabel: bundles.log?.[current.type]?.label || '',
+      settings,
+      log: current,
+      update,
+      save,
+      close,
+      units,
+      assets: computed(() => partitionOptions(assets.value, current.asset)),
+      equipment: computed(() => partitionOptions(equipment.value, current.equipment)),
+      locations: computed(() => partitionOptions(locations.value, current.location)),
+      categories: computed(() => partitionOptions(categories.value, current.category)),
+      appBarActions: computed(() => {
+        const logURL = current.url;
+        const openInNew = logURL ? [{
+          icon: 'icon-open-in-new',
+          onClick() { window.open(logURL, '_blank'); },
+          text: 'Open in browser',
+        }] : [];
+        return openInNew;
+      }),
+      updateNotes(value) {
+        update({ notes: { value, format: 'default' } });
+      },
+      toggleRelationship(relationship, { id, type }) {
+        const i = current[relationship].findIndex(e => e.id === id);
+        if (i < 0) {
+          const changed = current[relationship].concat({ id, type });
+          update({ [relationship]: changed });
+        } else {
+          const changed = [
+            ...current[relationship].slice(0, i),
+            ...current[relationship].slice(i + 1),
+          ];
+          update({ [relationship]: changed });
+        }
+      },
     };
   },
 
-  props: [
-    'id',
-    'useGeolocation',
-    'allAssets',
-    'allCategories',
-    'allEquipment',
-    'allAreas',
-    'allLogs',
-    'allUnits',
-    'areaGeoJSON',
-  ],
-
-  inject: ['alert', 'appendLog', 'bundles', 'updateLog', 'saveLog'],
-
+  beforeMount() {
+    if (!this.log) {
+      this.$router.push({ path: '/tasks' });
+    }
+  },
   beforeRouteLeave() {
-    this.saveLog(this.log);
+    if (this.log) {
+      this.save(this.log);
+    }
   },
 
-  methods: {
-    updateCurrentLog(tx) {
-      this.updateLog(this.log, tx);
-    },
+  // props: [
+  //   'areaGeoJSON',
+  // ],
 
-    updateNotes(value) {
-      this.updateCurrentLog({ notes: { value, format: 'default' } });
-    },
+  // methods: {
+  //   updateQuantity(key, value, index) {
+  //     const currentQuants = this.log.quantity || [];
+  //     const storedVal = (key === 'unit')
+  //       ? { id: value, type: 'taxonomy_term--unit' }
+  //       : value;
+  //     let updatedQuant; let updatedQuants;
+  //     if (index >= 0) {
+  //       updatedQuant = { ...currentQuants[index], [key]: storedVal };
+  //       updatedQuants = [
+  //         ...currentQuants.slice(0, index),
+  //         updatedQuant,
+  //         ...currentQuants.slice(index + 1),
+  //       ];
+  //     } else {
+  //       updatedQuant = {
+  //         measure: null,
+  //         value: null,
+  //         unit: null,
+  //         label: null,
+  //       };
+  //       updatedQuants = [...currentQuants, updatedQuant];
+  //     }
+  //     this.update({ quantity: updatedQuants });
+  //     if (index < 0) {
+  //       this.currentQuant = updatedQuants.length - 1;
+  //     }
+  //   },
 
-    // updateQuantity(key, value, index) {
-    //   const currentQuants = this.log.quantity || [];
-    //   const storedVal = (key === 'unit')
-    //     ? { id: value, type: 'taxonomy_term--unit' }
-    //     : value;
-    //   let updatedQuant; let updatedQuants;
-    //   if (index >= 0) {
-    //     updatedQuant = { ...currentQuants[index], [key]: storedVal };
-    //     updatedQuants = [
-    //       ...currentQuants.slice(0, index),
-    //       updatedQuant,
-    //       ...currentQuants.slice(index + 1),
-    //     ];
-    //   } else {
-    //     updatedQuant = {
-    //       measure: null,
-    //       value: null,
-    //       unit: null,
-    //       label: null,
-    //     };
-    //     updatedQuants = [...currentQuants, updatedQuant];
-    //   }
-    //   this.updateCurrentLog({ quantity: updatedQuants });
-    //   if (index < 0) {
-    //     this.currentQuant = updatedQuants.length - 1;
-    //   }
-    // },
+  //   addMovementArea(area) {
+  //     const { id, type } = area;
+  //     const areaReference = { id, type: `asset--${type}` };
+  //     // TODO: replace geofield property
+  //     const areaGeometry = area.geofield[0]?.geom;
+  //     const prevMovement = this.log.movement;
+  //     const newGeometry = prevMovement
+  //       ? mergeGeometries([areaGeometry, prevMovement.geometry])
+  //       : areaGeometry;
+  //     const newMovement = {
+  //       area: prevMovement
+  //         ? prevMovement.area.concat(areaReference)
+  //         : [areaReference],
+  //       geometry: newGeometry,
+  //     };
+  //     this.update({ movement: newMovement });
+  //   },
 
-    toggleAsset(isSelected, { id, type }) {
-      const newAssets = isSelected
-        ? this.log.asset.concat({ id, type })
-        : this.log.asset.filter(c => c.id !== id);
-      this.updateCurrentLog({ asset: newAssets });
-    },
-    toggleArea(isSelected, { id, type }) {
-      const newAreas = isSelected
-        ? this.log.location.concat({ id, type })
-        : this.log.location.filter(c => c.id !== id);
-      this.updateCurrentLog({ location: newAreas });
-    },
-    toggleCategory(isSelected, id) {
-      const newCats = isSelected
-        ? this.log.category.concat({ id, type: 'taxonomy_term--log_category' })
-        : this.log.category.filter(c => c.id !== id);
-      this.updateCurrentLog({ category: newCats });
-    },
-    toggleEquipment(isSelected, id) {
-      return isSelected
-        ? this.log.equipment.concat({ id, type: 'asset--equipment' })
-        : this.log.equipment.filter(c => c.id !== id);
-    },
+  //   removeMovementArea(area) {
+  //     const newAreas = this.log.movement.area
+  //       .filter(_area => _area.id !== area.id);
+  //     const prevGeometry = this.log.movement.geometry;
+  //     let areaGeometry = null;
+  //     // TODO: Replace geofield property.
+  //     if (area.geofield[0]) {
+  //       areaGeometry = area.geofield[0].geom;
+  //     }
+  //     const newGeometry = removeGeometry(prevGeometry, areaGeometry);
+  //     const newMovement = {
+  //       geometry: newGeometry,
+  //       area: newAreas,
+  //     };
+  //     this.update({ movement: newMovement });
+  //   },
 
-    // addMovementArea(area) {
-    //   const { id, type } = area;
-    //   const areaReference = { id, type: `asset--${type}` };
-    //   // TODO: replace geofield property
-    //   const areaGeometry = area.geofield[0]?.geom;
-    //   const prevMovement = this.log.movement;
-    //   const newGeometry = prevMovement
-    //     ? mergeGeometries([areaGeometry, prevMovement.geometry])
-    //     : areaGeometry;
-    //   const newMovement = {
-    //     area: prevMovement
-    //       ? prevMovement.area.concat(areaReference)
-    //       : [areaReference],
-    //     geometry: newGeometry,
-    //   };
-    //   this.updateCurrentLog({ movement: newMovement });
-    // },
+  //   removeQuant(index) {
+  //     if (this.currentQuant >= index) {
+  //       this.currentQuant -= 1;
+  //     }
+  //     const newQuant = [
+  //       ...this.log.quantity.slice(0, index),
+  //       ...this.log.quantity.slice(index + 1),
+  //     ];
+  //     this.update({ quantity: newQuant });
+  //   },
 
-    // removeMovementArea(area) {
-    //   const newAreas = this.log.movement.area
-    //     .filter(_area => _area.id !== area.id);
-    //   const prevGeometry = this.log.movement.geometry;
-    //   let areaGeometry = null;
-    //   // TODO: Replace geofield property.
-    //   if (area.geofield[0]) {
-    //     areaGeometry = area.geofield[0].geom;
-    //   }
-    //   const newGeometry = removeGeometry(prevGeometry, areaGeometry);
-    //   const newMovement = {
-    //     geometry: newGeometry,
-    //     area: newAreas,
-    //   };
-    //   this.updateCurrentLog({ movement: newMovement });
-    // },
+  //   getPhoto() {
+  //     // Obtains an image location from the camera!
+  //   },
 
-    // removeQuant(index) {
-    //   if (this.currentQuant >= index) {
-    //     this.currentQuant -= 1;
-    //   }
-    //   const newQuant = [
-    //     ...this.log.quantity.slice(0, index),
-    //     ...this.log.quantity.slice(index + 1),
-    //   ];
-    //   this.updateCurrentLog({ quantity: newQuant });
-    // },
+  //   loadPhoto(files) {
+  //     for (let i = 0; i < files.length; i += 1) {
+  //       // do something
+  //     }
+  //   },
+  // },
 
-    // getPhoto() {
-    //   // Obtains an image location from the camera!
-    // },
+  // computed: {
+  //   quantUnitNames() {
+  //     if (this.units.length > 0 && this.log?.quantity.length > 0) {
+  //       const unitNames = [];
+  //       this.log.quantity.forEach((quant) => {
+  //         if (quant.unit) {
+  //           this.units.forEach((unit) => {
+  //             if (parseInt(unit.id, 10) === parseInt(quant.unit.id, 10)) {
+  //               unitNames.push(unit.name);
+  //             }
+  //           });
+  //         } else {
+  //           unitNames.push(null);
+  //         }
+  //       });
+  //       return unitNames;
+  //     }
+  //     return [];
+  //   },
+  //   imageUrls() {
+  //     return this.log.images
+  //       .filter(img => typeof img === 'string');
+  //   },
+  //   mapLayers() {
+  //     const movement = {
+  //       title: 'movement',
+  //       wkt: this.log.movement?.geometry,
+  //       color: 'orange',
+  //       visible: true,
+  //       weight: 0,
+  //       canEdit: !!this.log.movement?.geometry,
+  //     };
+  //     const previousGeoms = this.log.asset
+  //       ?.map(logAsset => this.assets
+  //         ?.find(asset => asset.id === logAsset.id)?.geometry);
+  //     const previousWKT = previousGeoms ? mergeGeometries(previousGeoms) : undefined;
+  //     const previous = {
+  //       title: 'previous',
+  //       wkt: previousWKT,
+  //       color: 'green',
+  //       visible: true,
+  //       weight: 1,
+  //       canEdit: false,
+  //     };
+  //     return [previous, movement];
+  //   },
+  // },
 
-    // loadPhoto(files) {
-    //   for (let i = 0; i < files.length; i += 1) {
-    //   }
-    // },
+  // watch: {
+  //   useLocalAreas() {
+  //     function filterAreasByProximity(position) {
+  //       this.localAreas = this.locations.unselected
+  //         .filter(area => !!area.geofield[0] && isNearby(
+  //           [position.coords.longitude, position.coords.latitude],
+  //           area.geofield[0].geom,
+  //           (position.coords.accuracy),
+  //         ));
+  //     }
+  //     function onError(error) {
+  //       this.alert(error);
+  //     }
+  //     // If useLocalAreas is set to true, get geolocation and nearby areas
+  //     if (this.useLocalAreas) {
+  //       const options = {
+  //         enableHighAccuracy: true,
+  //         timeout: 10000,
+  //         maximumAge: 0,
+  //       };
 
-    parseNotes,
-  },
-
-  computed: {
-    log() {
-      return this.allLogs.find(l => l.id === this.id) || {};
-    },
-    assets() {
-      return partitionOptions(this.allAssets, this.log.asset);
-    },
-    areas() {
-      return partitionOptions(this.allAreas, this.log.area);
-    },
-    categories() {
-      return partitionOptions(this.allCategories, this.log.category);
-    },
-    equipment() {
-      if (!this.log.equipment) return { selected: [], unselected: this.allEquipment };
-      return partitionOptions(this.allEquipment, this.log.equipment);
-    },
-    logTypes() {
-      return this.bundles.log;
-    },
-    appBarActions() {
-      const logURL = this.log.url;
-      const openInNew = logURL ? [{
-        icon: 'icon-open-in-new',
-        onClick() { window.open(logURL, '_blank'); },
-        text: this.$t('Open in browser'),
-      }] : [];
-      return openInNew;
-    },
-
-    // quantUnitNames() {
-    //   if (this.units.length > 0 && this.log?.quantity.length > 0) {
-    //     const unitNames = [];
-    //     this.log.quantity.forEach((quant) => {
-    //       if (quant.unit) {
-    //         this.units.forEach((unit) => {
-    //           if (parseInt(unit.id, 10) === parseInt(quant.unit.id, 10)) {
-    //             unitNames.push(unit.name);
-    //           }
-    //         });
-    //       } else {
-    //         unitNames.push(null);
-    //       }
-    //     });
-    //     return unitNames;
-    //   }
-    //   return [];
-    // },
-    // imageUrls() {
-    //   return this.log.images
-    //     .filter(img => typeof img === 'string');
-    // },
-    /*
-    Assemble layers for display.
-    The 'previous' layer is assembled from the geofield plus
-    all area geometires associated with the log.
-    The 'movement' layer is the geometry in the log's movement field
-    */
-    // mapLayers() {
-    //   const movement = {
-    //     title: 'movement',
-    //     wkt: this.log.movement?.geometry,
-    //     color: 'orange',
-    //     visible: true,
-    //     weight: 0,
-    //     canEdit: !!this.log.movement?.geometry,
-    //   };
-    //   const previousGeoms = this.log.asset
-    //     ?.map(logAsset => this.assets
-    //       ?.find(asset => asset.id === logAsset.id)?.geometry);
-    //   const previousWKT = previousGeoms ? mergeGeometries(previousGeoms) : undefined;
-    //   const previous = {
-    //     title: 'previous',
-    //     wkt: previousWKT,
-    //     color: 'green',
-    //     visible: true,
-    //     weight: 1,
-    //     canEdit: false,
-    //   };
-    //   return [previous, movement];
-    // },
-  },
-
-  watch: {
-    // useLocalAreas() {
-    //   function filterAreasByProximity(position) {
-    //     this.localAreas = this.area.unselected.filter(area => !!area.geofield[0] && isNearby(
-    //       [position.coords.longitude, position.coords.latitude],
-    //       area.geofield[0].geom,
-    //       (position.coords.accuracy),
-    //     ));
-    //   }
-    //   function onError(error) {
-    //     this.alert(error);
-    //   }
-    //   // If useLocalAreas is set to true, get geolocation and nearby areas
-    //   if (this.useLocalAreas) {
-    //     const options = {
-    //       enableHighAccuracy: true,
-    //       timeout: 10000,
-    //       maximumAge: 0,
-    //     };
-
-    //     const watch = navigator.geolocation.watchPosition(
-    //       filterAreasByProximity.bind(this),
-    //       onError.bind(this),
-    //       options,
-    //     );
-    //     setTimeout(() => {
-    //       navigator.geolocation.clearWatch(watch);
-    //     }, 5000);
-    //   }
-    // },
-  },
+  //       const watch = navigator.geolocation.watchPosition(
+  //         filterAreasByProximity.bind(this),
+  //         onError.bind(this),
+  //         options,
+  //       );
+  //       setTimeout(() => {
+  //         navigator.geolocation.clearWatch(watch);
+  //       }, 5000);
+  //     }
+  //   },
+  // },
 };
 
 </script>

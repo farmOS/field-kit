@@ -16,54 +16,53 @@
       </farm-card>
       <farm-card
         v-for="(task, i) in tasks"
+        class="task-card"
         :key="`card-${i}`">
-        <router-link :to="{ path: `/tasks/${task.id}` }">
-          <farm-stack space="xxs">
+        <farm-stack space="xxs" @click="open(task.id)">
 
-            <farm-inline justifyContent="space-between" space="s">
-              <farm-inline justifyContent="start" space="s">
-                <icon-assignment-done
-                  v-if="task.status === 'done'"/>
-                <icon-assignment
-                  v-if="task.status !== 'done' && !task.late"/>
-                <icon-assignment-late
-                  class="late"
-                  v-if="task.status !== 'done' && task.late"/>
-                <h6>{{task.name}}</h6>
-              </farm-inline>
+          <farm-inline justifyContent="space-between" space="s">
+            <farm-inline justifyContent="start" space="s">
+              <icon-assignment-done
+                v-if="task.status === 'done'"/>
+              <icon-assignment
+                v-if="task.status !== 'done' && !task.late"/>
+              <icon-assignment-late
+                class="late"
+                v-if="task.status !== 'done' && task.late"/>
+              <h6>{{task.name}}</h6>
             </farm-inline>
+          </farm-inline>
 
-            <farm-text size="s">{{task.notes}}</farm-text>
+          <farm-text size="s">{{task.notes}}</farm-text>
 
-            <farm-inline justifyContent="space-between" alignItems="flex-end">
-              <farm-stack space="xs">
-                <farm-text-label as="p">
-                  {{$t(task.typeLabel).toUpperCase()}}
-                </farm-text-label>
-                <farm-text size="s">{{task.date}}</farm-text>
-              </farm-stack>
-              <farm-inline space="xs" justifyContent="flex-end" flex="0 0 75%">
-                <farm-text size="s"
-                  v-for="location in task.locations"
-                  class="tag area"
-                  :key="`area-${location.id}`">
-                  {{location.name}}
-                </farm-text>
-                <farm-text size="s"
-                  v-for="asset in task.assets"
-                  class="tag asset"
-                  :key="`asset-${asset.id}`">
-                  {{asset.name}}
-                </farm-text>
-              </farm-inline>
+          <farm-inline justifyContent="space-between" alignItems="flex-end">
+            <farm-stack space="xs">
+              <farm-text-label as="p">
+                {{$t(task.label).toUpperCase()}}
+              </farm-text-label>
+              <farm-text size="s">{{task.date}}</farm-text>
+            </farm-stack>
+            <farm-inline space="xs" justifyContent="flex-end" flex="0 0 75%">
+              <farm-text size="s"
+                v-for="location in task.locations"
+                class="tag area"
+                :key="`area-${location.id}`">
+                {{location.name}}
+              </farm-text>
+              <farm-text size="s"
+                v-for="asset in task.assets"
+                class="tag asset"
+                :key="`asset-${asset.id}`">
+                {{asset.name}}
+              </farm-text>
             </farm-inline>
+          </farm-inline>
 
-          </farm-stack>
-        </router-link>
+        </farm-stack>
       </farm-card>
     </farm-tiles>
 
-    <div class="add-circle" @click="startNewLog">
+    <div class="add-circle" @click="openNew">
       <div class="background-circle">
       </div>
       <icon-add-circle/>
@@ -73,60 +72,31 @@
 
 </template>
 <script>
-const {
-  parseNotes,
-} = window.lib;
+const { computed, inject } = window.Vue;
+const { parseNotes } = window.lib;
+
+const compare = (a, b) => new Date(b.timestamp) - new Date(a.timestamp);
+const dateOpts = { month: 'short', day: 'numeric', year: 'numeric' };
 
 export default {
   name: 'TasksAll',
-  inject: ['appendLog', 'bundles'],
-  props: [
-    'logs',
-    'userId',
-    'assets',
-  ],
-  computed: {
-    tasks() {
-      const compare = (a, b) => new Date(b.timestamp) - new Date(a.timestamp);
-      const logs = this.logs.map((log) => {
-        const {
-          id, name, status, timestamp,
-        } = log;
-        const [locations, assets] = log.asset.reduce(([locs, nonLocs], asset) => {
-          const match = this.assets.find(a => a.id === asset.id);
-          if (!match) return [locs, nonLocs];
-          if (match.is_location) return [[...locs, match], nonLocs];
-          return [locs, [...nonLocs, match]];
-        }, [[], []]);
-        const dateOpts = { month: 'short', day: 'numeric', year: 'numeric' };
-        const label = this.bundles?.log?.[log.type]?.label || '';
-        return {
-          id,
-          name,
-          status,
-          timestamp,
-          locations,
-          assets,
-          typeLabel: label,
-          date: new Date(timestamp).toLocaleDateString(undefined, dateOpts),
-          notes: parseNotes(log.notes),
-          late: timestamp < new Date().toISOString(),
-        };
-      });
-      return logs.sort(compare);
-    },
-  },
-  methods: {
-    showDate(iso) {
-      const date = new Date(iso);
-      const opts = { month: 'short', day: 'numeric', year: 'numeric' };
-      return date.toLocaleDateString(undefined, opts);
-    },
-    startNewLog() {
-      const log = this.appendLog('activity', { status: 'done' });
-      this.$router.push({ path: `/tasks/${log.id}` });
-    },
-    parseNotes,
+  inject: ['assets', 'bundles', 'logs'],
+  setup() {
+    const { equipment, locations } = inject('assets');
+    const bundles = inject('bundles');
+    const { logs, open, openNew } = inject('logs');
+    const tasks = computed(() => logs.map(log => ({
+      id: log.id,
+      name: log.name,
+      status: log.status,
+      assets: equipment.value.filter(equip => log.asset.some(a => a.id === equip.id)),
+      locations: locations.value.filter(loc => log.asset.some(a => a.id === loc.id)),
+      label: bundles.log?.[log.type]?.label || '',
+      date: new Date(log.timestamp).toLocaleDateString(undefined, dateOpts),
+      notes: parseNotes(log.notes),
+      late: new Date(log.timestamp) < new Date(),
+    })).sort(compare));
+    return { open, openNew, tasks };
   },
 };
 
@@ -136,12 +106,9 @@ export default {
     height: 1rem;
   }
 
-  a:hover {
-    text-decoration: none;
-  }
-
-  a {
-    color: var(--dark);
+  .task-card:hover,
+  .add-circle:hover {
+    cursor: pointer;
   }
 
   .late {
