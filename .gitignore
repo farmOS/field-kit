@@ -14,8 +14,3 @@ build-storybook.log
 *.ntvs*
 *.njsproj
 *.sln
-
-platforms/
-plugins/
-www/
-storybook-static/

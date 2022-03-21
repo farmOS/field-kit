@@ -2,6 +2,7 @@
   "name": "field-module-tasks",
   "version": "1.0.0",
   "description": "View, update and create farmOS logs for your assigned farm tasks.",
+  "main": "module.config.js",
   "type": "module",
   "scripts": {
     "start": "npm run dev",
@@ -16,6 +17,14 @@
   "author": "Jamie Gaehring <gaehj457@gmail.com> (https://jgaehring.com)",
   "license": "GPL-3.0-or-later",
   "devDependencies": {
-    "field-scripts": "file:../field-scripts"
-  }
+    "field-scripts": "1.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/farmOS/field-kit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/farmOS/field-kit/issues"
+  },
+  "homepage": "https://farmos.org"
 }

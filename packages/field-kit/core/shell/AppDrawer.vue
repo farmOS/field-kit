@@ -80,7 +80,7 @@
 import fieldModules from '../field-modules';
 import profile from '../farm/profile';
 import settings from './settings';
-import { version } from '../../../package.json';
+import { version } from '../../package.json';
 
 export default {
   name: 'App',

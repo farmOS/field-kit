@@ -2,10 +2,22 @@
   "name": "field-kit-utils",
   "version": "1.0.0",
   "description": "Utilities and constants for working with farmOS Field Kit and Field Modules.",
+  "main": "constants.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/farmOS/field-kit.git"
+  },
   "author": "Jamie Gaehring <gaehj457@gmail.com> (https://jgaehring.com)",
-  "license": "GPL-3.0-or-later"
+  "keywords": [
+    "farmOS"
+  ],
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/farmOS/field-kit/issues"
+  },
+  "homepage": "https://farmos.org"
 }

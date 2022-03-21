@@ -1,0 +1,69 @@
+{
+  "name": "field-kit",
+  "version": "2.0.0-alpha.6",
+  "description": "A modular, offline-first companion app to farmOS.",
+  "author": "Jamie Gaehring <gaehj457@gmail.com> (https://jgaehring.com)",
+  "license": "GPL-3.0-or-later",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "start": "npm run dev",
+    "test": "mocha --require test-setup.js 'src/**/*.test.js' --watch",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint --color",
+    "lint-src": "eslint --color --ext .js,.vue src",
+    "BROKEN-storybook": "NODE_PATH=src start-storybook -p 6006",
+    "BROKEN-build-storybook": "build-storybook"
+  },
+  "dependencies": {
+    "@farmos.org/farmos-map": "^1.4.2",
+    "@turf/turf": "^5.1.6",
+    "farmos": "^2.0.0-beta.9",
+    "field-kit-utils": "^1.0.0",
+    "ramda": "^0.27.1",
+    "uuid": "^8.3.2",
+    "vue": "^3.1.0",
+    "vue-router": "^4.0.12",
+    "wellknown": "^0.5.0"
+  },
+  "devDependencies": {
+    "@originjs/vite-plugin-commonjs": "^1.0.1",
+    "@vitejs/plugin-vue": "^2.0.1",
+    "@vue/runtime-dom": "^3.2.26",
+    "@vue/test-utils": "^2.0.0-rc.18",
+    "chromatic": "^6.3.4",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.24.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.3.1",
+    "eslint-plugin-vue": "^8.2.0",
+    "expect": "^27.4.6",
+    "jsdom": "^15.2.1",
+    "jsdom-global": "^3.0.2",
+    "mocha": "^9.1.3",
+    "vite": "^2.7.2",
+    "vite-plugin-env-compatible": "^1.1.1",
+    "vite-plugin-pwa": "^0.11.12"
+  },
+  "engines": {
+    "node": ">= 16.13.2"
+  },
+  "keywords": [
+    "farmOS",
+    "agriculture",
+    "offline-first",
+    "PWA",
+    "microfrontend"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/farmOS/field-kit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/farmOS/field-kit/issues"
+  },
+  "homepage": "https://github.com/farmOS/field-kit#readme"
+}

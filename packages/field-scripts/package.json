@@ -2,8 +2,11 @@
   "name": "field-scripts",
   "version": "1.0.0",
   "description": "Node scripts for farmOS Field Kit and Field Modules.",
+  "bin": {
+    "field-scripts": "bin/field-scripts.js"
+  },
+  "main": "bin/field-scripts.js",
   "type": "module",
-  "bin": "bin/field-scripts.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -15,11 +18,20 @@
   "dependencies": {
     "@originjs/vite-plugin-commonjs": "^1.0.3",
     "@vitejs/plugin-vue": "^2.2.2",
-    "field-kit": "file:../..",
-    "field-kit-utils": "file:../field-kit-utils",
+    "field-kit": "2.0.0-alpha.6",
+    "field-kit-utils": "^1.0.0",
     "js-yaml": "^4.1.0",
     "ramda": "^0.28.0",
     "vite": "^2.8.4",
     "vite-plugin-env-compatible": "^1.1.1"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/farmOS/field-kit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/farmOS/field-kit/issues"
+  },
+  "homepage": "https://farmos.org"
 }
