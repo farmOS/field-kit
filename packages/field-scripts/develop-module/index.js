@@ -1,4 +1,5 @@
 import path from 'path';
+import { createRequire } from 'module';
 import { createServer } from 'vite';
 import createVuePlugin from '@vitejs/plugin-vue';
 import envCompatible from 'vite-plugin-env-compatible';
@@ -7,7 +8,7 @@ import { FM_API_ENDPOINT, FM_SCRIPT_DIR } from 'field-kit-utils/constants.js';
 import { snake } from 'field-kit-utils/string-case.js';
 import createMockServer from './mock-server.js';
 
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
+const require = createRequire(import.meta.url);
 
 const proxyPort = port => ({
   target: `http://localhost:${port}`,
@@ -32,7 +33,8 @@ export default async function develop(options = {}) {
   const mockServer = createMockServer(config);
   mockServer.listen(mockPort, 'localhost');
 
-  const root = path.resolve(__dirname, '../../../');
+  const fieldKitEntry = require.resolve('field-kit');
+  const root = path.dirname(fieldKitEntry);
 
   const devServer = await createServer({
     root,
