@@ -1,9 +1,9 @@
-import FarmTiles from '../components/FarmTiles.vue';
+import FarmStack from '../src/components/FarmStack.vue';
 import FarmPlaceholder from './FarmPlaceholder.vue';
 
 export default {
-  title: 'Layout/FarmTiles',
-  component: FarmTiles,
+  title: 'Layout/FarmStack',
+  component: FarmStack,
   argTypes: {
     space: {
       control: {
@@ -11,6 +11,14 @@ export default {
         options: [
           'xxxs', 'xxs', 'xs', 's',
           'm', 'l', 'xl', 'xxl', 'none',
+        ],
+      },
+    },
+    align: {
+      control: {
+        type: 'select',
+        options: [
+          'left', 'right', 'center',
         ],
       },
     },
@@ -27,37 +35,44 @@ export default {
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  components: { FarmTiles, FarmPlaceholder },
+  components: { FarmStack, FarmPlaceholder },
   template: `
-    <farm-tiles :space="space" :columns="[1, 2, 3]" :dividers="dividers">
+    <farm-stack :space="space" :dividers="dividers" :align="align">
       <farm-placeholder/>
       <farm-placeholder height="150px" width="150px"/>
       <farm-placeholder/>
       <farm-placeholder height="150px" width="150px"/>
       <farm-placeholder/>
       <farm-placeholder height="150px" width="150px"/>
-    </farm-tiles>
+    </farm-stack>
   `,
 });
 
 export const Default = Template.bind({});
 
-export const withNoSpace = Template.bind({});
-withNoSpace.args = {
-  space: 'none',
+export const withSpace = Template.bind({});
+withSpace.args = {
+  space: 'm',
 };
 
 export const withMoreSpace = Template.bind({});
 withMoreSpace.args = {
-  space: 'l',
+  space: 'xl',
+};
+
+export const AlignCenter = Template.bind({});
+AlignCenter.args = {
+  align: 'center',
 };
 
 export const withDividers = Template.bind({});
 withDividers.args = {
+  space: 'm',
   dividers: true,
 };
 
 export const withStrongDividers = Template.bind({});
 withStrongDividers.args = {
+  space: 'm',
   dividers: 'strong',
 };

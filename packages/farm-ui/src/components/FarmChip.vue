@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { mapResponsiveEnums } from './responsiveProps';
+import { mapResponsiveEnums } from '../responsiveProps';
 
 export default {
   name: 'FarmChip',

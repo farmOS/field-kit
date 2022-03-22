@@ -27,9 +27,9 @@
 </template>
 
 <script>
-import IconMoreVert from './icons/icon-more-vert.vue';
-import IconArrowBack from './icons/icon-arrow-back.vue';
-import IconMenu from './icons/icon-menu.vue';
+import IconMoreVert from '../icons/icon-more-vert.vue';
+import IconArrowBack from '../icons/icon-arrow-back.vue';
+import IconMenu from '../icons/icon-menu.vue';
 
 const rem = 16;
 const liMargin = rem / 2;

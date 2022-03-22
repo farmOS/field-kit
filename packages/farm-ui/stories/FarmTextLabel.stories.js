@@ -1,8 +1,8 @@
-import FarmText from '../components/FarmText.vue';
+import FarmTextLabel from '../src/components/FarmTextLabel.vue';
 
 export default {
-  title: 'Content/FarmText',
-  component: FarmText,
+  title: 'Content/FarmTextLabel',
+  component: FarmTextLabel,
   argTypes: {
     as: {
       control: {
@@ -29,32 +29,24 @@ export default {
         ],
       },
     },
-    weight: {
-      control: {
-        type: 'select',
-        options: [
-          'regular', 'strong',
-        ],
-      },
-    },
   },
 };
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  components: { FarmText },
+  components: { FarmTextLabel },
   template: `
-    <farm-text :as="as" :color="color" :size="size" :weight="weight">
-      Hello, World!
-    </farm-text>
+    <farm-text-label :as="as" :color="color" :size="size">
+      Label
+    </farm-text-label>
   `,
 });
 
 export const Default = Template.bind({});
 
-export const asSpanTag = Template.bind({});
-asSpanTag.args = {
-  as: 'span',
+export const asPTag = Template.bind({});
+asPTag.args = {
+  as: 'p',
 };
 
 export const Small = Template.bind({});
@@ -65,9 +57,4 @@ Small.args = {
 export const Large = Template.bind({});
 Large.args = {
   size: 'l',
-};
-
-export const Strong = Template.bind({});
-Strong.args = {
-  weight: 'strong',
 };

@@ -1,4 +1,4 @@
-import FarmDateTimeForm from '../components/FarmDateTimeForm.vue';
+import FarmDateTimeForm from '../src/components/FarmDateTimeForm.vue';
 
 export default {
   title: 'Content/FarmDateTimeForm',

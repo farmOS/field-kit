@@ -7,7 +7,7 @@
 <script>
 import {
   responsiveProps, mapResponsiveProps, mapResponsiveEnums, responsiveValidator,
-} from './responsiveProps';
+} from '../responsiveProps';
 
 export default {
   name: 'FarmCard',

@@ -1,0 +1,26 @@
+{
+  "name": "farm-ui",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "devDependencies": {},
+  "peerDependencies": {
+    "vue": "^3.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "BROKEN-storybook": "NODE_PATH=src start-storybook -p 6006",
+    "BROKEN-build-storybook": "build-storybook"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/farmOS/field-kit.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/farmOS/field-kit/issues"
+  },
+  "homepage": "https://github.com/farmOS/field-kit#readme"
+}

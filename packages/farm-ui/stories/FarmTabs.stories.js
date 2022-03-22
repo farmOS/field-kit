@@ -1,4 +1,4 @@
-import FarmTabs from '../components/FarmTabs.vue';
+import FarmTabs from '../src/components/FarmTabs.vue';
 import FarmPlaceholder from './FarmPlaceholder.vue';
 
 const control = {

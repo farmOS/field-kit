@@ -13,7 +13,7 @@
 
 <script>
 import { computed } from 'vue';
-import { validateAction, validateNav } from '../../components/FarmAppBar.vue';
+import { validateAction, validateNav } from 'farm-ui/src/components/FarmAppBar.vue';
 import connection, { STATUS_GOOD_CONNECTION, STATUS_IN_PROGRESS, STATUS_NO_CONNECTION } from '../http/connection';
 
 let state;

@@ -1,6 +1,6 @@
 <script>
-import noEmptyVNodes from './noEmptyVNodes';
-import { responsiveProps, mapResponsiveProps, responsiveValidator } from './responsiveProps';
+import noEmptyVNodes from '../noEmptyVNodes';
+import { responsiveProps, mapResponsiveProps, responsiveValidator } from '../responsiveProps';
 
 export default {
   name: 'FarmInline',

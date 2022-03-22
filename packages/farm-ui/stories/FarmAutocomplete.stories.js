@@ -1,4 +1,4 @@
-import FarmAutocomplete from '../components/FarmAutocomplete.vue';
+import FarmAutocomplete from '../src/components/FarmAutocomplete.vue';
 
 export default {
   title: 'Content/FarmAutocomplete',

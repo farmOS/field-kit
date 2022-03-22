@@ -1,6 +1,6 @@
-import FarmCard from '../components/FarmCard.vue';
-import FarmStack from '../components/FarmStack.vue';
-import FarmInline from '../components/FarmInline.vue';
+import FarmCard from '../src/components/FarmCard.vue';
+import FarmStack from '../src/components/FarmStack.vue';
+import FarmInline from '../src/components/FarmInline.vue';
 
 export default {
   title: 'Layout/FarmCard',

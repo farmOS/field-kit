@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { mapResponsiveProps, responsiveProps, responsiveValidator } from './responsiveProps';
+import { mapResponsiveProps, responsiveProps, responsiveValidator } from '../responsiveProps';
 
 const paddingProp = {
   type: [String, Array],

@@ -1,4 +1,4 @@
-import FarmInline from '../components/FarmInline.vue';
+import FarmInline from '../src/components/FarmInline.vue';
 import FarmPlaceholder from './FarmPlaceholder.vue';
 
 export default {

@@ -1,8 +1,8 @@
 <script>
-import noEmptyVNodes from './noEmptyVNodes';
+import noEmptyVNodes from '../noEmptyVNodes';
 import {
   responsiveProps, mapResponsiveProps, responsiveValidator, mapResponsiveEnums,
-} from './responsiveProps';
+} from '../responsiveProps';
 
 export default {
   name: 'FarmStack',

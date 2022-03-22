@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { mapResponsiveProps, responsiveProps, responsiveValidator } from './responsiveProps';
+import { mapResponsiveProps, responsiveProps, responsiveValidator } from '../responsiveProps';
 
 export default {
   name: 'FarmTabs',

@@ -2,6 +2,7 @@ import * as Vue from 'vue';
 import * as VueRouter from 'vue-router';
 import * as R from 'ramda';
 import wellknown from 'wellknown';
+import * as components from 'farm-ui';
 import router from './router';
 import useEntities from './entities';
 import App from './App.vue';
@@ -11,7 +12,6 @@ import { alert } from './warnings/alert';
 import t from './l10n/mixin';
 import farm from './farm';
 import * as utils from './utils';
-import components from '../components';
 import './styles/normalize.css';
 import './styles/bootstrap-simplex.min.css';
 import './styles/vars.css';
@@ -52,7 +52,7 @@ app.mixin(t);
 
 // Register the shared component library globally so they can be accessed from
 // any other component and field module.
-components.forEach((c) => { app.component(c.name, c); });
+Object.values(components).forEach((c) => { app.component(c.name, c); });
 
 app.component('app-bar-options', AppBarOptions);
 

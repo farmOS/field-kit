@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { responsiveProps, mapResponsiveProps } from './responsiveProps';
+import { responsiveProps, mapResponsiveProps } from '../responsiveProps';
 
 export default {
   name: 'FarmLogMainInfo',

@@ -12,7 +12,8 @@
     "packages/field-kit",
     "packages/field-kit-utils",
     "packages/field-scripts",
-    "packages/field-module-tasks"
+    "packages/field-module-tasks",
+    "packages/farm-ui"
   ],
   "keywords": [
     "farmOS",

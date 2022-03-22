@@ -1,4 +1,4 @@
-import FarmChip from '../components/FarmChip.vue';
+import FarmChip from '../src/components/FarmChip.vue';
 
 export default {
   title: 'Content/FarmChip',

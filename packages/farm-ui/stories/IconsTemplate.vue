@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import components from '../components';
+import components from '../src/components';
 
 function convertPascalToKebab(name) {
   return name
