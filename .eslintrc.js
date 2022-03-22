@@ -18,7 +18,7 @@ module.exports = {
   plugins: [
     'vue'
   ],
-  ignorePatterns: ['src/core/store/l10n/**'],
+  ignorePatterns: ['src/l10n/**'],
   // add your custom rules here
   rules: {
     // don't require .vue extension when importing

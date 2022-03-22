@@ -1,10 +1,10 @@
 import Vue from 'vue';
 import components from '../src';
-import '../../field-kit/core/styles/normalize.css';
-import '../../field-kit/core/styles/bootstrap-simplex.min.css';
+import '../../field-kit/src/styles/normalize.css';
+import '../../field-kit/src/styles/bootstrap-simplex.min.css';
 import './override-bootstrap.css';
-import '../../field-kit/core/styles/vars.css';
-import '../../field-kit/core/styles/main.css';
+import '../../field-kit/src/styles/vars.css';
+import '../../field-kit/src/styles/main.css';
 
 const mockT = {
   methods: { $t: str => str },

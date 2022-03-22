@@ -1,4 +1,4 @@
-import app from './core';
+import app from './src';
 import onupdatefound from './onupdatefound';
 
 app.mount('#app');
