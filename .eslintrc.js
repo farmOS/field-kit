@@ -53,7 +53,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['src/**/*.test.js'],
+      files: ['packages/**/*.test.js'],
       env: {
         mocha: true,
         jest: true, // for `expect` global
