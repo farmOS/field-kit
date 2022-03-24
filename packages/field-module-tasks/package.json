@@ -1,6 +1,6 @@
 {
   "name": "field-module-tasks",
-  "version": "1.0.0",
+  "version": "2.0.0-alpha.1",
   "description": "View, update and create farmOS logs for your assigned farm tasks.",
   "main": "module.config.js",
   "type": "module",
@@ -17,7 +17,7 @@
   "author": "Jamie Gaehring <gaehj457@gmail.com> (https://jgaehring.com)",
   "license": "GPL-3.0-or-later",
   "devDependencies": {
-    "field-scripts": "1.0.0"
+    "field-scripts": "2.0.0-alpha.1"
   },
   "repository": {
     "type": "git",
