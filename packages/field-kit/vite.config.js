@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite';
-import createVuePlugin from '@vitejs/plugin-vue'
+import createVuePlugin from '@vitejs/plugin-vue';
 import envCompatible from 'vite-plugin-env-compatible';
 import { viteCommonjs } from '@originjs/vite-plugin-commonjs';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -11,7 +11,7 @@ const proxyConfig = {
   secure: false,
 };
 
-const proxyPaths = reduce((obj, path) => ({ ...obj, [path]: proxyConfig, }), {});
+const proxyPaths = reduce((obj, path) => ({ ...obj, [path]: proxyConfig }), {});
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -30,7 +30,7 @@ export default defineConfig({
       '.tsx',
       '.json',
       '.vue',
-    ]
+    ],
   },
   plugins: [
     createVuePlugin({ jsx: true }),
