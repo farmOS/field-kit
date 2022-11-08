@@ -62,7 +62,8 @@ export default async function develop(options = {}) {
       envCompatible.default(),
     ],
     optimizeDeps: {
-      exclude: ['@farmos.org/farmos-map', 'field-kit', 'farmos'],
+      exclude: ['@farmos.org/farmos-map'],
+      include: ['axios'],
     },
     server: {
       port,
