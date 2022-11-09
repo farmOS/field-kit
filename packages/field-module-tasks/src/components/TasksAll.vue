@@ -62,7 +62,8 @@
       </farm-card>
     </farm-tiles>
 
-    <div class="add-circle" @click="openNew">
+    <!-- TODO: replace hardcoded 'activity' type with a menu of available types -->
+    <div class="add-circle" @click="openNew('activity')">
       <div class="background-circle">
       </div>
       <icon-add-circle/>
