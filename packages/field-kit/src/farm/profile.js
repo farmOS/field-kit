@@ -55,9 +55,11 @@ export function updateProfile() {
       return Promise.reject(new Error('Cannot find remote profile info.'));
     })
     .then((results) => {
-      const { attributes: { display_name, langcode } } = results.data[0];
-      setProfile({ user: { display_name, langcode } });
-      LS.setItem('profile', JSON.stringify(store));
+      if (results.data.length > 0) {
+        const { attributes: { display_name, langcode } } = results.data[0];
+        setProfile({ user: { display_name, langcode } });
+        LS.setItem('profile', JSON.stringify(store));
+      }
       return reference;
     });
 }
