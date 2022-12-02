@@ -19,13 +19,13 @@ export default {
     const assetFilter = { status: 'active' };
     const assets = checkout('asset', assetFilter);
     const locations = computed(() => assets.filter(a => a.is_location));
-    const equipment = computed(() => assets.filter(a => a.type === 'equipment'));
+    const equipment = computed(() => assets.filter(a => a.type === 'asset--equipment'));
     provide('assets', { assets, locations, equipment });
 
-    const termFilter = { type: ['log_category', 'unit'] };
+    const termFilter = { type: ['taxonomy_term--log_category', 'taxonomy_term--unit'] };
     const terms = checkout('term', termFilter);
-    const units = computed(() => terms.filter(t => t.type === 'unit'));
-    const categories = computed(() => terms.filter(t => t.type === 'log_category'));
+    const units = computed(() => terms.filter(t => t.type === 'taxonomy_term--unit'));
+    const categories = computed(() => terms.filter(t => t.type === 'taxonomy_term--log_category'));
     provide('terms', { terms, units, categories });
 
     const profile = inject('profile');

@@ -3,7 +3,7 @@ import {
   clone, complement, compose, curryN, equals, is,
 } from 'ramda';
 import { validate, v4 as uuidv4 } from 'uuid';
-import { parseBundles } from 'farmos';
+import { splitFilterByType } from 'farmos';
 import farm from '../farm';
 import router from '../router';
 import SyncScheduler from '../http/SyncScheduler';
@@ -92,17 +92,18 @@ const syncHandler = revision => interceptor((evaluation) => {
   }
 });
 
-function findRepeatableBundles(entity, errors) {
-  const bundles = [];
+function findRepeatableTypes(entity, errors) {
+  const types = [];
   const bundleRE = /^\/api\/([a-z]*)\/([a-z]*)/;
   errors.forEach((error) => {
     const { config: { url }, request, response } = error;
-    const [, ent, bundle] = url.match(bundleRE);
-    if (request && !response && bundle && ent === entity) {
-      bundles.push(bundle);
+    const [, e, b] = url.match(bundleRE);
+    if (request && !response && b && e === entity) {
+      const type = `${e}--${b}`;
+      types.push(type);
     }
   });
-  return bundles;
+  return types;
 }
 
 const collectionSyncHandler = (entity, filter, emitter) =>
@@ -118,9 +119,9 @@ const collectionSyncHandler = (entity, filter, emitter) =>
     if (warnings.length > 0) {
       alert(warnings);
     }
-    const repeatableBundles = findRepeatableBundles(entity, repeatable);
-    if (repeatableBundles.length > 0) {
-      const repeatableFilters = parseBundles(filter, repeatableBundles);
+    const repeatableTypes = findRepeatableTypes(entity, repeatable);
+    if (repeatableTypes.length > 0) {
+      const repeatableFilters = splitFilterByType(filter, repeatableTypes);
       repeatableFilters.forEach(({ name: bundle, filter: bundleFilter }) => {
         const subscribe = scheduler.push(entity, bundle, bundleFilter);
         subscribe((results) => {

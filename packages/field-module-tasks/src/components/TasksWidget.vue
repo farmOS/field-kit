@@ -22,19 +22,19 @@
     <div class="scroll-container">
       <div class="scroll-x" :style="scrollStyle">
         <svg-filter-dropshadow id="btn-shadow" :opacity=".25" :blur="3" :x="1" :y="2"/>
-        <div id="activity" class="add-btn" @click="addLog('activity', $event)">
+        <div id="activity" class="add-btn" @click="addLog('log--activity', $event)">
           <icon-add-circle :style="{ filter: 'url(#btn-shadow)' }"/>
           <div>{{ $t('Activity')}}</div>
         </div>
-        <div id="observation" class="add-btn" @click="addLog('observation', $event)">
+        <div id="observation" class="add-btn" @click="addLog('log--observation', $event)">
           <icon-add-circle :style="{ filter: 'url(#btn-shadow)' }"/>
           <div>{{ $t('Observation')}}</div>
         </div>
-        <div id="harvest" class="add-btn" @click="addLog('harvest', $event)">
+        <div id="harvest" class="add-btn" @click="addLog('log--harvest', $event)">
           <icon-add-circle :style="{ filter: 'url(#btn-shadow)' }"/>
           <div>{{ $t('Harvest')}}</div>
         </div>
-        <div id="input" class="add-btn" @click="addLog('input', $event)">
+        <div id="input" class="add-btn" @click="addLog('log--input', $event)">
           <icon-add-circle :style="{ filter: 'url(#btn-shadow)' }"/>
           <div>{{ $t('Input')}}</div>
         </div>

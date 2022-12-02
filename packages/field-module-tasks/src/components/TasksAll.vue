@@ -63,7 +63,7 @@
     </farm-tiles>
 
     <!-- TODO: replace hardcoded 'activity' type with a menu of available types -->
-    <div class="add-circle" @click="openNew('activity')">
+    <div class="add-circle" @click="openNew('log--activity')">
       <div class="background-circle">
       </div>
       <icon-add-circle/>
