@@ -87,18 +87,16 @@
 
     <farm-card v-if="log.quantity !== undefined">
       <h3>{{ $t('Quantities')}} 🚧 UNDER CONSTRUCTION 🚧</h3>
-      <!-- <label for="quantity" class="control-label ">
+      <label for="quantity" class="control-label ">
         {{ $t('Add new or edit existing quantity')}}
       </label>
-      <div v-if="currentQuant >= 0" class="form-item form-item-name form-group"> -->
+      <div v-if="currentQuant >= 0" class="form-item form-item-name form-group">
         <!-- To display a placeholder value ONLY when there are no existing
         quantities, we must add the placeholder with an <option> tag and
         select it using the :value option -->
-        <!-- <select
-          :value="(log.quantity
-            && log.quantity.length > 0
-            && log.quantity[currentQuant].measure)
-            ? log.quantity[currentQuant].measure
+        <select
+          :value="(quantities.length > 0 && quantities[currentQuant].measure)
+            ? quantities[currentQuant].measure
             : 'Select measure'"
           @input="updateQuantity('measure', $event.target.value, currentQuant)"
           class="custom-select col-sm-3 ">
@@ -111,19 +109,16 @@
             </option>
         </select>
         <input
-          :value="(log.quantity
-            && log.quantity.length > 0)
-            ? log.quantity[currentQuant].value
+          :value="(quantities.length > 0)
+            ? quantities[currentQuant].value
             : null"
           @input="updateQuantity('value', $event.target.value, currentQuant)"
           :placeholder="$t('Enter value')"
           type="number"
           class="form-control"/>
         <select
-        :value="(log.quantity
-            && log.quantity.length > 0
-            && log.quantity[currentQuant].unit)
-            ? log.quantity[currentQuant].unit.id
+          :value="(quantities.length > 0 && quantities[currentQuant].unit)
+            ? quantities[currentQuant].unit.id
             : 'Select unit'"
           @input="updateQuantity('unit', $event.target.value, currentQuant)"
           class="custom-select col-sm-3 ">
@@ -136,9 +131,8 @@
             </option>
         </select>
         <input
-          :value="(log.quantity
-            && log.quantity.length > 0)
-            ? log.quantity[currentQuant].label
+          :value="(quantities.length > 0)
+            ? quantities[currentQuant].label
             : null"
           @input="updateQuantity('label', $event.target.value, currentQuant)"
           :placeholder="$t('Enter label')"
@@ -147,17 +141,16 @@
       </div>
       <div class="form-item form-group">
         <ul
-          v-if="log.quantity
-            && log.quantity.length > 0"
+          v-if="quantities.length > 0"
           class="list-group">
           <li
-            v-for="(quant, i) in log.quantity"
+            v-for="(quant, i) in quantities"
             v-bind:key="`quantity-${i}`"
             @click="currentQuant = i"
             class="list-group-item">
             {{ quant.measure }}&nbsp;
             {{ quant.value }}&nbsp;
-            {{ (quantUnitNames.length > 0) ? quantUnitNames[i] : '' }}&nbsp;
+            {{ quant.units }}&nbsp;
             {{ quant.label }}
             <span class="remove-list-item" @click="removeQuant(i); $event.stopPropagation()">
               &#x2715;
@@ -173,7 +166,7 @@
           name="addNewQuantity">
           {{$t('Add another quantity')}}
         </button>
-      </div> -->
+      </div>
     </farm-card>
 
     <farm-card>
@@ -319,6 +312,11 @@ export default {
     const {
       current, update, save, close,
     } = inject('logs');
+    const { quantities } = inject('quantities');
+    const computeQuantities = R.map(R.evolve({
+      units: u => R.find(R.propEq('id', u.id), units.value)?.name || '',
+      value: v => v.decimal || v.numerator / v.denominator,
+    }));
 
     return {
       parseNotes,
@@ -335,6 +333,7 @@ export default {
       save,
       close,
       units,
+      quantities: computed(() => computeQuantities(quantities.value)),
       assets: computed(() => partitionOptions(assets.value, current.asset)),
       equipment: computed(() => partitionOptions(equipment.value, current.equipment)),
       locations: computed(() => partitionOptions(locations.value, current.location)),
@@ -416,27 +415,6 @@ export default {
   //       ...this.log.quantity.slice(index + 1),
   //     ];
   //     this.update({ quantity: newQuant });
-  //   },
-  // },
-
-  // computed: {
-  //   quantUnitNames() {
-  //     if (this.units.length > 0 && this.log?.quantity.length > 0) {
-  //       const unitNames = [];
-  //       this.log.quantity.forEach((quant) => {
-  //         if (quant.unit) {
-  //           this.units.forEach((unit) => {
-  //             if (parseInt(unit.id, 10) === parseInt(quant.unit.id, 10)) {
-  //               unitNames.push(unit.name);
-  //             }
-  //           });
-  //         } else {
-  //           unitNames.push(null);
-  //         }
-  //       });
-  //       return unitNames;
-  //     }
-  //     return [];
   //   },
   // },
 };

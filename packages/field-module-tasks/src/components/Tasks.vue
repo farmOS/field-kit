@@ -38,6 +38,13 @@ export default {
     const currentID = ref(logs[0]);
     const current = computed(() => logs.find(l => l.id === currentID.value));
 
+    const quantities = computed(() => {
+      if (!Array.isArray(current?.value?.quantity)) return [];
+      const filter = current.value.quantity.map(({ id, type }) => ({ id, type }));
+      return checkout('quantity', filter);
+    });
+    provide('quantities', { quantities });
+
     const open = (id) => {
       currentID.value = id;
       router.push({ path: '/tasks/edit' });
