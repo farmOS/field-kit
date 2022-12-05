@@ -235,55 +235,7 @@
 
     <farm-card>
       <h3>{{ $t('Areas')}} &amp; {{ $t('Location')}}</h3>
-      <!-- We're using a radio button to choose whether areas are selected
-      automatically based on device location, or using an autocomplete.
-      This will use the useLocalAreas conditional var -->
-      <!-- <div
-        v-if="settinngs.permissions.geolocation"
-        class="form-item form-item-name form-group">
-        <div class="form-check">
-          <input
-          v-model="useLocalAreas"
-          type="radio"
-          class="form-check-input"
-          id="dontUseGeo"
-          name="geoRadioGroup"
-          v-bind:value="false"
-          checked>
-          <label class="form-check-label" for="dontUseGeo">{{ $t('Search areas')}}</label>
-        </div>
-        <div class="form-check">
-          <input
-          v-model="useLocalAreas"
-          type="radio"
-          class="form-check-input"
-          id="doUseGeo"
-          name="geoRadioGroup"
-          v-bind:value="true"
-          >
-          <label class="form-check-label" for="doUseGeo">{{ $t('Use my location')}}</label>
-        </div>
-      </div> -->
-      <!-- If using the user's, show a select menu of nearby locations -->
-      <div v-if="useLocalAreas" class="form-group">
-        <label for="areaSelector">{{ $t('Farm areas near your current location')}}</label>
-        <select
-          @input="toggleRelationship('location', localAreas[$event.target.value])"
-          class="form-control"
-          name="areas">
-          <option v-if="localAreas.length < 1" value="">No other areas nearby</option>
-          <option v-if="localAreas.length > 0" value="" selected>-- Select an Area --</option>
-          <option
-            v-for="(area, i) in localAreas"
-            :value="i"
-            :key="`local-area-${area.id}`">
-            {{area.name}}
-          </option>
-        </select>
-      </div>
-      <!-- If not using the user's location, show a search bar -->
       <farm-autocomplete
-        v-if="!useLocalAreas"
         :list="locations.unselected"
         :keys="['name']"
         @select="toggleRelationship('location', locations.unselected[$event])"
@@ -352,7 +304,6 @@ export default {
   setup() {
     // LOCAL STATE
     const localAreas = reactive([]);
-    const useLocalAreas = ref(false);
     const awaitingLocation = ref(false);
     const showAllCategories = ref(false);
     const currentQuant = ref(-1);
@@ -373,7 +324,6 @@ export default {
       parseNotes,
       quantMeasures,
       localAreas,
-      useLocalAreas,
       awaitingLocation,
       showAllCategories,
       currentQuant,
