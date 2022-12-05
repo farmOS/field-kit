@@ -181,7 +181,7 @@ export default function useEntities(options = {}) {
   function append(collectionReference, type, fields) {
     const collection = collections.get(collectionReference);
     const { entity, state: collectionState } = collection;
-    const [itemReference, revision] = createEntity(entity, type, fields.id);
+    const [itemReference, revision] = createEntity(entity, type, fields?.id);
     collectionState.push(itemReference);
     const { queue, state: itemState } = revision;
     queue.push(() => emit(itemState, fields));
