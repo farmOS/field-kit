@@ -147,6 +147,9 @@ export default function useEntities(options = {}) {
   // tracked individually above. This is primarily for appending new items to
   // the collection, but may be useful for attaching listeners in the future.
   const collections = new WeakMap();
+  // A store of Vue watch/unwatch callbacks, used when linking an entity or
+  // collection of entities to another entity's reactive state.
+  const linkWatchers = new WeakMap();
 
   const { module: modConfig } = options;
 
@@ -284,8 +287,6 @@ export default function useEntities(options = {}) {
     return reference;
   }
 
-  const linkWatchers = new WeakMap();
-
   // Checkout the entity or a collection of entities related to another that's
   // already been checked out (ie, `origReference`). The linked reference will
   // be updated reactively if a resource identifier changes in the corresponding
@@ -336,10 +337,13 @@ export default function useEntities(options = {}) {
         ifMissing(prev, next, p => drop(state.value, p.id));
       }
     };
+    // To make sure the linkedRef gets updates whenever there are changes to the
+    // corresponding resource identifiers in the origRef, a watcher must be set.
     let watcherIsSet = false;
     const setLinkWatcher = () => {
       const proxy = unref(origRef);
-      if (revisions.has(proxy) && relationship in proxy) {
+      // The original ref might be null or undefined initially, so check first.
+      if (revisions.has(proxy) && relationship in proxy && !watcherIsSet) {
         const getter = () => proxy[relationship];
         linkWatchers.set(linkedRef, {
           watch: update,
@@ -350,6 +354,8 @@ export default function useEntities(options = {}) {
       }
     };
     setLinkWatcher();
+    // If the watcher can't be set right away, use watchEffect with the setter
+    // as a callback, to watch all changes to the original ref as a whole.
     if (!watcherIsSet) watchEffect(setLinkWatcher);
     return linkedRef;
   }
