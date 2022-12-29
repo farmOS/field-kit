@@ -33,7 +33,7 @@ export default {
   setup() {
     const router = useRouter();
     const {
-      add, append, checkout, commit, link, revise,
+      append, checkout, commit, link, revise,
     } = useEntities();
 
     const assetFilter = { status: 'active' };
@@ -71,12 +71,10 @@ export default {
 
     const quantities = link(current, 'quantity', 'quantity');
     const addQuantity = (type = 'quantity--standard') => {
-      const quantity = add('quantity', type);
-      const { id } = quantity;
       const resIds = current.value?.quantity || [];
-      const updatedResIds = [...resIds, { id, type }];
+      const updatedResIds = [...resIds, { id: null, type }];
       update({ quantity: updatedResIds });
-      return id;
+      return resIds.length;
     };
     const updateQuantity = (key, value, id) => {
       let v = value;
@@ -85,12 +83,11 @@ export default {
       const quantity = quantities.value.find(q => q.id === id);
       if (quantity) revise(quantity, { [key]: v });
     };
-    const removeQuantity = (id) => {
-      const i = current.value.quantity.findIndex(q => q.id === id);
-      if (i >= 0) {
+    const removeQuantity = (index) => {
+      if (index >= 0) {
         const quantity = [
-          ...current.value.quantity.slice(0, i),
-          ...current.value.quantity.slice(i + 1),
+          ...current.value.quantity.slice(0, index),
+          ...current.value.quantity.slice(index + 1),
         ];
         update({ quantity });
       }
@@ -99,8 +96,7 @@ export default {
       quantities, addQuantity, updateQuantity, removeQuantity,
     });
 
-    const save = () => commit(quantities.value)
-      .then(() => commit(current.value));
+    const save = () => commit(current.value);
     const close = () => {
       const request = commit(current.value);
       router.push({ path: '/tasks' });

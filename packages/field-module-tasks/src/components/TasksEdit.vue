@@ -86,14 +86,14 @@
     </farm-card>
 
     <farm-card v-if="log.quantity !== undefined">
-      <h3>{{ $t('Quantities')}} 🚧 UNDER CONSTRUCTION 🚧</h3>
+      <h3>{{ $t('Quantities') }}</h3>
       <label for="quantity" class="control-label ">
         {{ $t('Add new or edit existing quantity')}}
       </label>
       <div v-if="curQuantity" class="form-item form-item-name form-group">
         <select
           :value="curQuantity.measure || $t('Select measure')"
-          @input="updateQuantity('measure', $event.target.value, curQuantID)"
+          @input="updateQuantity('measure', $event.target.value, curQuantity.id)"
           class="custom-select col-sm-3 ">
             <option>{{ $t('Select measure')}}</option>
             <option
@@ -105,13 +105,13 @@
         </select>
         <input
           :value="curQuantity.value"
-          @input="updateQuantity('value', $event.target.value, curQuantID)"
+          @input="updateQuantity('value', $event.target.value, curQuantity.id)"
           :placeholder="$t('Enter value')"
           type="number"
           class="form-control"/>
         <select
           :value="curQuantity.unitId || $t('Select unit')"
-          @input="updateQuantity('units', $event.target.value, curQuantID)"
+          @input="updateQuantity('units', $event.target.value, curQuantity.id)"
           class="custom-select col-sm-3 ">
             <option>{{ $t('Select unit')}}</option>
             <option
@@ -123,7 +123,7 @@
         </select>
         <input
           :value="curQuantity.label || ''"
-          @input="updateQuantity('label', $event.target.value, curQuantID)"
+          @input="updateQuantity('label', $event.target.value, curQuantity.id)"
           :placeholder="$t('Enter label')"
           type="text"
           class="form-control"/>
@@ -133,9 +133,9 @@
           v-if="quantities.length > 0"
           class="list-group">
           <li
-            v-for="quant in quantities"
+            v-for="(quant, i) in quantities"
             v-bind:key="`quantity-${quant.id}`"
-            @click="curQuantID = quant.id"
+            @click="curQuantIndex = i"
             class="list-group-item">
             {{ quant.measure }}&nbsp;
             {{ quant.value }}&nbsp;
@@ -143,7 +143,7 @@
             {{ quant.label }}
             <span
               class="remove-list-item"
-              @click="removeQuantity(quant.id); $event.stopPropagation()">
+              @click="removeQuantity(i); $event.stopPropagation()">
               &#x2715;
             </span>
           </li>
@@ -328,9 +328,8 @@ export default {
       quantities: rawQuantities, addQuantity, updateQuantity, removeQuantity,
     } = inject('quantities');
     const quantities = computed(() => R.map(computeQuantities, rawQuantities.value || []));
-    const curQuantID = ref(null);
-    const curQuantity = computed(() =>
-      quantities?.value?.find(q => q.id === curQuantID.value));
+    const curQuantIndex = ref(-1);
+    const curQuantity = computed(() => quantities.value?.[curQuantIndex.value]);
 
     return {
       parseNotes,
@@ -363,14 +362,17 @@ export default {
       updateNotes(value) {
         update({ notes: { value, format: 'default' } });
       },
-      curQuantID,
+      curQuantIndex,
       curQuantity,
       addQuantity(type) {
-        const id = addQuantity(type);
-        curQuantID.value = id;
+        const i = addQuantity(type);
+        curQuantIndex.value = i;
       },
       updateQuantity,
-      removeQuantity,
+      removeQuantity(i) {
+        if (i >= 0 && i < curQuantIndex) curQuantIndex.value -= 1;
+        removeQuantity(i);
+      },
       toggleRelationship(relationship, { id, type }) {
         const i = current[relationship].findIndex(e => e.id === id);
         if (i < 0) {
