@@ -178,14 +178,20 @@ export default function useEntities(options = {}) {
     return [reference, revision];
   }
 
+  // Create a reference to a single entity without yet committing it.
+  function add(entity, type, fields = {}) {
+    const [reference, revision] = createEntity(entity, type, fields?.id);
+    const { queue, state: itemState } = revision;
+    queue.push(() => emit(itemState, fields));
+    return reference;
+  }
+
   // Create a new entity and add it to an existing collection.
   function append(collectionReference, type, fields) {
     const collection = collections.get(collectionReference);
     const { entity, state: collectionState } = collection;
-    const [itemReference, revision] = createEntity(entity, type, fields?.id);
+    const itemReference = add(entity, type, fields);
     collectionState.push(itemReference);
-    const { queue, state: itemState } = revision;
-    queue.push(() => emit(itemState, fields));
     return itemReference;
   }
 
@@ -311,6 +317,6 @@ export default function useEntities(options = {}) {
   }
 
   return {
-    append, checkout, commit, revise,
+    add, append, checkout, commit, revise,
   };
 }
