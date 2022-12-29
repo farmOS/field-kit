@@ -195,6 +195,17 @@ export default function useEntities(options = {}) {
     return itemReference;
   }
 
+  // Remove an entity from a collection of entities. This discards any pending
+  // revisions, but does not delete the entity from local or remote persistence.
+  function drop(collectionReference, id) {
+    const collection = collections.get(collectionReference);
+    const { state: collectionState } = collection;
+    const i = collectionState.findIndex(item => item.id === id);
+    const itemRef = collectionReference[i];
+    collectionState.splice(i, 1);
+    return itemRef;
+  }
+
   // Upsert an entity in the collection.
   const emitCollection = reference => (value = {}) => {
     const { id, type, ...fields } = value;
@@ -317,6 +328,6 @@ export default function useEntities(options = {}) {
   }
 
   return {
-    add, append, checkout, commit, revise,
+    add, append, checkout, commit, drop, revise,
   };
 }
