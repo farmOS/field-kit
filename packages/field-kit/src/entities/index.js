@@ -1,6 +1,8 @@
-import { reactive, readonly, shallowReactive } from 'vue';
 import {
-  clone, complement, compose, curryN, equals, is,
+  isProxy, isRef, reactive, readonly, ref, shallowReactive, unref, watch, watchEffect,
+} from 'vue';
+import {
+  clone, complement, compose, curryN, equals, is, none, propEq,
 } from 'ramda';
 import { validate, v4 as uuidv4 } from 'uuid';
 import { splitFilterByType } from 'farmos';
@@ -282,6 +284,84 @@ export default function useEntities(options = {}) {
     return reference;
   }
 
+  const linkWatchers = new WeakMap();
+
+  // Checkout the entity or a collection of entities related to another that's
+  // already been checked out (ie, `origReference`). The linked reference will
+  // be updated reactively if a resource identifier changes in the corresponding
+  // relationship field of the original reference.
+  function link(origRef, relationship, entity) {
+    if (!isProxy(origRef) && !isRef(origRef)) {
+      const msg = `Invalid reference while linking the ${relationship} relationship.`
+        + ' Provide a reference to another entity that has already been checked out,'
+        + ' or use valid Vue ref or reactive object as a placeholder.';
+      throw new Error(msg);
+    }
+    const state = ref(null);
+    const linkedRef = readonly(state);
+    revisions.set(linkedRef, { entity, state });
+    // Helper for updating changes to one-to-many relationships.
+    const ifMissing = (arrA = [], arrB = [], cb) => arrA.forEach((a) => {
+      if (none(propEq('id', a.id), arrB)) { cb(a); }
+    });
+    const update = (next, prev) => {
+      if (!next && validate(prev?.id)) state.value = null;
+      if (validate(next?.id) && next.id !== prev?.id) {
+        state.value = checkout(entity, next.type, prev.id);
+        // After setting the state, "unwrap" the new revision data too, by swapping
+        // it for all but the previous revision's state and unwatch callback, then
+        // setting it to the linked reference. This obviates the need to unwrap the
+        // value in every subsequent calls to `revise`, `append`, etc.
+        const revision = revisions.get(state.value);
+        revisions.set(linkedRef, revision);
+      }
+      if ([origRef?.[relationship], state.value, next].some(Array.isArray)) {
+        if (!collections.has(linkedRef)) {
+          const filter = next?.reduce((acc, { id, type }) => {
+            const i = acc.findIndex(f => f.type === type);
+            if (i < 0) return [...acc, { type, id: [id] }];
+            const ids = acc[i]?.id || [];
+            return [
+              ...acc.slice(0, i),
+              { type, id: [...ids, id] },
+              ...acc.slice(i + 1),
+            ];
+          }, []) || [];
+          const nextRef = checkoutCollection(entity, filter);
+          state.value = nextRef;
+          const collection = collections.get(nextRef);
+          collections.set(state.value, collection);
+        }
+        ifMissing(next, prev, n => append(state.value, n.type, n));
+        ifMissing(prev, next, p => drop(state.value, p.id));
+      }
+    };
+    let watcherIsSet = false;
+    const setLinkWatcher = () => {
+      const proxy = unref(origRef);
+      if (revisions.has(proxy) && relationship in proxy) {
+        const getter = () => proxy[relationship];
+        linkWatchers.set(linkedRef, {
+          watch: update,
+          unwatch: watch(getter, update, { deep: true }),
+        });
+        update(proxy[relationship]);
+        watcherIsSet = true;
+      }
+    };
+    setLinkWatcher();
+    if (!watcherIsSet) watchEffect(setLinkWatcher);
+    return linkedRef;
+  }
+
+  // Manually break the link between the original reference and the reference to
+  // its related entity or entities, via Vue's `unwatch` handler:
+  // https://vuejs.org/guide/essentials/watchers.html#stopping-a-watcher
+  function unlink(reference) {
+    const watcher = linkWatchers.get(reference);
+    if (watcher && typeof watcher.unwatch === 'function') watcher.unwatch();
+  }
+
   // A synchronous operation that updates the reference but does not persist
   // that update in the local database or send it to any remote. Instead, it
   // holds onto the transaction so it can be replayed by the commit function.
@@ -328,6 +408,6 @@ export default function useEntities(options = {}) {
   }
 
   return {
-    add, append, checkout, commit, drop, revise,
+    add, append, checkout, commit, drop, link, revise, unlink,
   };
 }

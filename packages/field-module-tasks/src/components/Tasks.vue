@@ -8,12 +8,32 @@ const {
 } = window.Vue;
 const { useRouter } = window.VueRouter;
 
+const gcd = (a, b) => (b > Number.EPSILON ? gcd(b, a % b) : a);
+function toFraction(string) {
+  const decimal = Number.parseFloat(string);
+  if (Number.isInteger(decimal)) {
+    return {
+      numerator: decimal,
+      denominator: 1,
+      decimal,
+    };
+  }
+  const int = Number.parseInt(string, 10);
+  const places = (decimal - int).toString(10).length - 2;
+  let denominator = Math.abs(10 ** places);
+  let numerator = decimal * denominator;
+  const divisor = gcd(numerator, denominator);
+  denominator /= divisor;
+  numerator /= divisor;
+  return { numerator, denominator, decimal };
+}
+
 export default {
   name: 'TasksContainer',
   setup() {
     const router = useRouter();
     const {
-      append, checkout, commit, revise,
+      add, append, checkout, commit, link, revise,
     } = useEntities();
 
     const assetFilter = { status: 'active' };
@@ -35,15 +55,8 @@ export default {
     };
     const logs = checkout('log', logFilter);
 
-    const currentID = ref(logs[0]);
+    const currentID = ref(logs[0]?.id);
     const current = computed(() => logs.find(l => l.id === currentID.value));
-
-    const quantities = computed(() => {
-      if (!Array.isArray(current?.value?.quantity)) return [];
-      const filter = current.value.quantity.map(({ id, type }) => ({ id, type }));
-      return checkout('quantity', filter);
-    });
-    provide('quantities', { quantities });
 
     const open = (id) => {
       currentID.value = id;
@@ -55,7 +68,39 @@ export default {
       router.push({ path: '/tasks/edit' });
     };
     const update = (fields = {}) => { revise(current.value, fields); };
-    const save = () => commit(current.value);
+
+    const quantities = link(current, 'quantity', 'quantity');
+    const addQuantity = (type = 'quantity--standard') => {
+      const quantity = add('quantity', type);
+      const { id } = quantity;
+      const resIds = current.value?.quantity || [];
+      const updatedResIds = [...resIds, { id, type }];
+      update({ quantity: updatedResIds });
+      return id;
+    };
+    const updateQuantity = (key, value, id) => {
+      let v = value;
+      if (key === 'units') v = { id: value, type: 'taxonomy_term--unit' };
+      if (key === 'value') v = toFraction(value || 0);
+      const quantity = quantities.value.find(q => q.id === id);
+      if (quantity) revise(quantity, { [key]: v });
+    };
+    const removeQuantity = (id) => {
+      const i = current.value.quantity.findIndex(q => q.id === id);
+      if (i >= 0) {
+        const quantity = [
+          ...current.value.quantity.slice(0, i),
+          ...current.value.quantity.slice(i + 1),
+        ];
+        update({ quantity });
+      }
+    };
+    provide('quantities', {
+      quantities, addQuantity, updateQuantity, removeQuantity,
+    });
+
+    const save = () => commit(quantities.value)
+      .then(() => commit(current.value));
     const close = () => {
       const request = commit(current.value);
       router.push({ path: '/tasks' });

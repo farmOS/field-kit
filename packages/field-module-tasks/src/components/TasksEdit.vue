@@ -90,15 +90,10 @@
       <label for="quantity" class="control-label ">
         {{ $t('Add new or edit existing quantity')}}
       </label>
-      <div v-if="currentQuant >= 0" class="form-item form-item-name form-group">
-        <!-- To display a placeholder value ONLY when there are no existing
-        quantities, we must add the placeholder with an <option> tag and
-        select it using the :value option -->
+      <div v-if="curQuantity" class="form-item form-item-name form-group">
         <select
-          :value="(quantities.length > 0 && quantities[currentQuant].measure)
-            ? quantities[currentQuant].measure
-            : 'Select measure'"
-          @input="updateQuantity('measure', $event.target.value, currentQuant)"
+          :value="curQuantity.measure || $t('Select measure')"
+          @input="updateQuantity('measure', $event.target.value, curQuantID)"
           class="custom-select col-sm-3 ">
             <option>{{ $t('Select measure')}}</option>
             <option
@@ -109,18 +104,14 @@
             </option>
         </select>
         <input
-          :value="(quantities.length > 0)
-            ? quantities[currentQuant].value
-            : null"
-          @input="updateQuantity('value', $event.target.value, currentQuant)"
+          :value="curQuantity.value"
+          @input="updateQuantity('value', $event.target.value, curQuantID)"
           :placeholder="$t('Enter value')"
           type="number"
           class="form-control"/>
         <select
-          :value="(quantities.length > 0 && quantities[currentQuant].unit)
-            ? quantities[currentQuant].unit.id
-            : 'Select unit'"
-          @input="updateQuantity('unit', $event.target.value, currentQuant)"
+          :value="curQuantity.unitId || $t('Select unit')"
+          @input="updateQuantity('units', $event.target.value, curQuantID)"
           class="custom-select col-sm-3 ">
             <option>{{ $t('Select unit')}}</option>
             <option
@@ -131,10 +122,8 @@
             </option>
         </select>
         <input
-          :value="(quantities.length > 0)
-            ? quantities[currentQuant].label
-            : null"
-          @input="updateQuantity('label', $event.target.value, currentQuant)"
+          :value="curQuantity.label || ''"
+          @input="updateQuantity('label', $event.target.value, curQuantID)"
           :placeholder="$t('Enter label')"
           type="text"
           class="form-control"/>
@@ -144,15 +133,17 @@
           v-if="quantities.length > 0"
           class="list-group">
           <li
-            v-for="(quant, i) in quantities"
-            v-bind:key="`quantity-${i}`"
-            @click="currentQuant = i"
+            v-for="quant in quantities"
+            v-bind:key="`quantity-${quant.id}`"
+            @click="curQuantID = quant.id"
             class="list-group-item">
             {{ quant.measure }}&nbsp;
             {{ quant.value }}&nbsp;
             {{ quant.units }}&nbsp;
             {{ quant.label }}
-            <span class="remove-list-item" @click="removeQuant(i); $event.stopPropagation()">
+            <span
+              class="remove-list-item"
+              @click="removeQuantity(quant.id); $event.stopPropagation()">
               &#x2715;
             </span>
           </li>
@@ -162,8 +153,8 @@
         <button
           type="button"
           class="btn btn-success"
-          @click="updateQuantity(null, null, -1)"
-          name="addNewQuantity">
+          @click="addQuantity('quantity--standard')"
+          name="addQuantity">
           {{$t('Add another quantity')}}
         </button>
       </div>
@@ -292,6 +283,12 @@ const quantMeasures = [
   'probability',
 ];
 
+function toDecimal(value) {
+  if (!value || typeof value !== 'object') return 0;
+  const { decimal, numerator, denominator } = value;
+  return decimal || numerator / denominator;
+}
+
 export default {
   name: 'TasksEdit',
   setup() {
@@ -299,7 +296,6 @@ export default {
     const localAreas = reactive([]);
     const awaitingLocation = ref(false);
     const showAllCategories = ref(false);
-    const currentQuant = ref(-1);
 
     // APP SHELL DATA
     const alert = inject('alert');
@@ -312,11 +308,29 @@ export default {
     const {
       current, update, save, close,
     } = inject('logs');
-    const { quantities } = inject('quantities');
-    const computeQuantities = R.map(R.evolve({
-      units: u => R.find(R.propEq('id', u.id), units.value)?.name || '',
-      value: v => v.decimal || v.numerator / v.denominator,
-    }));
+
+    // QUANTITIES (related to the current log)
+    const findUnitName = R.compose(
+      R.defaultTo(''),
+      R.prop('name'),
+      R.find(R.__, units.value),
+      R.propEq('id'),
+      R.prop('id'),
+    );
+    const computeQuantities = R.compose(
+      R.evolve({
+        units: findUnitName,
+        value: toDecimal,
+      }),
+      q => R.assoc('unitId', q.units?.id, q),
+    );
+    const {
+      quantities: rawQuantities, addQuantity, updateQuantity, removeQuantity,
+    } = inject('quantities');
+    const quantities = computed(() => R.map(computeQuantities, rawQuantities.value || []));
+    const curQuantID = ref(null);
+    const curQuantity = computed(() =>
+      quantities?.value?.find(q => q.id === curQuantID.value));
 
     return {
       parseNotes,
@@ -324,7 +338,6 @@ export default {
       localAreas,
       awaitingLocation,
       showAllCategories,
-      currentQuant,
       alert,
       typeLabel: bundles.log?.[current.type]?.label || '',
       settings,
@@ -333,7 +346,7 @@ export default {
       save,
       close,
       units,
-      quantities: computed(() => computeQuantities(quantities.value)),
+      quantities,
       assets: computed(() => partitionOptions(assets.value, current.asset)),
       equipment: computed(() => partitionOptions(equipment.value, current.equipment)),
       locations: computed(() => partitionOptions(locations.value, current.location)),
@@ -350,6 +363,14 @@ export default {
       updateNotes(value) {
         update({ notes: { value, format: 'default' } });
       },
+      curQuantID,
+      curQuantity,
+      addQuantity(type) {
+        const id = addQuantity(type);
+        curQuantID.value = id;
+      },
+      updateQuantity,
+      removeQuantity,
       toggleRelationship(relationship, { id, type }) {
         const i = current[relationship].findIndex(e => e.id === id);
         if (i < 0) {
@@ -376,47 +397,6 @@ export default {
       this.save(this.log);
     }
   },
-
-  // methods: {
-  //   updateQuantity(key, value, index) {
-  //     const currentQuants = this.log.quantity || [];
-  //     const storedVal = (key === 'unit')
-  //       ? { id: value, type: 'taxonomy_term--unit' }
-  //       : value;
-  //     let updatedQuant; let updatedQuants;
-  //     if (index >= 0) {
-  //       updatedQuant = { ...currentQuants[index], [key]: storedVal };
-  //       updatedQuants = [
-  //         ...currentQuants.slice(0, index),
-  //         updatedQuant,
-  //         ...currentQuants.slice(index + 1),
-  //       ];
-  //     } else {
-  //       updatedQuant = {
-  //         measure: null,
-  //         value: null,
-  //         unit: null,
-  //         label: null,
-  //       };
-  //       updatedQuants = [...currentQuants, updatedQuant];
-  //     }
-  //     this.update({ quantity: updatedQuants });
-  //     if (index < 0) {
-  //       this.currentQuant = updatedQuants.length - 1;
-  //     }
-  //   },
-
-  //   removeQuant(index) {
-  //     if (this.currentQuant >= index) {
-  //       this.currentQuant -= 1;
-  //     }
-  //     const newQuant = [
-  //       ...this.log.quantity.slice(0, index),
-  //       ...this.log.quantity.slice(index + 1),
-  //     ];
-  //     this.update({ quantity: newQuant });
-  //   },
-  // },
 };
 
 </script>
