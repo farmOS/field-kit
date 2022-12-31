@@ -305,9 +305,7 @@ export default {
     // ENTITIES
     const { assets, equipment, locations } = inject('assets');
     const { categories, units } = inject('terms');
-    const {
-      current, update, save, close,
-    } = inject('logs');
+    const { current, update, save } = inject('logs');
 
     // QUANTITIES (related to the current log)
     const findUnitName = R.compose(
@@ -343,7 +341,6 @@ export default {
       log: current,
       update,
       save,
-      close,
       units,
       quantities,
       assets: computed(() => partitionOptions(assets.value, current.asset)),

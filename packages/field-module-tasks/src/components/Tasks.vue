@@ -97,11 +97,6 @@ export default {
     });
 
     const save = () => commit(current.value);
-    const close = () => {
-      const request = commit(current.value);
-      router.push({ path: '/tasks' });
-      return request;
-    };
     provide('logs', {
       logs,
       current,
@@ -109,7 +104,6 @@ export default {
       openNew,
       update,
       save,
-      close,
     });
   },
 };
