@@ -1,4 +1,3 @@
-import { head, tail } from 'ramda';
 import databases from './databases';
 import runUpgrades from './runUpgrades';
 
@@ -12,54 +11,62 @@ function openDatabase(dbName) {
   });
 }
 
-export function getRecords(dbName, storeName, query) {
-  return openDatabase(dbName).then(db => new Promise((resolve, reject) => {
-    const store = db.transaction(storeName, 'readonly').objectStore(storeName);
-    const getRecord = key => new Promise((res, rej) => {
-      const request = store.get(key);
-      request.onsuccess = event => res([key, event.target.result]);
-      request.onerror = event => rej(
-        new Error(`Could not retrieve record by key ${key}: ${event.target.error}`),
-      );
-    });
-    const getRecordsByKeys = (keys, results = {}) => {
-      if (keys.length === 0) {
-        return Promise.resolve(results);
-      }
-      if (keys.length === 1) {
-        return getRecord(head(keys))
-          .then(([key, val]) => ({ ...results, [key]: val }));
-      }
-      return getRecord(head(keys))
-        .then(([key, val]) => (getRecordsByKeys(tail(keys), { ...results, [key]: val })));
-    };
-    if (!query) {
-      const request = store.getAll();
-      request.onsuccess = event => resolve(event.target.result);
-      request.onerror = event => reject(event.target.error);
-    } else if (Array.isArray(query)) {
-      getRecordsByKeys(query)
-        .then(resolve)
-        .catch(reject);
-    } else if (typeof query === 'function') {
-      const request = store.openCursor();
-      const results = [];
-      request.onsuccess = (event) => {
-        const cursor = event.target.result;
-        if (cursor) {
-          if (query(cursor.value)) {
-            results.push(cursor.value);
-          }
-          cursor.continue();
-        } else {
-          resolve(results);
+function getOneByPrimaryKey(store, key) {
+  return new Promise((resolve, reject) => {
+    const request = store.get(key);
+    request.onsuccess = event => resolve([key, event.target.result]);
+    request.onerror = event => reject(
+      new Error(`Could not retrieve record by key ${key}: ${event.target.error}`),
+    );
+  });
+}
+function getManyByPrimaryKeys(store, keys, results = {}) {
+  if (keys.length === 0) return Promise.resolve(results);
+  const [head, ...tail] = keys;
+  const mergeResults = ([key, val]) => ({ ...results, [key]: val });
+  const request = getOneByPrimaryKey(store, head);
+  if (tail.length <= 0) return request.then(mergeResults);
+  return request.then(r => getManyByPrimaryKeys(store, tail, mergeResults(r)));
+}
+function getAllRecords(store) {
+  return new Promise((resolve, reject) => {
+    const request = store.getAll();
+    request.onsuccess = event => resolve(event.target.result);
+    request.onerror = event => reject(event.target.error);
+  });
+}
+function cursorQuery(store, query) {
+  return new Promise((resolve, reject) => {
+    const request = store.openCursor();
+    const results = [];
+    request.onsuccess = (event) => {
+      const cursor = event.target.result;
+      if (cursor) {
+        if (query(cursor.value)) {
+          results.push(cursor.value);
         }
-      };
-      request.onerror = event => reject(event);
-    } else {
-      getRecord(query).then(resolve).catch(reject);
+        cursor.continue();
+      } else {
+        resolve(results);
+      }
+    };
+    request.onerror = event => reject(event);
+  });
+}
+export function getRecords(dbName, storeName, query) {
+  return openDatabase(dbName).then((db) => {
+    const store = db.transaction(storeName, 'readonly').objectStore(storeName);
+    if (!query) {
+      return getAllRecords(store);
     }
-  }));
+    if (Array.isArray(query)) {
+      return getManyByPrimaryKeys(query);
+    }
+    if (typeof query === 'function') {
+      return cursorQuery(store, query);
+    }
+    return getOneByPrimaryKey(query);
+  });
 }
 
 export function count(dbName, storeName, key) {
