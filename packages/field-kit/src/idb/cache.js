@@ -159,16 +159,20 @@ function syncHandler(evaluation) {
 const syncCache = async (batch) => {
   const now = new Date().toISOString();
   const settings = JSON.parse(LS.getItem('cacheSettings')) || {};
-  const { lastSync } = settings;
   const requests = batch.map(async (name) => {
     const { shortName } = nomenclature.entities[name];
-    const criteria = cachingCriteria({ now })[name];
-    const changed = { $gt: lastSync };
-    const filter = changed.$gt ? { ...criteria, changed } : criteria;
-    const cache = await getRecords('entities', name, parseFilter(criteria));
+    let filter = cachingCriteria({ now })[name];
+    if (is(Map, passlists[name]) && passlists[name].size > 0) {
+      if (!filter) filter = {};
+      const dependentIds = Array.from(passlists[name]?.keys() || []);
+      filter.id = [].concat(filter?.id || []).concat(dependentIds);
+    }
+    if (settings.lastSync) filter.changed = settings.lastSync;
+    if (!filter) return Promise.resolve({ data: [], fulfilled: [], rejected: [] });
+    const cache = await getRecords('entities', name, parseFilter(filter));
     updateStatus(STATUS_IN_PROGRESS);
     const syncResults = await syncEntities(shortName, { filter, cache, limit: Infinity });
-    const cacheRequests = syncResults.data.map(d => cacheEntity(name, d, criteria));
+    const cacheRequests = syncResults.data.map(async d => cacheEntity(name, d, filter));
     const cacheResults = await Promise.allSettled(cacheRequests);
     cacheResults.forEach(({ status, reason }, i) => {
       if (status === 'rejected') {
@@ -180,14 +184,16 @@ const syncCache = async (batch) => {
     });
     return interceptor(syncHandler, syncResults);
   });
-  return Promise.allSettled(requests).then(() => {
-    const newSettings = { ...settings, lastSync: new Date().toISOString() };
-    LS.setItem('cacheSettings', JSON.stringify(newSettings));
-  });
+  return Promise.allSettled(requests);
 };
 
 const refresh = ([head, ...tail]) => syncCache(head)
   .then(() => purgeCache(head))
   .then(result => (tail.length > 0 ? refresh(tail) : result));
 
-export const refreshCache = () => refresh(batches);
+export const refreshCache = () => refresh(batches).then((results) => {
+  const settings = JSON.parse(LS.getItem('cacheSettings')) || {};
+  const newSettings = { ...settings, lastSync: new Date().toISOString() };
+  LS.setItem('cacheSettings', JSON.stringify(newSettings));
+  return results;
+});
