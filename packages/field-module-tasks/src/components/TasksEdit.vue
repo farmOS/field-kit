@@ -253,8 +253,9 @@ const {
   computed, inject, reactive, ref,
 } = window.Vue;
 const {
-  R,
   parseNotes,
+  R,
+  toDecimal,
 } = window.lib;
 
 // Used to separate assets, areas, etc into those that have already been added
@@ -282,12 +283,6 @@ const quantMeasures = [
   'ratio',
   'probability',
 ];
-
-function toDecimal(value) {
-  if (!value || typeof value !== 'object') return 0;
-  const { decimal, numerator, denominator } = value;
-  return decimal || numerator / denominator;
-}
 
 export default {
   name: 'TasksEdit',
