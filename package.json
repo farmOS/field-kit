@@ -8,7 +8,9 @@
   "scripts": {
     "build": "npm run build --workspace=field-kit",
     "clean": "npx -y rimraf node_modules **/node_modules/ package-lock.json && npm i",
-    "start": "npm run start --workspace=field-kit",
+    "dev:field-kit": "npm run start --workspace=field-kit",
+    "dev:field-module-tasks": "npm run start --workspace=field-kit",
+    "start": "npm run dev:field-kit",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "workspaces": [
