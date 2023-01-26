@@ -1,3 +1,5 @@
+import { validate } from 'uuid';
+import { is } from 'ramda';
 import { syncEntities } from './sync';
 import interceptor from './interceptor';
 import { getRecords } from '../idb';
@@ -6,6 +8,7 @@ import farm from '../farm';
 import nomenclature from '../entities/nomenclature';
 import { STATUS_IN_PROGRESS, updateStatus } from './connection';
 import { alert } from '../warnings/alert';
+import { asFlatArray } from '../utils/asArray';
 import parseFilter from '../utils/parseFilter';
 
 // An array of shortNames to ensure only valid entities are pushed onto the scheduler.
@@ -15,29 +18,35 @@ const stringifyID = (entity, type, id) => JSON.stringify({ entity, type, id });
 const parseID = string => JSON.parse(string);
 const FILTER_ID = 'FILTER_ID';
 
-function groupFilters(setOfPendingEntities, mapOfPendingFilters) {
-  const entityMap = new Map();
-  entities.forEach((name) => { entityMap.set(name, new Map()); });
-  setOfPendingEntities.forEach((idString) => {
-    const { entity, type, id } = parseID(idString);
-    const filters = entityMap.get(entity);
-    let filter = filters.get(type);
-    if (!filter) {
-      filter = { type, id: [] };
-      filters.set(type, filter);
-    }
-    if (id === FILTER_ID && mapOfPendingFilters.has(idString)) {
-      const pendingFilter = mapOfPendingFilters.get(idString);
-      filter = { ...pendingFilter, type, id: filter.id };
-      filters.set(type, filter);
-    } else {
-      filter.id.push(id);
-    }
+function groupFilters(pendingIdStrings, pendingFilters) {
+  const groupMap = new Map();
+  entities.forEach((name) => {
+    const entityGroupMap = new Map();
+    groupMap.set(name, entityGroupMap);
   });
+  pendingIdStrings.forEach((idString) => {
+    const { entity, type, id } = parseID(idString);
+    const entityGroupMap = groupMap.get(entity);
+    const group = entityGroupMap.get(type) || { entity, type };
+    if (!group.filter) group.filter = {};
+    if (!group.filter.type) group.filter.type = type;
+    if (id === FILTER_ID && pendingFilters.has(idString)) {
+      const filter = pendingFilters.get(idString);
+      if (is(Object, group.filter)) {
+        group.filter = asFlatArray(group.filter);
+        group.filter.push(filter);
+      } else group.filter = filter;
+    } else {
+      group.filter.id = asFlatArray(group.filter.id);
+      group.filter.id.push(id);
+    }
+    entityGroupMap.set(type, group.filter);
+  });
+  // Iterate through these nested ESM Maps to return a plain, flat array.
   const filterGroups = [];
-  entityMap.forEach((filters, entity) => {
-    filters.forEach((filter) => {
-      filterGroups.push({ entity, filter });
+  groupMap.forEach((entityGroupMap) => {
+    entityGroupMap.forEach((group) => {
+      filterGroups.push(group);
     });
   });
   return filterGroups;
@@ -111,6 +120,7 @@ export default function SyncScheduler(intervals = defaultIntervals) {
       });
       // Any entities that still haven't been synced are added back to pending.
       retrying.forEach((idString) => { pending.add(idString); });
+      retryingFilters.forEach((idString) => { pendingFilters.add(idString); });
       const cacheRequests = data.map(value => cacheEntity(entity, value));
       return Promise.allSettled(cacheRequests);
     });
@@ -134,8 +144,21 @@ export default function SyncScheduler(intervals = defaultIntervals) {
     if (!entities.includes(entity)) {
       throw new Error(`Invalid entity name: ${entity}`);
     }
-    const id = typeof target === 'string' ? target : FILTER_ID;
-    const idString = stringifyID(entity, type, id);
+    let idString;
+    // The "target" can be a plain entity id...
+    if (validate(target)) {
+      idString = stringifyID(entity, type, target);
+    }
+    // ...or the "target" can be a filter object.
+    if (is(Object, target)) {
+      idString = stringifyID(entity, type, FILTER_ID);
+      let filter = pendingFilters.get(idString);
+      if (is(Object, filter)) filter = asFlatArray(filter).concat(target);
+      else filter = target;
+      pendingFilters.set(idString, filter);
+    }
+    // If the target is invalid, return false instead of a subscriber function.
+    if (!idString) return false;
     if (pending.size === 0) startClock();
     pending.add(idString);
     return function subscribe(listener) {
