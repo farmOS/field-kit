@@ -18,38 +18,48 @@ const stringifyID = (entity, type, id) => JSON.stringify({ entity, type, id });
 const parseID = string => JSON.parse(string);
 const FILTER_ID = 'FILTER_ID';
 
+const makeNewGroup = type => ({ id: null, type, filter: null });
 function groupFilters(pendingIdStrings, pendingFilters) {
   const groupMap = new Map();
-  entities.forEach((name) => {
-    const entityGroupMap = new Map();
-    groupMap.set(name, entityGroupMap);
-  });
   pendingIdStrings.forEach((idString) => {
-    const { entity, type, id } = parseID(idString);
-    const entityGroupMap = groupMap.get(entity);
-    const group = entityGroupMap.get(type) || { entity, type };
-    if (!group.filter) group.filter = {};
-    if (!group.filter.type) group.filter.type = type;
+    const { type, id } = parseID(idString);
+    const group = groupMap.get(type) || makeNewGroup(type);
     if (id === FILTER_ID && pendingFilters.has(idString)) {
-      const filter = pendingFilters.get(idString);
+      // If the idString corresponds to a pending filter...
+      const filter = pendingFilters.get(idString) || {};
+      if (!filter.type) filter.type = type;
+      // ...either concatenate it onto the group filter,
       if (is(Object, group.filter)) {
         group.filter = asFlatArray(group.filter);
         group.filter.push(filter);
+      // ...or set it to the group filter if none exists.
       } else group.filter = filter;
-    } else {
-      group.filter.id = asFlatArray(group.filter.id);
-      group.filter.id.push(id);
+    // If there's no pending filter, and the id is valid...
+    } else if (validate(id)) {
+      // ...either set the group id, if none exists,
+      if (!group.id) group.id = id;
+      // ...or concatenate it onto a list of ids that will be combined into a
+      // separate filter at the very end.
+      else {
+        group.id = asFlatArray(group.id);
+        group.id.push(id);
+      }
     }
-    entityGroupMap.set(type, group.filter);
+    groupMap.set(type, group);
   });
-  // Iterate through these nested ESM Maps to return a plain, flat array.
-  const filterGroups = [];
-  groupMap.forEach((entityGroupMap) => {
-    entityGroupMap.forEach((group) => {
-      filterGroups.push(group);
-    });
+  // Iterate through the ESM Map, add the id's as a separate filter, and then
+  // return a plain, flat array.
+  const groups = Array.from(groupMap.values()).map((group) => {
+    const { id, type } = group;
+    let { filter } = group;
+    if (validate(id) || Array.isArray(id)) {
+      filter = asFlatArray(filter);
+      filter.push({ id, type });
+    }
+    if (!filter) filter = { type };
+    return { type, filter };
   });
-  return filterGroups;
+  return groups;
 }
 
 // Utility for safely calling listeners and callbacks w/o worrying about exceptions.
@@ -86,7 +96,8 @@ export default function SyncScheduler(intervals = defaultIntervals) {
     const filterGroups = groupFilters(retrying, retryingFilters);
     const requests = filterGroups.map(async (group) => {
       updateStatus(STATUS_IN_PROGRESS);
-      const { entity, filter } = group;
+      const { type, filter } = group;
+      const [entity] = type.split('--');
       const { shortName } = nomenclature.entities[entity];
       const query = parseFilter(filter);
       const cache = await getRecords('entities', entity, query);
@@ -109,7 +120,7 @@ export default function SyncScheduler(intervals = defaultIntervals) {
           listeners.delete(idString);
         };
         if (!farm.meta.isUnsynced(value)) {
-          const { type, id } = value;
+          const { id } = value;
           const idString = stringifyID(entity, type, id);
           clearById(retrying, idString);
           // Assume that if a value of a given type succeeds, any corresponding
