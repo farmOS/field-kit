@@ -1,3 +1,5 @@
+import { Comment, Fragment } from 'vue'
+
 // Predicate function for filtering out unwanted whitespace, comments and empty
 // fragments from VNodes in render functions. In the future it might be good to
 // accept a second object parameter, with options like `keepEmptyStrings` and
@@ -5,7 +7,6 @@
 // Symbols for identifying VNode types, which can be found here:
 // https://github.com/vuejs/core/blob/c35ec47d73212b1b1fb1abca9004f992c45aa942/packages/runtime-core/src/vnode.ts#L47-L55
 export default function noEmptyNodes(node) {
-  const { Comment, Fragment } = window.Vue;
   const isHtmlTag = node.tag !== undefined;
   const isFragment = node.type === Fragment;
   const isComment = node.type === Comment;

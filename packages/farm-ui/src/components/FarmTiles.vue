@@ -1,7 +1,7 @@
 <script>
 import noEmptyVNodes from '../noEmptyVNodes';
 import { responsiveProps, mapResponsiveProps, responsiveValidator } from '../responsiveProps';
-import { h } from 'vue'
+import { h, Fragment } from 'vue'
 
 export default {
   name: 'FarmTiles',
@@ -64,7 +64,6 @@ export default {
     },
   },
   render() {
-    const { Fragment } = window.Vue;
     const renderChildNode = (node, i, arr) => {
       // Derive the props and style attributes to be passed to farm-divider.
       const dividerAttrs = {
