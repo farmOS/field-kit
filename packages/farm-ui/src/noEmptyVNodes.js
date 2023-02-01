@@ -1,4 +1,4 @@
-import { Comment, Fragment } from 'vue'
+import { Comment, Fragment } from 'vue';
 
 // Predicate function for filtering out unwanted whitespace, comments and empty
 // fragments from VNodes in render functions. In the future it might be good to

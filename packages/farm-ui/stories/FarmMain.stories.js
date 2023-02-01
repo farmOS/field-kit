@@ -1,15 +1,15 @@
-import FarmMain from "../src/components/FarmMain.vue";
-import FarmPlaceholder from "./FarmPlaceholder.vue";
+import FarmMain from '../src/components/FarmMain.vue';
+import FarmPlaceholder from './FarmPlaceholder.vue';
 
 const control = {
   control: {
-    type: "select",
-    options: ["xxxs", "xxs", "xs", "s", "m", "l", "xl", "xxl", "none"],
+    type: 'select',
+    options: ['xxxs', 'xxs', 'xs', 's', 'm', 'l', 'xl', 'xxl', 'none'],
   },
 };
 
 export default {
-  title: "Layout/FarmMain",
+  title: 'Layout/FarmMain',
   component: FarmMain,
   argTypes: {
     space: control,

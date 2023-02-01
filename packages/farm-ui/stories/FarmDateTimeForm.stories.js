@@ -1,7 +1,7 @@
-import FarmDateTimeForm from "../src/components/FarmDateTimeForm.vue";
+import FarmDateTimeForm from '../src/components/FarmDateTimeForm.vue';
 
 export default {
-  title: "Content/FarmDateTimeForm",
+  title: 'Content/FarmDateTimeForm',
   component: FarmDateTimeForm,
 };
 
@@ -78,6 +78,6 @@ export const withDateLabel = {
   }),
 
   args: {
-    dateLabel: "Start Date",
+    dateLabel: 'Start Date',
   },
 };

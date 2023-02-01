@@ -1,33 +1,33 @@
-import FarmTextLabel from "../src/components/FarmTextLabel.vue";
+import FarmTextLabel from '../src/components/FarmTextLabel.vue';
 
 export default {
-  title: "Content/FarmTextLabel",
+  title: 'Content/FarmTextLabel',
   component: FarmTextLabel,
   argTypes: {
     as: {
       control: {
-        type: "select",
-        options: ["p", "div", "span", "li", "pre", "label", "input"],
+        type: 'select',
+        options: ['p', 'div', 'span', 'li', 'pre', 'label', 'input'],
       },
     },
     color: {
       control: {
-        type: "select",
+        type: 'select',
         options: [
-          "text",
-          "dark",
-          "subtle",
-          "white",
-          "primary",
-          "secondary",
-          "tertiary",
+          'text',
+          'dark',
+          'subtle',
+          'white',
+          'primary',
+          'secondary',
+          'tertiary',
         ],
       },
     },
     size: {
       control: {
-        type: "select",
-        options: ["s", "m", "l", "xl"],
+        type: 'select',
+        options: ['s', 'm', 'l', 'xl'],
       },
     },
   },
@@ -57,7 +57,7 @@ export const asPTag = {
   }),
 
   args: {
-    as: "p",
+    as: 'p',
   },
 };
 
@@ -73,7 +73,7 @@ export const Small = {
   }),
 
   args: {
-    size: "s",
+    size: 's',
   },
 };
 
@@ -89,6 +89,6 @@ export const Large = {
   }),
 
   args: {
-    size: "l",
+    size: 'l',
   },
 };

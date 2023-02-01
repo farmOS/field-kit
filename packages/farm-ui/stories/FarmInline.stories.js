@@ -1,33 +1,33 @@
-import FarmInline from "../src/components/FarmInline.vue";
-import FarmPlaceholder from "./FarmPlaceholder.vue";
+import FarmInline from '../src/components/FarmInline.vue';
+import FarmPlaceholder from './FarmPlaceholder.vue';
 
 export default {
-  title: "Layout/FarmInline",
+  title: 'Layout/FarmInline',
   component: FarmInline,
   argTypes: {
     alignItems: {
       control: {
-        type: "select",
-        options: ["stretch", "flex-start", "flex-end", "center", "baseline"],
+        type: 'select',
+        options: ['stretch', 'flex-start', 'flex-end', 'center', 'baseline'],
       },
     },
     justifyContent: {
       control: {
-        type: "select",
+        type: 'select',
         options: [
-          "flex-start",
-          "flex-end",
-          "center",
-          "space-around",
-          "space-between",
-          "space-evenly",
+          'flex-start',
+          'flex-end',
+          'center',
+          'space-around',
+          'space-between',
+          'space-evenly',
         ],
       },
     },
     space: {
       control: {
-        type: "select",
-        options: ["xxxs", "xxs", "xs", "s", "m", "l", "xl", "xxl", "none"],
+        type: 'select',
+        options: ['xxxs', 'xxs', 'xs', 's', 'm', 'l', 'xl', 'xxl', 'none'],
       },
     },
   },
@@ -67,7 +67,7 @@ export const withSpace = {
   }),
 
   args: {
-    space: "m",
+    space: 'm',
   },
 };
 
@@ -88,7 +88,7 @@ export const withMoreSpace = {
   }),
 
   args: {
-    space: "xl",
+    space: 'xl',
   },
 };
 
@@ -109,7 +109,7 @@ export const justifiedEnd = {
   }),
 
   args: {
-    justifyContent: "flex-end",
+    justifyContent: 'flex-end',
   },
 };
 
@@ -130,7 +130,7 @@ export const justifiedSpaceBetween = {
   }),
 
   args: {
-    justifyContent: "space-between",
+    justifyContent: 'space-between',
   },
 };
 
@@ -151,7 +151,7 @@ export const justifiedSpaceAround = {
   }),
 
   args: {
-    justifyContent: "space-around",
+    justifyContent: 'space-around',
   },
 };
 
@@ -172,6 +172,6 @@ export const alignCenter = {
   }),
 
   args: {
-    alignItems: "center",
+    alignItems: 'center',
   },
 };

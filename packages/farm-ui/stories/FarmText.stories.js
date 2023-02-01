@@ -1,39 +1,39 @@
-import FarmText from "../src/components/FarmText.vue";
+import FarmText from '../src/components/FarmText.vue';
 
 export default {
-  title: "Content/FarmText",
+  title: 'Content/FarmText',
   component: FarmText,
   argTypes: {
     as: {
       control: {
-        type: "select",
-        options: ["p", "div", "span", "li", "pre", "label", "input"],
+        type: 'select',
+        options: ['p', 'div', 'span', 'li', 'pre', 'label', 'input'],
       },
     },
     color: {
       control: {
-        type: "select",
+        type: 'select',
         options: [
-          "text",
-          "dark",
-          "subtle",
-          "white",
-          "primary",
-          "secondary",
-          "tertiary",
+          'text',
+          'dark',
+          'subtle',
+          'white',
+          'primary',
+          'secondary',
+          'tertiary',
         ],
       },
     },
     size: {
       control: {
-        type: "select",
-        options: ["s", "m", "l", "xl"],
+        type: 'select',
+        options: ['s', 'm', 'l', 'xl'],
       },
     },
     weight: {
       control: {
-        type: "select",
-        options: ["regular", "strong"],
+        type: 'select',
+        options: ['regular', 'strong'],
       },
     },
   },
@@ -63,7 +63,7 @@ export const asSpanTag = {
   }),
 
   args: {
-    as: "span",
+    as: 'span',
   },
 };
 
@@ -79,7 +79,7 @@ export const Small = {
   }),
 
   args: {
-    size: "s",
+    size: 's',
   },
 };
 
@@ -95,7 +95,7 @@ export const Large = {
   }),
 
   args: {
-    size: "l",
+    size: 'l',
   },
 };
 
@@ -111,6 +111,6 @@ export const Strong = {
   }),
 
   args: {
-    weight: "strong",
+    weight: 'strong',
   },
 };

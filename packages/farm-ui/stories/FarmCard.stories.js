@@ -1,46 +1,46 @@
-import FarmCard from "../src/components/FarmCard.vue";
-import FarmStack from "../src/components/FarmStack.vue";
-import FarmInline from "../src/components/FarmInline.vue";
+import FarmCard from '../src/components/FarmCard.vue';
+import FarmStack from '../src/components/FarmStack.vue';
+import FarmInline from '../src/components/FarmInline.vue';
 
 export default {
-  title: "Layout/FarmCard",
+  title: 'Layout/FarmCard',
   component: FarmCard,
   subcomponents: { FarmStack, FarmInline },
   argTypes: {
     backgroundColor: {
       control: {
-        type: "select",
+        type: 'select',
         options: [
-          "white",
-          "dark",
-          "primary",
-          "secondary",
-          "tertiary",
-          "purple",
-          "red",
-          "orange",
-          "yellow",
-          "green",
-          "blue",
+          'white',
+          'dark',
+          'primary',
+          'secondary',
+          'tertiary',
+          'purple',
+          'red',
+          'orange',
+          'yellow',
+          'green',
+          'blue',
         ],
       },
     },
     boxShadow: {
       control: {
-        type: "select",
-        options: ["normal", "strong", "inverse", "none"],
+        type: 'select',
+        options: ['normal', 'strong', 'inverse', 'none'],
       },
     },
     space: {
       control: {
-        type: "select",
-        options: ["xxxs", "xxs", "xs", "s", "m", "l", "xl", "xxl", "none"],
+        type: 'select',
+        options: ['xxxs', 'xxs', 'xs', 's', 'm', 'l', 'xl', 'xxl', 'none'],
       },
     },
     width: {
       control: {
-        type: "select",
-        options: ["s", "m", "l", "xl", "full", "content"],
+        type: 'select',
+        options: ['s', 'm', 'l', 'xl', 'full', 'content'],
       },
     },
   },
@@ -76,7 +76,7 @@ export const MoreSpace = {
   }),
 
   args: {
-    space: "l",
+    space: 'l',
   },
 };
 
@@ -95,7 +95,7 @@ export const Small = {
   }),
 
   args: {
-    width: "s",
+    width: 's',
   },
 };
 
@@ -114,7 +114,7 @@ export const Medium = {
   }),
 
   args: {
-    width: "m",
+    width: 'm',
   },
 };
 
@@ -133,7 +133,7 @@ export const FitContent = {
   }),
 
   args: {
-    width: "content",
+    width: 'content',
   },
 };
 
@@ -152,7 +152,7 @@ export const ResponsiveWidth = {
   }),
 
   args: {
-    width: ["s", "m", "l"],
+    width: ['s', 'm', 'l'],
   },
 };
 
@@ -171,7 +171,7 @@ export const StrongShadow = {
   }),
 
   args: {
-    boxShadow: "strong",
+    boxShadow: 'strong',
   },
 };
 
@@ -190,6 +190,6 @@ export const BlueBackground = {
   }),
 
   args: {
-    backgroundColor: "blue",
+    backgroundColor: 'blue',
   },
 };

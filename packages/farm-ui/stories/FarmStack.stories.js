@@ -1,26 +1,26 @@
-import FarmStack from "../src/components/FarmStack.vue";
-import FarmPlaceholder from "./FarmPlaceholder.vue";
+import FarmStack from '../src/components/FarmStack.vue';
+import FarmPlaceholder from './FarmPlaceholder.vue';
 
 export default {
-  title: "Layout/FarmStack",
+  title: 'Layout/FarmStack',
   component: FarmStack,
   argTypes: {
     space: {
       control: {
-        type: "select",
-        options: ["xxxs", "xxs", "xs", "s", "m", "l", "xl", "xxl", "none"],
+        type: 'select',
+        options: ['xxxs', 'xxs', 'xs', 's', 'm', 'l', 'xl', 'xxl', 'none'],
       },
     },
     align: {
       control: {
-        type: "select",
-        options: ["left", "right", "center"],
+        type: 'select',
+        options: ['left', 'right', 'center'],
       },
     },
     dividers: {
       control: {
-        type: "select",
-        options: ["regular", "strong", true, false],
+        type: 'select',
+        options: ['regular', 'strong', true, false],
       },
     },
   },
@@ -60,7 +60,7 @@ export const withSpace = {
   }),
 
   args: {
-    space: "m",
+    space: 'm',
   },
 };
 
@@ -81,7 +81,7 @@ export const withMoreSpace = {
   }),
 
   args: {
-    space: "xl",
+    space: 'xl',
   },
 };
 
@@ -102,7 +102,7 @@ export const AlignCenter = {
   }),
 
   args: {
-    align: "center",
+    align: 'center',
   },
 };
 
@@ -123,7 +123,7 @@ export const withDividers = {
   }),
 
   args: {
-    space: "m",
+    space: 'm',
     dividers: true,
   },
 };
@@ -145,7 +145,7 @@ export const withStrongDividers = {
   }),
 
   args: {
-    space: "m",
-    dividers: "strong",
+    space: 'm',
+    dividers: 'strong',
   },
 };

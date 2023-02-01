@@ -1,19 +1,19 @@
-import FarmChip from "../src/components/FarmChip.vue";
+import FarmChip from '../src/components/FarmChip.vue';
 
 export default {
-  title: "Content/FarmChip",
+  title: 'Content/FarmChip',
   component: FarmChip,
   argTypes: {
     color: {
       control: {
-        type: "select",
-        options: ["purple", "red", "orange", "yellow", "green", "blue"],
+        type: 'select',
+        options: ['purple', 'red', 'orange', 'yellow', 'green', 'blue'],
       },
     },
     size: {
       control: {
-        type: "select",
-        options: ["s", "m", "l"],
+        type: 'select',
+        options: ['s', 'm', 'l'],
       },
     },
   },
@@ -37,7 +37,7 @@ export const Small = {
   }),
 
   args: {
-    size: "s",
+    size: 's',
   },
 };
 
@@ -50,7 +50,7 @@ export const Large = {
   }),
 
   args: {
-    size: "l",
+    size: 'l',
   },
 };
 
@@ -63,7 +63,7 @@ export const Green = {
   }),
 
   args: {
-    color: "green",
+    color: 'green',
   },
 };
 
@@ -76,7 +76,7 @@ export const Orange = {
   }),
 
   args: {
-    color: "orange",
+    color: 'orange',
   },
 };
 

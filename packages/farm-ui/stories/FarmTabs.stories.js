@@ -1,15 +1,15 @@
-import FarmTabs from "../src/components/FarmTabs.vue";
-import FarmPlaceholder from "./FarmPlaceholder.vue";
+import FarmTabs from '../src/components/FarmTabs.vue';
+import FarmPlaceholder from './FarmPlaceholder.vue';
 
 const control = {
   control: {
-    type: "select",
-    options: ["xxxs", "xxs", "xs", "s", "m", "l", "xl", "xxl", "none"],
+    type: 'select',
+    options: ['xxxs', 'xxs', 'xs', 's', 'm', 'l', 'xl', 'xxl', 'none'],
   },
 };
 
 export default {
-  title: "Layout/FarmTabs",
+  title: 'Layout/FarmTabs',
   component: FarmTabs,
   argTypes: {
     space: control,

@@ -1,7 +1,7 @@
-import FarmAutocomplete from "../src/components/FarmAutocomplete.vue";
+import FarmAutocomplete from '../src/components/FarmAutocomplete.vue';
 
 export default {
-  title: "Content/FarmAutocomplete",
+  title: 'Content/FarmAutocomplete',
   component: FarmAutocomplete,
 };
 
@@ -33,11 +33,11 @@ export const Basic = {
 
   args: {
     list: [
-      { id: 1, name: "Apples" },
-      { id: 2, name: "Artichokes" },
-      { id: 3, name: "Amaranth" },
+      { id: 1, name: 'Apples' },
+      { id: 2, name: 'Artichokes' },
+      { id: 3, name: 'Amaranth' },
     ],
-    keys: ["name"],
-    label: "Select a crop",
+    keys: ['name'],
+    label: 'Select a crop',
   },
 };

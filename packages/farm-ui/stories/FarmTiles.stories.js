@@ -1,20 +1,20 @@
-import FarmTiles from "../src/components/FarmTiles.vue";
-import FarmPlaceholder from "./FarmPlaceholder.vue";
+import FarmTiles from '../src/components/FarmTiles.vue';
+import FarmPlaceholder from './FarmPlaceholder.vue';
 
 export default {
-  title: "Layout/FarmTiles",
+  title: 'Layout/FarmTiles',
   component: FarmTiles,
   argTypes: {
     space: {
       control: {
-        type: "select",
-        options: ["xxxs", "xxs", "xs", "s", "m", "l", "xl", "xxl", "none"],
+        type: 'select',
+        options: ['xxxs', 'xxs', 'xs', 's', 'm', 'l', 'xl', 'xxl', 'none'],
       },
     },
     dividers: {
       control: {
-        type: "select",
-        options: ["regular", "strong", true, false],
+        type: 'select',
+        options: ['regular', 'strong', true, false],
       },
     },
   },
@@ -54,7 +54,7 @@ export const withNoSpace = {
   }),
 
   args: {
-    space: "none",
+    space: 'none',
   },
 };
 
@@ -75,7 +75,7 @@ export const withMoreSpace = {
   }),
 
   args: {
-    space: "l",
+    space: 'l',
   },
 };
 
@@ -117,6 +117,6 @@ export const withStrongDividers = {
   }),
 
   args: {
-    dividers: "strong",
+    dividers: 'strong',
   },
 };

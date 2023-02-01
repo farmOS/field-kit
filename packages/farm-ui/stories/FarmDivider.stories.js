@@ -1,13 +1,13 @@
-import FarmDivider from "../src/components/FarmDivider.vue";
+import FarmDivider from '../src/components/FarmDivider.vue';
 
 export default {
-  title: "Layout/FarmDivider",
+  title: 'Layout/FarmDivider',
   component: FarmDivider,
   argTypes: {
     weight: {
       control: {
-        type: "select",
-        options: ["regular", "strong"],
+        type: 'select',
+        options: ['regular', 'strong'],
       },
     },
   },
@@ -33,6 +33,6 @@ export const Strong = {
   }),
 
   args: {
-    weight: "strong",
+    weight: 'strong',
   },
 };
