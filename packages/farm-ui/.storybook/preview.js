@@ -1,5 +1,5 @@
-import Vue from 'vue';
-import components from '../src';
+import { setup } from '@storybook/vue3';
+import * as components from '../src';
 import '../../field-kit/src/styles/normalize.css';
 import '../../field-kit/src/styles/bootstrap-simplex.min.css';
 import './override-bootstrap.css';
@@ -10,14 +10,16 @@ const mockT = {
   methods: { $t: str => str },
 };
 
-Object.values(components).forEach(c => { Vue.component(c.name, c); });
-Vue.mixin(mockT);
+setup((app) => {
+  Object.values(components).forEach(c => { app.component(c.name, c); });
+  app.mixin(mockT);
+});
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
   options: {
     storySort: {
-      order: ['Intro', 'Layout', 'Content', 'Icons'], 
+      order: ['Intro', 'Layout', 'Content', 'Icons'],
     },
   },
 }

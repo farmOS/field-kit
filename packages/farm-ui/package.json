@@ -1,16 +1,25 @@
 {
   "name": "farm-ui",
   "version": "2.0.0-alpha.1",
-  "description": "",
-  "main": "src/index.js",
-  "devDependencies": {},
-  "peerDependencies": {
-    "vue": "^3.0.0"
-  },
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "BROKEN-storybook": "NODE_PATH=src start-storybook -p 6006",
-    "BROKEN-build-storybook": "build-storybook"
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
+  "dependencies": {
+    "vue": "^3.2.45"
+  },
+  "devDependencies": {
+    "@storybook/addon-essentials": "^7.0.0-beta.38",
+    "@storybook/addon-interactions": "^7.0.0-beta.38",
+    "@storybook/addon-links": "^7.0.0-beta.38",
+    "@storybook/blocks": "^7.0.0-beta.38",
+    "@storybook/testing-library": "^0.0.14-next.1",
+    "@storybook/vue3": "^7.0.0-beta.38",
+    "@storybook/vue3-vite": "^7.0.0-beta.38",
+    "@vitejs/plugin-vue": "^4.0.0",
+    "storybook": "^7.0.0-beta.38",
+    "vite": "^4.0.4"
   },
   "repository": {
     "type": "git",
