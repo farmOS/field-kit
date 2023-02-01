@@ -64,7 +64,7 @@ const IconTiles = {
   render() {
     return h(
       'farm-tiles',
-      components
+      Object.values(components)
         .filter(c => c.name.startsWith('Icon'))
         .map(icon => h(
           'farm-card',
