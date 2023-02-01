@@ -30,6 +30,7 @@
 <script>
 import * as components from '../src';
 import { h } from 'vue'
+import { FarmTiles, FarmCard, FarmStack } from '../src';
 
 function convertPascalToKebab(name) {
   return name
@@ -63,14 +64,14 @@ const IconTiles = {
   },
   render() {
     return h(
-      'farm-tiles',
+      FarmTiles,
       Object.values(components)
         .filter(c => c.name.startsWith('Icon'))
         .map(icon => h(
-          'farm-card',
+          FarmCard,
           { width: 'full' },
           [h(
-            'farm-stack',
+            FarmStack,
             { align: 'center' },
             [
               h(
