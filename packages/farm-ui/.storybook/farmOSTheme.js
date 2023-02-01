@@ -5,5 +5,5 @@ export default create({
 
   brandTitle: 'farmOS Field Kit Storybook',
   brandUrl: 'https://farmos.org',
-  brandImage: 'https://farmos.org/img/farmOS.png',
+  brandImage: 'https://farmos.org/images/farmOS-logo.png',
 });
