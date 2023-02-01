@@ -3,6 +3,7 @@ import noEmptyVNodes from '../noEmptyVNodes';
 import {
   responsiveProps, mapResponsiveProps, responsiveValidator, mapResponsiveEnums,
 } from '../responsiveProps';
+import { h } from 'vue'
 
 export default {
   name: 'FarmStack',
@@ -42,7 +43,6 @@ export default {
     }),
   },
   render() {
-    const { h } = window.Vue;
     return h(
       'div',
       { class: `farm-stack ${this._space}`, style: { paddingTop: '1px' } },

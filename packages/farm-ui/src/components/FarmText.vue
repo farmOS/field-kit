@@ -1,4 +1,6 @@
 <script>
+import { h } from 'vue'
+
 export default {
   name: 'FarmText',
   props: {
@@ -56,7 +58,6 @@ export default {
     },
   },
   render() {
-    const { h } = window.Vue;
     return h(
       this.as,
       { class: 'farm-text', style: this.style },

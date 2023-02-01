@@ -28,7 +28,8 @@
 </template>
 
 <script>
-import components from '../src/components';
+import * as components from '../src';
+import { h } from 'vue'
 
 function convertPascalToKebab(name) {
   return name
@@ -61,7 +62,6 @@ const IconTiles = {
     },
   },
   render() {
-    const { h } = window.Vue;
     return h(
       'farm-tiles',
       components
