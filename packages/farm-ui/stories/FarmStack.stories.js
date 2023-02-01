@@ -1,78 +1,151 @@
-import FarmStack from '../src/components/FarmStack.vue';
-import FarmPlaceholder from './FarmPlaceholder.vue';
+import FarmStack from "../src/components/FarmStack.vue";
+import FarmPlaceholder from "./FarmPlaceholder.vue";
 
 export default {
-  title: 'Layout/FarmStack',
+  title: "Layout/FarmStack",
   component: FarmStack,
   argTypes: {
     space: {
       control: {
-        type: 'select',
-        options: [
-          'xxxs', 'xxs', 'xs', 's',
-          'm', 'l', 'xl', 'xxl', 'none',
-        ],
+        type: "select",
+        options: ["xxxs", "xxs", "xs", "s", "m", "l", "xl", "xxl", "none"],
       },
     },
     align: {
       control: {
-        type: 'select',
-        options: [
-          'left', 'right', 'center',
-        ],
+        type: "select",
+        options: ["left", "right", "center"],
       },
     },
     dividers: {
       control: {
-        type: 'select',
-        options: [
-          'regular', 'strong', true, false,
-        ],
+        type: "select",
+        options: ["regular", "strong", true, false],
       },
     },
   },
 };
 
-const Template = (args, { argTypes }) => ({
-  props: Object.keys(argTypes),
-  components: { FarmStack, FarmPlaceholder },
-  template: `
-    <farm-stack :space="space" :dividers="dividers" :align="align">
-      <farm-placeholder/>
-      <farm-placeholder height="150px" width="150px"/>
-      <farm-placeholder/>
-      <farm-placeholder height="150px" width="150px"/>
-      <farm-placeholder/>
-      <farm-placeholder height="150px" width="150px"/>
-    </farm-stack>
-  `,
-});
-
-export const Default = Template.bind({});
-
-export const withSpace = Template.bind({});
-withSpace.args = {
-  space: 'm',
+export const Default = {
+  render: (args, { argTypes }) => ({
+    props: Object.keys(argTypes),
+    components: { FarmStack, FarmPlaceholder },
+    template: `
+      <farm-stack :space="space" :dividers="dividers" :align="align">
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+      </farm-stack>
+    `,
+  }),
 };
 
-export const withMoreSpace = Template.bind({});
-withMoreSpace.args = {
-  space: 'xl',
+export const withSpace = {
+  render: (args, { argTypes }) => ({
+    props: Object.keys(argTypes),
+    components: { FarmStack, FarmPlaceholder },
+    template: `
+      <farm-stack :space="space" :dividers="dividers" :align="align">
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+      </farm-stack>
+    `,
+  }),
+
+  args: {
+    space: "m",
+  },
 };
 
-export const AlignCenter = Template.bind({});
-AlignCenter.args = {
-  align: 'center',
+export const withMoreSpace = {
+  render: (args, { argTypes }) => ({
+    props: Object.keys(argTypes),
+    components: { FarmStack, FarmPlaceholder },
+    template: `
+      <farm-stack :space="space" :dividers="dividers" :align="align">
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+      </farm-stack>
+    `,
+  }),
+
+  args: {
+    space: "xl",
+  },
 };
 
-export const withDividers = Template.bind({});
-withDividers.args = {
-  space: 'm',
-  dividers: true,
+export const AlignCenter = {
+  render: (args, { argTypes }) => ({
+    props: Object.keys(argTypes),
+    components: { FarmStack, FarmPlaceholder },
+    template: `
+      <farm-stack :space="space" :dividers="dividers" :align="align">
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+      </farm-stack>
+    `,
+  }),
+
+  args: {
+    align: "center",
+  },
 };
 
-export const withStrongDividers = Template.bind({});
-withStrongDividers.args = {
-  space: 'm',
-  dividers: 'strong',
+export const withDividers = {
+  render: (args, { argTypes }) => ({
+    props: Object.keys(argTypes),
+    components: { FarmStack, FarmPlaceholder },
+    template: `
+      <farm-stack :space="space" :dividers="dividers" :align="align">
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+      </farm-stack>
+    `,
+  }),
+
+  args: {
+    space: "m",
+    dividers: true,
+  },
+};
+
+export const withStrongDividers = {
+  render: (args, { argTypes }) => ({
+    props: Object.keys(argTypes),
+    components: { FarmStack, FarmPlaceholder },
+    template: `
+      <farm-stack :space="space" :dividers="dividers" :align="align">
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+      </farm-stack>
+    `,
+  }),
+
+  args: {
+    space: "m",
+    dividers: "strong",
+  },
 };

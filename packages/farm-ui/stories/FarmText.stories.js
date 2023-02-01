@@ -1,73 +1,116 @@
-import FarmText from '../src/components/FarmText.vue';
+import FarmText from "../src/components/FarmText.vue";
 
 export default {
-  title: 'Content/FarmText',
+  title: "Content/FarmText",
   component: FarmText,
   argTypes: {
     as: {
       control: {
-        type: 'select',
-        options: [
-          'p', 'div', 'span', 'li', 'pre', 'label', 'input',
-        ],
+        type: "select",
+        options: ["p", "div", "span", "li", "pre", "label", "input"],
       },
     },
     color: {
       control: {
-        type: 'select',
+        type: "select",
         options: [
-          'text', 'dark', 'subtle', 'white',
-          'primary', 'secondary', 'tertiary',
+          "text",
+          "dark",
+          "subtle",
+          "white",
+          "primary",
+          "secondary",
+          "tertiary",
         ],
       },
     },
     size: {
       control: {
-        type: 'select',
-        options: [
-          's', 'm', 'l', 'xl',
-        ],
+        type: "select",
+        options: ["s", "m", "l", "xl"],
       },
     },
     weight: {
       control: {
-        type: 'select',
-        options: [
-          'regular', 'strong',
-        ],
+        type: "select",
+        options: ["regular", "strong"],
       },
     },
   },
 };
 
-const Template = (args, { argTypes }) => ({
-  props: Object.keys(argTypes),
-  components: { FarmText },
-  template: `
-    <farm-text :as="as" :color="color" :size="size" :weight="weight">
-      Hello, World!
-    </farm-text>
-  `,
-});
-
-export const Default = Template.bind({});
-
-export const asSpanTag = Template.bind({});
-asSpanTag.args = {
-  as: 'span',
+export const Default = {
+  render: (args, { argTypes }) => ({
+    props: Object.keys(argTypes),
+    components: { FarmText },
+    template: `
+      <farm-text :as="as" :color="color" :size="size" :weight="weight">
+        Hello, World!
+      </farm-text>
+    `,
+  }),
 };
 
-export const Small = Template.bind({});
-Small.args = {
-  size: 's',
+export const asSpanTag = {
+  render: (args, { argTypes }) => ({
+    props: Object.keys(argTypes),
+    components: { FarmText },
+    template: `
+      <farm-text :as="as" :color="color" :size="size" :weight="weight">
+        Hello, World!
+      </farm-text>
+    `,
+  }),
+
+  args: {
+    as: "span",
+  },
 };
 
-export const Large = Template.bind({});
-Large.args = {
-  size: 'l',
+export const Small = {
+  render: (args, { argTypes }) => ({
+    props: Object.keys(argTypes),
+    components: { FarmText },
+    template: `
+      <farm-text :as="as" :color="color" :size="size" :weight="weight">
+        Hello, World!
+      </farm-text>
+    `,
+  }),
+
+  args: {
+    size: "s",
+  },
 };
 
-export const Strong = Template.bind({});
-Strong.args = {
-  weight: 'strong',
+export const Large = {
+  render: (args, { argTypes }) => ({
+    props: Object.keys(argTypes),
+    components: { FarmText },
+    template: `
+      <farm-text :as="as" :color="color" :size="size" :weight="weight">
+        Hello, World!
+      </farm-text>
+    `,
+  }),
+
+  args: {
+    size: "l",
+  },
+};
+
+export const Strong = {
+  render: (args, { argTypes }) => ({
+    props: Object.keys(argTypes),
+    components: { FarmText },
+    template: `
+      <farm-text :as="as" :color="color" :size="size" :weight="weight">
+        Hello, World!
+      </farm-text>
+    `,
+  }),
+
+  args: {
+    weight: "strong",
+  },
 };

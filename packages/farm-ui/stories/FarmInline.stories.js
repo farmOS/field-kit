@@ -1,83 +1,177 @@
-import FarmInline from '../src/components/FarmInline.vue';
-import FarmPlaceholder from './FarmPlaceholder.vue';
+import FarmInline from "../src/components/FarmInline.vue";
+import FarmPlaceholder from "./FarmPlaceholder.vue";
 
 export default {
-  title: 'Layout/FarmInline',
+  title: "Layout/FarmInline",
   component: FarmInline,
   argTypes: {
     alignItems: {
       control: {
-        type: 'select',
-        options: [
-          'stretch', 'flex-start', 'flex-end',
-          'center', 'baseline',
-        ],
+        type: "select",
+        options: ["stretch", "flex-start", "flex-end", "center", "baseline"],
       },
     },
     justifyContent: {
       control: {
-        type: 'select',
+        type: "select",
         options: [
-          'flex-start', 'flex-end', 'center',
-          'space-around', 'space-between', 'space-evenly',
+          "flex-start",
+          "flex-end",
+          "center",
+          "space-around",
+          "space-between",
+          "space-evenly",
         ],
       },
     },
     space: {
       control: {
-        type: 'select',
-        options: [
-          'xxxs', 'xxs', 'xs', 's',
-          'm', 'l', 'xl', 'xxl', 'none',
-        ],
+        type: "select",
+        options: ["xxxs", "xxs", "xs", "s", "m", "l", "xl", "xxl", "none"],
       },
     },
   },
 };
 
-const Template = (args, { argTypes }) => ({
-  props: Object.keys(argTypes),
-  components: { FarmInline, FarmPlaceholder },
-  template: `
-    <farm-inline :space="space" :justifyContent="justifyContent" :alignItems="alignItems">
-      <farm-placeholder/>
-      <farm-placeholder height="150px" width="150px"/>
-      <farm-placeholder/>
-      <farm-placeholder height="150px" width="150px"/>
-      <farm-placeholder/>
-      <farm-placeholder height="150px" width="150px"/>
-    </farm-inline>
-  `,
-});
-
-export const Default = Template.bind({});
-
-export const withSpace = Template.bind({});
-withSpace.args = {
-  space: 'm',
+export const Default = {
+  render: (args, { argTypes }) => ({
+    props: Object.keys(argTypes),
+    components: { FarmInline, FarmPlaceholder },
+    template: `
+      <farm-inline :space="space" :justifyContent="justifyContent" :alignItems="alignItems">
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+      </farm-inline>
+    `,
+  }),
 };
 
-export const withMoreSpace = Template.bind({});
-withMoreSpace.args = {
-  space: 'xl',
+export const withSpace = {
+  render: (args, { argTypes }) => ({
+    props: Object.keys(argTypes),
+    components: { FarmInline, FarmPlaceholder },
+    template: `
+      <farm-inline :space="space" :justifyContent="justifyContent" :alignItems="alignItems">
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+      </farm-inline>
+    `,
+  }),
+
+  args: {
+    space: "m",
+  },
 };
 
-export const justifiedEnd = Template.bind({});
-justifiedEnd.args = {
-  justifyContent: 'flex-end',
+export const withMoreSpace = {
+  render: (args, { argTypes }) => ({
+    props: Object.keys(argTypes),
+    components: { FarmInline, FarmPlaceholder },
+    template: `
+      <farm-inline :space="space" :justifyContent="justifyContent" :alignItems="alignItems">
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+      </farm-inline>
+    `,
+  }),
+
+  args: {
+    space: "xl",
+  },
 };
 
-export const justifiedSpaceBetween = Template.bind({});
-justifiedSpaceBetween.args = {
-  justifyContent: 'space-between',
+export const justifiedEnd = {
+  render: (args, { argTypes }) => ({
+    props: Object.keys(argTypes),
+    components: { FarmInline, FarmPlaceholder },
+    template: `
+      <farm-inline :space="space" :justifyContent="justifyContent" :alignItems="alignItems">
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+      </farm-inline>
+    `,
+  }),
+
+  args: {
+    justifyContent: "flex-end",
+  },
 };
 
-export const justifiedSpaceAround = Template.bind({});
-justifiedSpaceAround.args = {
-  justifyContent: 'space-around',
+export const justifiedSpaceBetween = {
+  render: (args, { argTypes }) => ({
+    props: Object.keys(argTypes),
+    components: { FarmInline, FarmPlaceholder },
+    template: `
+      <farm-inline :space="space" :justifyContent="justifyContent" :alignItems="alignItems">
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+      </farm-inline>
+    `,
+  }),
+
+  args: {
+    justifyContent: "space-between",
+  },
 };
 
-export const alignCenter = Template.bind({});
-alignCenter.args = {
-  alignItems: 'center',
+export const justifiedSpaceAround = {
+  render: (args, { argTypes }) => ({
+    props: Object.keys(argTypes),
+    components: { FarmInline, FarmPlaceholder },
+    template: `
+      <farm-inline :space="space" :justifyContent="justifyContent" :alignItems="alignItems">
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+      </farm-inline>
+    `,
+  }),
+
+  args: {
+    justifyContent: "space-around",
+  },
+};
+
+export const alignCenter = {
+  render: (args, { argTypes }) => ({
+    props: Object.keys(argTypes),
+    components: { FarmInline, FarmPlaceholder },
+    template: `
+      <farm-inline :space="space" :justifyContent="justifyContent" :alignItems="alignItems">
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+        <farm-placeholder/>
+        <farm-placeholder height="150px" width="150px"/>
+      </farm-inline>
+    `,
+  }),
+
+  args: {
+    alignItems: "center",
+  },
 };
