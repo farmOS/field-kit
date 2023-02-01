@@ -2,6 +2,7 @@
   "name": "farm-ui",
   "version": "2.0.0-alpha.1",
   "type": "module",
+  "main": "src/index.js",
   "scripts": {
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
