@@ -2,10 +2,8 @@ import FarmMain from '../src/components/FarmMain.vue';
 import FarmPlaceholder from './FarmPlaceholder.vue';
 
 const control = {
-  control: {
-    type: 'select',
-    options: ['xxxs', 'xxs', 'xs', 's', 'm', 'l', 'xl', 'xxl', 'none'],
-  },
+  control: 'select',
+  options: ['xxxs', 'xxs', 'xs', 's', 'm', 'l', 'xl', 'xxl', 'none'],
 };
 
 export default {
@@ -20,9 +18,6 @@ export default {
     paddingBottom: control,
     paddingLeft: control,
   },
-};
-
-export const Default = {
   render: (args, { argTypes }) => ({
     props: Object.keys(argTypes),
     components: { FarmMain, FarmPlaceholder },
@@ -52,3 +47,5 @@ export const Default = {
     `,
   }),
 };
+
+export const Default = {};

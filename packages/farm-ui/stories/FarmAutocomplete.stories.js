@@ -3,9 +3,6 @@ import FarmAutocomplete from '../src/components/FarmAutocomplete.vue';
 export default {
   title: 'Content/FarmAutocomplete',
   component: FarmAutocomplete,
-};
-
-export const Basic = {
   render: (args, { argTypes }) => ({
     props: Object.keys(argTypes),
     template: `
@@ -30,7 +27,9 @@ export const Basic = {
       };
     },
   }),
+};
 
+export const Basic = {
   args: {
     list: [
       { id: 1, name: 'Apples' },

@@ -1,22 +1,15 @@
 import FarmTabs from '../src/components/FarmTabs.vue';
 import FarmPlaceholder from './FarmPlaceholder.vue';
 
-const control = {
-  control: {
-    type: 'select',
-    options: ['xxxs', 'xxs', 'xs', 's', 'm', 'l', 'xl', 'xxl', 'none'],
-  },
-};
-
 export default {
   title: 'Layout/FarmTabs',
   component: FarmTabs,
   argTypes: {
-    space: control,
+    space: {
+      type: 'select',
+      options: ['xxxs', 'xxs', 'xs', 's', 'm', 'l', 'xl', 'xxl', 'none'],
+    },
   },
-};
-
-export const Default = {
   render: (args, { argTypes }) => ({
     props: Object.keys(argTypes),
     components: { FarmTabs, FarmPlaceholder },
@@ -53,3 +46,5 @@ export const Default = {
     `,
   }),
 };
+
+export const Default = {};

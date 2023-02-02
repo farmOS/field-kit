@@ -17,12 +17,6 @@ export default {
 };
 
 export const Icons = {
-  render: (args, { argTypes }) => ({
-    props: Object.keys(argTypes),
-    components: { IconsTemplate },
-    template: '<icons-template :height="height" :fill="fill"/>',
-  }),
-
   args: {
     height: 60,
     fill: 'black',
