@@ -86,7 +86,7 @@ function listDependencies(name, entity) {
       };
       const field = entity?.relationships?.[relationship];
       if (Array.isArray(field)) field.forEach(add);
-      if (field.id) add(field);
+      if (field?.id) add(field);
     });
   }
 }
@@ -105,7 +105,7 @@ const unlistDependencies = name => (results) => {
       };
       const field = entity?.relationships?.[relationship];
       if (Array.isArray(field)) field.forEach(remove);
-      if (field.id) remove(field);
+      if (field?.id) remove(field);
     });
   });
   return results;
