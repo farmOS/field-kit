@@ -274,7 +274,7 @@ export default function useEntities(options = {}) {
     const { queue, state, transactions } = revision;
     queue.push(() => {
       updateStatus(STATUS_IN_PROGRESS);
-      return getRecords('entities', _entity, id).then(([, data]) => {
+      return getRecords('entities', _entity, id).then((data) => {
         if (data) emit(state, data);
         const syncOptions = { cache: asArray(data), filter: { id, type } };
         return syncEntities(shortName, syncOptions)

@@ -65,7 +65,7 @@ export function getRecords(dbName, storeName, query) {
     if (typeof query === 'function') {
       return cursorQuery(store, query);
     }
-    return getOneByPrimaryKey(query);
+    return getOneByPrimaryKey(query).then(([, data]) => data);
   });
 }
 
