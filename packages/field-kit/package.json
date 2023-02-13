@@ -19,7 +19,7 @@
     "@farmos.org/farmos-map": "^1.4.2",
     "@turf/turf": "^5.1.6",
     "farmos": "^2.0.0-beta.14",
-    "farm-ui": "2.0.0-alpha.1",
+    "farm-ui": "2.0.0-alpha.2",
     "field-kit-utils": "2.0.0-alpha.1",
     "ramda": "^0.27.1",
     "uuid": "^8.3.2",
