@@ -169,13 +169,14 @@ export default function useEntities(options = {}) {
   function createEntity(entity, type, id) {
     const { shortName } = nomenclature.entities[entity];
     const _id = validate(id) ? id : uuidv4();
-    const def = farm[shortName].create({ id: _id, type });
+    const init = farm[shortName].create({ id: _id, type });
     const defaultFields = {
-      id: _id, type, ...def.attributes, ...def.relationships,
+      id: _id, type, ...init.attributes, ...init.relationships,
     };
     const state = reactive(defaultFields);
     const reference = readonly(state);
-    const queue = new PromiseQueue(def);
+    const queue = new PromiseQueue();
+    queue.push(() => init);
     const route = identifyRoute();
     const [backupURI, transactions] = restoreTransactions(entity, type, _id, route);
     const revision = {
@@ -189,7 +190,12 @@ export default function useEntities(options = {}) {
   function add(entity, type, fields = {}) {
     const [reference, revision] = createEntity(entity, type, fields?.id);
     const { queue, state: itemState } = revision;
-    queue.push(() => emit(itemState, fields));
+    const { shortName } = nomenclature.entities[entity];
+    queue.push((prev) => {
+      const next = farm[shortName].update(prev, fields);
+      emit(itemState, next);
+      return next;
+    });
     return reference;
   }
 
