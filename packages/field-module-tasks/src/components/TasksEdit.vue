@@ -1,5 +1,6 @@
 <template>
-  <app-bar-options :title="$t('Edit Log')" nav="back" :actions="appBarActions"/>
+<app-bar-options :title="$t('Edit Log')" nav="back" :actions="appBarActions"/>
+<farm-main :space="['none', 's']">
   <farm-stack v-if="log" :space="['none', 'none', 's']" :dividers="true">
 
     <farm-card>
@@ -246,6 +247,7 @@
     </farm-card>
 
   </farm-stack>
+</farm-main>
 </template>
 
 <script>
