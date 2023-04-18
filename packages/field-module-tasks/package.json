@@ -1,6 +1,6 @@
 {
   "name": "field-module-tasks",
-  "version": "2.0.0-beta.1",
+  "version": "2.0.0-beta.2",
   "description": "View, update and create farmOS logs for your assigned farm tasks.",
   "main": "module.config.js",
   "type": "module",
