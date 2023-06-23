@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite';
 import createVuePlugin from '@vitejs/plugin-vue';
-import envCompatible from 'vite-plugin-env-compatible';
 import { viteCommonjs } from '@originjs/vite-plugin-commonjs';
 import { VitePWA } from 'vite-plugin-pwa';
 import { reduce } from 'ramda';
@@ -35,7 +34,6 @@ export default defineConfig({
   plugins: [
     createVuePlugin({ jsx: true }),
     viteCommonjs(),
-    envCompatible(),
     VitePWA({
       filename: 'service-worker.js',
       manifest: false,

@@ -2,7 +2,6 @@ import path from 'path';
 import { createRequire } from 'module';
 import { createServer } from 'vite';
 import createVuePlugin from '@vitejs/plugin-vue';
-import envCompatible from 'vite-plugin-env-compatible';
 import { viteCommonjs } from '@originjs/vite-plugin-commonjs';
 import { FM_API_ENDPOINT, FM_SCRIPT_DIR } from 'field-kit-utils/constants.js';
 import { snake } from 'field-kit-utils/string-case.js';
@@ -59,7 +58,6 @@ export default async function develop(options = {}) {
     plugins: [
       createVuePlugin({ jsx: true }),
       viteCommonjs(),
-      envCompatible.default(),
     ],
     optimizeDeps: {
       exclude: ['@farmos.org/farmos-map'],

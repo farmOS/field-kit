@@ -2,7 +2,6 @@ import fs from 'fs';
 import path from 'path';
 import { build } from 'vite';
 import createVuePlugin from '@vitejs/plugin-vue';
-import envCompatible from 'vite-plugin-env-compatible';
 import { viteCommonjs } from '@originjs/vite-plugin-commonjs';
 import jsYaml from 'js-yaml';
 import { snake } from 'field-kit-utils/string-case.js';
@@ -40,7 +39,6 @@ export default async function bundler(config) {
     plugins: [
       createVuePlugin({ jsx: true }),
       viteCommonjs(),
-      envCompatible.default(),
       fieldModulePlugin({ ...config, fileName }),
     ],
     build: {
