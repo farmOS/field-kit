@@ -11,15 +11,15 @@
     "vue": "^3.2.47"
   },
   "devDependencies": {
-    "@storybook/addon-essentials": "^7.0.23",
-    "@storybook/addon-interactions": "^7.0.23",
-    "@storybook/addon-links": "^7.0.23",
-    "@storybook/blocks": "^7.0.23",
-    "@storybook/testing-library": "^0.2.0",
-    "@storybook/vue3": "^7.0.23",
-    "@storybook/vue3-vite": "^7.0.23",
+    "@storybook/addon-essentials": "^7.0.0-beta.40",
+    "@storybook/addon-interactions": "^7.0.0-beta.40",
+    "@storybook/addon-links": "^7.0.0-beta.40",
+    "@storybook/blocks": "^7.0.0-beta.40",
+    "@storybook/testing-library": "^0.0.14-next.1",
+    "@storybook/vue3": "^7.0.0-beta.40",
+    "@storybook/vue3-vite": "^7.0.0-beta.40",
     "@vitejs/plugin-vue": "^4.2.3",
-    "storybook": "^7.0.23",
+    "storybook": "^7.0.0-beta.40",
     "vite": "^4.3.9"
   },
   "repository": {
