@@ -5,6 +5,7 @@ export default {
   component: FarmAutocomplete,
   render: (args, { argTypes }) => ({
     props: Object.keys(argTypes),
+    setup() { return args; },
     template: `
       <farm-stack>
         <farm-autocomplete

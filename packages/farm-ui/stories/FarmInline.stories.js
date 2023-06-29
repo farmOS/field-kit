@@ -25,8 +25,9 @@ export default {
       options: ['xxxs', 'xxs', 'xs', 's', 'm', 'l', 'xl', 'xxl', 'none'],
     },
   },
-  render: (args) => ({
+  render: args => ({
     components: { FarmInline, FarmPlaceholder },
+    setup() { return args; },
     template: `
       <farm-inline :space="space" :justifyContent="justifyContent" :alignItems="alignItems">
         <farm-placeholder/>
@@ -40,40 +41,52 @@ export default {
   }),
 };
 
-export const Default = {};
+export const Default = {
+  args: {
+    alignItems: 'stretch',
+    justifyContent: 'flex-start',
+    space: 'none',
+  },
+};
 
 export const withSpace = {
   args: {
+    ...Default.args,
     space: 'm',
   },
 };
 
 export const withMoreSpace = {
   args: {
+    ...Default.args,
     space: 'xl',
   },
 };
 
 export const justifiedEnd = {
   args: {
+    ...Default.args,
     justifyContent: 'flex-end',
   },
 };
 
 export const justifiedSpaceBetween = {
   args: {
+    ...Default.args,
     justifyContent: 'space-between',
   },
 };
 
 export const justifiedSpaceAround = {
   args: {
+    ...Default.args,
     justifyContent: 'space-around',
   },
 };
 
 export const alignCenter = {
   args: {
+    ...Default.args,
     alignItems: 'center',
   },
 };

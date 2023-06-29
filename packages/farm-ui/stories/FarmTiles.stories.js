@@ -17,6 +17,7 @@ export default {
   render: (args, { argTypes }) => ({
     props: Object.keys(argTypes),
     components: { FarmTiles, FarmPlaceholder },
+    setup() { return args; },
     template: `
       <farm-tiles :space="space" :columns="[1, 2, 3]" :dividers="dividers">
         <farm-placeholder/>
@@ -30,28 +31,38 @@ export default {
   }),
 };
 
-export const Default = {};
+export const Default = {
+  args: {
+    columns: [1, 2, 3],
+    dividers: false,
+    space: 's',
+  },
+};
 
 export const withNoSpace = {
   args: {
+    ...Default.args,
     space: 'none',
   },
 };
 
 export const withMoreSpace = {
   args: {
+    ...Default.args,
     space: 'l',
   },
 };
 
 export const withDividers = {
   args: {
+    ...Default.args,
     dividers: true,
   },
 };
 
 export const withStrongDividers = {
   args: {
+    ...Default.args,
     dividers: 'strong',
   },
 };

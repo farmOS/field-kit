@@ -28,6 +28,7 @@ export default {
   render: (args, { argTypes }) => ({
     props: Object.keys(argTypes),
     components: { FarmTextLabel },
+    setup() { return args; },
     template: `
       <farm-text-label :as="as" :color="color" :size="size">
         Label
@@ -36,22 +37,31 @@ export default {
   }),
 };
 
-export const Default = {};
+export const Default = {
+  args: {
+    as: 'label',
+    size: 'm',
+    color: 'text',
+  },
+};
 
 export const asPTag = {
   args: {
+    ...Default.args,
     as: 'p',
   },
 };
 
 export const Small = {
   args: {
+    ...Default.args,
     size: 's',
   },
 };
 
 export const Large = {
   args: {
+    ...Default.args,
     size: 'l',
   },
 };

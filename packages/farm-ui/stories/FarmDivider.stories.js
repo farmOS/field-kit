@@ -11,10 +11,10 @@ export default {
   },
 };
 
-export const Default = {};
+export const Default = {
+  args: { weight: 'regular' },
+};
 
 export const Strong = {
-  args: {
-    weight: 'strong',
-  },
+  args: { weight: 'strong' },
 };

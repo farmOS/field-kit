@@ -32,6 +32,7 @@ export default {
   render: (args, { argTypes }) => ({
     props: Object.keys(argTypes),
     components: { FarmText },
+    setup() { return args; },
     template: `
       <farm-text :as="as" :color="color" :size="size" :weight="weight">
         Hello, World!
@@ -40,28 +41,39 @@ export default {
   }),
 };
 
-export const Default = {};
+export const Default = {
+  args: {
+    as: 'p',
+    size: 'm',
+    color: 'text',
+    weight: 'regular',
+  },
+};
 
 export const asSpanTag = {
   args: {
+    ...Default.args,
     as: 'span',
   },
 };
 
 export const Small = {
   args: {
+    ...Default.args,
     size: 's',
   },
 };
 
 export const Large = {
   args: {
+    ...Default.args,
     size: 'l',
   },
 };
 
 export const Strong = {
   args: {
+    ...Default.args,
     weight: 'strong',
   },
 };

@@ -13,11 +13,9 @@ export default {
   render: (args, { argTypes }) => ({
     props: Object.keys(argTypes),
     components: { FarmTabs, FarmPlaceholder },
+    setup() { return args; },
     template: `
       <div style="position: relative; transform: scale(1)">
-        <farm-menu-bar :more="false">
-          <template #left-menu><h3>Menu Bar</h3></template>
-        </farm-menu-bar>
         <farm-tabs
           :tabs="['One', 'Two']"
           :space="['none', 'none', 'm']">
@@ -47,4 +45,9 @@ export default {
   }),
 };
 
-export const Default = {};
+export const Default = {
+  args: {
+    tabs: ['One', 'Two'],
+    space: ['none', 'none', 'm'],
+  },
+};
