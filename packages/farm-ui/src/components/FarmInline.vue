@@ -1,7 +1,7 @@
 <script>
+import { h } from 'vue';
 import noEmptyVNodes from '../noEmptyVNodes';
 import { responsiveProps, mapResponsiveProps, responsiveValidator } from '../responsiveProps';
-import { h } from 'vue'
 
 export default {
   name: 'FarmInline',

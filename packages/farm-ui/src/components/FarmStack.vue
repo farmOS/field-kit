@@ -1,9 +1,9 @@
 <script>
+import { h } from 'vue';
 import noEmptyVNodes from '../noEmptyVNodes';
 import {
   responsiveProps, mapResponsiveProps, responsiveValidator, mapResponsiveEnums,
 } from '../responsiveProps';
-import { h } from 'vue'
 
 export default {
   name: 'FarmStack',

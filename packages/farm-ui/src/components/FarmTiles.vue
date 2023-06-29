@@ -1,7 +1,7 @@
 <script>
+import { h, Fragment } from 'vue';
 import noEmptyVNodes from '../noEmptyVNodes';
 import { responsiveProps, mapResponsiveProps, responsiveValidator } from '../responsiveProps';
-import { h, Fragment } from 'vue'
 
 export default {
   name: 'FarmTiles',
