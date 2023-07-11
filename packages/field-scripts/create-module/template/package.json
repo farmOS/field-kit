@@ -1,7 +1,5 @@
 {
-  "name": "field-module-observations",
-  "version": "2.0.0-alpha.1",
-  "description": "Take photos and quick notes from the farm.",
+  "version": "0.0.0",
   "main": "module.config.js",
   "type": "module",
   "scripts": {
@@ -11,21 +9,10 @@
     "preview": "vite preview",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/farmOS/field-kit.git"
-  },
   "keywords": [
     "farmOS"
   ],
-  "author": "Jamie Gaehring <gaehj457@gmail.com> (https://jgaehring.com)",
-  "license": "GPL-3.0-or-later",
-  "dependencies": {},
   "devDependencies": {
     "field-scripts": "2.0.0-alpha.1"
-  },
-  "bugs": {
-    "url": "https://github.com/farmOS/field-kit/issues"
-  },
-  "homepage": "https://github.com/farmOS/field-kit#readme"
+  }
 }
