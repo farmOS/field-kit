@@ -18,7 +18,9 @@ module.exports = {
   plugins: [
     'vue'
   ],
-  ignorePatterns: ['src/l10n/**'],
+  ignorePatterns: [
+    'packages/field-kit/src/l10n/**',
+  ],
   // add your custom rules here
   rules: {
     // don't require .vue extension when importing
