@@ -20,6 +20,7 @@ module.exports = {
   ],
   ignorePatterns: [
     'packages/field-kit/src/l10n/**',
+    'packages/field-scripts/create-module/template/**',
   ],
   // add your custom rules here
   rules: {
