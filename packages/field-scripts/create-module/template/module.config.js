@@ -1,7 +1,7 @@
 export default {
-  name: 'observations',
-  label: 'Observations',
-  description: 'Take photos and quick notes from the farm.',
-  widget: './src/ObservationsWidget.vue',
+  name: '_MODULE_NAME_KEBAB_',
+  label: '_MODULE_LABEL_',
+  description: '_MODULE_DESCIPTION_',
+  widget: './src/_MODULE_NAME_PASCAL_Widget.vue',
   routes: './src/routes',
 };

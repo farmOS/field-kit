@@ -1,10 +1,10 @@
-import ObservationsContainer from './ObservationsContainer.vue';
+import _MODULE_NAME_PASCAL_Container from './_MODULE_NAME_PASCAL_Container.vue';
 
 const routes = [
   {
-    path: '/observations',
-    name: 'observations',
-    component: ObservationsContainer,
+    path: '/_MODULE_NAME_KEBAB_',
+    name: '_MODULE_NAME_KEBAB_',
+    component: _MODULE_NAME_PASCAL_Container,
   },
 ];
 

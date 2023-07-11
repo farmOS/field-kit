@@ -4,7 +4,7 @@
 
 <script>
 export default {
-  name: 'ObservationsContainer',
+  name: '_MODULE_NAME_PASCAL_Widget',
   setup() {},
 };
 </script>
