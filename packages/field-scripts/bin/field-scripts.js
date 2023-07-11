@@ -44,6 +44,16 @@ async function run() {
       process.exit(1);
     }
   }
+  if (script === 'create-module') {
+    const { default: create } = await import('../create-module/index.js');
+    try {
+      const targetDir = rest[0];
+      await create(targetDir);
+    } catch (error) {
+      console.error(error);
+      process.exit(1);
+    }
+  }
 }
 
 run();
