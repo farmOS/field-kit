@@ -17,6 +17,15 @@ export const pascal = str => title(str).replaceAll(/\W+/g, '');
 // kebab-case, but it doesn't handle whitespace and other deviations very well.
 const kebab = str => title(str).toLowerCase().replaceAll(/\s+/g, '-');
 
+// Read a template file, transform it somehow, write the new file.
+function castTemplate({ src, dest, transform }) {
+  const srcPath = path.resolve(...[src].flat());
+  const destPath = path.resolve(...[dest].flat());
+  let content = fs.readFileSync(srcPath, 'utf-8');
+  if (typeof transform === 'function') content = transform(content);
+  fs.writeFileSync(destPath, content);
+}
+
 export default async function create(projectName = '') {
   const results = await prompts([
     {
@@ -61,39 +70,37 @@ export default async function create(projectName = '') {
   fs.mkdirSync(projectRoot);
   fs.mkdirSync(projectSrc);
 
-  const pkgSrc = path.resolve(templateRoot, 'package.json');
-  const pkgDest = path.resolve(projectRoot, 'package.json');
-  const pkgTemplate = JSON.parse(fs.readFileSync(pkgSrc, 'utf-8'));
-  const pkgJSON = JSON.stringify({
-    name, description, ...pkgTemplate,
-  }, null, 2);
-  fs.writeFileSync(pkgDest, pkgJSON);
+  castTemplate({
+    src: [templateRoot, 'package.json'],
+    dest: [projectRoot, 'package.json'],
+    transform: pkg => JSON.stringify({
+      name, description, ...JSON.parse(pkg),
+    }, null, 2),
+  });
 
-  const configSrc = path.resolve(templateRoot, 'module.config.js');
-  const configDest = path.resolve(projectRoot, 'module.config.js');
-  const configRaw = fs.readFileSync(configSrc, 'utf-8');
-  const config = replaceholders(configRaw);
-  fs.writeFileSync(configDest, config);
+  castTemplate({
+    src: [templateRoot, 'module.config.js'],
+    dest: [projectRoot, 'module.config.js'],
+    transform: replaceholders,
+  });
 
-  const routesSrc = path.resolve(templateRoot, 'src', 'routes.js');
-  const routesDest = path.resolve(projectSrc, 'routes.js');
-  const routesRaw = fs.readFileSync(routesSrc, 'utf-8');
-  const routes = replaceholders(routesRaw);
-  fs.writeFileSync(routesDest, routes);
+  castTemplate({
+    src: [templateRoot, 'src', 'routes.js'],
+    dest: [projectSrc, 'routes.js'],
+    transform: replaceholders,
+  });
 
-  const containerSrc = path.resolve(templateRoot, 'src', 'Container.vue');
-  const containerFilename = `${placeholders._MODULE_NAME_PASCAL_}Container.vue`;
-  const containerDest = path.resolve(projectSrc, containerFilename);
-  const containerRaw = fs.readFileSync(containerSrc, 'utf-8');
-  const container = replaceholders(containerRaw);
-  fs.writeFileSync(containerDest, container);
+  castTemplate({
+    src: [templateRoot, 'src', 'Container.vue'],
+    dest: [projectSrc, `${placeholders._MODULE_NAME_PASCAL_}Container.vue`],
+    transform: replaceholders,
+  });
 
-  const widgetSrc = path.resolve(templateRoot, 'src', 'Widget.vue');
-  const widgetFilename = `${placeholders._MODULE_NAME_PASCAL_}Widget.vue`;
-  const widgetDest = path.resolve(projectSrc, widgetFilename);
-  const widgetRaw = fs.readFileSync(widgetSrc, 'utf-8');
-  const widget = replaceholders(widgetRaw);
-  fs.writeFileSync(widgetDest, widget);
+  castTemplate({
+    src: [templateRoot, 'src', 'Widget.vue'],
+    dest: [projectSrc, `${placeholders._MODULE_NAME_PASCAL_}Widget.vue`],
+    transform: replaceholders,
+  });
 
   return results;
 }
