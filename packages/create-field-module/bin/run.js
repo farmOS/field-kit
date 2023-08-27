@@ -2,12 +2,13 @@
 
 /* eslint-disable no-console */
 
+import minimist from 'minimist';
 import create from './index.js';
 
 async function run() {
-  const args = process.argv.slice(2);
   try {
-    const targetDir = args[0];
+    const argv = minimist(process.argv.slice(2));
+    const { _: [targetDir] } = argv;
     await create(targetDir);
   } catch (error) {
     console.error(error);
