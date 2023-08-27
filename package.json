@@ -15,6 +15,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "workspaces": [
+    "packages/create-field-module",
     "packages/field-kit",
     "packages/field-kit-utils",
     "packages/field-scripts",

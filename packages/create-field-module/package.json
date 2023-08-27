@@ -1,0 +1,24 @@
+{
+  "name": "create-field-module",
+  "version": "2.0.0-alpha.1",
+  "description": "Scaffold a Field Module for development with farmOS Field Kit.",
+  "bin": "bin/run.js",
+  "main": "bin/run.js",
+  "type": "module",
+  "keywords": [
+    "farmOS"
+  ],
+  "author": "Jamie Gaehring <gaehj457@gmail.com> (https://jgaehring.com)",
+  "license": "GPL-3.0-or-later",
+  "dependencies": {
+    "prompts": "^2.4.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/farmOS/field-kit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/farmOS/field-kit/issues"
+  },
+  "homepage": "https://farmos.org"
+}
