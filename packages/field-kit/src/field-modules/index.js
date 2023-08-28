@@ -1,7 +1,6 @@
 import { reactive, readonly } from 'vue';
 import { compose, map, path } from 'ramda';
-import { kebab } from 'field-kit-utils/string-case';
-import { FM_API_ENDPOINT } from 'field-kit-utils/constants';
+import { FM_API_ENDPOINT, kebab } from '@farmos.org/field-scripts';
 import farm from '../farm';
 import { alert } from '../warnings/alert';
 import importFieldModule from './import';

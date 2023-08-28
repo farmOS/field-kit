@@ -1,9 +1,9 @@
 {
   "name": "@farmos.org/field-scripts",
-  "version": "2.0.0-alpha.1",
+  "version": "2.0.0-alpha.2",
   "description": "Node scripts for farmOS Field Kit and Field Modules.",
   "bin":  "bin/field-scripts.js",
-  "main": "bin/field-scripts.js",
+  "main": "lib/index.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -16,7 +16,6 @@
   "dependencies": {
     "@originjs/vite-plugin-commonjs": "^1.0.3",
     "@vitejs/plugin-vue": "^4.2.3",
-    "field-kit-utils": "2.0.0-alpha.1",
     "js-yaml": "^4.1.0",
     "minimist": "^1.2.8",
     "ramda": "^0.28.0",

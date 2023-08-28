@@ -17,7 +17,6 @@
   "workspaces": [
     "packages/create-field-module",
     "packages/field-kit",
-    "packages/field-kit-utils",
     "packages/field-scripts",
     "packages/field-module-tasks",
     "packages/farm-ui"
