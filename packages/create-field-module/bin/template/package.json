@@ -13,6 +13,6 @@
     "farmOS"
   ],
   "devDependencies": {
-    "field-scripts": "2.0.0-alpha.1"
+    "@farmos.org/field-scripts": "2.0.0-alpha.1"
   }
 }
