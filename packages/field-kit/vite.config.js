@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import createVuePlugin from '@vitejs/plugin-vue';
 import { viteCommonjs } from '@originjs/vite-plugin-commonjs';
 import { VitePWA } from 'vite-plugin-pwa';
-import { reduce } from 'ramda';
+import { reduce } from '../../node_modules/ramda/es';
 
 const proxyConfig = {
   target: 'http://localhost:80',
