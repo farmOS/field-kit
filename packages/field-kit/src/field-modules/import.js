@@ -1,4 +1,4 @@
-import { resolveModulePathname } from '@farmos.org/field-scripts';
+import { resolveModulePathname } from '../../namespaces';
 import { getHost } from '../farm/remote';
 
 // Takes module info from the API and uses it to inject a script tag and run

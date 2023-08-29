@@ -1,7 +1,7 @@
 import {
   assoc, compose, curry, evolve, map, mapObjIndexed, pick, prop,
 } from 'ramda';
-import { kebab } from '@farmos.org/field-scripts';
+import { kebab } from '../../namespaces';
 import { upsertModuleConfig } from './index';
 
 const parseWidgetName = curry((modName, widget) =>

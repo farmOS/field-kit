@@ -1,11 +1,15 @@
 {
-  "name": "field-kit",
+  "name": "@farmos.org/field-kit",
   "version": "2.0.0-alpha.8",
   "description": "A modular, offline-first companion app to farmOS.",
   "author": "Jamie Gaehring <gaehj457@gmail.com> (https://jgaehring.com)",
   "license": "GPL-3.0-or-later",
-  "private": true,
+  "private": false,
   "main": "main.js",
+  "type": "module",
+  "bin": {
+    "field-scripts": "bin/field-scripts/index.js"
+  },
   "scripts": {
     "start": "npm run dev",
     "BROKEN-test": "mocha --require test-setup.js 'src/**/*.test.js' --watch",
@@ -18,17 +22,16 @@
   "dependencies": {
     "@farmos.org/field-components": "2.0.0-alpha.3",
     "@farmos.org/farmos-map": "^1.4.2",
-    "@farmos.org/field-scripts": "2.0.0-alpha.2",
     "@turf/turf": "^5.1.6",
     "farmos": "^2.0.0-beta.14",
-    "ramda": "^0.27.1",
+    "ramda": "^0.28.0",
     "uuid": "^8.3.2",
     "vue": "^3.1.0",
     "vue-router": "^4.0.12",
     "wellknown": "^0.5.0"
   },
   "devDependencies": {
-    "@originjs/vite-plugin-commonjs": "^1.0.1",
+    "@originjs/vite-plugin-commonjs": "^1.0.3",
     "@vitejs/plugin-vue": "^4.2.3",
     "@vue/runtime-dom": "^3.2.26",
     "eslint": "^7.32.0",
@@ -37,6 +40,8 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.3.1",
     "eslint-plugin-vue": "^8.2.0",
+    "js-yaml": "^4.1.0",
+    "minimist": "^1.2.8",
     "vite": "^4.3.9",
     "vite-plugin-pwa": "^0.16.4"
   },

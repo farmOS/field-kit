@@ -3,8 +3,7 @@ import { createRequire } from 'module';
 import { createServer } from 'vite';
 import createVuePlugin from '@vitejs/plugin-vue';
 import { viteCommonjs } from '@originjs/vite-plugin-commonjs';
-import { FM_API_ENDPOINT, FM_SCRIPT_DIR } from '../../namespaces/constants.js';
-import { snake } from '../../namespaces/string-case.js';
+import { FM_API_ENDPOINT, FM_SCRIPT_DIR, snake } from '../../../namespaces/index.js';
 import createMockServer from './mock-server.js';
 
 const require = createRequire(import.meta.url);
@@ -32,7 +31,7 @@ export default async function develop(options = {}) {
   const mockServer = createMockServer(config);
   mockServer.listen(mockPort, 'localhost');
 
-  const fieldKitEntry = require.resolve('field-kit');
+  const fieldKitEntry = require.resolve('@farmos.org/field-kit');
   const root = path.dirname(fieldKitEntry);
 
   const devServer = await createServer({

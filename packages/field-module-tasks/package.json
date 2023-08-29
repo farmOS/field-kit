@@ -17,7 +17,7 @@
   "author": "Jamie Gaehring <gaehj457@gmail.com> (https://jgaehring.com)",
   "license": "GPL-3.0-or-later",
   "devDependencies": {
-    "@farmos.org/field-scripts": "2.0.0-alpha.2"
+    "@farmos.org/field-kit": "2.0.0-alpha.8"
   },
   "repository": {
     "type": "git",
