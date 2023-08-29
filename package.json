@@ -11,7 +11,7 @@
     "dev:field-kit": "npm run start --workspace=field-kit",
     "dev:field-module-tasks": "npm run start --workspace=field-module-tasks",
     "start": "npm run dev:field-kit",
-    "storybook": "npm run --workspace=farm-ui storybook",
+    "storybook": "npm run --workspace=@farmos.org/field-components storybook",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "workspaces": [
@@ -19,7 +19,7 @@
     "packages/field-kit",
     "packages/field-scripts",
     "packages/field-module-tasks",
-    "packages/farm-ui"
+    "packages/field-components"
   ],
   "keywords": [
     "farmOS",

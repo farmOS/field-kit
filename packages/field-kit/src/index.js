@@ -2,7 +2,7 @@ import * as Vue from 'vue';
 import * as VueRouter from 'vue-router';
 import * as R from 'ramda';
 import wellknown from 'wellknown';
-import * as components from 'farm-ui';
+import * as components from '@farmos.org/field-components';
 import router from './router';
 import useEntities from './entities';
 import App from './App.vue';
