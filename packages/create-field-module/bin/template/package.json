@@ -13,6 +13,12 @@
     "farmOS"
   ],
   "devDependencies": {
-    "@farmos.org/field-kit": "2.0.0-alpha.8"
+    "@farmos.org/field-kit": "2.0.0-alpha.8",
+    "@originjs/vite-plugin-commonjs": "^1.0.3",
+    "@vitejs/plugin-vue": "^4.2.3",
+    "js-yaml": "^4.1.0",
+    "minimist": "^1.2.8",
+    "ramda": "^0.28.0",
+    "vite": "^4.3.9"
   }
 }
