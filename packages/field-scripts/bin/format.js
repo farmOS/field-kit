@@ -1,6 +1,6 @@
 import path from 'path';
 import { evolve } from 'ramda';
-import { snake } from '../lib/string-case.js';
+import { snake } from '../namespaces/string-case.js';
 
 const fmtImport = (name, value) =>
   (value ? `import ${name} from '${value}';` : '');

@@ -4,7 +4,7 @@ import { build } from 'vite';
 import createVuePlugin from '@vitejs/plugin-vue';
 import { viteCommonjs } from '@originjs/vite-plugin-commonjs';
 import jsYaml from 'js-yaml';
-import { snake } from '../../lib/string-case.js';
+import { snake } from '../../namespaces/string-case.js';
 import fieldModulePlugin from './rollup-plugin-field-module.js';
 
 const writeYaml = (filepath, data) => {
