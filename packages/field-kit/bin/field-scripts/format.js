@@ -1,5 +1,4 @@
 import path from 'path';
-import { evolve } from 'ramda';
 import { snake } from '../../namespaces/index.js';
 
 const fmtImport = (name, value) =>
@@ -27,11 +26,11 @@ document.head.appendChild(style);
 })();${js}`.replaceAll('\n', '');
 
 const absPath = relPath => path.resolve(process.cwd(), relPath);
-const absConfig = evolve({
-  routes: absPath,
-  widget: absPath,
+export const fmtScript = config => fmtCode({
+  ...config,
+  routes: config.routes && absPath(config.routes),
+  widget: config.widget && absPath(config.widget),
 });
-export const fmtScript = config => fmtCode(absConfig(config));
 
 const fmtModuleData = ({ name, label, description } = {}) => ({
   type: 'field_module--field_module',
