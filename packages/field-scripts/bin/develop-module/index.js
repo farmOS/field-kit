@@ -3,8 +3,8 @@ import { createRequire } from 'module';
 import { createServer } from 'vite';
 import createVuePlugin from '@vitejs/plugin-vue';
 import { viteCommonjs } from '@originjs/vite-plugin-commonjs';
-import { FM_API_ENDPOINT, FM_SCRIPT_DIR } from '../lib/constants.js';
-import { snake } from '../lib/string-case.js';
+import { FM_API_ENDPOINT, FM_SCRIPT_DIR } from '../../lib/constants.js';
+import { snake } from '../../lib/string-case.js';
 import createMockServer from './mock-server.js';
 
 const require = createRequire(import.meta.url);

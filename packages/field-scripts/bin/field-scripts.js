@@ -16,7 +16,7 @@ async function run() {
   const args = minimist(process.argv.slice(2));
   const { _: [command], ...options } = args;
   if (command === 'build-module') {
-    const { default: build } = await import('../build-module/index.js');
+    const { default: build } = await import('./build-module/index.js');
     try {
       const results = await build(options);
       printResults(results);
@@ -26,7 +26,7 @@ async function run() {
     }
   }
   if (command === 'develop-module') {
-    const { default: develop } = await import('../develop-module/index.js');
+    const { default: develop } = await import('./develop-module/index.js');
     try {
       await develop(options);
     } catch (error) {

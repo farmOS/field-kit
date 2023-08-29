@@ -1,6 +1,6 @@
 import http from 'http';
-import { FM_API_ENDPOINT, resolveModulePathname } from '../lib/constants.js';
-import { fmtScript, fmtJsonApi } from '../shared/format.js';
+import { FM_API_ENDPOINT, resolveModulePathname } from '../../lib/constants.js';
+import { fmtScript, fmtJsonApi } from '../format.js';
 
 const trimPath = p => (typeof p === 'string' ? p : '').replaceAll(/^\/|\/$/g, '');
 const eqPath = (pathA, pathB) => trimPath(pathA) === trimPath(pathB);
