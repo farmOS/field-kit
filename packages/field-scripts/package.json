@@ -2,7 +2,7 @@
   "name": "@farmos.org/field-scripts",
   "version": "2.0.0-alpha.2",
   "description": "Node scripts for farmOS Field Kit and Field Modules.",
-  "bin":  "bin/field-scripts.js",
+  "bin":  "bin/index.js",
   "main": "lib/index.js",
   "type": "module",
   "scripts": {
