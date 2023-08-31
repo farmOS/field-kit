@@ -20,7 +20,7 @@ export default function fieldModulePlugin(pluginOptions = {}) {
       try {
         const js = bundle[pluginOptions.fileName()];
         const css = bundle[STYLE_BUNDLE];
-        js.code = injectStyle(js.code, css.source);
+        if (css) js.code = injectStyle(js.code, css.source);
         delete bundle[STYLE_BUNDLE];
       } catch (error) {
         const msg = `Error injecting styles for ${pluginOptions.name} module: `;
