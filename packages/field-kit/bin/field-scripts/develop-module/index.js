@@ -1,12 +1,29 @@
-import path from 'path';
-import { createRequire } from 'module';
+import path from 'node:path';
+import process from 'node:process';
+import { fileURLToPath } from 'node:url';
 import { createServer } from 'vite';
 import createVuePlugin from '@vitejs/plugin-vue';
 import { viteCommonjs } from '@originjs/vite-plugin-commonjs';
 import { FM_API_ENDPOINT, FM_SCRIPT_DIR, snake } from '../../../namespaces/index.js';
 import createMockServer from './mock-server.js';
 
-const require = createRequire(import.meta.url);
+// The current working directory of the downstream application, which will call
+// `npm run field-scripts develop`.
+const cwd = process.cwd();
+// The root path of this, the @farmos.org/field-kit package itself, which may be
+// under the node_modules of the cwd.
+const root = fileURLToPath(new URL('../../..', import.meta.url));
+
+/**
+ * Explicitly use strict mode on the file system (already Vite's default), but
+ * also add both the root and the cwd to the allow list. Vite will only include
+ * the root by default, not the cwd.
+ * @see https://vitejs.dev/config/server-options.html#server-fs-allow
+ */
+const fs = {
+  strict: true,
+  allow: [cwd, root],
+};
 
 const proxyPort = port => ({
   target: `http://localhost:${port}`,
@@ -23,16 +40,12 @@ export default async function develop(options = {}) {
     } = {},
     ...sharedOptions
   } = options;
-  const cwd = process.cwd();
   const location = path.resolve(cwd, relLocation);
   const { default: config } = await import(location);
 
   const mockPort = 9000;
   const mockServer = createMockServer(config);
   mockServer.listen(mockPort, 'localhost');
-
-  const fieldKitEntry = require.resolve('@farmos.org/field-kit');
-  const root = path.dirname(fieldKitEntry);
 
   const devServer = await createServer({
     root,
@@ -64,16 +77,7 @@ export default async function develop(options = {}) {
     },
     server: {
       port,
-      /**
-       * Explicitly use strict mode on the file system (already Vite's default), but
-       * also add both the root and the cwd to the allow list. Vite will only include
-       * the root by default, not the cwd.
-       * @see https://vitejs.dev/config/server-options.html#server-fs-allow
-       */
-      fs: {
-        strict: true,
-        allow: [cwd, root],
-      },
+      fs,
       proxy: {
         [`/${FM_API_ENDPOINT}`]: proxyPort(9000),
         [`/${FM_SCRIPT_DIR}/${snake(config.name)}/`]: proxyPort(9000),
