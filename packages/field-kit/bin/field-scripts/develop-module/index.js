@@ -64,6 +64,16 @@ export default async function develop(options = {}) {
     },
     server: {
       port,
+      /**
+       * Explicitly use strict mode on the file system (already Vite's default), but
+       * also add both the root and the cwd to the allow list. Vite will only include
+       * the root by default, not the cwd.
+       * @see https://vitejs.dev/config/server-options.html#server-fs-allow
+       */
+      fs: {
+        strict: true,
+        allow: [cwd, root],
+      },
       proxy: {
         [`/${FM_API_ENDPOINT}`]: proxyPort(9000),
         [`/${FM_SCRIPT_DIR}/${snake(config.name)}/`]: proxyPort(9000),
