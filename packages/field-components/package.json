@@ -26,7 +26,7 @@
     "vite": "^4.3.9"
   },
   "peerDependencies": {
-    "@farmos.org/field-kit": "2.0.0-alpha.8"
+    "@farmos.org/field-kit": "^2.0.0-alpha.7"
   },
   "repository": {
     "type": "git",
