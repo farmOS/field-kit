@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import process from 'node:process';
-import { fileURLToPath } from 'node:url';
 import { createServer } from 'vite';
 import createVuePlugin from '@vitejs/plugin-vue';
 import { viteCommonjs } from '@originjs/vite-plugin-commonjs';
@@ -11,9 +11,11 @@ import createMockServer from './mock-server.js';
 // The current working directory of the downstream application, which will call
 // `npm run field-scripts develop`.
 const cwd = process.cwd();
-// The root path of this, the @farmos.org/field-kit package itself, which may be
-// under the node_modules of the cwd.
-const root = fileURLToPath(new URL('../../..', import.meta.url));
+// The root path of the @farmos.org/field-kit package itself, which may be a
+// workspace in the monorepo, or a peer dependency of a field module project,
+// under node_modules alongside field-scripts.
+const main = createRequire(import.meta.url).resolve('@farmos.org/field-kit');
+const root = path.dirname(main);
 
 /**
  * Explicitly use strict mode on the file system (already Vite's default), but
