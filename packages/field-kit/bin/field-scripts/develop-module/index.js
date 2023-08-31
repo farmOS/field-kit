@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
@@ -24,6 +25,18 @@ const fs = {
   strict: true,
   allow: [cwd, root],
 };
+
+/**
+ * Optimize dependencies for @farmos.org/field-kit, except @farmos.org/farmos-map.
+ * @see https://vitejs.dev/config/dep-optimization-options.html
+ */
+const pkgPath = path.resolve(root, 'package.json');
+const pkgRaw = readFileSync(pkgPath, 'utf-8');
+const pkg = JSON.parse(pkgRaw);
+const { dependencies = {} } = pkg || {};
+const exclude = ['@farmos.org/farmos-map'];
+const include = Object.keys(dependencies).filter(d => !exclude.includes(d));
+const optimizeDeps = { exclude, include };
 
 const proxyPort = port => ({
   target: `http://localhost:${port}`,
@@ -71,10 +84,7 @@ export default async function develop(options = {}) {
       createVuePlugin({ jsx: true }),
       viteCommonjs(),
     ],
-    optimizeDeps: {
-      exclude: ['@farmos.org/farmos-map'],
-      include: ['axios'],
-    },
+    optimizeDeps,
     server: {
       port,
       fs,
