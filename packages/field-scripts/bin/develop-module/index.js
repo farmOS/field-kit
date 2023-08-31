@@ -5,7 +5,7 @@ import process from 'node:process';
 import { createServer } from 'vite';
 import createVuePlugin from '@vitejs/plugin-vue';
 import { viteCommonjs } from '@originjs/vite-plugin-commonjs';
-import { FM_API_ENDPOINT, FM_SCRIPT_DIR, snake } from '../../../namespaces/index.js';
+import { FM_API_ENDPOINT, FM_SCRIPT_DIR, snake } from '@farmos.org/field-kit/namespaces/index.js';
 import createMockServer from './mock-server.js';
 
 // The current working directory of the downstream application, which will call

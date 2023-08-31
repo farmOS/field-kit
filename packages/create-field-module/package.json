@@ -1,6 +1,6 @@
 {
   "name": "@farmos.org/create-field-module",
-  "version": "2.0.0-alpha.2",
+  "version": "2.0.0-alpha.3",
   "description": "Scaffold a Field Module for development with farmOS Field Kit.",
   "bin": "bin/run.js",
   "main": "bin/run.js",

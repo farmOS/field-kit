@@ -7,9 +7,6 @@
   "private": false,
   "main": "main.js",
   "type": "module",
-  "bin": {
-    "field-scripts": "bin/field-scripts/index.js"
-  },
   "scripts": {
     "start": "npm run dev",
     "BROKEN-test": "mocha --require test-setup.js 'src/**/*.test.js' --watch",
@@ -32,6 +29,7 @@
     "wellknown": "^0.5.0"
   },
   "devDependencies": {
+    "@farmos.org/field-scripts": "2.0.0-alpha.3",
     "@originjs/vite-plugin-commonjs": "^1.0.3",
     "@vitejs/plugin-vue": "^4.2.3",
     "@vue/runtime-dom": "^3.2.26",

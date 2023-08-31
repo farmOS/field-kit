@@ -1,5 +1,5 @@
 import path from 'path';
-import { snake } from '../../namespaces/index.js';
+import { snake } from '@farmos.org/field-kit/namespaces/index.js';
 
 const fmtImport = (name, value) =>
   (value ? `import ${name} from '${value}';` : '');

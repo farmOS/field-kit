@@ -1,5 +1,5 @@
 import http from 'http';
-import { FM_API_ENDPOINT, resolveModulePathname } from '../../../namespaces/index.js';
+import { FM_API_ENDPOINT, resolveModulePathname } from '@farmos.org/field-kit/namespaces/index.js';
 import { fmtScript, fmtJsonApi } from '../format.js';
 
 const trimPath = p => (typeof p === 'string' ? p : '').replaceAll(/^\/|\/$/g, '');

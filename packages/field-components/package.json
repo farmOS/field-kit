@@ -25,6 +25,9 @@
     "storybook": "^7.0.23",
     "vite": "^4.3.9"
   },
+  "peerDependencies": {
+    "@farmos.org/field-kit": "2.0.0-alpha.8"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/farmOS/field-kit.git"
