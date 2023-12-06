@@ -2,7 +2,6 @@
 
 [![Licence](https://img.shields.io/badge/Licence-GPL%203.0-blue.svg)](https://opensource.org/licenses/GPL-3.0/)
 [![Last commit](https://img.shields.io/github/last-commit/farmOS/field-kit.svg?style=flat)](https://github.com/farmOS/field-kit/commits)
-[![Twitter](https://img.shields.io/twitter/follow/farmOSorg.svg?label=%40farmOSorg&style=flat)](https://twitter.com/farmOSorg)
 [![Chat](https://img.shields.io/matrix/farmOS:matrix.org.svg)](https://riot.im/app/#/room/#farmOS:matrix.org)
 
 farmOS Field Kit is a lightweight application for connecting to a farmOS server from any mobile device. It is a Progressive Web App (PWA), meaning it can run from a browser, even offline, and will persist data in between sessions.
